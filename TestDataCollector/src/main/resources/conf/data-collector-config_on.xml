@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property>
+		<name>ftpServerIp</name>
+		<value>10.48.99.13</value>
+		<description>
+			源数据FTP服务器的IP:
+				湖东：10.53.169.146,金山：10.53.170.134,泉州：10.53.175.14,
+				厦门：10.53.175.14,一厂：10.53.171.158,测试机：10.1.4.54
+		</description>
+	</property>
+	
+	<property>
+	  	<name>ftpServerPort</name>
+	  	<value>21</value>
+	  	<description>源数据FTP服务器的FTP端口号</description>
+	</property>
+	
+	<property>
+	  	<name>ftpServerUser</name>
+	  	<value>dsi_FJ_mobile</value>
+    	<description>源数据服务器FTP服务的用户名，生产机用户名：admin,测试机用户名：app-dev</description>
+	</property>
+	
+	<property>
+	  	<name>ftpServerPassword</name>
+	  	<value>Huawei123!</value>
+    	<description>源数据服务器FTP服务的密码,生产机密码：Gn@fzjs2013，测试机密码：dev123</description>
+	</property>
+	
+	<property>
+	  	<name>sourceDataPath</name>
+	  	<value>/data/dsi_FJ_mobile/LTE_S1UHTTP/</value>
+	  	<description>源数据服务器的数据路径（目录必须以斜扛结尾），生产机目录：/data/gndata/,测试机目录：/home/app-dev/sourceData/</description>
+	</property>
+	<property>
+	  	<name>ifSaveDifferentPath</name>
+	  	<value>true</value>
+	  	<description>数据文件和控制文件是否分开存放</description>
+	</property>
+	<property>
+	  	<name>temporaryPath</name>
+	  	<value>/bi/HW_LteXdrCollect/collectTmpData/</value>
+	  	<description>临时路径</description>
+	</property>
+	<property>
+	  	<name>saveDataPath</name>
+	  	<value>/bi/HW_LteXdrCollect/sourcedata/</value>
+	  	<description>数据存放的本地路径（目录必须以斜扛结尾）,如果配置项ifSaveDifferentPath是false的话，数据文件和控制文件都是存在在这个路径里。生产机FTP文件存放目录：/bi/ftpsite，测试机文件存放目录：/home/app-dev/saveDir</description>
+	</property>
+	<property>
+	  	<name>saveCtlPath</name>
+	  	<value>/bi/HW_LteXdrCollect/checkdata/</value>
+	  	<description>控制文件存放的本地路径（目录必须以斜扛结尾）,生产机FTP文件存放目录：/bi/ftpsite，测试机文件存放目录：/home/app-dev/saveDir</description>
+	</property>
+	
+
+	<property>
+	  	<name>dataSourceFileSuffixName</name>
+	  	<value>.txt</value>
+	  	<description>数据源文件的后缀名</description>
+	</property>
+	
+	<property>
+	  	<name>ifHasCtlSourceFile</name>
+	  	<value>true</value>
+	  	<description>每个数据文件是否含有对应的控制文件</description>
+	</property>
+	
+	<property>
+	  	<name>ctlSourceFileSuffixName</name>
+	  	<value>.txt.chk</value>
+	  	<description>控制源文件的后缀名</description>
+	</property>
+	
+	<property>
+	  	<name>ifDownloadCtlFile</name>
+	  	<value>true</value>
+	  	<description>是否下载控制文件</description>
+	</property>
+	
+	<property>
+	  	<name>ifFirstDownloadCtlFile</name>
+	  	<value>true</value>
+	  	<description>是否先下载控制文件</description>
+	</property>
+	
+	<property>
+	  	<name>ftpTmpFileNameSuffix</name>
+	  	<value>.tmp</value>
+    	<description>FTP下载文件的中间文件名后缀</description> 
+	</property>
+	
+	<property>
+	  	<name>downloadBuffersize</name>
+	  	<value>10</value>
+    	<description>FTP下载文件缓冲区（单位M）</description> 
+	</property>
+	
+  	<property>
+	  	<name>ifNeedDeleteSourceDataFile</name>
+    	<value>false</value>
+  		<description>FTP下载完文件后，是否删除源文件</description>
+	</property>
+	
+	<property>
+	  	<name>ifNeedMvSourceDataFile</name>
+	  	<value>true</value>
+	  	<description>采集程序下载完是否需要移动源文件</description>
+	</property>
+	
+	<property>
+	  	<name>mvSourceDataFilePath</name>
+	  	<value>/data/dsi_FJ_mobile/LTE_S1UHTTP/backup/</value>
+	  	<description>采集程序下载完移动源文件到目的目录（目录必须以斜扛结尾）,每种类型的接口文件移动的目的目录不一样</description>
+	</property>
+	
+	<property>
+	  	<name>ifNeedDeleteSourceCtlFile</name>
+    	<value>false</value>
+  		<description>FTP下载完文件后，是否删除源文件</description>
+	</property>
+	
+	<property>
+	  	<name>ifNeedMvSourceCtlFile</name>
+	  	<value>true</value>
+	  	<description>采集程序下载完是否需要移动源文件</description>
+	</property>
+	
+	<property>
+	  	<name>mvSourceCtlFilePath</name>
+	  	<value>/data/dsi_FJ_mobile/LTE_S1UHTTP/backup/</value>
+	  	<description>采集程序下载完移动源文件到目的目录（目录必须以斜扛结尾）,每种类型的接口文件移动的目的目录不一样</description>
+	</property>
+	
+	<property>
+		<name>splitFileNameForDateTime</name>
+		<value>_</value>
+		<description>
+			截取文件名时间点的分隔符
+			例如文件：
+				LTE接口文件：FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv,
+				 GN接口文件：GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv
+				 MC接口文件：FuJianYiDong-A-IuCS-4-201408061520.txt
+		</description>
+	</property>
+	
+	<property>
+		<name>ifDateAndHourTheSameLocation</name>
+		<value>true</value>
+		<description>
+			源数据文件名中的日期与小时是否在同一个位置
+			例如文件：
+				LTE接口文件false：FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv
+				 GN接口文件false：GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv
+				 MC接口文件true：FuJianYiDong-A-IuCS-4-201408061520.txt
+		</description>
+	</property>
+	
+	<property>
+		<name>dateLocationAtFileName</name>
+		<value>3</value>
+		<description>
+			文件名日期字符串在文件名中的位置
+			LTE数据文件名：FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv以_分隔后，日期位置为3 
+		    GN口数据文件名：GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv以_分隔后，日期位置为4
+		    MC口数据文件名：FuJianYiDong-A-IuCS-4-201408061520.txt以-分隔后，日期位置为4
+		</description>
+	</property>
+	
+	<property>
+		<name>dateSubStringBegin</name>
+		<value>0</value>
+		<description>
+			文件名日期字符串在文件名中的位置
+			LTE数据文件名FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv以_分隔后，日期位置为3,日期字符串为20140708
+			GN口数据文件名GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv以_分隔后，日期位置为4,日期字符串为20131218
+			MC口数据文件名：FuJianYiDong-A-IuCS-4-201408061520.txt以-分隔后，日期位置为4，日期字符串为20140806
+			日期字符串截取的开始位置都为0
+		</description>
+	</property>
+	
+	<property>
+		<name>dateSubStringEnd</name>
+		<value>8</value>
+		<description>
+			文件名日期字符串在文件名中的位置
+			LTE数据文件名FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv以_分隔后，日期位置为3,日期字符串为20140708
+			GN口数据文件名GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv以_分隔后，日期位置为4,日期字符串为20131218
+			MC口数据文件名：FuJianYiDong-A-IuCS-4-201408061520.txt以-分隔后，日期位置为4，日期字符串为20140806
+			日期字符串截取的结束位置都为8
+		</description>
+	</property>
+	
+	<property>
+		<name>hourLocationAtFileName</name>
+		<value>3</value>
+		<description>
+			文件名小时字符串在文件名中的位置
+			LTE数据文件名FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv以_分隔后，小时位置为4
+		    GN口数据文件名GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv以_分隔后，小时位置为5
+		    MC口数据文件名：FuJianYiDong-A-IuCS-4-201408061520.txt以-分隔后，小时位置为4
+		</description>
+	</property>
+	
+	<property>
+		<name>hourSubStringBegin</name>
+		<value>8</value>
+		<description>
+			文件名日期字符串在文件名中的位置
+			LTE数据文件名FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv以_分隔后，小时位置为4,小时字符串为100700
+			GN口数据文件名GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv以_分隔后，小时位置为5,小时字符串为105600
+			MC口数据文件名：FuJianYiDong-A-IuCS-4-201408061520.txt以-分隔后，小时位置为4,小时字符串为1520
+			小时字符串截取的开始位置都为8
+		</description>
+	</property>
+	
+	<property>
+		<name>hourSubStringEnd</name>
+		<value>10</value>
+		<description>
+			文件名日期字符串在文件名中的位置
+			LTE数据文件名FZLTE001_s1u100_17_20140708_100700_20140708_100759.csv以_分隔后，小时位置为4,小时字符串为100700
+			GN口数据文件名GnC64_http_dnssession_60_20131218_105600_20131218_105659.csv以_分隔后，小时位置为5,小时字符串为105600
+			MC口数据文件名：FuJianYiDong-A-IuCS-4-201408061520.txt以-分隔后，小时位置为4,小时字符串为1520
+			小时字符串截取的结束位置都为10
+		</description>
+	</property>
+	
+	<property>
+	  	<name>ftpThreadNumEveryDir</name>
+    	<value>5</value>
+  		<description>多个目录，每个目录分配的FTP下载线程数</description>
+	</property>
+	
+	<property>
+	  	<name>ifSortByFileName</name>
+    	<value>true</value>
+  		<description>是否按文件名时间排序</description>
+	</property>
+	
+	<property>
+	  	<name>ifDownloadNewestFile</name>
+    	<value>false</value>
+  		<description>是否采集最新小时的文件</description>
+	</property>
+	
+	<property>
+	  	<name>ifFilterSpecificFileName</name>
+    	<value>false</value>
+  		<description>是否过滤出特定文件名</description>
+	</property>
+	
+	<property>
+	  	<name>filterSpecificFileName</name>
+    	<value>BB</value>
+  		<description>过滤出特定文件名的字符串</description>
+	</property>
+	
+	<property>
+	  	<name>ifExcludeSpecificFileName</name>
+    	<value>false</value>
+  		<description>是否排除指定文件名的文件</description>
+	</property>
+	
+	<property>
+	  	<name>excludeSpecificFileName</name>
+    	<value>.tmp</value>
+  		<description>排除指定文件名的文件</description>
+	</property>
+	
+	<property>
+	  	<name>ifFilterSpecificTimeFileName</name>
+    	<value>false</value>
+  		<description>是否过滤出特定时间点的文件名</description>
+	</property>
+	
+	<property>
+	  	<name>filterSpecificTimeFileName</name>
+    	<value>20140702_16</value>
+  		<description>过滤出特定时间点的文件名</description>
+	</property>
+	
+	<property>
+	  	<name>ifFilterSpecificHourIncrement</name>
+    	<value>false</value>
+  		<description>是否过滤特定小时文件名自增</description>
+	</property>
+	
+	<property>
+	  	<name>incrementHourValue</name>
+    	<value>-1</value>
+  		<description>采集特定时间点的文件后，时间自增的数值（1、-1）</description>
+	</property>
+	
+	<property>
+	  	<name>ifConnectBySftp</name>
+    	<value>false</value>
+  		<description>是否采用SFTP连接</description>
+	</property>
+	
+		<property>
+	  	<name>ifCollectByPartition</name>
+    	<value>true</value>
+  		<description>是否将源数据分成几份进行采集，一个采集程序采集其中一份</description>
+	</property>
+	
+	<property>
+	  	<name>locationToPartition</name>
+    	<value>2</value>
+  		<description>分割源数据的的依据在文件名中的位置是第几个，取该位置的最后一位取余进行运算，从0开始计数</description>
+	</property>
+	
+	<property>
+	  	<name>partitions</name>
+    	<value>2</value>
+  		<description>j将源数据分成几份,比如2</description>
+	</property>
+	
+	<property>
+	  	<name>collectPartion</name>
+    	<value>1</value>
+  		<description>本采集程序采集第几份，比如分成2份的话，可以选择1,2对应余数为0，1</description>
+	</property>
+	
+</configuration>
+

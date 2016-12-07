@@ -1,0 +1,22 @@
+INFO main 15-12-22 11:15:57  [com.cqx.InitCollectorFile.initDataCollector(InitCollectorFile.java:27)]: initDataCollector
+INFO main 15-12-22 11:15:57  [com.cqx.TestShareMain.main(TestShareMain.java:78)]: #####TestShareMain¿ªÊ¼½øĞĞµÚ1´ÎÑ­»·
+INFO Thread-0 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-0 [poll]aa1 0
+INFO Thread-1 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-1 [poll]aa1 1
+INFO Thread-2 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-2 [poll]aa1 3
+INFO Thread-0 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-0 Ëæ»úĞİÃß5000ºÀÃë
+INFO Thread-2 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-2 Ëæ»úĞİÃß9000ºÀÃë
+INFO Thread-4 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-4 [poll]aa1 4
+INFO Thread-9 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-9 [poll]aa1 9
+INFO Thread-8 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-8 [poll]aa1 8
+INFO Thread-3 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-3 [poll]aa1 2
+INFO Thread-6 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-6 [poll]aa1 7
+INFO Thread-5 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-5 [poll]aa1 6
+INFO Thread-1 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-1 Ëæ»úĞİÃß5000ºÀÃë
+INFO Thread-7 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:30)]: Thread-7 [poll]aa1 5
+INFO Thread-5 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-5 Ëæ»úĞİÃß4000ºÀÃë
+INFO Thread-6 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-6 Ëæ»úĞİÃß3000ºÀÃë
+INFO Thread-3 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-3 Ëæ»úĞİÃß8000ºÀÃë
+INFO Thread-8 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-8 Ëæ»úĞİÃß6000ºÀÃë
+INFO Thread-9 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-9 Ëæ»úĞİÃß6000ºÀÃë
+INFO Thread-4 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-4 Ëæ»úĞİÃß7000ºÀÃë
+INFO Thread-7 15-12-22 11:15:57  [com.cqx.TestShareThread.run(TestShareThread.java:34)]: Thread-7 Ëæ»úĞİÃß4000ºÀÃë

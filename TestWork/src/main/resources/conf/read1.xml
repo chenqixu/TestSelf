@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<property>
+		<node>root.SvcCont</node>
+		<type>xml.xml</type>
+		<value>IDType,IDItemRange,OprNumb,BizType,IdentCode</value>
+	</property>
+	<property>
+		<node>root.SvcCont.ProdunctInfo</node>
+		<type>xml.xml.node</type>
+		<value>ProductType,ProductId,SPID,BizCode,OprCode,EffectiveType</value>
+	</property>
+</configuration>

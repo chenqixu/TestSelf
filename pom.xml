@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.cqx</groupId>
+  <artifactId>TestSelf</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <modules>
+  	<module>ReadFile</module>
+  	<module>DataCollectorTest</module>
+  	<module>TestDataCollector</module>
+  	<module>TestShareClass</module>
+  	<module>TestSFTPTool</module>
+  	<module>TestHbaseTool</module>
+  	<module>TestHdfsTool</module>
+  	<module>TestAigTool</module>
+  	<module>TestKafka</module>
+  	<module>TestJStorm</module>
+  	<module>TestSpring</module>
+  	<module>testdeploy</module>
+  	<module>TestDeploy</module>
+  	<module>TestExcelTool</module>
+  	<module>TestWork</module>
+  </modules>
+</project>

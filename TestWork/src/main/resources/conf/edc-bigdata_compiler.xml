@@ -1,0 +1,1282 @@
+﻿<?xml version="1.0" encoding="GBK"?>
+<project name="edc-bigdata" basedir="." default="all">
+<!-- 配置参数据信息 -->
+<property file="edc-bigdata.properties"/>
+<!-- 默认执行target -->
+<target name="all">
+<!-- 清理编译目标路径 -->
+<antcall target="clean" />
+<!-- filter project in history list -->
+<antcall target="filter_project" />
+<!-- 全量编译,打包 -->
+<antcall target="compile_searchCrawler" />
+<antcall target="compile_SNsearchCrawler" />
+<antcall target="compile_TXDMsearchCrawler" />
+<antcall target="compile_dataCollectAll" />
+<antcall target="compile_dataCollectAllRT" />
+<antcall target="compile_dataCollectMrDt" />
+<antcall target="compile_dataCollectorHWLte" />
+<antcall target="compile_dataCollectorSimultaneously" />
+<antcall target="compile_dataLoadCombine-Shell" />
+<antcall target="compile_fileSort" />
+<antcall target="compile_fileToHbase" />
+<antcall target="compile_fileToHbase_HW" />
+<antcall target="compile_fileToHbase_NX" />
+<antcall target="compile_giToHbase" />
+<antcall target="compile_flumecollect" />
+<antcall target="compile_flumedistribution" />
+<antcall target="compile_detailToHbase" />
+<antcall target="compile_getHWLteDataToHbase" />
+<antcall target="compile_getNXLteDataToHbase" />
+<antcall target="compile_joinGiAndLTE" />
+<antcall target="compile_joinGiGpfs" />
+<antcall target="compile_joinGnXdr" />
+<antcall target="compile_dataFilterExtract" />
+<antcall target="compile_getKeyWord" />
+<antcall target="compile_getMovementTrackData" />
+<antcall target="compile_getMovementTrackDataDay" />
+<antcall target="compile_getMovementTrackDataHour" />
+<antcall target="compile_statisticGnxdrIpHttp" />
+<antcall target="compile_statisticHuaweiLte" />
+<antcall target="compile_statisticIpHttp" />
+<antcall target="compile_statisticLte" />
+<antcall target="compile_XmlParser" />
+<antcall target="compile_bi_bigdata_svc" />
+<!-- 增量拷贝新增lib -->
+<antcall target="copy_lib_searchCrawler" />
+<antcall target="copy_lib_SNsearchCrawler" />
+<antcall target="copy_lib_TXDMsearchCrawler" />
+<antcall target="copy_lib_dataCollectAll" />
+<antcall target="copy_lib_dataCollectAllRT" />
+<antcall target="copy_lib_dataCollectMrDt" />
+<antcall target="copy_lib_dataCollectorHWLte" />
+<antcall target="copy_lib_dataCollectorSimultaneously" />
+<antcall target="copy_lib_dataLoadCombine-Shell" />
+<antcall target="copy_lib_fileSort" />
+<antcall target="copy_lib_fileToHbase" />
+<antcall target="copy_lib_fileToHbase_HW" />
+<antcall target="copy_lib_fileToHbase_NX" />
+<antcall target="copy_lib_giToHbase" />
+<antcall target="copy_lib_flumecollect" />
+<antcall target="copy_lib_flumedistribution" />
+<antcall target="copy_lib_detailToHbase" />
+<antcall target="copy_lib_getHWLteDataToHbase" />
+<antcall target="copy_lib_getNXLteDataToHbase" />
+<antcall target="copy_lib_joinGiAndLTE" />
+<antcall target="copy_lib_joinGiGpfs" />
+<antcall target="copy_lib_joinGnXdr" />
+<antcall target="copy_lib_dataFilterExtract" />
+<antcall target="copy_lib_getKeyWord" />
+<antcall target="copy_lib_getMovementTrackData" />
+<antcall target="copy_lib_getMovementTrackDataDay" />
+<antcall target="copy_lib_getMovementTrackDataHour" />
+<antcall target="copy_lib_statisticGnxdrIpHttp" />
+<antcall target="copy_lib_statisticHuaweiLte" />
+<antcall target="copy_lib_statisticIpHttp" />
+<antcall target="copy_lib_statisticLte" />
+<antcall target="copy_lib_XmlParser" />
+<!-- 压缩jar和lib到一个文件 -->
+<antcall target="zip_jar_lib_searchCrawler"  />
+<antcall target="zip_jar_lib_SNsearchCrawler"  />
+<antcall target="zip_jar_lib_TXDMsearchCrawler"  />
+<antcall target="zip_jar_lib_dataCollectAll"  />
+<antcall target="zip_jar_lib_dataCollectAllRT"  />
+<antcall target="zip_jar_lib_dataCollectMrDt"  />
+<antcall target="zip_jar_lib_dataCollectorHWLte"  />
+<antcall target="zip_jar_lib_dataCollectorSimultaneously"  />
+<antcall target="zip_jar_lib_dataLoadCombine-Shell"  />
+<antcall target="zip_jar_lib_fileSort"  />
+<antcall target="zip_jar_lib_fileToHbase"  />
+<antcall target="zip_jar_lib_fileToHbase_HW"  />
+<antcall target="zip_jar_lib_fileToHbase_NX"  />
+<antcall target="zip_jar_lib_giToHbase"  />
+<antcall target="zip_jar_lib_flumecollect"  />
+<antcall target="zip_jar_lib_flumedistribution"  />
+<antcall target="zip_jar_lib_detailToHbase"  />
+<antcall target="zip_jar_lib_getHWLteDataToHbase"  />
+<antcall target="zip_jar_lib_getNXLteDataToHbase"  />
+<antcall target="zip_jar_lib_joinGiAndLTE"  />
+<antcall target="zip_jar_lib_joinGiGpfs"  />
+<antcall target="zip_jar_lib_joinGnXdr"  />
+<antcall target="zip_jar_lib_dataFilterExtract"  />
+<antcall target="zip_jar_lib_getKeyWord"  />
+<antcall target="zip_jar_lib_getMovementTrackData"  />
+<antcall target="zip_jar_lib_getMovementTrackDataDay"  />
+<antcall target="zip_jar_lib_getMovementTrackDataHour"  />
+<antcall target="zip_jar_lib_statisticGnxdrIpHttp"  />
+<antcall target="zip_jar_lib_statisticHuaweiLte"  />
+<antcall target="zip_jar_lib_statisticIpHttp"  />
+<antcall target="zip_jar_lib_statisticLte"  />
+<antcall target="zip_jar_lib_XmlParser"  />
+<!-- 清理过滤项目时生成的临时文件 -->
+<antcall target="clean_list_project" />
+</target>
+<!-- 清理编译目标路径 -->
+<target name="clean">
+<!-- 删除全量编译目标路径 -->
+<delete dir="${edcbigdatadir_dist}" />
+<!-- 删除编译生成的全量或增量包 -->
+<delete file="${output.dir}/${edcbigdatadir_searchCrawler_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_SNsearchCrawler_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_TXDMsearchCrawler_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataCollectAll_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataCollectAllRT_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataCollectMrDt_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataCollectorHWLte_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataCollectorSimultaneously_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataLoadCombine-Shell_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_fileSort_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_fileToHbase_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_fileToHbase_HW_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_fileToHbase_NX_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_giToHbase_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_flumecollect_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_flumedistribution_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_detailToHbase_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_getHWLteDataToHbase_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_getNXLteDataToHbase_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_joinGiAndLTE_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_joinGiGpfs_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_joinGnXdr_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_dataFilterExtract_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_getKeyWord_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_getMovementTrackData_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_getMovementTrackDataDay_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_getMovementTrackDataHour_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_statisticGnxdrIpHttp_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_statisticHuaweiLte_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_statisticIpHttp_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_statisticLte_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_XmlParser_zip}" />
+<delete file="${output.dir}/${edcbigdatadir_bi_bigdata_svc_war}" />
+<!-- 创建全量编译目标路径,编译路径,拷贝lib路径,jar打包路径 -->
+<!-- 编译路径 -->
+<mkdir dir="${edcbigdatadir_searchCrawler_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_SNsearchCrawler_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_TXDMsearchCrawler_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataCollectAll_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataCollectAllRT_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataCollectMrDt_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataCollectorHWLte_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataCollectorSimultaneously_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataLoadCombine-Shell_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_fileSort_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_HW_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_NX_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_giToHbase_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_flumecollect_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_flumedistribution_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_detailToHbase_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_getHWLteDataToHbase_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_getNXLteDataToHbase_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_joinGiAndLTE_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_joinGiGpfs_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_joinGnXdr_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_dataFilterExtract_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_getKeyWord_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackData_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackDataDay_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackDataHour_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_statisticGnxdrIpHttp_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_statisticHuaweiLte_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_statisticIpHttp_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_statisticLte_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_XmlParser_all}/${compile_all}" />
+<mkdir dir="${edcbigdatadir_bi_bigdata_svc_all}/${compile_all}" />
+<!-- 拷贝lib路径 -->
+<mkdir dir="${edcbigdatadir_searchCrawler_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_SNsearchCrawler_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_TXDMsearchCrawler_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectAll_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectAllRT_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectMrDt_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectorHWLte_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectorSimultaneously_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataLoadCombine-Shell_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_fileSort_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_HW_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_NX_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_giToHbase_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_flumecollect_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_flumedistribution_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_detailToHbase_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_getHWLteDataToHbase_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_getNXLteDataToHbase_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_joinGiAndLTE_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_joinGiGpfs_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_joinGnXdr_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_dataFilterExtract_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_getKeyWord_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackData_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackDataDay_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackDataHour_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_statisticGnxdrIpHttp_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_statisticHuaweiLte_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_statisticIpHttp_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_statisticLte_all}/${lib.dir}" />
+<mkdir dir="${edcbigdatadir_XmlParser_all}/${lib.dir}" />
+<!-- jar打包路径 -->
+<mkdir dir="${edcbigdatadir_searchCrawler_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_SNsearchCrawler_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_TXDMsearchCrawler_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectAll_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectAllRT_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectMrDt_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectorHWLte_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataCollectorSimultaneously_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataLoadCombine-Shell_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_fileSort_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_HW_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_fileToHbase_NX_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_giToHbase_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_flumecollect_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_flumedistribution_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_detailToHbase_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_getHWLteDataToHbase_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_getNXLteDataToHbase_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_joinGiAndLTE_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_joinGiGpfs_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_joinGnXdr_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_dataFilterExtract_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_getKeyWord_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackData_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackDataDay_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_getMovementTrackDataHour_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_statisticGnxdrIpHttp_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_statisticHuaweiLte_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_statisticIpHttp_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_statisticLte_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_XmlParser_all}/${jar.dir}" />
+<mkdir dir="${edcbigdatadir_bi_bigdata_svc_all}/${jar.dir}" />
+</target>
+<!-- 通过运行shell脚本过滤历史清单中的项目，生成项目名临时文件 -->
+<target name="filter_project">
+<exec executable="./filterProjectEdcbigdata.sh">
+</exec>
+</target>
+<!-- 清理过滤项目时生成的临时文件 -->
+<target name="clean_list_project">
+<delete>
+<fileset dir="./">
+<include name="*.lst_project"/>
+</fileset>
+</delete>
+</target>
+<!-- 通过临时文件是否存在来判断项目是否需要编译 -->
+<condition property="exist.searchCrawler.project">
+<and>
+<available file="edc-bigdata-searchCrawler.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.SNsearchCrawler.project">
+<and>
+<available file="edc-bigdata-SNsearchCrawler.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.TXDMsearchCrawler.project">
+<and>
+<available file="edc-bigdata-TXDMsearchCrawler.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataCollectAll.project">
+<and>
+<available file="edc-bigdata-dataCollectAll.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataCollectAllRT.project">
+<and>
+<available file="edc-bigdata-dataCollectAllRT.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataCollectMrDt.project">
+<and>
+<available file="edc-bigdata-dataCollectMrDt.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataCollectorHWLte.project">
+<and>
+<available file="edc-bigdata-dataCollectorHWLte.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataCollectorSimultaneously.project">
+<and>
+<available file="edc-bigdata-dataCollectorSimultaneously.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataLoadCombine-Shell.project">
+<and>
+<available file="edc-bigdata-dataLoadCombine-Shell.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.fileSort.project">
+<and>
+<available file="edc-bigdata-fileSort.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.fileToHbase.project">
+<and>
+<available file="edc-bigdata-fileToHbase.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.fileToHbase_HW.project">
+<and>
+<available file="edc-bigdata-fileToHbase_HW.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.fileToHbase_NX.project">
+<and>
+<available file="edc-bigdata-fileToHbase_NX.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.giToHbase.project">
+<and>
+<available file="edc-bigdata-giToHbase.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.flumecollect.project">
+<and>
+<available file="edc-bigdata-flumecollect.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.flumedistribution.project">
+<and>
+<available file="edc-bigdata-flumedistribution.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.detailToHbase.project">
+<and>
+<available file="edc-bigdata-detailToHbase.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.getHWLteDataToHbase.project">
+<and>
+<available file="edc-bigdata-getHWLteDataToHbase.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.getNXLteDataToHbase.project">
+<and>
+<available file="edc-bigdata-getNXLteDataToHbase.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.joinGiAndLTE.project">
+<and>
+<available file="edc-bigdata-joinGiAndLTE.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.joinGiGpfs.project">
+<and>
+<available file="edc-bigdata-joinGiGpfs.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.joinGnXdr.project">
+<and>
+<available file="edc-bigdata-joinGnXdr.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.dataFilterExtract.project">
+<and>
+<available file="edc-bigdata-dataFilterExtract.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.getKeyWord.project">
+<and>
+<available file="edc-bigdata-getKeyWord.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.getMovementTrackData.project">
+<and>
+<available file="edc-bigdata-getMovementTrackData.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.getMovementTrackDataDay.project">
+<and>
+<available file="edc-bigdata-getMovementTrackDataDay.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.getMovementTrackDataHour.project">
+<and>
+<available file="edc-bigdata-getMovementTrackDataHour.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.statisticGnxdrIpHttp.project">
+<and>
+<available file="edc-bigdata-statisticGnxdrIpHttp.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.statisticHuaweiLte.project">
+<and>
+<available file="edc-bigdata-statisticHuaweiLte.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.statisticIpHttp.project">
+<and>
+<available file="edc-bigdata-statisticIpHttp.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.statisticLte.project">
+<and>
+<available file="edc-bigdata-statisticLte.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.XmlParser.project">
+<and>
+<available file="edc-bigdata-XmlParser.lst_project" filepath="./"/>
+</and>
+</condition>
+<condition property="exist.bi_bigdata_svc.project">
+<and>
+<available file="edc-bigdata-bi_bigdata_svc.lst_project" filepath="./"/>
+</and>
+</condition>
+<!-- 判断是否有新增lib -->
+<condition property="exist.searchCrawler.lib">
+<and>
+<available file="${cvsworkdir_searchCrawler_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.SNsearchCrawler.lib">
+<and>
+<available file="${cvsworkdir_SNsearchCrawler_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.TXDMsearchCrawler.lib">
+<and>
+<available file="${cvsworkdir_TXDMsearchCrawler_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataCollectAll.lib">
+<and>
+<available file="${cvsworkdir_dataCollectAll_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataCollectAllRT.lib">
+<and>
+<available file="${cvsworkdir_dataCollectAllRT_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataCollectMrDt.lib">
+<and>
+<available file="${cvsworkdir_dataCollectMrDt_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataCollectorHWLte.lib">
+<and>
+<available file="${cvsworkdir_dataCollectorHWLte_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataCollectorSimultaneously.lib">
+<and>
+<available file="${cvsworkdir_dataCollectorSimultaneously_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataLoadCombine-Shell.lib">
+<and>
+<available file="${cvsworkdir_dataLoadCombine-Shell_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.fileSort.lib">
+<and>
+<available file="${cvsworkdir_fileSort_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.fileToHbase.lib">
+<and>
+<available file="${cvsworkdir_fileToHbase_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.fileToHbase_HW.lib">
+<and>
+<available file="${cvsworkdir_fileToHbase_HW_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.fileToHbase_NX.lib">
+<and>
+<available file="${cvsworkdir_fileToHbase_NX_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.giToHbase.lib">
+<and>
+<available file="${cvsworkdir_giToHbase_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.flumecollect.lib">
+<and>
+<available file="${cvsworkdir_flumecollect_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.flumedistribution.lib">
+<and>
+<available file="${cvsworkdir_flumedistribution_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.detailToHbase.lib">
+<and>
+<available file="${cvsworkdir_detailToHbase_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.getHWLteDataToHbase.lib">
+<and>
+<available file="${cvsworkdir_getHWLteDataToHbase_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.getNXLteDataToHbase.lib">
+<and>
+<available file="${cvsworkdir_getNXLteDataToHbase_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.joinGiAndLTE.lib">
+<and>
+<available file="${cvsworkdir_joinGiAndLTE_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.joinGiGpfs.lib">
+<and>
+<available file="${cvsworkdir_joinGiGpfs_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.joinGnXdr.lib">
+<and>
+<available file="${cvsworkdir_joinGnXdr_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.dataFilterExtract.lib">
+<and>
+<available file="${cvsworkdir_dataFilterExtract_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.getKeyWord.lib">
+<and>
+<available file="${cvsworkdir_getKeyWord_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.getMovementTrackData.lib">
+<and>
+<available file="${cvsworkdir_getMovementTrackData_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.getMovementTrackDataDay.lib">
+<and>
+<available file="${cvsworkdir_getMovementTrackDataDay_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.getMovementTrackDataHour.lib">
+<and>
+<available file="${cvsworkdir_getMovementTrackDataHour_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.statisticGnxdrIpHttp.lib">
+<and>
+<available file="${cvsworkdir_statisticGnxdrIpHttp_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.statisticHuaweiLte.lib">
+<and>
+<available file="${cvsworkdir_statisticHuaweiLte_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.statisticIpHttp.lib">
+<and>
+<available file="${cvsworkdir_statisticIpHttp_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.statisticLte.lib">
+<and>
+<available file="${cvsworkdir_statisticLte_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<condition property="exist.XmlParser.lib">
+<and>
+<available file="${cvsworkdir_XmlParser_path}/${lib.dir}" type="dir"/>
+</and>
+</condition>
+<!-- 全量编译,打包 -->
+<target name="compile_searchCrawler" if="exist.searchCrawler.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_searchCrawler_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_searchCrawler_all}/${src.dir}" destdir="${edcbigdatadir_searchCrawler_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_searchCrawler_all}/${jar.dir}/${edcbigdatadir_searchCrawler_jar}" basedir="${edcbigdatadir_searchCrawler_all}/${compile_all}" />
+</target>
+<target name="compile_SNsearchCrawler" if="exist.SNsearchCrawler.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_SNsearchCrawler_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_SNsearchCrawler_all}/${src.dir}" destdir="${edcbigdatadir_SNsearchCrawler_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_SNsearchCrawler_all}/${jar.dir}/${edcbigdatadir_SNsearchCrawler_jar}" basedir="${edcbigdatadir_SNsearchCrawler_all}/${compile_all}" />
+</target>
+<target name="compile_TXDMsearchCrawler" if="exist.TXDMsearchCrawler.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_TXDMsearchCrawler_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_TXDMsearchCrawler_all}/${src.dir}" destdir="${edcbigdatadir_TXDMsearchCrawler_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_TXDMsearchCrawler_all}/${jar.dir}/${edcbigdatadir_TXDMsearchCrawler_jar}" basedir="${edcbigdatadir_TXDMsearchCrawler_all}/${compile_all}" />
+</target>
+<target name="compile_dataCollectAll" if="exist.dataCollectAll.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataCollectAll_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataCollectAll_all}/${src.dir}" destdir="${edcbigdatadir_dataCollectAll_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataCollectAll_all}/${jar.dir}/${edcbigdatadir_dataCollectAll_jar}" basedir="${edcbigdatadir_dataCollectAll_all}/${compile_all}" />
+</target>
+<target name="compile_dataCollectAllRT" if="exist.dataCollectAllRT.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataCollectAllRT_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataCollectAllRT_all}/${src.dir}" destdir="${edcbigdatadir_dataCollectAllRT_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataCollectAllRT_all}/${jar.dir}/${edcbigdatadir_dataCollectAllRT_jar}" basedir="${edcbigdatadir_dataCollectAllRT_all}/${compile_all}" />
+</target>
+<target name="compile_dataCollectMrDt" if="exist.dataCollectMrDt.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataCollectMrDt_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataCollectMrDt_all}/${src.dir}" destdir="${edcbigdatadir_dataCollectMrDt_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataCollectMrDt_all}/${jar.dir}/${edcbigdatadir_dataCollectMrDt_jar}" basedir="${edcbigdatadir_dataCollectMrDt_all}/${compile_all}" />
+</target>
+<target name="compile_dataCollectorHWLte" if="exist.dataCollectorHWLte.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataCollectorHWLte_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataCollectorHWLte_all}/${src.dir}" destdir="${edcbigdatadir_dataCollectorHWLte_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataCollectorHWLte_all}/${jar.dir}/${edcbigdatadir_dataCollectorHWLte_jar}" basedir="${edcbigdatadir_dataCollectorHWLte_all}/${compile_all}" />
+</target>
+<target name="compile_dataCollectorSimultaneously" if="exist.dataCollectorSimultaneously.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataCollectorSimultaneously_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataCollectorSimultaneously_all}/${src.dir}" destdir="${edcbigdatadir_dataCollectorSimultaneously_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataCollectorSimultaneously_all}/${jar.dir}/${edcbigdatadir_dataCollectorSimultaneously_jar}" basedir="${edcbigdatadir_dataCollectorSimultaneously_all}/${compile_all}" />
+</target>
+<target name="compile_dataLoadCombine-Shell" if="exist.dataLoadCombine-Shell.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataLoadCombine-Shell_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataLoadCombine-Shell_all}/${src.dir}" destdir="${edcbigdatadir_dataLoadCombine-Shell_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataLoadCombine-Shell_all}/${jar.dir}/${edcbigdatadir_dataLoadCombine-Shell_jar}" basedir="${edcbigdatadir_dataLoadCombine-Shell_all}/${compile_all}" />
+</target>
+<target name="compile_fileSort" if="exist.fileSort.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_fileSort_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_fileSort_all}/${src.dir}" destdir="${edcbigdatadir_fileSort_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_fileSort_all}/${jar.dir}/${edcbigdatadir_fileSort_jar}" basedir="${edcbigdatadir_fileSort_all}/${compile_all}" />
+</target>
+<target name="compile_fileToHbase" if="exist.fileToHbase.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_fileToHbase_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_fileToHbase_all}/${src.dir}" destdir="${edcbigdatadir_fileToHbase_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_fileToHbase_all}/${jar.dir}/${edcbigdatadir_fileToHbase_jar}" basedir="${edcbigdatadir_fileToHbase_all}/${compile_all}" />
+</target>
+<target name="compile_fileToHbase_HW" if="exist.fileToHbase_HW.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_fileToHbase_HW_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_fileToHbase_HW_all}/${src.dir}" destdir="${edcbigdatadir_fileToHbase_HW_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_fileToHbase_HW_all}/${jar.dir}/${edcbigdatadir_fileToHbase_HW_jar}" basedir="${edcbigdatadir_fileToHbase_HW_all}/${compile_all}" />
+</target>
+<target name="compile_fileToHbase_NX" if="exist.fileToHbase_NX.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_fileToHbase_NX_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_fileToHbase_NX_all}/${src.dir}" destdir="${edcbigdatadir_fileToHbase_NX_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_fileToHbase_NX_all}/${jar.dir}/${edcbigdatadir_fileToHbase_NX_jar}" basedir="${edcbigdatadir_fileToHbase_NX_all}/${compile_all}" />
+</target>
+<target name="compile_giToHbase" if="exist.giToHbase.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_giToHbase_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_giToHbase_all}/${src.dir}" destdir="${edcbigdatadir_giToHbase_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_giToHbase_all}/${jar.dir}/${edcbigdatadir_giToHbase_jar}" basedir="${edcbigdatadir_giToHbase_all}/${compile_all}" />
+</target>
+<target name="compile_flumecollect" if="exist.flumecollect.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_flumecollect_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_flumecollect_all}/${src.dir}" destdir="${edcbigdatadir_flumecollect_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_flumecollect_all}/${jar.dir}/${edcbigdatadir_flumecollect_jar}" basedir="${edcbigdatadir_flumecollect_all}/${compile_all}" />
+</target>
+<target name="compile_flumedistribution" if="exist.flumedistribution.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_flumedistribution_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_flumedistribution_all}/${src.dir}" destdir="${edcbigdatadir_flumedistribution_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_flumedistribution_all}/${jar.dir}/${edcbigdatadir_flumedistribution_jar}" basedir="${edcbigdatadir_flumedistribution_all}/${compile_all}" />
+</target>
+<target name="compile_detailToHbase" if="exist.detailToHbase.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_detailToHbase_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_detailToHbase_all}/${src.dir}" destdir="${edcbigdatadir_detailToHbase_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_detailToHbase_all}/${jar.dir}/${edcbigdatadir_detailToHbase_jar}" basedir="${edcbigdatadir_detailToHbase_all}/${compile_all}" />
+</target>
+<target name="compile_getHWLteDataToHbase" if="exist.getHWLteDataToHbase.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_getHWLteDataToHbase_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_getHWLteDataToHbase_all}/${src.dir}" destdir="${edcbigdatadir_getHWLteDataToHbase_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_getHWLteDataToHbase_all}/${jar.dir}/${edcbigdatadir_getHWLteDataToHbase_jar}" basedir="${edcbigdatadir_getHWLteDataToHbase_all}/${compile_all}" />
+</target>
+<target name="compile_getNXLteDataToHbase" if="exist.getNXLteDataToHbase.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_getNXLteDataToHbase_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_getNXLteDataToHbase_all}/${src.dir}" destdir="${edcbigdatadir_getNXLteDataToHbase_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_getNXLteDataToHbase_all}/${jar.dir}/${edcbigdatadir_getNXLteDataToHbase_jar}" basedir="${edcbigdatadir_getNXLteDataToHbase_all}/${compile_all}" />
+</target>
+<target name="compile_joinGiAndLTE" if="exist.joinGiAndLTE.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_joinGiAndLTE_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_joinGiAndLTE_all}/${src.dir}" destdir="${edcbigdatadir_joinGiAndLTE_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_joinGiAndLTE_all}/${jar.dir}/${edcbigdatadir_joinGiAndLTE_jar}" basedir="${edcbigdatadir_joinGiAndLTE_all}/${compile_all}" />
+</target>
+<target name="compile_joinGiGpfs" if="exist.joinGiGpfs.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_joinGiGpfs_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_joinGiGpfs_all}/${src.dir}" destdir="${edcbigdatadir_joinGiGpfs_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_joinGiGpfs_all}/${jar.dir}/${edcbigdatadir_joinGiGpfs_jar}" basedir="${edcbigdatadir_joinGiGpfs_all}/${compile_all}" />
+</target>
+<target name="compile_joinGnXdr" if="exist.joinGnXdr.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_joinGnXdr_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_joinGnXdr_all}/${src.dir}" destdir="${edcbigdatadir_joinGnXdr_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_joinGnXdr_all}/${jar.dir}/${edcbigdatadir_joinGnXdr_jar}" basedir="${edcbigdatadir_joinGnXdr_all}/${compile_all}" />
+</target>
+<target name="compile_dataFilterExtract" if="exist.dataFilterExtract.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_dataFilterExtract_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_dataFilterExtract_all}/${src.dir}" destdir="${edcbigdatadir_dataFilterExtract_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_dataFilterExtract_all}/${jar.dir}/${edcbigdatadir_dataFilterExtract_jar}" basedir="${edcbigdatadir_dataFilterExtract_all}/${compile_all}" />
+</target>
+<target name="compile_getKeyWord" if="exist.getKeyWord.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_getKeyWord_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_getKeyWord_all}/${src.dir}" destdir="${edcbigdatadir_getKeyWord_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_getKeyWord_all}/${jar.dir}/${edcbigdatadir_getKeyWord_jar}" basedir="${edcbigdatadir_getKeyWord_all}/${compile_all}" />
+</target>
+<target name="compile_getMovementTrackData" if="exist.getMovementTrackData.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_getMovementTrackData_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_getMovementTrackData_all}/${src.dir}" destdir="${edcbigdatadir_getMovementTrackData_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_getMovementTrackData_all}/${jar.dir}/${edcbigdatadir_getMovementTrackData_jar}" basedir="${edcbigdatadir_getMovementTrackData_all}/${compile_all}" />
+</target>
+<target name="compile_getMovementTrackDataDay" if="exist.getMovementTrackDataDay.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_getMovementTrackDataDay_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_getMovementTrackDataDay_all}/${src.dir}" destdir="${edcbigdatadir_getMovementTrackDataDay_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_getMovementTrackDataDay_all}/${jar.dir}/${edcbigdatadir_getMovementTrackDataDay_jar}" basedir="${edcbigdatadir_getMovementTrackDataDay_all}/${compile_all}" />
+</target>
+<target name="compile_getMovementTrackDataHour" if="exist.getMovementTrackDataHour.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_getMovementTrackDataHour_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_getMovementTrackDataHour_all}/${src.dir}" destdir="${edcbigdatadir_getMovementTrackDataHour_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_getMovementTrackDataHour_all}/${jar.dir}/${edcbigdatadir_getMovementTrackDataHour_jar}" basedir="${edcbigdatadir_getMovementTrackDataHour_all}/${compile_all}" />
+</target>
+<target name="compile_statisticGnxdrIpHttp" if="exist.statisticGnxdrIpHttp.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_statisticGnxdrIpHttp_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_statisticGnxdrIpHttp_all}/${src.dir}" destdir="${edcbigdatadir_statisticGnxdrIpHttp_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_statisticGnxdrIpHttp_all}/${jar.dir}/${edcbigdatadir_statisticGnxdrIpHttp_jar}" basedir="${edcbigdatadir_statisticGnxdrIpHttp_all}/${compile_all}" />
+</target>
+<target name="compile_statisticHuaweiLte" if="exist.statisticHuaweiLte.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_statisticHuaweiLte_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_statisticHuaweiLte_all}/${src.dir}" destdir="${edcbigdatadir_statisticHuaweiLte_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_statisticHuaweiLte_all}/${jar.dir}/${edcbigdatadir_statisticHuaweiLte_jar}" basedir="${edcbigdatadir_statisticHuaweiLte_all}/${compile_all}" />
+</target>
+<target name="compile_statisticIpHttp" if="exist.statisticIpHttp.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_statisticIpHttp_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_statisticIpHttp_all}/${src.dir}" destdir="${edcbigdatadir_statisticIpHttp_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_statisticIpHttp_all}/${jar.dir}/${edcbigdatadir_statisticIpHttp_jar}" basedir="${edcbigdatadir_statisticIpHttp_all}/${compile_all}" />
+</target>
+<target name="compile_statisticLte" if="exist.statisticLte.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_statisticLte_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_statisticLte_all}/${src.dir}" destdir="${edcbigdatadir_statisticLte_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_statisticLte_all}/${jar.dir}/${edcbigdatadir_statisticLte_jar}" basedir="${edcbigdatadir_statisticLte_all}/${compile_all}" />
+</target>
+<target name="compile_XmlParser" if="exist.XmlParser.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_XmlParser_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_XmlParser_all}/${src.dir}" destdir="${edcbigdatadir_XmlParser_all}/${compile_all}" fork="true" debug="true" executable="${jdk1.5.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成jar到目标路径jar -->
+<jar destfile="${edcbigdatadir_XmlParser_all}/${jar.dir}/${edcbigdatadir_XmlParser_jar}" basedir="${edcbigdatadir_XmlParser_all}/${compile_all}" />
+</target>
+<target name="compile_bi_bigdata_svc" if="exist.bi_bigdata_svc.project">
+<!-- lib依赖全量 -->
+<path id="classpathdef">
+<fileset dir="${cvsworkdir_bi_bigdata_svc_all}/${lib.dir}">
+<include name="**/*.jar" />
+</fileset>
+</path>
+<!-- javac编译到目标路径compile -->
+<javac classpathref="classpathdef" srcdir="${cvsworkdir_bi_bigdata_svc_all}/${src.dir}" destdir="${edcbigdatadir_bi_bigdata_svc_all}/${compile_all}" fork="true" debug="true" executable="${jdk.path}" memorymaximumsize="512M" includeantruntime="on" encoding="${build.encode}" />
+<!-- 打包成war到目标路径jar -->
+<jar destfile="${edcbigdatadir_bi_bigdata_svc_all}/${jar.dir}/${edcbigdatadir_bi_bigdata_svc_jar}" basedir="${edcbigdatadir_bi_bigdata_svc_all}/${compile_all}" />
+</target>
+<!-- 判断是否有增量lib,有的话拷贝增量lib到lib路径 -->
+<target name="copy_lib_searchCrawler" if="exist.searchCrawler.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_searchCrawler_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_searchCrawler_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_SNsearchCrawler" if="exist.SNsearchCrawler.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_SNsearchCrawler_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_SNsearchCrawler_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_TXDMsearchCrawler" if="exist.TXDMsearchCrawler.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_TXDMsearchCrawler_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_TXDMsearchCrawler_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataCollectAll" if="exist.dataCollectAll.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataCollectAll_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataCollectAll_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataCollectAllRT" if="exist.dataCollectAllRT.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataCollectAllRT_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataCollectAllRT_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataCollectMrDt" if="exist.dataCollectMrDt.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataCollectMrDt_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataCollectMrDt_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataCollectorHWLte" if="exist.dataCollectorHWLte.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataCollectorHWLte_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataCollectorHWLte_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataCollectorSimultaneously" if="exist.dataCollectorSimultaneously.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataCollectorSimultaneously_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataCollectorSimultaneously_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataLoadCombine-Shell" if="exist.dataLoadCombine-Shell.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataLoadCombine-Shell_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataLoadCombine-Shell_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_fileSort" if="exist.fileSort.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_fileSort_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_fileSort_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_fileToHbase" if="exist.fileToHbase.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_fileToHbase_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_fileToHbase_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_fileToHbase_HW" if="exist.fileToHbase_HW.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_fileToHbase_HW_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_fileToHbase_HW_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_fileToHbase_NX" if="exist.fileToHbase_NX.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_fileToHbase_NX_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_fileToHbase_NX_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_giToHbase" if="exist.giToHbase.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_giToHbase_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_giToHbase_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_flumecollect" if="exist.flumecollect.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_flumecollect_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_flumecollect_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_flumedistribution" if="exist.flumedistribution.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_flumedistribution_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_flumedistribution_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_detailToHbase" if="exist.detailToHbase.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_detailToHbase_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_detailToHbase_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_getHWLteDataToHbase" if="exist.getHWLteDataToHbase.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_getHWLteDataToHbase_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_getHWLteDataToHbase_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_getNXLteDataToHbase" if="exist.getNXLteDataToHbase.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_getNXLteDataToHbase_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_getNXLteDataToHbase_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_joinGiAndLTE" if="exist.joinGiAndLTE.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_joinGiAndLTE_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_joinGiAndLTE_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_joinGiGpfs" if="exist.joinGiGpfs.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_joinGiGpfs_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_joinGiGpfs_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_joinGnXdr" if="exist.joinGnXdr.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_joinGnXdr_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_joinGnXdr_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_dataFilterExtract" if="exist.dataFilterExtract.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_dataFilterExtract_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_dataFilterExtract_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_getKeyWord" if="exist.getKeyWord.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_getKeyWord_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_getKeyWord_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_getMovementTrackData" if="exist.getMovementTrackData.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_getMovementTrackData_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_getMovementTrackData_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_getMovementTrackDataDay" if="exist.getMovementTrackDataDay.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_getMovementTrackDataDay_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_getMovementTrackDataDay_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_getMovementTrackDataHour" if="exist.getMovementTrackDataHour.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_getMovementTrackDataHour_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_getMovementTrackDataHour_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_statisticGnxdrIpHttp" if="exist.statisticGnxdrIpHttp.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_statisticGnxdrIpHttp_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_statisticGnxdrIpHttp_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_statisticHuaweiLte" if="exist.statisticHuaweiLte.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_statisticHuaweiLte_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_statisticHuaweiLte_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_statisticIpHttp" if="exist.statisticIpHttp.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_statisticIpHttp_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_statisticIpHttp_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_statisticLte" if="exist.statisticLte.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_statisticLte_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_statisticLte_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<target name="copy_lib_XmlParser" if="exist.XmlParser.lib">
+<!-- 拷贝增量lib到目标路径lib -->
+<copy todir="${edcbigdatadir_XmlParser_all}/${lib.dir}">
+<fileset dir="${cvsworkdir_XmlParser_path}/${lib.dir}" includes="**/*.jar" />
+</copy>
+</target>
+<!-- 压缩jar和lib -->
+<target name="zip_jar_lib_searchCrawler" if="exist.searchCrawler.project">
+<zip destfile="${output.dir}/${edcbigdatadir_searchCrawler_zip}" basedir="${edcbigdatadir_searchCrawler_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_SNsearchCrawler" if="exist.SNsearchCrawler.project">
+<zip destfile="${output.dir}/${edcbigdatadir_SNsearchCrawler_zip}" basedir="${edcbigdatadir_SNsearchCrawler_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_TXDMsearchCrawler" if="exist.TXDMsearchCrawler.project">
+<zip destfile="${output.dir}/${edcbigdatadir_TXDMsearchCrawler_zip}" basedir="${edcbigdatadir_TXDMsearchCrawler_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataCollectAll" if="exist.dataCollectAll.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataCollectAll_zip}" basedir="${edcbigdatadir_dataCollectAll_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataCollectAllRT" if="exist.dataCollectAllRT.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataCollectAllRT_zip}" basedir="${edcbigdatadir_dataCollectAllRT_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataCollectMrDt" if="exist.dataCollectMrDt.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataCollectMrDt_zip}" basedir="${edcbigdatadir_dataCollectMrDt_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataCollectorHWLte" if="exist.dataCollectorHWLte.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataCollectorHWLte_zip}" basedir="${edcbigdatadir_dataCollectorHWLte_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataCollectorSimultaneously" if="exist.dataCollectorSimultaneously.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataCollectorSimultaneously_zip}" basedir="${edcbigdatadir_dataCollectorSimultaneously_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataLoadCombine-Shell" if="exist.dataLoadCombine-Shell.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataLoadCombine-Shell_zip}" basedir="${edcbigdatadir_dataLoadCombine-Shell_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_fileSort" if="exist.fileSort.project">
+<zip destfile="${output.dir}/${edcbigdatadir_fileSort_zip}" basedir="${edcbigdatadir_fileSort_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_fileToHbase" if="exist.fileToHbase.project">
+<zip destfile="${output.dir}/${edcbigdatadir_fileToHbase_zip}" basedir="${edcbigdatadir_fileToHbase_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_fileToHbase_HW" if="exist.fileToHbase_HW.project">
+<zip destfile="${output.dir}/${edcbigdatadir_fileToHbase_HW_zip}" basedir="${edcbigdatadir_fileToHbase_HW_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_fileToHbase_NX" if="exist.fileToHbase_NX.project">
+<zip destfile="${output.dir}/${edcbigdatadir_fileToHbase_NX_zip}" basedir="${edcbigdatadir_fileToHbase_NX_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_giToHbase" if="exist.giToHbase.project">
+<zip destfile="${output.dir}/${edcbigdatadir_giToHbase_zip}" basedir="${edcbigdatadir_giToHbase_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_flumecollect" if="exist.flumecollect.project">
+<zip destfile="${output.dir}/${edcbigdatadir_flumecollect_zip}" basedir="${edcbigdatadir_flumecollect_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_flumedistribution" if="exist.flumedistribution.project">
+<zip destfile="${output.dir}/${edcbigdatadir_flumedistribution_zip}" basedir="${edcbigdatadir_flumedistribution_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_detailToHbase" if="exist.detailToHbase.project">
+<zip destfile="${output.dir}/${edcbigdatadir_detailToHbase_zip}" basedir="${edcbigdatadir_detailToHbase_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_getHWLteDataToHbase" if="exist.getHWLteDataToHbase.project">
+<zip destfile="${output.dir}/${edcbigdatadir_getHWLteDataToHbase_zip}" basedir="${edcbigdatadir_getHWLteDataToHbase_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_getNXLteDataToHbase" if="exist.getNXLteDataToHbase.project">
+<zip destfile="${output.dir}/${edcbigdatadir_getNXLteDataToHbase_zip}" basedir="${edcbigdatadir_getNXLteDataToHbase_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_joinGiAndLTE" if="exist.joinGiAndLTE.project">
+<zip destfile="${output.dir}/${edcbigdatadir_joinGiAndLTE_zip}" basedir="${edcbigdatadir_joinGiAndLTE_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_joinGiGpfs" if="exist.joinGiGpfs.project">
+<zip destfile="${output.dir}/${edcbigdatadir_joinGiGpfs_zip}" basedir="${edcbigdatadir_joinGiGpfs_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_joinGnXdr" if="exist.joinGnXdr.project">
+<zip destfile="${output.dir}/${edcbigdatadir_joinGnXdr_zip}" basedir="${edcbigdatadir_joinGnXdr_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_dataFilterExtract" if="exist.dataFilterExtract.project">
+<zip destfile="${output.dir}/${edcbigdatadir_dataFilterExtract_zip}" basedir="${edcbigdatadir_dataFilterExtract_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_getKeyWord" if="exist.getKeyWord.project">
+<zip destfile="${output.dir}/${edcbigdatadir_getKeyWord_zip}" basedir="${edcbigdatadir_getKeyWord_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_getMovementTrackData" if="exist.getMovementTrackData.project">
+<zip destfile="${output.dir}/${edcbigdatadir_getMovementTrackData_zip}" basedir="${edcbigdatadir_getMovementTrackData_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_getMovementTrackDataDay" if="exist.getMovementTrackDataDay.project">
+<zip destfile="${output.dir}/${edcbigdatadir_getMovementTrackDataDay_zip}" basedir="${edcbigdatadir_getMovementTrackDataDay_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_getMovementTrackDataHour" if="exist.getMovementTrackDataHour.project">
+<zip destfile="${output.dir}/${edcbigdatadir_getMovementTrackDataHour_zip}" basedir="${edcbigdatadir_getMovementTrackDataHour_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_statisticGnxdrIpHttp" if="exist.statisticGnxdrIpHttp.project">
+<zip destfile="${output.dir}/${edcbigdatadir_statisticGnxdrIpHttp_zip}" basedir="${edcbigdatadir_statisticGnxdrIpHttp_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_statisticHuaweiLte" if="exist.statisticHuaweiLte.project">
+<zip destfile="${output.dir}/${edcbigdatadir_statisticHuaweiLte_zip}" basedir="${edcbigdatadir_statisticHuaweiLte_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_statisticIpHttp" if="exist.statisticIpHttp.project">
+<zip destfile="${output.dir}/${edcbigdatadir_statisticIpHttp_zip}" basedir="${edcbigdatadir_statisticIpHttp_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_statisticLte" if="exist.statisticLte.project">
+<zip destfile="${output.dir}/${edcbigdatadir_statisticLte_zip}" basedir="${edcbigdatadir_statisticLte_all}" excludes="compile/" />
+</target>
+<target name="zip_jar_lib_XmlParser" if="exist.XmlParser.project">
+<zip destfile="${output.dir}/${edcbigdatadir_XmlParser_zip}" basedir="${edcbigdatadir_XmlParser_all}" excludes="compile/" />
+</target>
+</project>

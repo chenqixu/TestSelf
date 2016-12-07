@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://edc01:8020</value>
+  </property>
+  <property>
+    <name>fs.hdfs.impl</name>
+    <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
+  </property>
+  <!-- other -->
+  <property>
+    <name>filepath</name>
+    <value>/home/hadoop/files1463716229824/input/N5001_2G.AVL</value>
+  </property>
+  <property>
+    <name>filetype</name>
+    <value>hdfs</value>
+  </property>
+  <property>
+    <name>outputPath</name>
+    <value>/cqx/testdata/gzip/N5001_2G.gz</value>
+  </property>
+  <property>
+    <name>codecClassName</name>
+    <value>org.apache.hadoop.io.compress.GzipCodec</value>
+  </property>
+</configuration>
