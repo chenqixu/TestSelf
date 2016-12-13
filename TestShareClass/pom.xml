@@ -8,6 +8,9 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>TestShareClass</artifactId>
+	<properties>
+		<hadoop.version>2.7.1</hadoop.version>
+	</properties>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -63,7 +66,8 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.cqx.TestShareMain</mainClass>
+							<!-- <mainClass>com.cqx.TestShareMain</mainClass> -->
+							<mainClass>com.cqx.ExampleDriver</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -149,7 +153,7 @@
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>2.0.0-cdh4.3.0</version>
+			<version>${hadoop.version}</version>
 			<!-- 去除自带的其他包 -->
 			<exclusions>
 				<exclusion>
@@ -157,11 +161,22 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency><!-- 
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
-			<version>2.0.0-mr1-cdh4.3.0</version>
+			<version>${hadoop.version}</version>			
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency> -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${hadoop.version}</version>
 			<!-- 去除自带的其他包 -->
 			<exclusions>
 				<exclusion>
@@ -172,8 +187,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.0.0-cdh4.3.0</version>
+			<artifactId>hadoop-mapreduce-examples</artifactId>  
+			<version>${hadoop.version}</version>
 			<!-- 去除自带的其他包 -->
 			<exclusions>
 				<exclusion>
