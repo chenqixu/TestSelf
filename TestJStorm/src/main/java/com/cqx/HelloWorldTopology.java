@@ -3,6 +3,7 @@ package com.cqx;
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.AuthorizationException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.SpoutDeclarer;
@@ -30,7 +31,7 @@ public class HelloWorldTopology {
 	 * Create and run the topology using 'createTopology' and 'submitTopology'
 	 */
 	public static void main(String[] args) throws AlreadyAliveException,
-			InvalidTopologyException {
+			InvalidTopologyException, AuthorizationException {
 		// 创建topology的生成器
 		TopologyBuilder builder = new TopologyBuilder();
 		// 创建Spout，其中new HelloWorldSpout() 为真正spout对象
