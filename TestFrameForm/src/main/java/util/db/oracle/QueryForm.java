@@ -431,9 +431,10 @@ public class QueryForm extends JFrame implements ActionListener {
 	 * */
 	private List<OracleUser> getJdbcUrl(){
 		List<OracleUser> oulist = new Vector<OracleUser>();
-		String rootPath = System.getProperty("user.dir");
-		String spltstr = File.separator;//文件路径分隔符(区分windows和linux)
-		String pathQueryform = rootPath+spltstr+"config"+spltstr+"application_queryform.properties";
+//		String rootPath = System.getProperty("user.dir");
+//		String spltstr = File.separator;//文件路径分隔符(区分windows和linux)
+//		String pathQueryform = rootPath+spltstr+"config"+spltstr+"application_queryform.properties";
+		String pathQueryform = ClassLoader.getSystemResource("config/application_queryform.properties").getPath();
 
 		File f = null;
 		FileInputStream pInStream = null;
