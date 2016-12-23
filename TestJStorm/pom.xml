@@ -11,15 +11,26 @@
 	<build />
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.storm</groupId>
+			<artifactId>storm-core</artifactId>
+			<version>0.10.0</version>
+		</dependency>
+		<!-- 
+		<dependency>
 			<groupId>com.alibaba.jstorm</groupId>
 			<artifactId>jstorm-client</artifactId>
 			<version>0.9.6.3</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.alibaba.jstorm</groupId>
 			<artifactId>jstorm-client-extension</artifactId>
 			<version>0.9.6.3</version>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.12</version>
+			<scope>compile</scope>
+		</dependency> -->
 	</dependencies>
 </project>
