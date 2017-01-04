@@ -2,8 +2,10 @@ package com.newland.bi.bigdata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Test {
+	
 	public static void checkTokenName(String namedOutput) {
 		if (namedOutput == null || namedOutput.length() == 0) {
 			throw new IllegalArgumentException("Name cannot be NULL or emtpy");
@@ -40,7 +42,7 @@ public class Test {
 		}
 		return result_str;
 	}
-
+	
 	public static void main(String[] args) throws Exception {
 		// System.out.println("Hello! "+args[0]);
 		// Test.checkTokenName("dns_data1");
@@ -94,5 +96,10 @@ public class Test {
 //			System.out.println("aa");
 //		}
 		
+		// 十六进制计算
+		long x = Long.parseLong("A000", 16);
+		long y = Long.parseLong("10", 16);
+		long z = Long.parseLong("200", 16);
+		System.out.println(Long.toHexString(x*y+z));
 	}
 }

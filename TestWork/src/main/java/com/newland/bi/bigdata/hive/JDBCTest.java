@@ -34,7 +34,7 @@ public class JDBCTest {
 		res = stmt.executeQuery(sql);
 		System.out.println("执行“select * query”运行结果:");
 		if (res!=null)System.out.println(res.getRow());
-		while (res.next()) {			
+		while (res.next()) {
 			System.out.println(res.getString(1));
 		}
 		res.close();
@@ -43,5 +43,19 @@ public class JDBCTest {
 		stmt = null;
 		conn.close();
 		conn = null;
+		
+		// EOF无法切换到后台运行
+		org.apache.hadoop.hive.cli.CliDriver a;
+		
+		// 任务异常
+		org.apache.hadoop.mapreduce.v2.app.job.impl.JobImpl a1;
+		
+		// 元数据
+		org.apache.hadoop.hive.metastore.tools.HiveMetaTool ht;
+		org.apache.hadoop.hive.ql.Driver qd;
+		org.apache.hadoop.hive.metastore.HiveMetaStoreClient hmsc;
+		
+		// ambari-server
+//		org.apache.ambari.server.controller.AmbariServer as;
 	}
 }

@@ -52,8 +52,9 @@ public class SSHHelper {
 					new InputStreamReader(in));
 			String buf = null;
 			while ((buf = reader.readLine()) != null) {
-				result += new String(buf.getBytes("gbk"), "UTF-8")
-						+ "\r\n";
+//				result += new String(buf.getBytes("gbk"), "UTF-8")
+//						+ "\r\n";
+				result += buf + "\r\n";
 			}
 		} catch (JSchException e) {
 			result += e.getMessage();
@@ -72,7 +73,7 @@ public class SSHHelper {
 
 	public static void main(String args[]) {
 		String exec = exec("10.1.8.1", "hadoop", "hadoopA1!", 22,
-				"jps");
+				"ps -ef|grep DataNode|grep -v grep|wc -l");
 		System.out.println(exec);
 //		exec = exec("10.1.8.2", "hadoop", "hadoopA1!", 22,
 //				"cd /bi/app/apache-flume-1.5.0-bin/bin;sh Collect.sh status;");

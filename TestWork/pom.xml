@@ -104,6 +104,11 @@
 			<artifactId>hive-exec</artifactId>
 			<version>${hive.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-cli</artifactId>
+			<version>${hive.version}</version>
+		</dependency>
 
 		<!-- google -->
 		<!-- <dependency> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId> 
@@ -138,6 +143,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<!-- ambari-server -->
+		
 
 		<!-- apache -->
 		<dependency>
