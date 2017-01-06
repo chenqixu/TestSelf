@@ -200,6 +200,18 @@ class ComparatorMroBean implements Comparator<Object> {
 			System.out.println("MroBean Comparator ERR:"+e.toString());
 			e.printStackTrace();
 		}
-		return date1.compareTo(date2);
+		if(date1==date2){
+			Double d1 = Double.valueOf(n1.getLon());
+			Double d2 = Double.valueOf(n2.getLon());
+			if(d1==d2){
+				Double dd1 = Double.valueOf(n1.getLat());
+				Double dd2 = Double.valueOf(n2.getLat());
+				return dd1.compareTo(dd2);
+			}else{
+				return d1.compareTo(d2);
+			}			
+		}else{
+			return date1.compareTo(date2);
+		}
 	}
 }
