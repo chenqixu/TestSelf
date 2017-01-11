@@ -136,7 +136,7 @@ public class ExcelUtils {
         if (xssfRow.getCellType() == xssfRow.CELL_TYPE_BOOLEAN) {
             return String.valueOf(xssfRow.getBooleanCellValue());
         } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_NUMERIC) {
-            return String.valueOf(xssfRow.getNumericCellValue());
+            return String.valueOf(ExcelCommons.df.format(xssfRow.getNumericCellValue()));
         } else {
             return String.valueOf(xssfRow.getStringCellValue());
         }

@@ -1,27 +1,26 @@
 package com.newland.bi.bigdata.hbase;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.text.ParseException;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.hbase.KeyValue;
-import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SubstringComparator;
+import org.apache.hadoop.hbase.util.Bytes;
 
 
 public class HbaseQueryTest {
@@ -63,6 +62,8 @@ public class HbaseQueryTest {
 		}
 		//设置列簇
 	  	scan.addFamily(Bytes.toBytes(COLUMN_FAMILY));
+//	  	//设置最大记录数，没有作用
+//	  	scan.setMaxResultSize(100);
 	  	//设置表名
 	  	hTable = tablePool.getTable(Bytes.toBytes(tableName));
 	  	ResultScanner rs = hTable.getScanner(scan);
@@ -122,6 +123,8 @@ public class HbaseQueryTest {
 		String tableName = TABLE_NAME + "_" + month;
 		//hbase的过滤器
 		FilterList filterList = new FilterList();
+//		//分页
+//		PageFilter pf;		
 		// 被叫号码的过滤
 		if(!StringUtils.isEmpty(requestBean.getCall_ed())){
 			String filterStr = ",B"+requestBean.getCall_ed();

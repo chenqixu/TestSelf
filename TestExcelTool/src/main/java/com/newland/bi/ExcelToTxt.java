@@ -42,7 +42,8 @@ public class ExcelToTxt {
 					// 循环sheet每一行
 					for (int j=0; j<list.get(i).getSheetList().size(); j++) {
 						for(int x=0;x<list.get(i).getSheetList().get(j).size();x++){
-							sb.append(list.get(i).getSheetList().get(j).get(x)+"\t");
+							// 替换内容中的换行符为空格
+							sb.append(list.get(i).getSheetList().get(j).get(x).replaceAll("\n", " ")+"\t");
 						}
 						sb.deleteCharAt(sb.length()-1);
 						sb.append("\n");
