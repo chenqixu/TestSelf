@@ -36,7 +36,8 @@ public class ExcelToTxt {
 			if (list != null && list.size()>=1) {
 				File writeFile = new File(writefilepath);
 				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(writeFile), "UTF-8"));				
+						new FileOutputStream(writeFile)));
+//						new FileOutputStream(writeFile), "UTF-8"));
 				// 读取并转换第一个sheet
 				for (int i=0; i<1; i++) {
 					// 循环sheet每一行
