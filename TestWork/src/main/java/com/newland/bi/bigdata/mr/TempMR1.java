@@ -2,9 +2,8 @@ package com.newland.bi.bigdata.mr;
 
 import java.io.IOException;
 
-import org.apache.hadoop.mapred.JobInProgress;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Job;
 
 public class TempMR1 {
 	public static void main(String[] args) {
@@ -20,6 +19,7 @@ public class TempMR1 {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		org.apache.hadoop.fs.BlockLocation test;
+//		org.apache.hadoop.mapreduce.lib.input.TaggedInputSplit t1;
 	}
 }
