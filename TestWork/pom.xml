@@ -95,6 +95,13 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase-examples</artifactId>
+			<version>${hbase.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- hive -->
 		<dependency>
