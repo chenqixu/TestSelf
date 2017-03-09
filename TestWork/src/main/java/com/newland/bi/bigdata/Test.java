@@ -2,6 +2,7 @@ package com.newland.bi.bigdata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 public class Test {
@@ -96,10 +97,16 @@ public class Test {
 //			System.out.println("aa");
 //		}
 		
-		// 十六进制计算
-		long x = Long.parseLong("A000", 16);
-		long y = Long.parseLong("10", 16);
-		long z = Long.parseLong("200", 16);
-		System.out.println(Long.toHexString(x*y+z));
+//		// 十六进制计算
+//		long x = Long.parseLong("A000", 16);
+//		long y = Long.parseLong("10", 16);
+//		long z = Long.parseLong("200", 16);
+//		System.out.println(Long.toHexString(x*y+z));
+		
+		// 随机0~0.1
+		Random rr = new Random();
+		System.out.println(rr.nextDouble()/10);
+		System.out.println(rr.nextDouble()/10);
+//		System.out.println(Math.floor(rr.nextDouble()/10)); 
 	}
 }
