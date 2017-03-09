@@ -133,6 +133,11 @@
 			<artifactId>spark-core_${sparkother.version}</artifactId>
 			<version>${spark.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-launcher_${sparkother.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
 
 		<!-- lzo -->
 		<dependency>
