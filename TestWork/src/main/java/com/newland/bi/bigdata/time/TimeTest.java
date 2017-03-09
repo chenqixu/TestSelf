@@ -74,7 +74,7 @@ public class TimeTest {
 		return result/1000;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 //		String time2 = "180_hw_1452129156865.CHK";
 //		int begin = 0;
 //		int end = 13;
@@ -88,30 +88,22 @@ public class TimeTest {
 
 //		String time3 = "19910414000000";
 		String time3 = "20160522113010";
-		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyyMMddHHmmss");		
-		try {
-			System.out.println("原来的时间"+sdf3.parse(time3));
-			Calendar cale = Calendar.getInstance();
-			cale.set(2016,5,22,11,30,10);
-			System.out.println(cale.isSet(2));
-			cale.setTime(sdf3.parse(time3));
-			System.out.println("初始化的时间"+sdf3.format(cale.getTime()));
-			cale.add(Calendar.DAY_OF_MONTH, 1);
-			System.out.println("初始化的时间"+sdf3.format(cale.getTime()));
-//			cale.add(Calendar.MINUTE, -10);
-//			cale.add(Calendar.MILLISECOND, -1);
-//			System.out.println("修改后的时间"+cale.getTime());
-//			System.out.println("修改后的时间"+sdf3.format(cale.getTime()));
+		SimpleDateFormat sdf3 = new SimpleDateFormat("yyyyMMddHHmmss");	
+		System.out.println("原来的时间"+sdf3.parse(time3));
+		Calendar cale = Calendar.getInstance();
+		cale.set(2016,5,22,11,30,10);
+		System.out.println(cale.isSet(2));
+		cale.setTime(sdf3.parse(time3));
+		System.out.println("初始化的时间"+sdf3.format(cale.getTime()));
+		cale.add(Calendar.DAY_OF_MONTH, 1);
+		System.out.println("初始化的时间"+sdf3.format(cale.getTime()));
+//		cale.add(Calendar.MINUTE, -10);
+//		cale.add(Calendar.MILLISECOND, -1);
+//		System.out.println("修改后的时间"+cale.getTime());
+//		System.out.println("修改后的时间"+sdf3.format(cale.getTime()));
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHH");
+		System.out.println("[datebefore]"+sdf1.parse("2016031111").before(sdf1.parse("2016031112")));
 			
-			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHH");
-			try{
-					System.out.println("[datebefore]"+sdf1.parse("2016031111").before(sdf1.parse("2016031112")));
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 		
 //		System.out.println(dateCompareTo(time3, "20160224143559", "yyyyMMddHHmmss"));
 		//20160224142600-20160224145600
@@ -159,5 +151,15 @@ public class TimeTest {
 //			newlist.addAll(oldlist);
 //		}
 //		System.out.println(newlist);
+		
+		// 判断是否整点
+		String time4 = "20170215110000";
+		Date now=sdf3.parse(time4);
+//		Date now=new Date();
+		Long time=now.getTime();
+		System.out.println(time);
+		if(time%(1000*60*60)==0){
+			System.out.println("整点");
+		}
 	}
 }
