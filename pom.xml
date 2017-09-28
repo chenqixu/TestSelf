@@ -32,5 +32,6 @@
   	<module>TestFrameForm</module>
   	<module>TestJavaThinking</module>
   	<module>TestQuestions</module>
+  	<module>TestMR</module>
   </modules>
 </project>

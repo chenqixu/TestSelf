@@ -1,5 +1,6 @@
 package com.newland.bi.bigdata.collect;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,12 @@ public class CollectTest1 {
 		while(it.hasNext()){
 			System.out.println(it.next());
 		}
+	}
+	
+	public static void iterator(){
+		List<String> list = new ArrayList<String>();
+		Iterator<String> it = list.iterator();
+		
 	}
 	
 	public static void main(String[] args) {

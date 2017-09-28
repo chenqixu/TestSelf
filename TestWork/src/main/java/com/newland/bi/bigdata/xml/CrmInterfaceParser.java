@@ -25,7 +25,7 @@ public class CrmInterfaceParser {
 			}
 			br.close();
 			fr.close();
-			System.out.println("[xml_c]"+xml_c.toString());
+//			System.out.println("[xml_c]"+xml_c.toString());
 
 			fr = new FileReader(valuexml);
 			br = new BufferedReader(fr);
@@ -35,7 +35,7 @@ public class CrmInterfaceParser {
 			}
 			br.close();
 			fr.close();
-			System.out.println("[xml_v]"+xml_v.toString());
+//			System.out.println("[xml_v]"+xml_v.toString());
 
 			ResultXML rx = new ResultXML();
 			XMLData xd = new XMLData(xml_c.toString());
@@ -82,7 +82,7 @@ public class CrmInterfaceParser {
 	 * @param value 以,分割
 	 * */
 	public String getValueByNode(String xml, String node, String type, String value){
-		System.out.println("getValueByNode["+node+"][xml]"+xml);
+//		System.out.println("getValueByNode["+node+"][xml]"+xml);
 		StringBuffer sb = new StringBuffer();
 		ResultXML rx = new ResultXML();
 		XMLData xd = new XMLData(xml);
@@ -163,15 +163,18 @@ public class CrmInterfaceParser {
 	}
 	
 	public static void main(String[] args) {
-		new CrmInterfaceParser().parserxml("H:/Work/WorkSpace/MyEclipse10/self/test/src/main/resources/conf/read1.xml"
-				,"d:/Work/ETL/xml解析/71202-关于CRM接口表intf_biz.interboss_operation抽取及CLOB内容解析的处理/报文.xml");
+//		new CrmInterfaceParser().parserxml("H:/Work/Git/TestSelf/TestWork/src/main/resources/conf/read2.xml"
+//				,"d:/Work/ETL/xml解析/71202-关于CRM接口表intf_biz.interboss_operation抽取及CLOB内容解析的处理/报文.xml");
+		new CrmInterfaceParser().parserxml("H:/Work/Git/TestSelf/TestWork/src/main/resources/conf/read3.xml"
+				,"j:/Work/海南/海南MRO/xml接口相关资料/test.xml");
 //		String xml = "<?xml version='1.0' encoding='UTF-8'?><prodOrderReq><IDType>01</IDType><IDItemRange>13960435498</IDItemRange><OprNumb>UMMPBIP3A21120150901192148264186</OprNumb><BizType>69</BizType><IdentCode>59100020150901191510396945590645</IdentCode><ProdunctInfo><ProductType>01</ProductType><ProductId>1000210077</ProductId><OprCode>01</OprCode><EffectiveType>01</EffectiveType></ProdunctInfo></prodOrderReq>";
+//		String xml = "<?xml version='1.0' encoding='UTF-8'?><InterBOSS><Version>0100</Version><TestFlag>0</TestFlag><BIPType><BIPCode>BIP3A211</BIPCode><ActivityCode>T3000214</ActivityCode><ActionCode>1</ActionCode></BIPType><RoutingInfo><OrigDomain>UMMP</OrigDomain><RouteType>01</RouteType><Routing><HomeDomain>BOSS</HomeDomain><RouteValue>13960435498</RouteValue></Routing></RoutingInfo><TransInfo><SessionID>6900P2B77420150901192149517395</SessionID><TransIDO>6900P2B77420150901192149517395</TransIDO><TransIDOTime>20150901192148</TransIDOTime><TransIDH>308988998424</TransIDH><TransIDHTime>20150901192320</TransIDHTime></TransInfo><SNReserve><TransIDC>9980111120150901190658904280153</TransIDC><ConvID>157a4ba7-bc7b-4e29-8c8d-3c718f8b36b3</ConvID><CutOffDay>20150901</CutOffDay><OSNTime>20150901190658</OSNTime><OSNDUNS>9980</OSNDUNS><HSNDUNS>5910</HSNDUNS><MsgSender>0216</MsgSender><MsgReceiver>5911</MsgReceiver><Priority>3</Priority><ServiceLevel>1</ServiceLevel></SNReserve><SvcCont><![CDATA[<?xml version='1.0' encoding='UTF-8'?><prodOrderReq><IDType>01</IDType><IDItemRange>13960435498</IDItemRange><OprNumb>UMMPBIP3A21120150901192148264186</OprNumb><BizType>69</BizType><IdentCode>59100020150901191510396945590645</IdentCode><ProdunctInfo><ProductType>01</ProductType><ProductId>1000210077</ProductId><OprCode>01</OprCode><EffectiveType>01</EffectiveType></ProdunctInfo></prodOrderReq>]]></SvcCont></InterBOSS>";
 //		ResultXML rx = new ResultXML();
 //		XMLData xd = new XMLData(xml);
 //		rx.rtFlag = true;
 //		rx.bXmldata = true;
 //		rx.xmldata = xd;
 //		rx.setbFlag(false);
-//		System.out.println(rx.node("IDType").getValue());
+//		System.out.println(rx.node("TestFlag").getValue());
 	}
 }

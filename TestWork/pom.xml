@@ -9,18 +9,34 @@
 	</parent>
 	<artifactId>TestWork</artifactId>
 	<properties>
-		<!-- <hadoop.version>2.0.0-cdh4.3.0</hadoop.version> <hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version>
+		<!--
+		<hadoop.version>2.0.0-cdh4.3.0</hadoop.version>
+		<hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version>
 		<hadoop.version>2.3.0-cdh5.1.5</hadoop.version>
-		<hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version> -->
+		<hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version>
+		<hadoop.version>2.4.0</hadoop.version>
+		<hadoop.mr.version>2.4.0</hadoop.mr.version> 
 		<hadoop.version>2.6.0</hadoop.version>
 		<hadoop.mr.version>2.6.0</hadoop.mr.version>
-		<hbase.version>1.1.1</hbase.version><!-- 0.98.1-cdh5.1.5 -->
-		<hive.version>0.10.0-cdh4.3.0</hive.version><!-- 0.12.0 0.12.0-cdh5.1.5-->
+		-->
+		<hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
+		<hadoop.mr.version>2.6.0-cdh5.7.2</hadoop.mr.version>
+		<!--
+		<hbase.version>0.98.1-cdh5.1.5</hbase.version>
+		<hbase.version>0.98.1-cdh5.1.0</hbase.version>
+		<hbase.version>1.1.1</hbase.version>
+		-->
+		<hbase.version>1.2.0-cdh5.7.2</hbase.version>
+		<!--
+		<hive.version>0.12.0 0.12.0-cdh5.1.5</hive.version>
+		<hive.version>0.10.0-cdh4.3.0</hive.version>
+		-->
+		<hive.version>1.1.0-cdh5.7.2</hive.version>
 		<spark.version>1.5.0</spark.version>
+		<!--
+		<sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version>
+		-->
 		<sparkother.version>2.10</sparkother.version>
-		<!-- <sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version> -->
-		<!-- <hadoop.version>2.4.0</hadoop.version> <hadoop.mr.version>2.4.0</hadoop.mr.version> 
-			<hbase.version>0.98.1-cdh5.1.0</hbase.version> -->
 	</properties>
 
 	<dependencies>
@@ -64,9 +80,14 @@
 		</dependency> -->
 
 		<!-- hbase -->
-		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase</artifactId> 
-			<version>0.94.6-cdh4.3.0</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-			</dependency> -->
+		<!--
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase</artifactId> 
+			<version>0.94.6-cdh4.3.0</version>
+			<exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
+		</dependency>
+		-->
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-server</artifactId>
@@ -121,11 +142,20 @@
 		</dependency>
 
 		<!-- google -->
-		<!-- <dependency> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId> 
-			<version>11.0.2</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-			</dependency> <dependency> <groupId>com.google.protobuf</groupId> <artifactId>protobuf-java</artifactId> 
-			<version>2.4.0a</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-			</dependency> -->
+		<!--
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId> 
+			<version>11.0.2</version>
+			<exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId> 
+			<version>2.4.0a</version>
+			<exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
+		</dependency>
+		-->
 
 		<!-- spark -->
 		<dependency>
@@ -160,7 +190,6 @@
 		</dependency>
 		
 		<!-- ambari-server -->
-		
 
 		<!-- apache -->
 		<dependency>
@@ -566,11 +595,30 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+				
+		<!-- nl bi -->
+		<dependency>
+			<groupId>com.newland.bi</groupId>
+			<artifactId>nl-bi-util</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.newland.bi</groupId>
 			<artifactId>edc-storm-agent</artifactId>
 			<version>1.0</version>
+		</dependency>
+		
+		<!-- XSLT 2.0 SAXON -->
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>9.7.0-10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>

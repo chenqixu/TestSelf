@@ -105,6 +105,7 @@ public class JDBCTest {
 //		org.apache.hadoop.hive.metastore.tools.HiveMetaTool ht;
 //		org.apache.hadoop.hive.ql.Driver qd;
 //		org.apache.hadoop.hive.metastore.HiveMetaStoreClient hmsc;
+//		org.apache.hadoop.hive.metastore.Warehouse wh;
 		
 		// 压缩
 //		org.apache.hadoop.hive.ql.io.orc.CompressionKind ck;
