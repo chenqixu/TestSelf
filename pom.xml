@@ -33,5 +33,6 @@
   	<module>TestJavaThinking</module>
   	<module>TestQuestions</module>
   	<module>TestMR</module>
+  	<module>TestSpringCXF</module>
   </modules>
 </project>
