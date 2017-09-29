@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+	<!-- 输入路径信息 -->
+	<property>
+		<name>INPUT_PAHT_MC_CDR</name>
+		<value>/yznewlandbase/gpfsdata/mccdr/FuJianYiDongAIuCS/</value>
+		<description>Gn的HTTP文件输入路径</description>
+	</property>
+	
+	<property>
+		<name>INPUT_PAHT_LTE_S1MME</name>
+		<value>/yznewlandbase/gpfsdata/hwlte/S1MME/</value>
+		<description>Gn的HTTP文件输入路径</description>
+	</property>
+	
+	<!-- 输出路径配置 -->
+	<property>
+		<name>OUTPUT_PATH</name>
+		<value>/yznewlandbase/bigdata/mc/GetMovementTrackData/</value>
+		<description>输出文件路径</description>
+	</property>
+
+	<!-- 字段信息 -->
+	<property>
+	  	<name>MC_CDR</name>
+	  	<value>btime,etime,cdrid,globalid,sessionid,protocolid,eventid,spckind,msccode,bsccode,pcm,cic,lac,ci,olac,oci,dlac,dci,firstlac,firstci,lastlac,lastci,drncid,callingnum,callednum,callingimsi,calledimsi,callingimei,calledimei,callingtmsi,calledtmsi,callingtmsi_relc,calledtmsi_relc,smcnum,eventcause,eventcausetype,eventresult,tchtype,nrab,rrab,cmreqoffset,cmrspoffset,authreqoffset,authrspoffset,ciphoffset,ciphcmploffset,idenoffset,idenrspoffset,assreqoffset,asscomoffset,setupoffset,cpgoffset,cpgrspoffset,alertoffset,connoffset,connackoffset,discondirect,disconnoffset,handoutrequirecause,handoutoffset,handoutrspoffset,handinoffset,handinrspoffset,seizuredur,answerdur,reloffset,relcmpoffset,rabreleaseoffset,clearoffset,clearcomoffset,clearcmpoffset,cpoffset,cpackoffset,luoffset,lurspoffset,registeroffset,pagingresptype,rspdur,xdrtype,beartype,oaddresss,daddresss,tac,mobilesoft,cmstatus,cmcause,authstatus,ciphstatus,ciphrejcause,idenstatus,assstatus,asscause,assrrcause,setupstatus,cpgstatus,cpgrspstatus,alertstatus,constatus,disconnstatus,disconncause,handoutstatus,handoutcause,horrcause,handinstatus,handincause,reldirect,relstatus,relcause,clearstatus,clearcause,smsstatus,smscpcause,smsrpcause,lustatus,lucause,sapiflag,sapicause,firstabnoffst,sdcchdur,tchdur,sstype,hoflag,horeference,celldesc,channldesc,smssumincall,issmsalone,iscallalone,process1,process2,process3,process4,direction1,direction2,direction3,direction4,dtapccrlscnt,fallbackflag</value>
+	  	<description>MC_CDR表字段</description>
+	</property>
+	<property>
+	  	<name>LTE_S1MME</name>
+	  	<value>length,city,interface,xdr_id,rat,imsi,imei,msisdn,procedure_type,subprocedure_type,procedure_start_time,procedure_delay_time,procedure_end_time,procedure_status,cause,nas_cause,s1ap_cause1,s1ap_cause2,keyword,enb_ue_s1ap_id,mme_ue_s1ap_id,old_mme_group_id,old_mme_code,m_tmsi,mcc,mnc,lac,tmsi,user_ipv4,user_ipv6,machine_ip_add_type,mme_ip_add,enb_ip_add,mme_port,enb_port,tac,cell_id,other_tac,other_eci,mac,req_count,res_count,apn,eps_bearer_number,bearer_id1,bearer_type1,bearer_qci1,bearer_status1,bearer_enb_gtp_teid1,bearer_sgw_gtp_teid1,bearer_id2,bearer_type2,bearer_qci2,bearer_status2,bearer_enb_gtp_teid2,bearer_sgw_gtp_teid2,bearer_id3,bearer_type3,bearer_qci3,bearer_status3,bearer_enb_gtp_teid3,bearer_sgw_gtp_teid3,bearer_id4,bearer_type4,bearer_qci4,bearer_status4,bearer_enb_gtp_teid4,bearer_sgw_gtp_teid4,bearer_id5,bearer_type5,bearer_qci5,bearer_status5,bearer_enb_gtp_teid5,bearer_sgw_gtp_teid5,bearer_id6,bearer_type6,bearer_qci6,bearer_status6,bearer_enb_gtp_teid6,bearer_sgw_gtp_teid6,bearer_id7,bearer_type7,bearer_qci7,bearer_status7,bearer_enb_gtp_teid7,bearer_sgw_gtp_teid7,bearer_id8,bearer_type8,bearer_qci8,bearer_status8,bearer_enb_gtp_teid8,bearer_sgw_gtp_teid8,bearer_id9,bearer_type9,bearer_qci9,bearer_status9,bearer_enb_gtp_teid9,bearer_sgw_gtp_teid9,bearer_id10,bearer_type10,bearer_qci10,bearer_status10,bearer_enb_gtp_teid10,bearer_sgw_gtp_teid10,bearer_id11,bearer_type11,bearer_qci11,bearer_status11,bearer_enb_gtp_teid11,bearer_sgw_gtp_teid11,bearer_id12,bearer_type12,bearer_qci12,bearer_status12,bearer_enb_gtp_teid12,bearer_sgw_gtp_teid12,bearer_id13,bearer_type13,bearer_qci13,bearer_status13,bearer_enb_gtp_teid13,bearer_sgw_gtp_teid13,bearer_id14,bearer_type14,bearer_qci14,bearer_status14,bearer_enb_gtp_teid14,bearer_sgw_gtp_teid14,bearer_id15,bearer_type15,bearer_qci15,bearer_status15,bearer_enb_gtp_teid15,bearer_sgw_gtp_teid15,s_year,s_month,s_day,s_hour,s_minute,request_cause,Old_MME_Group_ID</value>
+	  	<description>LTE S1MME表字段</description>
+	</property>
+	
+
+	<!-- 其他 -->
+	
+	<property>
+		<name>PREFIX_NAME</name>
+		<value>moveTrack</value>
+		<description>输入文件名</description>
+	</property>	
+	
+	<property>
+		<name>STRING_MAX_LENGTH</name>
+		<value>4000</value>
+		<description>最大字段长度限制</description>
+	</property>
+
+	<property>
+		<name>IF_CHECK_SOURCE_DATA_LENGTH</name>
+		<value>false</value>
+		<description>是否进行源数据字段数检查</description>
+	</property>
+	
+	<property>
+		<name>MC_CDR_DATA_LENGTH</name>
+		<value>138</value>
+		<description>MC_CDR数据的字段长度</description>
+	</property>
+	
+	<property>
+		<name>LTE_S1MME_DATA_LENGTH</name>
+		<value>141</value>
+		<description>LTE S1MME源数据字段数</description>
+	</property>
+</configuration>
+
+
