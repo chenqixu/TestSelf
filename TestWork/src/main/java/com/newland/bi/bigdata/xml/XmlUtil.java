@@ -55,15 +55,15 @@ public class XmlUtil {
 //    	srcXml = "j:/Work/海南/海南MRO/data/TD1.xml";
     	String dstXml = "j:/Work/海南/海南MRO/data/LteScRIP";
     	String xslt = "file:///j:/Work/海南/海南MRO/data/LteScRIP.xslt";
-    	pes(srcXml, dstXml, xslt);
+//    	pes(srcXml, dstXml, xslt);
     	dstXml = "j:/Work/海南/海南MRO/data/LteScPlrULQci1";
-    	xslt = "j:/Work/海南/海南MRO/data/LteScPlrULQci1.xslt";
+    	xslt = "file:///j:/Work/海南/海南MRO/data/LteScPlrULQci1.xslt";
 //    	pes(srcXml, dstXml, xslt);
     	dstXml = "j:/Work/海南/海南MRO/data/LteScRSRP";
     	xslt = "file:///j:/Work/海南/海南MRO/data/LteScRSRP.xslt";
 //    	pes(srcXml, dstXml, xslt);
     	dstXml = "j:/Work/海南/海南MRO/data/output1";
-    	xslt = "j:/Work/海南/海南MRO/data/ALL.xslt";
+    	xslt = "file:///j:/Work/海南/海南MRO/data/ALL.xslt";
 //    	pes(srcXml, dstXml, xslt);
     	srcXml = "file:///j:/Work/ETL/xml解析/data/ex.xml";
     	dstXml = "j:/Work/ETL/xml解析/data/ex";

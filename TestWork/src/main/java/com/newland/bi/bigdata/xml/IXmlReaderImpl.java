@@ -3,7 +3,6 @@ package com.newland.bi.bigdata.xml;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,62 +22,87 @@ public class IXmlReaderImpl implements IXmlReader {
 
 	// 初始化param对象中的xslt参数KEY
 	public static String PARAM_XSLT = "xslt";
-	// 初始化param对象
-	private Map<String, Map<String, String>> xslt_list = null;
-	// 原始xml数据文件
-	private File srcXmlFile = null;
+	// 初始化param对象中的解析名称的KEY
+	public static String PARAM_NAME = "xsltName";
+
 	// 解析结果map
 	private Map<String, BufferedReader> peser_result = null;
-	
+	// 原始xml数据文件缓存
+	MemoryCacheFile cacheFile = null;
+	// 传入参数
+	List<Map<String, String>> xslt_list = null;
+
 	/**
 	 * 初始化
 	 * */
 	@Override
-	public void init(Map<String, Map<String, String>> param) {
+	public void init(List<Map<String, String>> param) {
 		this.xslt_list = param;
 	}
 
 	/**
 	 * 加载原始xml数据文件
-	 * */
+	 * 
+	 * @throws IOException
+	 */
 	@Override
-	public void load(File xmlFile) {
-		// 原始xml数据文件
-		this.srcXmlFile = xmlFile;
+	public void load(InputStream inputStream) throws IOException {
 		// 解析结果map初始化
 		this.peser_result = new HashMap<String, BufferedReader>();
+		// 构建原始xml数据文件缓存
+		cacheFile = new MemoryCacheFile(inputStream);
 		// 循环参数，根据XSLT解析XML数据文件
-		for (Map.Entry<String, Map<String, String>> param : this.xslt_list.entrySet()) {
+		for (Map<String, String> param : this.xslt_list) {
 			// 解析获得BufferedReader
-			BufferedReader reader = transformXmlByXslt(this.srcXmlFile, param.getValue().get(PARAM_XSLT));
+			BufferedReader reader = transformXmlByXslt(cacheFile.getInputStream(), param.get(PARAM_XSLT));
 			// 存入解析结果map
-			this.peser_result.put(param.getKey(), reader);
+			this.peser_result.put(param.get(PARAM_NAME), reader);
 		}
+		// 释放原始xml数据文件输入流
+		this.cacheFile.close();
+		this.cacheFile = null;
 	}
-
+	
 	/**
-	 * 返回解析好的结果内容
+	 * 返回解析好的结果内容，这里随机给出数据
+	 * 
 	 * @param limit 输出行数
-	 * */
+	 */
 	@Override
-	public Map<String, List<String>> getBatch(int limit) {
-		Map<String, List<String>> batchResult = new HashMap<String, List<String>>();
+	public IXmlBatchMsgs getBatch(int limit) {
+		IXmlBatchMsgs batchResult = null;
 		// 循环解析结果map
 		for (Map.Entry<String, BufferedReader> peser : this.peser_result.entrySet()) {
 			try {
 				List<String> tmplist = new ArrayList<String>();
-				String str = "";
+				String str = null;
 				int count = 0;
 				// 获得解析结果
 				BufferedReader reader = peser.getValue();
 				// 根据传入的行数，循环读取解析结果，写入到返回list
-				while (reader!=null && limit>0 && (str=reader.readLine())!=null) {
+				while (reader != null && limit > 0 && (str = reader.readLine()) != null) {
 					tmplist.add(str);
 					count++;
-					if (count==limit) break;
+					if (count == limit)
+						break;
 				}
-				// 设置返回map
-				batchResult.put(peser.getKey(), tmplist);
+				// 三种情况
+				// 1、文件读取完成，tmplist有值，返回
+				// 2、文件读取完成，tmplist没有值，继续下个循环
+				// 3、文件没有读取完成，返回
+				if ((str==null && tmplist.size() > 0) || (str!=null)) {
+					// 设置返回值
+					batchResult = new IXmlBatchMsgs();
+					batchResult.setDateType(peser.getKey());
+					batchResult.setRecords(tmplist);
+					// 跳出循环
+					break;
+				} else if (str==null && tmplist.size()==0) {
+					// 继续下个循环
+				} else {
+					// 异常情况
+					throw new IOException("异常情况，无法返回");
+				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -106,46 +130,47 @@ public class IXmlReaderImpl implements IXmlReader {
 		this.peser_result = null;
 		// 释放初始化param对象
 		this.xslt_list = null;
-		// 释放原始xml数据文件对象
-		this.srcXmlFile = null;
+
 	}
 
-/* ====================工具类==================== */
-	
-	/** 
-     * 使用XSLT转换XML文件 
-     * @param srcXml 源XML文件
-     * @param xslt 解析XSLT文件内容
-     */
-    private BufferedReader transformXmlByXslt(File srcXml, String xslt) {
-    	BufferedReader reader = null;
-    	InputStream ips = null;
-    	ByteArrayOutputStream ops = null;
-    	// 判断源文件是否有内容 & 判断样式文件有值
-    	if (srcXml!=null && srcXml.length()>0 && xslt!=null && !xslt.trim().equals("")) {
-        	ops = new ByteArrayOutputStream();
-        	// SAXON XSLT2.0
-        	System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
-            // 获取转换器工厂
-            TransformerFactory tf = TransformerFactory.newInstance();
-            try {
-                // 获取转换器对象实例
-                Transformer transformer = tf.newTransformer(new StreamSource(StringToInputStream(xslt)));
-                // 进行转换
-                transformer.transform(new StreamSource(srcXml),
-                        new StreamResult(ops));
-                // 输出流转输入流
-                ips = new ByteArrayInputStream(ops.toByteArray());
-                // 输入流转reader
-                reader = new BufferedReader(new InputStreamReader(ips));
-            } catch (TransformerConfigurationException e) {
-                e.printStackTrace();
-            } catch (TransformerException e) {
-                e.printStackTrace();
-            } finally {
-            	// 最后关闭输入流和输出流
-            	if (ops!=null) {
-            		try {
+	/* ====================工具类==================== */
+
+	/**
+	 * 使用XSLT转换XML文件
+	 * 
+	 * @param srcXml
+	 *            源XML文件
+	 * @param xslt
+	 *            解析XSLT文件内容
+	 */
+	private BufferedReader transformXmlByXslt(InputStream inputStream, String xslt) {
+		BufferedReader reader = null;
+		InputStream ips = null;
+		ByteArrayOutputStream ops = null;
+		// 判断源文件是否有内容 & 判断样式文件有值
+		if (inputStream != null && xslt != null && !xslt.trim().equals("")) {
+			ops = new ByteArrayOutputStream();
+			// SAXON XSLT2.0
+			System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
+			// 获取转换器工厂
+			TransformerFactory tf = TransformerFactory.newInstance();
+			try {
+				// 获取转换器对象实例
+				Transformer transformer = tf.newTransformer(new StreamSource(StringToInputStream(xslt)));
+				// 进行转换
+				transformer.transform(new StreamSource(inputStream), new StreamResult(ops));
+				// 输出流转输入流
+				ips = new ByteArrayInputStream(ops.toByteArray());
+				// 输入流转reader
+				reader = new BufferedReader(new InputStreamReader(ips));
+			} catch (TransformerConfigurationException e) {
+				e.printStackTrace();
+			} catch (TransformerException e) {
+				e.printStackTrace();
+			} finally {
+				// 最后关闭输入流和输出流
+				if (ops != null) {
+					try {
 						ops.close();
 					} catch (IOException e) {
 						e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.newland.bi.bigdata.xml;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -8,15 +9,12 @@ import java.util.Map;
  * Xml解析接口
  * */
 public interface IXmlReader {
-	public void init(Map<String,Map<String,String>> param);
+	
+	public void init(List<Map<String,String>> param);
 
-	public void load(File xmlFile);
-	/**
-	 * 
-	 * @param limit
-	 * @return
-	 */
-	public Map<String,List<String>> getBatch(int limit);
+	void load(InputStream inputStream) throws IOException;
+	
+	public IXmlBatchMsgs getBatch(int limit);
 	
 	public void clear();
 }

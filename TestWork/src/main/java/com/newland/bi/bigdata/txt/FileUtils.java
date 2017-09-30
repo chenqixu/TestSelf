@@ -13,8 +13,8 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.newland.bi.bigdata.xml.IXmlReader;
-import com.newland.bi.bigdata.xml.IXmlReaderImpl;
+import com.newland.bi.bigdata.xml.IXmlReader1;
+import com.newland.bi.bigdata.xml.IXmlReaderImpl1;
 
 public class FileUtils {
 	public static BufferedReader reader = null;
