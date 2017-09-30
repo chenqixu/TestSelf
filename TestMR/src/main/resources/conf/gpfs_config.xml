@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<!-- 输入路径信息 -->
+	<property>
+	  	<name>INPUT_IP_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/ip/</value>
+	  	<description>原始IP文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_DNS_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/http_dns/</value>
+	  	<description>原始DNS文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_EMAIL_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/mail/</value>
+	  	<description>原始EMAIL文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_FTP_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/ftp/</value>
+	  	<description>原始FTP文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_HTTP_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/http_net/</value>
+	  	<description>原始HTTP文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_IM_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/im/</value>
+	  	<description>原始IM文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_MMS_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/mms/</value>
+	  	<description>原始MMS文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_P2P_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/p2p/</value>
+	  	<description>原始P2P文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_RTSP_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/rtsp/</value>
+	  	<description>原始RTSP文件输入路径</description>
+	</property>
+	<property>
+	  	<name>INPUT_VOIP_FILE_PATH</name>
+	  	<value>/yz_newland_base/gpfsdata/gn_xdr/voip/</value>
+	  	<description>原始VOIP文件输入路径</description>
+	</property>
+	
+	<!-- Oracle导出终端信息文件路径信息 -->
+	<property>
+		<name>ORACLE_TABLEFILE_IN_HDFS</name>
+		<value>/yz_newland_base/bigdata/gn_xdr/joinData/oracleMobiletype/modeldesc</value>
+		<description>关联oracle表在gpfs中的位置</description>
+	</property>
+	
+	<!-- 关联信息文件路径信息 -->
+	<property>
+		<name>APP_NAME_TABLE</name>
+		<value>/appNameTable.txt</value>
+		<description>app配置信息表在gpfs中的位置</description>
+	</property>
+	
+	<!-- 关联信息文件路径信息 -->
+	<property>
+		<name>WEB_NAME_TABLE</name>
+		<value>/webNameTable.txt</value>
+		<description>web配置信息表在hdfs中的位置</description>
+	</property>
+	
+	<!-- 输出路径信息 -->
+	<property>
+	  	<name>FILE_OUTPUT_PATH</name>
+	  	<value>/yz_newland_base/bigdata/gn_xdr/joinData/data/</value>
+	  	<description>输出路径</description>
+	</property>
+	<property>
+	  	<name>TMP_PATH</name>
+	  	<value>/yz_newland_base/bigdata/gn_xdr/joinData/tmp/</value>
+	  	<description>临时文件输出路径</description>
+	</property>
+	<property>
+	  	<name>ERROR_OUTPUT_PATH</name>
+	  	<value>/yz_newland_base/bigdata/gn_xdr/joinData/error/</value>
+	  	<description>错误记录文件输出路径</description>
+	</property>
+	
+	<property>
+	  	<name>HBASE_OUTPUT_FILE</name>
+	  	<value>/yz_newland_base/bigdata/gn_xdr/joinData/tohbasedata/</value>
+	  	<description>Hbase入库文件输出路径</description>
+	</property>
+
+		<!-- 字段信息 -->
+	<property>
+	  	<name>GN_XDR_IP_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,busi_type,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,duration_1,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_built_delay,tcp_confirm_delay,first_tcp_success_delay,first_answer_delay,window_size,mss_size,tcp_attempts_cnt,tcp_connection_status,session_end_flag,charge_id,terminal_factory,terminal_model,apply_classify,apply_name</value>
+	  	<description>IP表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_DNS_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,dns,results_ip,dns_response_code,dns_requests_cnt,response_cnt,authoriza_content_num,add_content_num,charge_id,terminal_factory,terminal_model</value>
+	  	<description>DNS表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_EMAIL_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,email_type,return_status_code,user_name,sender_info,email_long,smtp_domain,receive_user,email_header_info,access_mode,charge_id,terminal_factory,terminal_model</value>
+	  	<description>EMAIL表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_FTP_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,ftp_status,login_user,loc_dir,trans_mode,trans_direction,file_name,local_port,remote_port,file_total_size,response_delay,charge_id,terminal_factory,terminal_model</value>
+	  	<description>FTP表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_HTTP_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,duration_1,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,browse_tool,portal_app,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,object_type,object_code,http_versions,first_http_answer_delay,last_http_answer_delay,last_ack_answer_delay,host,uri,x_online_host,user_agent,http_content_type,refer_uri,cookie,content_length,target_action,wtp_disruption_type,wtp_disruption_causes,title,key_word,charge_id,terminal_factory,terminal_model,label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5</value>
+	  	<description>HTTP表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_IM_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,login_user,versions,client_type,oper_type,charge_id,terminal_factory,terminal_model</value>
+	  	<description>IM表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_MMS_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,first_tcp_delay,second_tcp_delay,first_answer_delay,trans_type,success_flag,http_or_wap,http_wap_code,mmse_rsp_status,mms_send_addr,mms_msg_id,mms_transaction_id,mms_retrive_addr,mms_retrive_addr_num,mms_cc_bcc_addr,mms_cc_bcc_addr_num,mms_subject,mms_data_size,mmsc_ip,host,uri,online_host,charge_id,terminal_factory,terminal_model</value>
+	  	<description>MMS表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_P2P_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,file_size,p2p_id,tracker,charge_id,terminal_factory,terminal_model</value>
+	  	<description>P2P表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_RTSP_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,url,user_agent,rtp_server_ip,client_start_prot,client_end_prot,server_start_prot,server_end_prot,video_flux,audio_flux,answer_dely,charge_id,terminal_factory,terminal_model,label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5</value>
+	  	<description>RTSP表字段</description>
+	</property>
+	<property>
+	  	<name>GN_XDR_VOIP_FIELD</name>
+	  	<value>city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type,procedure_id,ip_id,start_time,end_time,app_class_top,app_class,business,l4_protocol,user_port,server_ip,server_prot,country_code,net_code,up_data,down_data,duration,up_rate,down_rate,up_ip_pkgs,down_ip_pkgs,action_flag,complete_flag,busi_delay,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,call_mode,calling_nbr,called_nbr,call_type,voip_data_flux,hang_reason,protocol_type,charge_id,terminal_factory,terminal_model</value>
+	  	<description>VOIP表字段</description>
+	</property>
+	
+	<!-- M to R需要传输的字段 -->
+	<property>
+	  	<name>MAP_IP_TRANSPORT</name>
+	  	<value>ip_id,server_ip,apply_name,up_data,down_data,up_ip_pkgs,down_ip_pkgs,rat,lac,cid,charge_id,msisdn,terminal_model,apn,imei,start_time,end_time,imsi,l4_protocol,apply_classify,server_prot,duration,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets</value>
+	  	<description>传输的IP表字段</description>
+	</property>
+	<property>
+  		<name>MAP_DNS_TRANSPORT</name>
+  		<value>ip_id,server_ip,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的DNS表字段</description>
+	</property>
+	<property>
+  		<name>MAP_EMAIL_TRANSPORT</name>
+  		<value>ip_id,server_ip,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs,user_name</value>
+  		<description>传输的EMAIL表字段</description>
+	</property>
+	<property>
+  		<name>MAP_FTP_TRANSPORT</name>
+  		<value>ip_id,server_ip,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的FTP表字段</description>
+	</property>
+	<property>
+  		<name>MAP_HTTP_TRANSPORT</name>
+  		<value>ip_id,host,uri,apply_name,apply_classify,web_classify,web_name,up_data,down_data,up_ip_pkgs,down_ip_pkgs,user_agent</value>
+  		<description>传输的HTTP表字段</description>
+	</property>
+	<property>
+  		<name>MAP_IM_TRANSPORT</name>
+  		<value>ip_id,server_ip,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的IM表字段</description>
+	</property>
+	<property>
+  		<name>MAP_MMS_TRANSPORT</name>
+  		<value>ip_id,uri,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的MMS表字段</description>
+	</property>
+	<property>
+  		<name>MAP_P2P_TRANSPORT</name>
+  		<value>ip_id,server_ip,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的P2P表字段</description>
+	</property>
+	<property>
+  		<name>MAP_RTSP_TRANSPORT</name>
+  		<value>ip_id,server_ip,rtp_server_ip,apply_name,apply_classify,web_classify,web_name,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的RTSP表字段</description>
+	</property>
+	<property>
+  		<name>MAP_VOIP_TRANSPORT</name>
+  		<value>ip_id,server_ip,app_class,app_class_top,up_data,down_data,up_ip_pkgs,down_ip_pkgs</value>
+  		<description>传输的VOIP表字段</description>
+	</property>		
+	
+	
+	
+	
+	<!-- 其他 -->
+	<property>
+		<name>PREFIX</name>
+		<value>statisticsourcedata</value>
+	</property>
+	<property>
+		<name>DEBUG</name>
+		<value>false</value>
+	</property>
+	
+</configuration>

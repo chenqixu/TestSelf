@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<person id="1">
+		<username>张三</username>
+		<password>123123</password>
+	</person>
+	<person id="2">
+		<username>1111111112</username>
+		<password><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="text" encoding="utf-8"/>
+
+<xsl:variable name="filename" select="document-uri(/)"/>
+<xsl:variable name="filename2" select="substring-after($filename, '_')" />
+<xsl:variable name="filename3" select="substring-after($filename2, '_')" />
+<xsl:variable name="equipment" select="substring-before($filename3, '_')" />
+
+<xsl:template match="/">
+<xsl:for-each select="bulkPmMrDataFile/eNB">
+<xsl:variable name="enbid" select ="@id"/>
+<xsl:for-each select="measurement[smr='MR.LteScPlrULQci1 MR.LteScPlrULQci2 MR.LteScPlrULQci3 MR.LteScPlrULQci4 MR.LteScPlrULQci5 MR.LteScPlrULQci6 MR.LteScPlrULQci7 MR.LteScPlrULQci8 MR.LteScPlrULQci9 MR.LteScPlrDLQci1 MR.LteScPlrDLQci2 MR.LteScPlrDLQci3 MR.LteScPlrDLQci4 MR.LteScPlrDLQci5 MR.LteScPlrDLQci6 MR.LteScPlrDLQci7 MR.LteScPlrDLQci8 MR.LteScPlrDLQci9']">
+<xsl:for-each select="object/v">
+<xsl:value-of select="$enbid"></xsl:value-of>|<xsl:value-of select="../../../../fileHeader/@reportTime"></xsl:value-of>|<xsl:value-of select="../../../../fileHeader/@startTime"></xsl:value-of>|<xsl:value-of select="../../../../fileHeader/@endTime"></xsl:value-of>|<xsl:value-of select="../@id"></xsl:value-of>|<xsl:value-of select="../@MmeUeS1apId"></xsl:value-of>|<xsl:value-of select="../@MmeGroupId"></xsl:value-of>|<xsl:value-of select="../@MmeCode"></xsl:value-of>|<xsl:value-of select="../@TimeStamp"></xsl:value-of>|<xsl:value-of select="$equipment"></xsl:value-of>|<xsl:value-of select="translate(.,' ','|')"></xsl:value-of>|
+</xsl:for-each>
+</xsl:for-each>
+</xsl:for-each>
+</xsl:template>
+
+</xsl:stylesheet>]]></password>
+	</person>
+</root>

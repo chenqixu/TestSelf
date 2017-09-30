@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+    xmlns:soap="http://cxf.apache.org/bindings/soap"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://cxf.apache.org/bindings/soap 
+                        http://cxf.apache.org/schemas/configuration/soap.xsd
+                        http://cxf.apache.org/jaxws 
+                        http://cxf.apache.org/schemas/jaxws.xsd">
+        <!-- 配置客户端bean -->
+        <!-- 
+            id:唯一标识
+            address：请求的服务地址
+            serviceClass：客户端接口
+         -->
+        <jaxws:client id="GreetingService" address="http://localhost:8080/SpringCXFWebService/GreetingService" serviceClass="com.gary.test.ws.service.GreetingService"></jaxws:client>
+        <jaxws:client id="NgService" address="http://10.1.8.6:9007/bi_bigdata_svc/services/NgService" serviceClass="com.newland.bi.webservice.service.GnQryService"></jaxws:client>
+		
+</beans>

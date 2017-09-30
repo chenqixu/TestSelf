@@ -41,9 +41,19 @@ public class regex1 {
 //		boolean result = m.find();
 //		System.out.println(result);
 
-		String regex = "lib";
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher("lib");
+//		String regex = "lib";
+//		Pattern p = Pattern.compile(regex);
+//		Matcher m = p.matcher("lib");
+//		boolean matched = m.matches();
+//		System.out.println(matched);
+//		boolean result = m.find();
+//		System.out.println(result);
+		
+		String regex = "Uar_103_01_IP_session_60_20170111_212300_20170111_212359.csv";
+		String regex1 = "LTE_VOIP_002113305707_20170117080200.csv";
+		String regex2 = "LTE.csv";
+		Pattern p = Pattern.compile(regex2);
+		Matcher m = p.matcher("L*");
 		boolean matched = m.matches();
 		System.out.println(matched);
 		boolean result = m.find();

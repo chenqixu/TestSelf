@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+<property>
+<!--namenode dir-->
+<name>dfs.namenode.name.dir</name>
+<value>/opt/hadoop/hadoop-2.4.0/hdfs/namenode</value>
+<description>Determineswhere on the local filesystem the DFS name node should store the name table. Ifthis is a comma-delimited list of directories then the name table is replicatedin all of the directories, for redundancy. </description>
+<final>true</final>
+</property>
+<property>
+<!--datanode dir-->
+<name>dfs.datanode.data.dir</name>
+<value>/opt/hadoop/hadoop-2.4.0/hdfs/datanode</value>
+<description>Determineswhere on the local filesystem an DFS data node should store its blocks. If thisis a comma-delimited list of directories, then data will be stored in all nameddirectories, typically on different devices.Directories that do not exist areignored.
+</description>
+<final>true</final>
+</property>
+<property>
+<!--replication num-->
+<name>dfs.replication</name>
+<value>1</value>
+</property>
+<property>
+<!--file permissions-->
+<name>dfs.permissions</name>
+<value>false</value>
+</property>
+</configuration>

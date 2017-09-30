@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 输入路径信息 -->
+	<property>
+		<name>input</name>
+		<value>test/hbaseinput.txt</value>
+		<description>文件输入路径</description>
+	</property>
+	<!-- 输出路径配置 -->
+	<property>
+		<name>dstout</name>
+		<value>test/hbaseoutput</value>
+		<description>输出文件路径</description>
+	</property>
+	<!-- 表名 -->
+	<property>
+		<name>tablename</name>
+		<value>gn_cdr_7</value>
+		<description>表名</description>
+	</property>
+</configuration>
