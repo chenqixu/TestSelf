@@ -73,5 +73,9 @@ public class XmlUtil {
     	dstXml = "file:///j:/Work/海南/海南MRO/data/test1";
     	xslt = "file:///j:/Work/海南/海南MRO/data/test1.xslt";
 //    	pes(srcXml, dstXml, xslt);
+    	
+    	// 海南MRO文件名时间截取测试
+    	String file_name = "TD-LTE_MRO_HUAWEI_010199146040_475829_20170707121500.xml.gz";
+    	System.out.println(file_name.substring(38,38+14));
 	}
 }
