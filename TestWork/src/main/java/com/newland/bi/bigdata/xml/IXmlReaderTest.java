@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class IXmlReaderTest {
-	public static void IXmlReader1Test() {
+	public static void IXmlReaderTest1() {
 		// 参数
 		Map<String, Map<String, String>> param = new HashMap<String, Map<String, String>>();
 		Map<String, String> xsltparam1 = new HashMap<String, String>();
@@ -54,7 +54,6 @@ public class IXmlReaderTest {
 		param.put("x2", xsltparam2);
 		// 数据文件
 		File xmlFile = new File("j:/Work/海南/海南MRO/data/TD-LTE_MRO_HUAWEI_010199146040_475829_20170707121500.xml");
-//		Reader reader = new FileReader(xmlFile);
 		// 读取行数
 		int limit = 1000;
 		
@@ -64,7 +63,6 @@ public class IXmlReaderTest {
 		ixri.init(param);
 		// 加载数据文件
 		ixri.load(xmlFile);
-//		ixri.load(reader);
 		// 输出解析后的内容
 		System.out.println(ixri.getBatch(limit).get("x1"));
 		System.out.println(ixri.getBatch(limit).get("x2"));
@@ -134,20 +132,32 @@ public class IXmlReaderTest {
 		ixri.init(xslt_list);
 		// 加载数据文件
 		ixri.load(is);
-//		ixri.load(reader);
 		// 输出解析后的内容
-		System.out.println(ixri.getBatch(limit));
-		System.out.println(ixri.getBatch(limit));
-		System.out.println(ixri.getBatch(limit));
-		System.out.println(ixri.getBatch(limit));
-		System.out.println(ixri.getBatch(limit));
-		System.out.println(ixri.getBatch(limit));
+		printList(ixri.getBatch(limit).getRecords());
+//		System.out.println(ixri.getBatch(limit));
+//		System.out.println(ixri.getBatch(limit));
+//		System.out.println(ixri.getBatch(limit));
+//		System.out.println(ixri.getBatch(limit));
+//		System.out.println(ixri.getBatch(limit));
 		// 释放对象
 		ixri.clear();
 	}
 	
+	/**
+	 * 打印List<String>内容
+	 * */
+	public static void printList(List<String> list) {
+		if (list!=null) {
+			for (String str : list) {
+				System.out.println(str);
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
-//		IXmlReaderTest1();
+		// filename
+		IXmlReaderTest1();
+		// inputstream
 		IXmlReaderTest2();
 	}
 }
