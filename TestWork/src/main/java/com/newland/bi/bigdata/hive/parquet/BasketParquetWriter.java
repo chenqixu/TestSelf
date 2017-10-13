@@ -8,15 +8,20 @@ import java.util.Random;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.ql.io.parquet.read.DataWritableReadSupport;
+import org.apache.hadoop.hive.ql.io.parquet.timestamp.NanoTime;
 import org.apache.hadoop.hive.ql.io.parquet.write.DataWritableWriteSupport;
+import org.apache.hadoop.hive.serde2.io.TimestampWritable;
 import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Writable;
 
+import parquet.hadoop.ParquetReader;
 import parquet.hadoop.ParquetWriter;
 import parquet.hadoop.metadata.CompressionCodecName;
+import parquet.io.ColumnIOFactory;
 import parquet.schema.MessageType;
 import parquet.schema.MessageTypeParser;
 
@@ -39,6 +44,12 @@ public class BasketParquetWriter {
 		DataWritableWriteSupport.setSchema(schema, config);
 		Path outDirPath = new Path(ReadCord.HDFS_PATH+"/user/hive/warehouse/parquet_example1/year=2015/month=7/day=16/"+outFilePath);
 
+//		// read
+//		ParquetReader reader = new ParquetReader(outDirPath, new DataWritableReadSupport(){
+//			
+//		});
+//		NanoTime nt;
+		
 		ParquetWriter writer = new ParquetWriter(outDirPath, new DataWritableWriteSupport () {
 			@Override
 			public WriteContext init(Configuration configuration) {
@@ -65,6 +76,7 @@ public class BasketParquetWriter {
 				values[2] = new IntWritable(quantityRandom.nextInt(10));
 				values[3] = new FloatWritable(priceRandom.nextFloat());
 				values[4] = new FloatWritable(totalPrice);
+//				new TimestampWritable();
 				ArrayWritable value = new ArrayWritable(Writable.class, values);
 				writer.write(value);
 			}
