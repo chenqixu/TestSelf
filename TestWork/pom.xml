@@ -32,6 +32,8 @@
 		<hive.version>0.10.0-cdh4.3.0</hive.version>
 		-->
 		<hive.version>1.1.0-cdh5.7.2</hive.version>
+		<!-- parquet version -->
+		<parquet.version>1.5.0-cdh5.4.0</parquet.version>
 		<spark.version>1.5.0</spark.version>
 		<!--
 		<sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version>
@@ -139,6 +141,13 @@
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-cli</artifactId>
 			<version>${hive.version}</version>
+		</dependency>
+		
+		<!-- parquet -->
+		<dependency>
+			<groupId>com.twitter</groupId>
+			<artifactId>parquet-hadoop-bundle</artifactId>
+			<version>${parquet.version}</version>
 		</dependency>
 
 		<!-- google -->

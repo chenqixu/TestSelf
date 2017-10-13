@@ -55,6 +55,9 @@ public class IXmlReaderImpl implements IXmlReader {
 		for (Map<String, String> param : this.xslt_list) {
 			// 解析获得BufferedReader
 			BufferedReader reader = transformXmlByXslt(cacheFile.getInputStream(), param.get(PARAM_XSLT));
+			// 如果传入的名称无法获取到，就抛出运行时异常
+			if (param.get(PARAM_NAME)==null)
+				throw new RuntimeException("传入的名称无法获取到,PARAM_NAME is null.");
 			// 存入解析结果map
 			this.peser_result.put(param.get(PARAM_NAME), reader);
 		}
