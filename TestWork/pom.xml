@@ -34,7 +34,7 @@
 		<hive.version>1.1.0-cdh5.7.2</hive.version>
 		<!-- parquet version -->
 		<parquet.version>1.5.0-cdh5.4.0</parquet.version>
-		<spark.version>1.5.0</spark.version>
+		<spark.version>1.6.0</spark.version>
 		<!--
 		<sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version>
 		-->
@@ -174,8 +174,25 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-hive_${sparkother.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-launcher_${sparkother.version}</artifactId>
 			<version>${spark.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-sql_${sparkother.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
+		
+		<!-- impala -->
+		<dependency>
+			<groupId>com.cloudera.impala.jdbc</groupId>
+			<artifactId>ImpalaJDBC41</artifactId>
+			<version>2.5.30</version>
 		</dependency>
 
 		<!-- lzo -->
