@@ -8,5 +8,7 @@ public class Aig2Main {
 		System.out.println("[source]"+passwd+" [md5]"+MD5.toMD5(passwd));
 		passwd = "234wer";
 		System.out.println("[source]"+passwd+" [md5]"+MD5.toMD5(passwd));
+		passwd = "000000";
+		System.out.println("[source]"+passwd+" [md5]"+MD5.toMD5(passwd));
 	}
 }

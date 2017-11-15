@@ -6,7 +6,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-public class EncryptUtil {
+public class EncryptUtilOld {
 	private static final String PASSWORD_CRYPT_KEY = "__nlbi__";
 
 	private final static String DES = "DES";
@@ -184,7 +184,7 @@ public class EncryptUtil {
 		System.out.println("[加密]"+data2);
 		System.out.println("[解密]"+decrypt(data2));
 		
-		System.out.println("E13D97F8F7FF8FCA8246B2E26CED148E[解密]"+decrypt("E13D97F8F7FF8FCA8246B2E26CED148E"));
+		System.out.println("bPb0b1aRbsbdbwabaVaublbsacaHb7bcbUaCbzaiamaZa8a7bvaVbEbJbrbtaLbB[解密]"+decrypt("bPb0b1aRbsbdbwabaVaublbsacaHb7bcbUaCbzaiamaZa8a7bvaVbEbJbrbtaLbB"));
 	}
 }
 
