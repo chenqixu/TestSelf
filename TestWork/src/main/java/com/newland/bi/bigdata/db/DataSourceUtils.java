@@ -65,21 +65,29 @@ public class DataSourceUtils {
 	// 获取连接
 	public static Connection getConnection()
 			throws Exception {
+		String _dbUserName = dbUserName;
+		String _dbPassword =dbPassword ;
 		 // 是否使用连接池
 		if(isPool){
 			return getConfSource().getConnection();
 		} else {
-			//统一密码管理
-		    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
-		    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
-		    //用户名
-		    StringBuffer szUserName = new StringBuffer();
-		    //密码
-		    StringBuffer szPasswd = new StringBuffer();
-		    cSaInfoQueryer.openAndQueryByName(dbUserName, dbPassword, szUserName, szPasswd);
+			// 是否使用统一密码
+			if(isLocal){
+				// 统一密码管理
+			    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
+			    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
+			    // 用户名
+			    StringBuffer szUserName = new StringBuffer();
+			    // 密码
+			    StringBuffer szPasswd = new StringBuffer();
+			    cSaInfoQueryer.openAndQueryByName(dbUserName, dbPassword, szUserName, szPasswd);
+			    // 解析出来的用户密码
+			    _dbUserName = szUserName.toString();
+			    _dbPassword = szPasswd.toString();
+			}
 	        // 加载数据库驱动类
 			Class.forName(dbDriver);
-			Connection conn = DriverManager.getConnection(dbURL, szUserName.toString(), szPasswd.toString());
+			Connection conn = DriverManager.getConnection(dbURL, _dbUserName, _dbPassword);
 			return conn;
 		}
 	}
@@ -118,20 +126,28 @@ public class DataSourceUtils {
 	 */
 	public static DataSource setupDataSource(String driver, String username,
 			String password, String url) {
+		String _dbUserName = dbUserName;
+		String _dbPassword =dbPassword ;
 		
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(driver);
-		
-		//统一密码管理
-	    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
-	    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
-	    //用户名
-	    StringBuffer szUserName = new StringBuffer();
-	    //密码
-	    StringBuffer szPasswd = new StringBuffer();
-	    cSaInfoQueryer.openAndQueryByName(username, password, szUserName, szPasswd);
-		ds.setUsername(szUserName.toString());
-		ds.setPassword(szPasswd.toString());
+
+		// 是否使用统一密码
+		if(isLocal){
+			// 统一密码管理
+		    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
+		    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
+		    // 用户名
+		    StringBuffer szUserName = new StringBuffer();
+		    // 密码
+		    StringBuffer szPasswd = new StringBuffer();
+		    cSaInfoQueryer.openAndQueryByName(username, password, szUserName, szPasswd);
+		    // 解析出来的用户密码
+		    _dbUserName = szUserName.toString();
+		    _dbPassword = szPasswd.toString();
+		}
+		ds.setUsername(_dbUserName);
+		ds.setPassword(_dbPassword);
 		ds.setUrl(url);
 		// 最大活动连接
 		ds.setMaxActive(5);
@@ -156,5 +172,53 @@ public class DataSourceUtils {
 			bds.close();
 			ds = null;
 		}
+	}
+
+	public static boolean isLocal() {
+		return isLocal;
+	}
+
+	public static void setLocal(boolean isLocal) {
+		DataSourceUtils.isLocal = isLocal;
+	}
+
+	public static boolean isPool() {
+		return isPool;
+	}
+
+	public static void setPool(boolean isPool) {
+		DataSourceUtils.isPool = isPool;
+	}
+
+	public static String getDbDriver() {
+		return dbDriver;
+	}
+
+	public static void setDbDriver(String dbDriver) {
+		DataSourceUtils.dbDriver = dbDriver;
+	}
+
+	public static String getDbUserName() {
+		return dbUserName;
+	}
+
+	public static void setDbUserName(String dbUserName) {
+		DataSourceUtils.dbUserName = dbUserName;
+	}
+
+	public static String getDbPassword() {
+		return dbPassword;
+	}
+
+	public static void setDbPassword(String dbPassword) {
+		DataSourceUtils.dbPassword = dbPassword;
+	}
+
+	public static String getDbURL() {
+		return dbURL;
+	}
+
+	public static void setDbURL(String dbURL) {
+		DataSourceUtils.dbURL = dbURL;
 	}
 }

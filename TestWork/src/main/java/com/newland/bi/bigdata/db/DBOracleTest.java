@@ -33,6 +33,31 @@ public class DBOracleTest {
 	}
 	
 	/**
+	 * 构造函数，传入oracle版本
+	 * */
+	public DBOracleTest(int version){
+		switch (version){
+		case 11:
+			DataSourceUtils.setDbURL("jdbc:oracle:thin:@10.1.0.242:1521:ywxx");
+			DataSourceUtils.setDbUserName("bassweb");
+			DataSourceUtils.setDbPassword("bassweb");
+			DataSourceUtils.setLocal(false); //不使用同一密码
+			DataSourceUtils.setPool(false); //不使用连接池
+			break;
+		case 12:
+			DataSourceUtils.setDbURL("jdbc:oracle:thin:@10.1.8.99:1521/edc_etl_pri");
+			DataSourceUtils.setDbUserName("edc_etl_col");
+			DataSourceUtils.setDbPassword("edc_etl_col");
+			DataSourceUtils.setLocal(false); //不使用同一密码
+			DataSourceUtils.setPool(false); //不使用连接池
+			break;
+		default:
+			break;
+		}
+		init();
+	}
+	
+	/**
 	 * 类释放
 	 * */
 	@Override
@@ -54,6 +79,26 @@ public class DBOracleTest {
 	protected void init(){
 		// 初始连接池
 		DataSourceUtils.initConfigure();		
+	}
+	
+	/**
+	 * 通过SQL进行查询
+	 * */
+	public void querySQL(String sql){
+		try {
+			// 获得连接
+			conn = DataSourceUtils.getConnection();
+			st = conn.createStatement();
+			// 执行查询语句
+			rs = st.executeQuery(sql);
+			// 打印行数
+			System.out.println(rs.getRow());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 释放连接
+			DataSourceUtils.release(conn, st, rs);
+		}
 	}
 	
 	/**
@@ -234,17 +279,24 @@ public class DBOracleTest {
 	}
 	
 	public static void main(String[] args) {
-		String path = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\data.zip";
-		String path1 = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456";
-		String path2 = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456.zip";
-		String xmlPath = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456.xml";
-		DBOracleTest dbot = new DBOracleTest();
+//		String path = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\data.zip";
+//		String path1 = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456";
+//		String path2 = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456.zip";
+//		String xmlPath = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456.xml";
+//		DBOracleTest dbot = new DBOracleTest();
 //		int code = dbot.insertBlob(path);
 //		System.out.println("[resultcode]"+code);
 //		dbot.done();
 //		dbot.readByteStringToFile(path1, path2);
 //		dbot.readXmlToFile(xmlPath, path2);
-		// 销毁对象
-		dbot.finalize();
+//		// 销毁对象
+//		dbot.finalize();
+		// 测试12c和11g能否共用1个jdbc包
+		DBOracleTest dbot12 = new DBOracleTest(12);
+		dbot12.querySQL("select * from sm2_user");
+		dbot12.finalize();
+		DBOracleTest dbot11 = new DBOracleTest(11);
+		dbot11.querySQL("select * from sm_user");
+		dbot11.finalize();
 	}
 }

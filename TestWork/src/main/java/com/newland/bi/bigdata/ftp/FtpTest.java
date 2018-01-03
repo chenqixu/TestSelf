@@ -1,7 +1,5 @@
 package com.newland.bi.bigdata.ftp;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +67,8 @@ public class FtpTest {
 		}
     	return true;
     }
-	
-	public static void main(String[] args) {
+    
+    public static void test1(){
 		ifRoundSubdirectory = true;
     	FTPClient ftpClient = null;
     	String ftpServerIp = "192.168.230.101";//"10.1.8.6";
@@ -132,5 +130,47 @@ public class FtpTest {
 			}
 			ftpClient=null;
 		}
+    }
+    
+    public static void test2(){
+    	FTPClient ftpClient = null;
+    	String ftpServerIp = "10.1.8.75";
+    	int ftpServerPort = 21;
+    	String ftpServerUser = "edc_base";
+    	String ftpServerPassword = "edc_base";
+    	try {
+    		ftpClient = new FTPClient();    		
+    		ftpClient.connect(ftpServerIp, ftpServerPort);
+			ftpClient.login(ftpServerUser, ftpServerPassword);
+			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+	        ftpClient.enterLocalPassiveMode();
+	        ftpClient.setDataTimeout(300000);
+	        
+	        ftpClient.changeWorkingDirectory("/home/edc_base/wjc/test/mArtificialIntelligence/m/20171215091512");
+        	//扫描FTP的工作目录
+	        for(FTPFile a : ftpClient.listFiles()){
+	        	System.out.println(a.getName());
+	        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(ftpClient!=null){
+				try {
+					ftpClient.logout();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					ftpClient.disconnect();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			ftpClient=null;
+		}
+    }
+	
+	public static void main(String[] args) {
+		FtpTest.test2();
 	}
 }
