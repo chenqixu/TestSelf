@@ -37,15 +37,17 @@ public class PswEncrypt {
 	}
     /**
      * 二次加密方法
-     * @param md5pwd 传入密码
+     * @param passwd 传入密码
      * @param operatorid 密钥
      * @return MD5串二次加密的字符串
      */
-	public static String MD5PswEncrypt(String md5pwd,String operatorid){
+	public static String MD5PswEncrypt(String passwd,String operatorid){
 		
 		String newpwdstr = "";
 		
-		if(md5pwd != null && md5pwd.trim().length()>0 && operatorid != null && operatorid.trim().length()>0){
+		if(passwd != null && passwd.trim().length()>0 && operatorid != null && operatorid.trim().length()>0){
+			// md5后的字符串
+			String md5pwd = MD5.toMD5(passwd);
 			
 			char[] oldpwdstr = md5pwd.toCharArray();
 			int oldlen = oldpwdstr.length;
@@ -115,29 +117,30 @@ public class PswEncrypt {
 	 */
 	public static void main(String[] args)throws Exception{
 		String passwd = "000000";
-		String md5passwd = MD5.toMD5(passwd);
-		//System.out.println("[source]"+passwd+" [md5]"+md5passwd);
-		//传入的是md5后的字符串
 		//二次加密后密码
 		PswEncrypt synenc = new PswEncrypt();
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990122")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990122);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990424")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990424);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"8000005")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (8000005);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9991749")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9991749);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990986")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990986);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000227")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000227);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000119")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000119);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000264")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000264);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"8000003")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (8000003);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9804245")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9804245);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000106")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000106);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000224")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000224);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993110")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993110);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993111")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993111);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9802490")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9802490);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993112")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993112);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990072")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990072);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000102")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000102);");
-		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993113")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993113);");
+		System.out.println(synenc.MD5PswEncrypt("111111","9990035"));
+		System.out.println(synenc.MD5PswEncrypt("111111","9990424"));
+		System.out.println(synenc.MD5PswEncrypt("111111","9999022"));
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990122")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990122);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990424")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990424);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"8000005")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (8000005);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9991749")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9991749);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990986")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990986);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000227")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000227);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000119")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000119);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000264")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000264);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"8000003")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (8000003);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9804245")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9804245);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000106")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000106);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000224")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000224);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993110")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993110);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993111")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993111);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9802490")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9802490);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993112")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993112);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990072")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990072);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"11000102")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (11000102);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9993113")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9993113);");
+//		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990306")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990306);");
 	}
 }
