@@ -1,11 +1,15 @@
 package com.cqx.demo;
 
-import kafka.admin.DeleteTopicCommand;
+//import kafka.admin.DeleteTopicCommand;
 import kafka.admin.TopicCommand;
+import kafka.admin.TopicCommand.TopicCommandOptions;
+import kafka.utils.ZkUtils;
 
 public class KafkaApiTest {
 	public static final String zookeeper_ip_port = "192.168.230.128:2181";
 	public static final String zookeeper_param = "--zookeeper";
+	public ZkUtils zku;
+	public TopicCommandOptions tco;
 	private String[] options = null;	
 	public String[] getOptions() {
 		return options;
@@ -51,7 +55,9 @@ public class KafkaApiTest {
 			    "--topic",
 			    topic_name
 		};
-		DeleteTopicCommand.main(options);
+//		TopicCommand.deleteTopic(zku, tco);
+		TopicCommand.main(options);
+//		DeleteTopicCommand.main(options); // �ɰ汾
 	}
 	public static void main(String[] args) {
 		KafkaApiTest kat = new KafkaApiTest();
