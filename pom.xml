@@ -34,5 +34,6 @@
   	<module>TestQuestions</module>
   	<module>TestMR</module>
   	<module>TestSpringCXF</module>
+  	<module>TestWorkJDK8</module>
   </modules>
 </project>
