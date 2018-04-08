@@ -10,8 +10,9 @@ import java.sql.ResultSet;
  * */
 public class ImpalaJDBCTest {
 	static String JDBC_DRIVER = "com.cloudera.impala.jdbc41.Driver";
-	static String CONNECTION_URL = "jdbc:impala://10.1.8.75:21050/default";
-
+	static String CONNECTION_URL = "jdbc:impala://10.1.8.75:21050/default;user=foo;password=bar;MEM_LIMIT=1000000000;REQUEST_POOL=myPool;queuename=root";
+	com.cloudera.impala.jdbc41.Driver a;
+	org.apache.hive.service.cli.thrift.TExecuteStatementReq t;
 	public static void main(String[] args) throws Exception {
 		Connection con = null;
 		ResultSet rs = null;

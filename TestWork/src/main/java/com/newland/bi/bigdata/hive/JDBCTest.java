@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class JDBCTest {
 	private static String driverName = "org.apache.hive.jdbc.HiveDriver";
-	private static String url = "jdbc:hive2://10.1.8.1:10001/default";
+	private static String url = "jdbc:hive2://10.1.8.75:10000/default";
 	private Connection conn = null;
 	
 	public JDBCTest(){
@@ -133,8 +133,8 @@ public class JDBCTest {
 //		sql = "select concat(getSecondDomain(url,parse_url(url,'HOST')),'/',getCatalog(url,parse_url(url,'HOST'))) from url_test";
 //		jt.executeQuery(sql);
 		
-//		sql = "show tables";
-		sql = "select a from logs";
+		sql = "show tables";
+//		sql = "select a from logs";
 		jt.executeQuery(sql);
 		
 		// 最后释放连接资源
