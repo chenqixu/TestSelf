@@ -21,5 +21,16 @@
 			<version>1.2.12</version>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.newland.bd.utils</groupId>
+            <artifactId>nl-bd-jms-utils</artifactId>
+            <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 	</dependencies>
 </project>
