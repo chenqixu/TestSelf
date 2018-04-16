@@ -19,7 +19,68 @@ http://cxf.apache.org/schemas/jaxws.xsd
 		address="/GreetingService" />
 	<context:component-scan base-package="com.spring.test.bean" />
 	
-	<!-- < bean id="propertiesFiles" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<!-- 对JOTM进行初始化 -->
+	<bean id="jotm" class="org.springframework.transaction.jta.JotmFactoryBean"/>
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="userTransaction"><ref local="jotm"/></property>
+	</bean>
+	<!-- 定义所需的数据源 -->
+	<bean id="innerOracleDataSource" class="org.enhydra.jdbc.standard.StandardXADataSource" destroy-method="shutdown">
+		<property name="transactionManager"><ref local="jotm"/></property>
+		<property name="driverName"><value>oracle.jdbc.driver.OracleDriver</value></property>
+		<property name="url"><value>jdbc:oracle:thin:@192.168.230.128:1521:orcl</value></property>
+	</bean>
+	<bean id="dataSource" class="org.enhydra.jdbc.pool.StandardXAPoolDataSource" destroy-method="shutdown">
+		<property name="dataSource"><ref local="innerOracleDataSource"/></property>
+		<property name="maxSize"><value>5</value></property>
+		<property name="minSize"><value>2</value></property>
+		<property name="user"><value>bishow</value></property>
+		<property name="password"><value>bishow</value></property>
+	</bean>
+	<!-- 定义相应的sessionFactory -->
+	<bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="mappingResources">
+			<list>
+				<value>com/vtradex/edi/example/om/oracle/Example.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</prop>
+			</props>
+		</property>
+		<property name="jtaTransactionManager">
+			<ref bean="jotm" />
+		</property>
+ 	</bean>
+	<!-- 定义一个进行事务控制的代理 -->
+	<bean id="abstractTransactionProxy" abstract="true"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager"/>
+        </property>
+        <property name="transactionAttributeSource">
+			<bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+        </property>
+	</bean>
+	<!--  -->
+	<bean id="hqlExecutor1" class="com.vtradex.edi.example.util.HqlExecutor"  scope="singleton">
+		<property name="sessionFactory" ref="mySessionFactory"/>
+	</bean>
+	<bean id="hqlExecutor2" class="com.vtradex.edi.example.util.HqlExecutor"  scope="singleton">
+		<property name="sessionFactory" ref="mySessionFactory2"/>
+	</bean>
+    <bean id="tt" parent="abstractTransactionProxy">
+        <property name="target">
+			<bean class="com.vtradex.edi.server.service.Tt">
+				<property name="hqlExec1" ref="hqlExecutor1"/>
+				<property name="hqlExec2" ref="hqlExecutor2"/>
+			</bean>
+        </property>
+    </bean>
+	<!-- 配置文件
+	< bean id="propertiesFiles" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
 			<value>/WEB-INF/classes/resources/config/common.properties</value>
 		</property>

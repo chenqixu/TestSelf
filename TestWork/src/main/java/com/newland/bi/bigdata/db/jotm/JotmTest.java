@@ -43,7 +43,7 @@ public class JotmTest {
 	public static void main(String[] a) throws Exception {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
 				"org.ow2.carol.jndi.spi.MultiOrbInitialContextFactory");
-		System.setProperty(Context.PROVIDER_URL, "rmi://10.1.2.212:1099");
+		System.setProperty(Context.PROVIDER_URL, "rmi://10.1.4.185:1099");
 		String dbURL1= "jdbc:oracle:thin:@10.1.8.79:1521/edc_cfg_pri";
 		String dbURL2= "jdbc:oracle:thin:@10.1.0.242:1521:ywxx";	
 
