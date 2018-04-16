@@ -9,35 +9,21 @@
 	</parent>
 	<artifactId>TestWork</artifactId>
 	<properties>
-		<!--
-		<hadoop.version>2.0.0-cdh4.3.0</hadoop.version>
-		<hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version>
-		<hadoop.version>2.3.0-cdh5.1.5</hadoop.version>
-		<hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version>
-		<hadoop.version>2.4.0</hadoop.version>
-		<hadoop.mr.version>2.4.0</hadoop.mr.version> 
-		<hadoop.version>2.6.0</hadoop.version>
-		<hadoop.mr.version>2.6.0</hadoop.mr.version>
-		-->
+		<!-- <hadoop.version>2.0.0-cdh4.3.0</hadoop.version> <hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version> 
+			<hadoop.version>2.3.0-cdh5.1.5</hadoop.version> <hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version> 
+			<hadoop.version>2.4.0</hadoop.version> <hadoop.mr.version>2.4.0</hadoop.mr.version> 
+			<hadoop.version>2.6.0</hadoop.version> <hadoop.mr.version>2.6.0</hadoop.mr.version> -->
 		<hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
 		<hadoop.mr.version>2.6.0-cdh5.7.2</hadoop.mr.version>
-		<!--
-		<hbase.version>0.98.1-cdh5.1.5</hbase.version>
-		<hbase.version>0.98.1-cdh5.1.0</hbase.version>
-		<hbase.version>1.1.1</hbase.version>
-		-->
+		<!-- <hbase.version>0.98.1-cdh5.1.5</hbase.version> <hbase.version>0.98.1-cdh5.1.0</hbase.version> 
+			<hbase.version>1.1.1</hbase.version> -->
 		<hbase.version>1.2.0-cdh5.7.2</hbase.version>
-		<!--
-		<hive.version>0.12.0 0.12.0-cdh5.1.5</hive.version>
-		<hive.version>0.10.0-cdh4.3.0</hive.version>
-		-->
+		<!-- <hive.version>0.12.0 0.12.0-cdh5.1.5</hive.version> <hive.version>0.10.0-cdh4.3.0</hive.version> -->
 		<hive.version>1.1.0-cdh5.7.2</hive.version>
 		<!-- parquet version -->
 		<parquet.version>1.5.0-cdh5.4.0</parquet.version>
 		<spark.version>1.6.0</spark.version>
-		<!--
-		<sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version>
-		-->
+		<!-- <sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version> -->
 		<sparkother.version>2.10</sparkother.version>
 	</properties>
 
@@ -71,25 +57,14 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
-			<artifactId>hadoop-mapreduce-client-core</artifactId>
-			<version>${hadoop.mr.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-core</artifactId> 
+			<artifactId>hadoop-mapreduce-client-core</artifactId> <version>${hadoop.mr.version}</version> 
+			<scope>provided</scope> <optional>true</optional> </dependency> -->
 
 		<!-- hbase -->
-		<!--
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase</artifactId> 
-			<version>0.94.6-cdh4.3.0</version>
-			<exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase</artifactId> 
+			<version>0.94.6-cdh4.3.0</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-server</artifactId>
@@ -142,7 +117,7 @@
 			<artifactId>hive-cli</artifactId>
 			<version>${hive.version}</version>
 		</dependency>
-		
+
 		<!-- parquet -->
 		<dependency>
 			<groupId>com.twitter</groupId>
@@ -151,20 +126,11 @@
 		</dependency>
 
 		<!-- google -->
-		<!--
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId> 
-			<version>11.0.2</version>
-			<exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId> 
-			<version>2.4.0a</version>
-			<exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId> 
+			<version>11.0.2</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
+			</dependency> <dependency> <groupId>com.google.protobuf</groupId> <artifactId>protobuf-java</artifactId> 
+			<version>2.4.0a</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
+			</dependency> -->
 
 		<!-- spark -->
 		<dependency>
@@ -187,7 +153,7 @@
 			<artifactId>spark-sql_${sparkother.version}</artifactId>
 			<version>${spark.version}</version>
 		</dependency>
-		
+
 		<!-- impala -->
 		<dependency>
 			<groupId>com.cloudera.impala.jdbc</groupId>
@@ -214,7 +180,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- ambari-server -->
 
 		<!-- apache -->
@@ -635,7 +601,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-				
+
 		<!-- nl bi -->
 		<dependency>
 			<groupId>com.newland.bi</groupId>
@@ -647,12 +613,47 @@
 			<artifactId>edc-storm-agent</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
+
 		<!-- XSLT 2.0 SAXON -->
 		<dependency>
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
 			<version>9.7.0-10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Jotm -->
+		<dependency>
+			<groupId>org.objectweb.jotm</groupId>
+			<artifactId>com.springsource.org.objectweb.jotm</artifactId>
+			<version>2.0.10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.experlog</groupId>
+			<artifactId>xapool</artifactId>
+			<version>1.5.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.carol</groupId>
+			<artifactId>carol</artifactId>
+			<version>3.0.10</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
