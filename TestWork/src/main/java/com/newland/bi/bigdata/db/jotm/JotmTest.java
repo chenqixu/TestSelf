@@ -44,18 +44,19 @@ public class JotmTest {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY,
 				"org.ow2.carol.jndi.spi.MultiOrbInitialContextFactory");
 		System.setProperty(Context.PROVIDER_URL, "rmi://10.1.4.185:1099");
-		String dbURL1= "jdbc:oracle:thin:@10.1.8.79:1521/edc_cfg_pri";
+		String dbURL1= "jdbc:oracle:thin:@10.1.8.79:1521/edc_etl_pri";
 		String dbURL2= "jdbc:oracle:thin:@10.1.0.242:1521:ywxx";	
 
 		Jotm jotm = new Jotm(false, false);
 		UserTransaction utx = jotm.getUserTransaction();
 
-		System.out.println(getStatusName(utx.getStatus()));
+		System.out.println("not begin:"+getStatusName(utx.getStatus()));
 		utx.begin();
-		System.out.println(getStatusName(utx.getStatus()));
+		System.out.println("begin:"+getStatusName(utx.getStatus()));
 		try {
 			Connection conn = getConnection(jotm.getTransactionManager(),
 					dbURL1, "edc_etl_col", "edc_etl_col");
+			conn.setAutoCommit(false);
 			Statement statement = conn.createStatement();
 			statement.execute("insert into tmp_cqx(msisdn) values('315')");
 		} catch (Exception e) {
@@ -64,15 +65,16 @@ public class JotmTest {
 		try {
 			Connection conn2 = getConnection(jotm.getTransactionManager(),
 					dbURL2, "bishow", "bishow");
+			conn2.setAutoCommit(false);
 			Statement statement = conn2.createStatement();
 			statement.execute("insert into tmp_cqx(msisdn) values('315')");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		// utx.commit();
+//		utx.commit();
 		utx.rollback();
-		System.out.println(getStatusName(utx.getStatus()));
+		System.out.println("commit/rollbak:"+getStatusName(utx.getStatus()));
 
 		jotm.stop();
 	}

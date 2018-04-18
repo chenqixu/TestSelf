@@ -628,17 +628,22 @@
 		</dependency>
 
 		<!-- Jotm -->
+		<!-- https://mvnrepository.com/artifact/org.ow2.jotm/jotm-core -->
 		<dependency>
-			<groupId>org.objectweb.jotm</groupId>
-			<artifactId>com.springsource.org.objectweb.jotm</artifactId>
-			<version>2.0.10</version>
+			<groupId>org.ow2.jotm</groupId>
+			<artifactId>jotm-core</artifactId>
+			<version>2.2.3</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- <dependency> <groupId>org.objectweb.jotm</groupId> <artifactId>com.springsource.org.objectweb.jotm</artifactId> 
+			<version>2.0.10</version> <exclusions> <exclusion> <groupId>org.apache.commons</groupId> 
+			<artifactId>com.springsource.org.apache.commons.logging</artifactId> </exclusion> 
+			</exclusions> </dependency> -->
 		<dependency>
 			<groupId>com.experlog</groupId>
 			<artifactId>xapool</artifactId>
@@ -654,6 +659,28 @@
 			<groupId>org.ow2.carol</groupId>
 			<artifactId>carol</artifactId>
 			<version>3.0.10</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.carol</groupId>
+			<artifactId>carol-interceptors</artifactId>
+			<version>1.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.spec.ee</groupId>
+			<artifactId>ow2-connector-1.5-spec</artifactId>
+			<version>1.0.13</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

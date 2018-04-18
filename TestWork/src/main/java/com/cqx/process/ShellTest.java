@@ -1,13 +1,8 @@
 package com.cqx.process;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-
 public class ShellTest extends Thread {
 	private String cmd = "";
+	private String[] cmdarr = {};
 	private int shellRetCode = -1;
 	private int status = 0;
 	
@@ -15,20 +10,36 @@ public class ShellTest extends Thread {
 		this.cmd = _cmd;
 	}
 	
+	public ShellTest(String[] _cmdarr) {
+		this.cmdarr = _cmdarr;
+	}
+	
 	public void run(){
 		Process process = null;
-    	InputStreamReader isr = null;
-    	BufferedReader br = null;
+//    	InputStreamReader isr = null;
+//    	BufferedReader br = null;
 		try{
-			process = Runtime.getRuntime().exec(cmd);
-            isr = new InputStreamReader(process.getInputStream(), "GB2312");
-            br = new BufferedReader(isr, 1024);            
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println("info:"+line);
-            }
-            isr.close();
-            br.close();
+			if(cmd.length()>0)
+				process = Runtime.getRuntime().exec(cmd);
+			if(cmdarr.length>0)
+				process = Runtime.getRuntime().exec(cmdarr);
+/***************************************/
+//			// 自行读日志
+//            isr = new InputStreamReader(process.getInputStream(), "GB2312");
+//            br = new BufferedReader(isr, 1024);            
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                System.out.println("info:"+line);
+//            }
+//            isr.close();
+//            br.close();
+/***************************************/
+			// 通过日志类读日志
+            LogThread ltinfo = new LogThread(process.getInputStream(), "info");
+            LogThread lterr = new LogThread(process.getErrorStream(), "err");
+            ltinfo.start();
+            lterr.start();
+			// 等待直到完成
         	shellRetCode = process.waitFor();
         	this.status = 1;//1:完成
         	System.out.println("shellRetCode:"+shellRetCode+" status:"+status);
@@ -37,76 +48,33 @@ public class ShellTest extends Thread {
 			e.printStackTrace();
 			System.out.println(" status:"+status+" "+e.toString());
 		}finally{
-        	if(isr != null){
-        		try {
-					isr.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-        	}
-        	if(br != null){
-        		try {
-        			br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-        	}
+//        	if(isr != null){
+//        		try {
+//					isr.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//        	}
+//        	if(br != null){
+//        		try {
+//        			br.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//        	}
 			if(process != null){
 				process.destroy();
 			}
 		}
 	}
 	
-	
-	class LogThread extends Thread {
-        InputStream is;
-
-        String type;
-
-        LogThread(InputStream is, String type) {
-            this.is = is;
-            this.type = type;
-        }
-
-        public void run() {
-        	InputStreamReader isr = null;
-        	BufferedReader br = null;
-            try {
-                isr = new InputStreamReader(is);
-                br = new BufferedReader(isr, 1024);
-                String line;
-                while ((line = br.readLine()) != null) {
-                    if (type.equals("err")) {
-                    	System.out.println("err:"+line);
-                    } else {
-                    	System.out.println("info:"+line);
-                    }
-                }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            } finally {
-            	if(isr != null){
-            		try {
-						isr.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-            	}
-            	if(br != null){
-            		try {
-            			br.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-            	}
-            }
-        }
-    }
-	
 	public static void main(String[] args) {
-		String cmd = args[0];
-		System.out.println("[cmd]"+cmd);
-		Thread t = new ShellTest(cmd);
+//		String cmd = "cmd.exe /c dir d:\\";
+//		String cmd = "cmd.exe /c del d:\\23.txt;dir d:\\";
+//		String cmd = "cmd.exe /c dir c:\\;dir d:\\";
+		String[] cmdarr = {"cmd.exe", "/c", "dir", "c:\\", "dir", "d:\\"};
+//		System.out.println("[cmd]"+cmd);
+		Thread t = new ShellTest(cmdarr);
 		t.start();
 	}
 }
