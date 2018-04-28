@@ -36,5 +36,6 @@
   	<module>TestSpringCXF</module>
   	<module>TestWorkJDK8</module>
   	<module>TestJMX</module>
+  	<module>TestSpark</module>
   </modules>
 </project>

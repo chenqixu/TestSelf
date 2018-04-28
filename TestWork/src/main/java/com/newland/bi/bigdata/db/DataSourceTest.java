@@ -40,16 +40,16 @@ public class DataSourceTest {
 		ds.setPassword(password);
 		ds.setUrl(url);
 		// 最大活动连接
-		ds.setMaxActive(2);
-		// 最大空闲连接
-		ds.setMinIdle(2);
+		ds.setMaxActive(5);
 		// 最小空闲连接
-		ds.setMaxIdle(2);
-		ds.setValidationQuery("select 1 from dual");
-		ds.setValidationQueryTimeout(1000);
-		ds.setTestOnBorrow(false);
-		ds.setTestWhileIdle(true);
-		ds.setTimeBetweenEvictionRunsMillis(15000);
+		ds.setMinIdle(2);
+		// 最大空闲连接
+		ds.setMaxIdle(3);
+//		ds.setValidationQuery("select 1 from dual");
+//		ds.setValidationQueryTimeout(1000);
+//		ds.setTestOnBorrow(false);
+//		ds.setTestWhileIdle(true);
+//		ds.setTimeBetweenEvictionRunsMillis(15000);
 		return ds;
 	}
 	

@@ -25,6 +25,7 @@
 		<spark.version>1.6.0</spark.version>
 		<!-- <sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version> -->
 		<sparkother.version>2.10</sparkother.version>
+		<oozie.version>4.1.0-cdh5.7.2</oozie.version>
 	</properties>
 
 	<dependencies>
@@ -159,6 +160,19 @@
 			<groupId>com.cloudera.impala.jdbc</groupId>
 			<artifactId>ImpalaJDBC41</artifactId>
 			<version>2.5.30</version>
+		</dependency>
+		
+		<!-- oozie -->		
+		<dependency>
+			<groupId>org.apache.oozie</groupId>
+			<artifactId>oozie-core</artifactId>
+			<version>${oozie.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- lzo -->
