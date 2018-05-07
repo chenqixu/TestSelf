@@ -96,6 +96,13 @@ public class FileUtils {
 		peser_result = null;
 	}
 	
+	/**
+	 * linux：在/tmp目录下创建临时文件
+	 * */
+	public void FileCreateTmp() throws Exception{
+		File.createTempFile("hive-rowcontainer", "");
+	}
+	
 	public static void main(String[] args) {
 //		test();
 //		close();
