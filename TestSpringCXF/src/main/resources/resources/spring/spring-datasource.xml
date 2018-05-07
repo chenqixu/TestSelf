@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/context
+ http://www.springframework.org/schema/context/spring-context.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx.xsd
+ http://www.springframework.org/schema/aop
+ http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+        <description>spring-datasource</description>
+        <context:property-placeholder location="classpath:resources/spring/jdbc.properties" />
+        <!-- DBCP 数据源 -->
+        <bean id="abstractDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+                <property name="driverClassName" value="${jdbcmysql.driver}" />
+                <!-- 连接池连接数初始值 -->
+                <!-- <property name="initialSize" value="${jdbc.initialSize}" /> -->
+                <!-- 连接池最大连接数量 -->
+                <property name="maxActive" value="${jdbc.maxActive}" />
+                <!-- 连接池最大空闲值，释放多余的不用的连接，释放到多少为止, 新版本该参数已弃用 -->
+                <property name="maxIdle" value="${jdbc.maxIdle}" />
+                <!-- 连接池最小空闲值，当空闲连接数小于这个数的时候，连接池就会去申请一些连接以免高峰期来不及申请 -->
+                <property name="minIdle" value="${jdbc.minIdle}" />
+                <!-- 获取连接时最大等待时间，单位毫秒。 -->
+                <property name="maxWait" value="${jdbc.maxWait}" />
+                <!-- 是否缓存preparedStatement，支持游标的数据库有性能提升。 -->
+                <property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}" />
+                <property name="validationQuery" value="${jdbc.validationQuery}" />
+                <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+                <property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+                <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+        </bean>
+
+        <!-- 初始化ywxx -->
+        <bean id="dataSourceWEB" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" parent="abstractDataSource">
+                <property name="url" value="${jdbcmysql.url}" />
+                <property name="username" value="${jdbcmysql.username}" />
+                <property name="password" value="${jdbcmysql.password}" />
+        </bean>
+
+        <!-- 采用数据源路由的方法 -->
+        <!-- <bean id="dataSource" class="com.newland.edc.core.db.utils.datasource.CustomRoutingDataSource"> -->
+                <!-- 通过key-value的形式来关联数据源 -->
+                <!-- <property name="targetDataSources">
+                        <map>
+                                <entry value-ref="dataSourceWEB" key="web"></entry>
+                                <entry value-ref="dataSourceTT1" key="tt1"></entry>
+                        </map>
+                </property>
+                <property name="defaultTargetDataSource" ref="dataSourceTT1" />
+        </bean> -->
+
+        <!-- 配置jdbcTemplate -->
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+                <property name="dataSource" ref="dataSourceWEB" />
+        </bean>
+
+        <!-- 配置namedParameterJdbcTemplate -->
+        <!-- ywxx -->
+        <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+                <constructor-arg ref="dataSourceWEB" />
+        </bean>
+
+</beans> 
