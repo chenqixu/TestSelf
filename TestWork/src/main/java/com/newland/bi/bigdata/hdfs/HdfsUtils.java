@@ -296,10 +296,7 @@ public class HdfsUtils {
 		}
 	}
 	
-	public static void main(String[] args) {
-        //需要设置hadoop用户,否则没有权限
-        System.setProperty("HADOOP_USER_NAME", "hadoop");
-        
+	public static void hadoopedc01(){        
 //		FileSystem hdfsSystem;
 		AbstractFileSystem ahdfsSystem;
 		String defaultfs = "hdfs://10.1.8.1:8020";//"hdfs://streamslab.localdomain:8020";//
@@ -358,6 +355,33 @@ public class HdfsUtils {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public static void hadoopmaster75(){
+		FileSystem hdfsSystem;
+		String defaultfs = "hdfs://10.1.8.75:8020";
+		String nameservice = "master75";
+		String namenodes = "nn";
+		String namenodeAddr = "10.1.8.75:8020";
+		String failoverProxy = "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider";
+		boolean isSecurity = false;
+		String principal = "";
+		String keytab = "";
+		try{
+			hdfsSystem = HdfsUtils.openFileSystem(defaultfs, nameservice, namenodes, namenodeAddr, 
+					failoverProxy, isSecurity, principal, keytab, "", "");
+			System.out.println(hdfsSystem);
+			String path = "hdfs://master75:8020/zyh";
+			getFileList(hdfsSystem, path);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+        //需要设置hadoop用户,否则没有权限
+        System.setProperty("HADOOP_USER_NAME", "hadoop");
+        hadoopmaster75();
 	}
 	
 }

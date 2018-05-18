@@ -41,6 +41,33 @@
                 <property name="password" value="${jdbcmysql.password}" />
         </bean>
 
+	<!-- timesten tt1 DBCP 数据源 -->
+	<bean id="ttDataSource1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbctt1.driver}" />
+		<!-- 连接池连接数初始值 -->
+		<property name="initialSize" value="${jdbc.initialSize}" />
+		<!-- 连接池最大连接数量 -->
+		<property name="maxActive" value="${jdbc.maxActive}" />
+		<!-- 连接池最大空闲值，释放多余的不用的连接，释放到多少为止, 新版本该参数已弃用 -->
+		<property name="maxIdle" value="${jdbc.maxIdle}" />
+		<!-- 连接池最小空闲值，当空闲连接数小于这个数的时候，连接池就会去申请一些连接以免高峰期来不及申请 -->
+		<property name="minIdle" value="${jdbc.minIdle}" />
+		<!-- 获取连接时最大等待时间，单位毫秒。 -->
+		<property name="maxWait" value="${jdbc.maxWait}" />
+		<!-- 是否缓存preparedStatement，支持游标的数据库有性能提升。 -->
+		<property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}" />
+		<property name="validationQuery" value="${jdbc.validationQuery}" />
+		<property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+		<property name="testOnReturn" value="${jdbc.testOnReturn}" />
+	</bean>
+	<!-- 初始化tt1 -->
+	<bean id="dataSourceTT1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" parent="ttDataSource1">
+		<property name="url" value="${jdbctt1.url}" />
+		<property name="username" value="${jdbctt1.username}" />
+		<property name="password" value="${jdbctt1.password}" />
+	</bean>
+
         <!-- 采用数据源路由的方法 -->
         <!-- <bean id="dataSource" class="com.newland.edc.core.db.utils.datasource.CustomRoutingDataSource"> -->
                 <!-- 通过key-value的形式来关联数据源 -->
@@ -57,11 +84,18 @@
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
                 <property name="dataSource" ref="dataSourceWEB" />
         </bean>
+<!--         <bean id="jdbcTemplateTT1" class="org.springframework.jdbc.core.JdbcTemplate">
+                <property name="dataSource" ref="dataSourceTT1" />
+        </bean> -->
 
         <!-- 配置namedParameterJdbcTemplate -->
         <!-- ywxx -->
         <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
                 <constructor-arg ref="dataSourceWEB" />
         </bean>
+	
+		<bean id="namedParameterJdbcTemplateTT1" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+			<constructor-arg ref="dataSourceTT1" />
+		</bean>
 
 </beans> 
