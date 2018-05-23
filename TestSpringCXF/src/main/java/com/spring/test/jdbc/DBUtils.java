@@ -1,6 +1,7 @@
 package com.spring.test.jdbc;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,16 @@ public class DBUtils {
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplateTT1;
 //	@Resource(name="jdbcTemplateTT1")
 //	private JdbcTemplate jdbcTemplateTT1;
+	private List<NamedParameterJdbcTemplate> npjtlist = null;
+	
+	public DBUtils(){
+		npjtlist = new ArrayList<NamedParameterJdbcTemplate>();
+//		npjtlist.add(namedParameterJdbcTemplateTT1);
+	}
+	
+	public void init(){
+		npjtlist.add(namedParameterJdbcTemplateTT1);
+	}
 	
 	public Common getConfigInfo() {
 		return configInfo;
@@ -86,7 +97,11 @@ public class DBUtils {
 		ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:resources/spring/spring-base.xml");
 		//使用名称初始化类
 		DBUtils db = (DBUtils) ctx.getBean("DBUtils");
-		testJDBC(db);
+//		System.out.println(db.namedParameterJdbcTemplateTT1);
+		//Spring注入初始化迟于构造函数
+		db.init();
+		System.out.println(db.npjtlist);
+//		testJDBC(db);
 //		testProperties(db);
 	}
 }
