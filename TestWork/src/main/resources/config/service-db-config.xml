@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service-config>
+    <db-config>
+		<!-- TT数据库配置 mktbi模拟 -->
+		<database id="uidp" is_jndi="false"
+                        driverClassName="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@10.1.0.242:1521:ywxx"
+                        username="mktbi" password="C5F85D043DCBA696"
+                        maxActive="200" maxIdle="30" maxWait="200" />	
+	</db-config>
+</service-config>

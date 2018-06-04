@@ -15,6 +15,9 @@
 
 	<!-- 自动扫描bean配置的目录 -->
 	<context:component-scan base-package="com.spring.test.*" />
+	<bean id="TimestenTest1" class="com.spring.test.jdbc.TimestenTest1" />
+	<bean id="TimestenTest2" class="com.spring.test.jdbc.TimestenTest1" />
+	<bean id="TimestenTest3" class="com.spring.test.jdbc.TimestenTest1" />
 
 	<!-- 配置数据源与事务信息 -->
 	<import resource="classpath:resources/spring/spring-datasource.xml" />

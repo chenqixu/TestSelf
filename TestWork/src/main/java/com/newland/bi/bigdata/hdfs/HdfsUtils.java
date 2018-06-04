@@ -295,6 +295,44 @@ public class HdfsUtils {
 			e.printStackTrace();
 		}
 	}
+
+	/** 
+	 * Check that a Path belongs to this FileSystem.
+	 * @param path to check
+	 */
+//	protected void checkPath(Path path) {
+//	  URI uri = path.toUri();
+//	  String thatScheme = uri.getScheme();
+//	  if (thatScheme == null)                // fs is relative
+//	    return;
+//	  URI thisUri = getCanonicalUri();
+//	  String thisScheme = thisUri.getScheme();
+//	  //authority and scheme are not case sensitive
+//	  if (thisScheme.equalsIgnoreCase(thatScheme)) {// schemes match
+//	    String thisAuthority = thisUri.getAuthority();
+//	    String thatAuthority = uri.getAuthority();
+//	    if (thatAuthority == null &&                // path's authority is null
+//	        thisAuthority != null) {                // fs has an authority
+//	      URI defaultUri = getDefaultUri(getConf());
+//	      if (thisScheme.equalsIgnoreCase(defaultUri.getScheme())) {
+//	        uri = defaultUri; // schemes match, so use this uri instead
+//	      } else {
+//	        uri = null; // can't determine auth of the path
+//	      }
+//	    }
+//	    if (uri != null) {
+//	      // canonicalize uri before comparing with this fs
+//	      uri = canonicalizeUri(uri);
+//	      thatAuthority = uri.getAuthority();
+//	      if (thisAuthority == thatAuthority ||       // authorities match
+//	          (thisAuthority != null &&
+//	           thisAuthority.equalsIgnoreCase(thatAuthority)))
+//	        return;
+//	    }
+//	  }
+//	  throw new IllegalArgumentException("Wrong FS: "+path+
+//	                                     ", expected: "+this.getUri());
+//	}
 	
 	public static void hadoopedc01(){        
 //		FileSystem hdfsSystem;
