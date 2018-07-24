@@ -12,7 +12,7 @@
  http://www.springframework.org/schema/aop/spring-aop.xsd">
 
         <description>spring-datasource</description>
-        <context:property-placeholder location="classpath:resources/spring/jdbc.properties" />
+        <context:property-placeholder location="jdbc.properties" />
         <!-- DBCP 数据源 -->
         <bean id="abstractDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
                 <property name="driverClassName" value="${jdbcmysql.driver}" />
@@ -114,7 +114,7 @@
 		<property name="maxWait" value="${jdbc.maxWait}" />
 		<!-- 是否缓存preparedStatement，支持游标的数据库有性能提升。 -->
 		<property name="poolPreparedStatements" value="${jdbc.poolPreparedStatements}" />
-		<property name="validationQuery" value="${jdbc.validationQuery}" />
+		<property name="validationQuery" value="${jdbchive.validationQuery}" />
 		<property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
 		<property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
 		<property name="testOnReturn" value="${jdbc.testOnReturn}" />

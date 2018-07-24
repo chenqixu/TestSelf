@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/context
+ http://www.springframework.org/schema/context/spring-context.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx.xsd
+ http://www.springframework.org/schema/aop
+ http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<description>spring-base-config</description>
+
+	<!-- 自动扫描bean配置的目录 -->
+	<context:component-scan base-package="com.spring.test.*" />
+	<bean id="TimestenTest1" class="com.spring.test.jdbc.TimestenTest1" />
+	<bean id="TimestenTest2" class="com.spring.test.jdbc.TimestenTest1" />
+	<bean id="TimestenTest3" class="com.spring.test.jdbc.TimestenTest1" />
+
+	<!-- 配置数据源与事务信息 -->
+	<import resource="spring-datasource.xml" />
+	<import resource="spring-transaction.xml" />
+	<!-- spring定时器配置 -->
+	<!-- <import resource="classpath:resources/spring/applicationContext-quartz-common.xml" 
+		/> -->
+
+	<!-- 导入cxf配置 -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<!-- <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /> 
+		<import resource="classpath:META-INF/cxf/cxf-servlet.xml" /> -->
+
+	<!-- spring aop配置 -->
+	<import resource="classpath:spring-aop.xml" />
+
+	<!-- 加载公共配置
+	<context:property-placeholder location="classpath:resources/spring/common.properties" /> -->
+	<!-- 把公共配置的值注入bean
+	<bean id="Common" class="com.spring.test.bean.Common"> 
+		<property name="ttuid" value='${ttuid}' />
+	</bean> -->
+	<!-- 加载配置文件 -->
+	<bean id="configProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location">
+			<value>common.properties</value>
+		</property>
+		<property name="fileEncoding" value="utf-8" />
+	</bean>
+	<!-- 属性注入 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="properties" ref="configProperties" />
+	</bean>
+</beans> 
