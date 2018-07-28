@@ -38,5 +38,7 @@
   	<module>TestJMX</module>
   	<module>TestSpark</module>
   	<module>TestRanger</module>
+  	<module>TestOozie</module>
+  	<module>TestZookeeperTool</module>
   </modules>
 </project>

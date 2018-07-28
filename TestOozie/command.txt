@@ -1,0 +1,9 @@
+上传到hdfs目录后，执行
+hadoop fs -put message /user/hadoop/examples/apps
+oozie job -oozie http://chenqx:11000/oozie -config /opt/hadoop/oozie-4.1.0/examples/apps/message/job.properties -run
+oozie job -oozie http://chenqx:11000/oozie -info 0000000-180725221930530-oozie-hado-W
+oozie job -oozie http://chenqx:11000/oozie -log 0000000-180725221930530-oozie-hado-W
+
+增量
+hadoop fs -rm -f /user/hadoop/examples/apps/message/lib/externalOozieAction.jar
+hadoop fs -put externalOozieAction.jar /user/hadoop/examples/apps/message/lib

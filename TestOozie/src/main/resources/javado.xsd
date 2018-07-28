@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:javado="uri:custom:javado-action:0.1"
+	elementFormDefault="qualified"
+	targetNamespace="uri:custom:javado-action:0.1">
+	<xs:complexType name="MESSAGE">
+		<xs:sequence>
+			<xs:element name="content" type="xs:string"></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="javado" type="javado:MESSAGE"></xs:element>
+</xs:schema>
