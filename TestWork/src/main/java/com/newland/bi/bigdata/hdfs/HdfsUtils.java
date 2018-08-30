@@ -14,7 +14,9 @@ import org.apache.hadoop.fs.AbstractFileSystem;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.security.SecurityUtil;
 
@@ -296,6 +298,39 @@ public class HdfsUtils {
 		}
 	}
 
+	/**
+	 * hdfs dfs -ls /path
+	 * */
+	public void getFileListByRegex(FileSystem fs, String path, String s){
+		// 表达式内容替换
+		s = s.replace('.', '#');
+		s = s.replaceAll("#", "\\\\.");
+		s = s.replace('*', '#');
+		s = s.replaceAll("#", ".*");
+		s = s.replace('?', '#');
+		s = s.replaceAll("#", ".?");
+		s = "^" + s + "$";
+		
+		Path paths = new Path(path);
+		Path[] listedPaths = new Path[] {};
+		try {
+			if (fs.exists(paths)) {// 目录存在才做list
+				FileStatus[] status = fs.listStatus(paths, new RegexExcludePathFilter(s));
+				listedPaths = FileUtil.stat2Paths(status);
+
+				for(int i=0;i<listedPaths.length;i++) {
+					System.out.println("[getFileList]"+listedPaths[i].getName());
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/** 
 	 * Check that a Path belongs to this FileSystem.
 	 * @param path to check
@@ -410,9 +445,25 @@ public class HdfsUtils {
 					failoverProxy, isSecurity, principal, keytab, "", "");
 			System.out.println(hdfsSystem);
 			String path = "hdfs://master75:8020/zyh";
-			getFileList(hdfsSystem, path);
+			// 获取列表
+//			getFileList(hdfsSystem, path);
+			// 正则过滤
+			new HdfsUtils().getFileListByRegex(hdfsSystem, path, "1*");
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 过滤器，用来过滤HDFS文件的过滤规则
+	 * */
+	class RegexExcludePathFilter implements PathFilter {
+		private final String regex;
+		public RegexExcludePathFilter(String regex){
+			this.regex=regex;
+		}
+		public boolean accept(Path path) {
+			return path.getName().matches(regex);
 		}
 	}
 	

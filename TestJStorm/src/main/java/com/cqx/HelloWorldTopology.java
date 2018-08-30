@@ -32,34 +32,38 @@ public class HelloWorldTopology {
 	 */
 	public static void main(String[] args) throws AlreadyAliveException,
 			InvalidTopologyException, AuthorizationException {
-		// 创建topology的生成器
-		TopologyBuilder builder = new TopologyBuilder();
-		// 创建Spout，其中new HelloWorldSpout() 为真正spout对象
-		// randomHelloWorld 为spout的名字，注意名字中不要含有空格
-		// spout的并发设置，这里设置为1
-		SpoutDeclarer spout = builder.setSpout("randomHelloWorld", new HelloWorldSpout(), 1);
-		// 创建bolt，HelloWorldBolt为bolt名字
-		// HelloWorldBolt 为bolt对象
-		// 1为bolt并发数
-		// shuffleGrouping（SequenceTopologyDef.SEQUENCE_SPOUT_NAME），
-		// 表示接收SequenceTopologyDef.SEQUENCE_SPOUT_NAME的数据，并且以shuffle方式，
-		// 即每个spout随机轮询发送tuple到下一级bolt中
-		BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 1)
-				.shuffleGrouping("randomHelloWorld");
-		Config conf = new Config();
-		// nimbus地址
-		conf.put(Config.NIMBUS_HOST, "localhost");
-		// nimbus thrift端口
-		conf.put(Config.NIMBUS_THRIFT_PORT, 6627);
-		// 允许debug
-		conf.setDebug(true);
-		if (args != null && args.length > 0) {
+		if ( args != null && args.length == 3 ) {
+			String Topology_name = args[0];
+			String NIMBUS_HOST = args[1];
+			String NIMBUS_THRIFT_PORT = args[2];
+			// 创建topology的生成器
+			TopologyBuilder builder = new TopologyBuilder();
+			// 创建Spout，其中new HelloWorldSpout() 为真正spout对象
+			// randomHelloWorld 为spout的名字，注意名字中不要含有空格
+			// spout的并发设置，这里设置为1
+			SpoutDeclarer spout = builder.setSpout("randomHelloWorld", new HelloWorldSpout(), 1);
+			// 创建bolt，HelloWorldBolt为bolt名字
+			// HelloWorldBolt 为bolt对象
+			// 1为bolt并发数
+			// shuffleGrouping（SequenceTopologyDef.SEQUENCE_SPOUT_NAME），
+			// 表示接收SequenceTopologyDef.SEQUENCE_SPOUT_NAME的数据，并且以shuffle方式，
+			// 即每个spout随机轮询发送tuple到下一级bolt中
+			BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 1)
+					.shuffleGrouping("randomHelloWorld");
+			Config conf = new Config();
+			// nimbus地址
+			conf.put(Config.NIMBUS_HOST, NIMBUS_HOST);
+			// nimbus thrift端口
+			conf.put(Config.NIMBUS_THRIFT_PORT, Integer.valueOf(NIMBUS_THRIFT_PORT));
+			// 允许debug
+			conf.setDebug(true);
 			// 表示整个topology将使用几个worker
-			conf.setNumWorkers(3);
+			conf.setNumWorkers(1);
 			// 提交topology
-			StormSubmitter.submitTopology(args[0], conf,
+			StormSubmitter.submitTopology(Topology_name, conf,
 					builder.createTopology());
 		} else {
+			System.out.println("You need input Topology name、NIMBUS_HOST、NIMBUS_THRIFT_PORT.");
 		}
 	}
 }

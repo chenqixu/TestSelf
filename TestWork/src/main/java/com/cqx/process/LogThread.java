@@ -24,26 +24,26 @@ public class LogThread extends Thread {
             String line;
             while ((line = br.readLine()) != null) {
                 if (type.equals("err")) {
-                	System.out.println("err:"+line);
+                	LogInfoFactory.info("##错误日志##"+line);
                 } else {
-                	System.out.println("info:"+line);
+                	LogInfoFactory.info("##内容##"+line);
                 }
             }
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            LogInfoFactory.err("创建/读取 IO异常", ioe);
         } finally {
         	if(isr != null){
         		try {
 					isr.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					LogInfoFactory.err("InputStreamReader流关闭IO异常", e);
 				}
         	}
         	if(br != null){
         		try {
         			br.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					LogInfoFactory.err("BufferedReader流关闭IO异常", e);
 				}
         	}
         }

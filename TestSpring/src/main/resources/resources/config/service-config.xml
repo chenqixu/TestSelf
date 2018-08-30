@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service-config>
+	<config-files>
+		<config-file>
+			<name>db</name>
+			<file>resources/config/service-db-config.xml</file>
+		</config-file>
+	</config-files>
+</service-config>

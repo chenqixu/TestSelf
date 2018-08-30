@@ -6,8 +6,17 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
+
 import java.util.Map;
 import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import storm.kafka.BrokerHosts;
+import storm.kafka.KafkaSpout;
+import storm.kafka.SpoutConfig;
+import storm.kafka.ZkHosts;
 
 /**
  * 数据来源spout<br>
@@ -24,6 +33,7 @@ public class HelloWorldSpout extends BaseRichSpout {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldSpout.class);
 	private SpoutOutputCollector collector;
 	private int referenceRandom;
 	private static final int MAX_RANDOM = 10;
@@ -31,6 +41,17 @@ public class HelloWorldSpout extends BaseRichSpout {
 	public HelloWorldSpout() {
 		final Random rand = new Random();
 		referenceRandom = rand.nextInt(MAX_RANDOM);
+		LOGGER.info("##############create HelloWorldSpout");
+		
+//		String zks = "";
+//		String topic =  "";
+//		String brokerZkPath = "";
+//		String id = "";
+//		BrokerHosts brokerHosts = new ZkHosts(zks);
+//		SpoutConfig spoutConf = new SpoutConfig(brokerHosts, topic, brokerZkPath, id);
+////		spoutConf.scheme = new SchemeAsMultiScheme(new StringScheme());
+////		spoutConf.forceFromStart = false;
+//		KafkaSpout kafkaSpout = new KafkaSpout(spoutConf);
 	}
 
 	/*
@@ -40,6 +61,7 @@ public class HelloWorldSpout extends BaseRichSpout {
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
 		declarer.declare(new Fields("sentence"));
+		LOGGER.info("##############declareOutputFields sentence");
 	}
 
 	/*
@@ -52,6 +74,7 @@ public class HelloWorldSpout extends BaseRichSpout {
 	public void open(Map conf, TopologyContext topologyContext,
 			SpoutOutputCollector collector) {
 		this.collector = collector;
+		LOGGER.info("##############open collector");
 	}
 
 	/*
@@ -62,11 +85,14 @@ public class HelloWorldSpout extends BaseRichSpout {
 	 */
 	@Override
 	public void nextTuple() {
+		LOGGER.info("##############nextTuple");
 		final Random rand = new Random();
 		int instanceRandom = rand.nextInt(MAX_RANDOM);
 		if (instanceRandom == referenceRandom) {
+			LOGGER.info("##############emit Hello World");
 			collector.emit(new Values("Hello World"));
 		} else {
+			LOGGER.info("##############emit Other Random Word");
 			collector.emit(new Values("Other Random Word"));
 		}
 	}

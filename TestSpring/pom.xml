@@ -95,6 +95,18 @@
 					<groupId>commons-collections</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<!-- Spring Features -->
@@ -245,6 +257,39 @@
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudhopper.proxool</groupId>
+			<artifactId>proxool</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- nl -->
+		<dependency>
+			<groupId>com.newland.bi</groupId>
+			<artifactId>nl-bi-util</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nl.sri.sam</groupId>
+			<artifactId>sam-toolkit</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
 	</dependencies>
 	<build>
 		<plugins>

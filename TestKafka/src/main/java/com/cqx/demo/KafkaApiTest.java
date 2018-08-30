@@ -6,6 +6,7 @@ import kafka.admin.TopicCommand.TopicCommandOptions;
 import kafka.utils.ZkUtils;
 
 public class KafkaApiTest {
+//	kafka.javaapi.consumer.SimpleConsumer a;
 	public static final String zookeeper_ip_port = "192.168.230.128:2181";
 	public static final String zookeeper_param = "--zookeeper";
 	public ZkUtils zku;

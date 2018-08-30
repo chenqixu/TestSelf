@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service-config>
+	<db-config>			
+		<!-- DEV: 以下为福建开发数据库配置  -->
+		<!-- 
+		<database id="bi_db_jndi" is_jndi="false"
+                        driverClassName="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@10.1.0.242:1521:ywxx"
+                        username="web" password="F1C273D960B8F025"
+                        maxActive="200" maxIdle="30" maxWait="200" default="true" />
+         -->         
+        <!-- RUN: <database id="bi_db_jndi" is_jndi="true" env="" jndi="BIDB" default="true"/> -->
+		<database id="ywxx"  is_jndi="false" 
+		    driverClassName="oracle.jdbc.driver.OracleDriver" 
+		    url="jdbc:oracle:thin:@10.1.0.242:1521:ywxx" 
+		    username="web"  password="F1C273D960B8F025"
+		    maxActive="2000"  maxIdle="100"  maxWait="100"  default="true"/>
+	</db-config>
+</service-config>

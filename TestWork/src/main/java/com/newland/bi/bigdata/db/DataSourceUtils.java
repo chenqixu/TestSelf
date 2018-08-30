@@ -12,8 +12,8 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nl.sri.sam.service.ISaInfoQueryer;
-import com.nl.sri.sam.service.impl.SaInfoQueryer;
+//import com.nl.sri.sam.service.ISaInfoQueryer;
+//import com.nl.sri.sam.service.impl.SaInfoQueryer;
 
 /**
  * 数据源工具类
@@ -71,20 +71,20 @@ public class DataSourceUtils {
 		if(isPool){
 			return getConfSource().getConnection();
 		} else {
-			// 是否使用统一密码
-			if(isLocal){
-				// 统一密码管理
-			    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
-			    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
-			    // 用户名
-			    StringBuffer szUserName = new StringBuffer();
-			    // 密码
-			    StringBuffer szPasswd = new StringBuffer();
-			    cSaInfoQueryer.openAndQueryByName(dbUserName, dbPassword, szUserName, szPasswd);
-			    // 解析出来的用户密码
-			    _dbUserName = szUserName.toString();
-			    _dbPassword = szPasswd.toString();
-			}
+//			// 是否使用统一密码
+//			if(isLocal){
+//				// 统一密码管理
+//			    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
+//			    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
+//			    // 用户名
+//			    StringBuffer szUserName = new StringBuffer();
+//			    // 密码
+//			    StringBuffer szPasswd = new StringBuffer();
+//			    cSaInfoQueryer.openAndQueryByName(dbUserName, dbPassword, szUserName, szPasswd);
+//			    // 解析出来的用户密码
+//			    _dbUserName = szUserName.toString();
+//			    _dbPassword = szPasswd.toString();
+//			}
 	        // 加载数据库驱动类
 			Class.forName(dbDriver);
 			Connection conn = DriverManager.getConnection(dbURL, _dbUserName, _dbPassword);
@@ -132,20 +132,20 @@ public class DataSourceUtils {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(driver);
 
-		// 是否使用统一密码
-		if(isLocal){
-			// 统一密码管理
-		    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
-		    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
-		    // 用户名
-		    StringBuffer szUserName = new StringBuffer();
-		    // 密码
-		    StringBuffer szPasswd = new StringBuffer();
-		    cSaInfoQueryer.openAndQueryByName(username, password, szUserName, szPasswd);
-		    // 解析出来的用户密码
-		    _dbUserName = szUserName.toString();
-		    _dbPassword = szPasswd.toString();
-		}
+//		// 是否使用统一密码
+//		if(isLocal){
+//			// 统一密码管理
+//		    ISaInfoQueryer cSaInfoQueryer = new SaInfoQueryer();
+//		    cSaInfoQueryer.loadLibrary("nothing to load"); // 已标注为@Deprecated 保留此接口为兼容旧版，无实际作用
+//		    // 用户名
+//		    StringBuffer szUserName = new StringBuffer();
+//		    // 密码
+//		    StringBuffer szPasswd = new StringBuffer();
+//		    cSaInfoQueryer.openAndQueryByName(username, password, szUserName, szPasswd);
+//		    // 解析出来的用户密码
+//		    _dbUserName = szUserName.toString();
+//		    _dbPassword = szPasswd.toString();
+//		}
 		ds.setUsername(_dbUserName);
 		ds.setPassword(_dbPassword);
 		ds.setUrl(url);
