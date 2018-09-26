@@ -6,11 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LogThread extends Thread {
-    InputStream is;
+	private LogInfoFactory log = LogInfoFactory.getInstance();
+	private InputStream is;
 
-    String type;
+	private String type;
 
-    LogThread(InputStream is, String type) {
+	public LogThread(InputStream is, String type) {
         this.is = is;
         this.type = type;
     }
@@ -24,26 +25,26 @@ public class LogThread extends Thread {
             String line;
             while ((line = br.readLine()) != null) {
                 if (type.equals("err")) {
-                	LogInfoFactory.info("##错误日志##"+line);
+                	log.info("##错误日志##"+line);
                 } else {
-                	LogInfoFactory.info("##内容##"+line);
+                	log.info("##内容##"+line);
                 }
             }
         } catch (IOException ioe) {
-            LogInfoFactory.err("创建/读取 IO异常", ioe);
+        	log.err("创建/读取 IO异常", ioe);
         } finally {
         	if(isr != null){
         		try {
 					isr.close();
 				} catch (IOException e) {
-					LogInfoFactory.err("InputStreamReader流关闭IO异常", e);
+					log.err("InputStreamReader流关闭IO异常", e);
 				}
         	}
         	if(br != null){
         		try {
         			br.close();
 				} catch (IOException e) {
-					LogInfoFactory.err("BufferedReader流关闭IO异常", e);
+					log.err("BufferedReader流关闭IO异常", e);
 				}
         	}
         }

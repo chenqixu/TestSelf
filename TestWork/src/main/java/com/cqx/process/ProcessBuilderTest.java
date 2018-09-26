@@ -10,7 +10,8 @@ import java.util.List;
 //import org.apache.hadoop.util.ShutdownHookManager;
 
 public class ProcessBuilderTest {
-	
+
+	private LogInfoFactory log = LogInfoFactory.getInstance();
 	private ProcessBuilder builder = null;
 	private List<String> list = null;
 	private Process process = null;
@@ -39,7 +40,7 @@ public class ProcessBuilderTest {
 			process = builder.command(list).start();
 			runLog();
 			int resultcode = process.waitFor();
-			LogInfoFactory.info("##resultcode##"+resultcode);
+			log.info("##resultcode##"+resultcode);
 			list.clear();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,40 +57,40 @@ public class ProcessBuilderTest {
 		BufferedReader stdInput = null;
 		BufferedReader stdError = null;
 		try {
-			LogInfoFactory.info("builder.start");
+			log.info("builder.start");
 			process = builder.start();
 			stdInput = new BufferedReader(new InputStreamReader(process.getInputStream(), "GBK"));
 			stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), "GBK"));
 			String echo;
 			while ((echo = stdInput.readLine()) != null) {
-				LogInfoFactory.info("##正确日志##"+echo);
+				log.info("##正确日志##"+echo);
 			}
 			while ((echo = stdError.readLine()) != null) {
 				if (echo.contains(" ERROR ")) {
-					LogInfoFactory.info("##错误日志##"+ echo);
+					log.info("##错误日志##"+ echo);
 				} else {
-					LogInfoFactory.info("##日志##"+ echo);
+					log.info("##日志##"+ echo);
 				}
 			}
 //			runLog();
 			int resultcode = process.waitFor();
-			LogInfoFactory.info("##resultcode##"+resultcode);
+			log.info("##resultcode##"+resultcode);
 		} catch (IOException e) {
-			LogInfoFactory.err("IO异常", e);
+			log.err("IO异常", e);
 		} catch (InterruptedException e) {
-			LogInfoFactory.err("中断异常", e);
+			log.err("中断异常", e);
 		} finally {
 //			if(stdInput!=null)
 				try {
 					stdInput.close();
 				} catch (IOException e) {
-					LogInfoFactory.err("process.getInputStream流关闭IO异常", e);
+					log.err("process.getInputStream流关闭IO异常", e);
 				}
 			if(stdError!=null)
 				try {
 					stdError.close();
 				} catch (IOException e) {
-					LogInfoFactory.err("process.getErrorStream流关闭IO异常", e);
+					log.err("process.getErrorStream流关闭IO异常", e);
 				}
 			release();
 		}
@@ -104,7 +105,7 @@ public class ProcessBuilderTest {
 			process = runtime.exec(cmd);
 			runLog();
 			int resultcode = process.waitFor();
-			LogInfoFactory.info("##resultcode##"+resultcode);
+			log.info("##resultcode##"+resultcode);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -127,7 +128,7 @@ public class ProcessBuilderTest {
 	 * */
 	public void release() {
 		if(process != null){
-			LogInfoFactory.info("process.destroy");
+			log.info("process.destroy");
 			process.destroy();
 		}
 	}

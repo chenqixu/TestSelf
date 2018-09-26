@@ -1,12 +1,15 @@
 package com.newland.bi.bigdata.ftp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPCmd;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 
@@ -169,8 +172,82 @@ public class FtpTest {
 			ftpClient=null;
 		}
     }
+    
+    public static void test3(){
+    	FTPClient ftpClient = null;
+    	String ftpServerIp = "10.1.8.81";
+    	int ftpServerPort = 21;
+    	String ftpServerUser = "edc_base";
+    	String ftpServerPassword = "edc_base";
+    	try {
+    		ftpClient = new FTPClient();    		
+    		ftpClient.connect(ftpServerIp, ftpServerPort);
+			ftpClient.login(ftpServerUser, ftpServerPassword);
+			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+	        ftpClient.enterLocalPassiveMode();
+	        ftpClient.setDataTimeout(300000);
+	        
+	        ftpClient.changeWorkingDirectory("/test/cqx");
+//        	//扫描FTP的工作目录
+//	        for(FTPFile a : ftpClient.listFiles()){
+//	        	System.out.println(a.getName());
+//	        }
+	        for(FTPFile a : ftpClient.listFiles("MA_001_001*")){
+	        	System.out.println(a.getName());
+	        }
+//	        ftpClient.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out), true));
+//	        ftpClient.sendCommand(FTPCmd.PWD);
+////	        ftpClient.sendCommand(FTPCmd.TYPE, "binary");
+////	        ftpClient.sendCommand(FTPCmd.USERNAME, "hadoop");
+////	        ftpClient.sendCommand(FTPCmd.PASSWORD, "hadoop");
+////	        ftpClient.sendCommand(FTPCmd.HELP);
+////	        ftpClient.sendCommand(FTPCmd.PORT);
+//	        ftpClient.sendCommand(FTPCmd.PASV);
+//	        ftpClient.sendCommand(FTPCmd.LIST, "/home");
+////	        ftpClient.sendCommand(FTPCmd.QUIT);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(ftpClient!=null){
+				try {
+					ftpClient.logout();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					ftpClient.disconnect();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			ftpClient=null;
+		}
+    }
+    
+    public static void test4() throws Exception{
+    	String ftpServerIp = "10.1.8.81";
+    	int ftpServerPort = 21;
+    	String ftpServerUser = "edc_base";
+    	String ftpServerPassword = "edc_base";
+    	int timeout = 30000;
+    	String contorlcharset = "UTF-8";
+    	FtpUtil ftpUtil = new FtpUtil(ftpServerIp, ftpServerUser, ftpServerPassword,
+    			ftpServerPort, timeout);
+        ftpUtil.setContorlCharset(contorlcharset);
+        ftpUtil.connectServer();
+        ftpUtil.setPssiveMode();
+        ftpUtil.setBinaryMode();
+        int count = 0;
+        for(com.enterprisedt.net.ftp.FTPFile ftpf : ftpUtil.getClient().dirDetails("/test/cqx/M*")){
+//        	System.out.println(ftpf.getName());
+        	count++;
+        }
+        System.out.println("[count]"+count);
+        ftpUtil.disconnect();
+    }
 	
-	public static void main(String[] args) {
-		FtpTest.test2();
+	public static void main(String[] args) throws Exception{
+//		FtpTest.test3();
+		FtpTest.test4();
 	}
 }

@@ -9,9 +9,9 @@
 	</parent>
 	<artifactId>TestMR</artifactId>
 	<properties>
-		<hadoop.version>2.3.0-cdh5.1.5</hadoop.version>
+		<hadoop.version>2.6.0</hadoop.version>
 		<hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version>
-		<hbase.version>0.98.1-cdh5.1.5</hbase.version>
+		<hbase.version>1.1.1</hbase.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -59,11 +59,23 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-mapreduce-client-hs</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
 			<version>${hadoop.mr.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
-		</dependency>
+		</dependency> -->
 		
 		<!-- hbase -->
 		<dependency>
@@ -94,6 +106,15 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- yarn -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-yarn-server-resourcemanager</artifactId>
+			<version>${hadoop.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>		
 
 		<!-- apache -->
 		<dependency>

@@ -1,15 +1,35 @@
 package com.cqx.process;
 
 public class LogInfoFactory {
-	private static String LEVEL = "INFO";
+	private static LogInfoFactory log = new LogInfoFactory();
+	private static String LEVEL = "ERR";
+	private boolean isNeedTime = true;
 	
-	public static void setLevel(int levelcode){
+	private LogInfoFactory(){}
+	
+	public static LogInfoFactory getInstance(){
+		return log!=null?log:new LogInfoFactory();
+	}
+	
+	public void setNeedTime(boolean isNeedTime) {
+		this.isNeedTime = isNeedTime;
+	}
+
+	/**
+	 * <pre>
+	 * 0:ERR
+	 * 1:INFO
+	 * 2:WARN
+	 * 3:DEBUG
+	 * </pre>
+	 * */
+	public void setLevel(int levelcode){
 		switch (levelcode) {
 		case 0:
-			LEVEL = "INFO";
+			LEVEL = "ERR";
 			break;
 		case 1:
-			LEVEL = "ERR";
+			LEVEL = "INFO";
 			break;
 		case 2:
 			LEVEL = "WARN";
@@ -23,32 +43,43 @@ public class LogInfoFactory {
 		}
 	}
 	
-	public static String getLEVEL() {
+	public String getLEVEL() {
 		return LEVEL;
 	}
+	
+	private void print(String str){
+		String output = "";
+		if(isNeedTime)
+			output = "##"+new java.util.Date()+"##"+getLEVEL()+"##";
+		System.out.println(output+str);
+	}
 
-	public static void info(String str){
+	public void info(String str){
+//		setLevel(1);
 		if(getLEVEL().equals("INFO")){
-			System.out.println("##"+new java.util.Date()+"##"+getLEVEL()+"##"+str);
+			print(str);
 		}
 	}
 	
-	public static void warn(String str){
+	public void warn(String str){
+//		setLevel(2);
 		if(getLEVEL().equals("WARN")){
-			System.out.println("##"+new java.util.Date()+"##"+getLEVEL()+"##"+str);
+			print(str);
 		}
 	}
 	
-	public static void err(String str, Exception e){
+	public void err(String str, Exception e){
+//		setLevel(0);
 		if(getLEVEL().equals("ERR")){
-			System.out.println("##"+new java.util.Date()+"##"+getLEVEL()+"##"+str);
+			print(str);
 			e.printStackTrace();
 		}
 	}
 	
-	public static void debug(String str){
+	public void debug(String str){
+//		setLevel(3);
 		if(getLEVEL().equals("DEBUG")){
-			System.out.println("##"+new java.util.Date()+"##"+getLEVEL()+"##"+str);
+			print(str);
 		}
 	}
 }

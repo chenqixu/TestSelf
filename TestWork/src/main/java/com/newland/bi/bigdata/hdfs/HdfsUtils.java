@@ -19,6 +19,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.security.SecurityUtil;
+import org.apache.hadoop.util.StringUtils;
 
 public class HdfsUtils {
 	// key
@@ -441,14 +442,24 @@ public class HdfsUtils {
 		String principal = "";
 		String keytab = "";
 		try{
-			hdfsSystem = HdfsUtils.openFileSystem(defaultfs, nameservice, namenodes, namenodeAddr, 
-					failoverProxy, isSecurity, principal, keytab, "", "");
+//			hdfsSystem = HdfsUtils.openFileSystem(defaultfs, nameservice, namenodes, namenodeAddr, 
+//					failoverProxy, isSecurity, principal, keytab, "", "");
+			hdfsSystem = HdfsUtils.openFileSystem("D:\\Document\\Workspaces\\Git\\TestSelf\\TestWork\\src\\main\\resources\\75hadoop\\core-site.xml");
 			System.out.println(hdfsSystem);
-			String path = "hdfs://master75:8020/zyh";
+			// 创建文件及目录
+//			createNewFile(hdfsSystem, new Path("/tmp/20180906/data0/aaa_data0_20180906_0_000111.tmp"));
+			String path = "hdfs://master75:8020/test/*/";
 			// 获取列表
 //			getFileList(hdfsSystem, path);
 			// 正则过滤
-			new HdfsUtils().getFileListByRegex(hdfsSystem, path, "1*");
+//			new HdfsUtils().getFileListByRegex(hdfsSystem, path, "1*");
+			// SQOOP-EXPORT test
+			Path p1 = new Path(path);
+			p1.getFileSystem(hdfsCfg).makeQualified(p1);
+			String dirStr = StringUtils.escapeString(path.toString());
+			System.out.println("[dirStr]"+dirStr);
+		    String dirs = hdfsCfg.get("mapred.input.dir");
+		    hdfsCfg.set("mapred.input.dir", dirs == null ? dirStr : dirs + "," + dirStr);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -469,7 +480,7 @@ public class HdfsUtils {
 	
 	public static void main(String[] args) {
         //需要设置hadoop用户,否则没有权限
-        System.setProperty("HADOOP_USER_NAME", "hadoop");
+        System.setProperty("HADOOP_USER_NAME", "edc_base");
         hadoopmaster75();
 	}
 	

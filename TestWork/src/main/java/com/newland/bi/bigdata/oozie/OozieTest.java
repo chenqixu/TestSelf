@@ -20,6 +20,11 @@ import org.apache.hadoop.conf.Configuration;
 //import org.jdom.filter.ElementFilter;
 
 public class OozieTest {
+	
+	public void test1(){
+//		org.apache.curator.ConnectionState a;
+	}
+	
 	public static void main(String[] args) {
 //		org.apache.oozie.action.oozie.SubWorkflowActionExecutor s;
 		org.apache.oozie.servlet.V1JobsServlet v1;

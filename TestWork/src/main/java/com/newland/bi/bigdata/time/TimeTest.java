@@ -148,6 +148,10 @@ public class TimeTest {
 		}
 		return localTimeStr;
 	}
+	
+	public static String getNowGMTDate(String timezone, String type){
+		return format.format(Calendar.getInstance(TimeZone.getTimeZone("GMT"+type+timezone)).getTime());
+	}
 
 	public static void main(String[] args) throws Exception {
 //		// String time2 = "180_hw_1452129156865.CHK";
@@ -244,5 +248,8 @@ public class TimeTest {
 		System.out.println(UTCTimeStr);
 		// UTC时间转换为本地时区时间
 		System.out.println(getLocalTimeFromUTC(UTCTimeStr));
+		
+//		System.out.println(getNowGMTDate("8", "+"));
+		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 	}
 }
