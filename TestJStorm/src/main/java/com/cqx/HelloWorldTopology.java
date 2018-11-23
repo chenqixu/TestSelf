@@ -1,6 +1,14 @@
 package com.cqx;
 
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.apache.log4j.Logger;
+
+import java.io.File;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 import backtype.storm.Config;
+import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.AuthorizationException;
@@ -8,12 +16,15 @@ import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.utils.Utils;
 
 /**
  * Desc: setup the topology and submit it to either a local of remote Storm
  * cluster depending on the arguments passed to the main method.
  * */
 public class HelloWorldTopology {
+//	private static final Logger logger = LoggerFactory.getLogger(HelloWorldTopology.class);
+//	private static Logger logger = Logger.getLogger(HelloWorldTopology.class);
 	/*
 	 * main class in which to define the topology and a LocalCluster object
 	 * (enables you to test and debug the topology locally). In conjunction with
@@ -32,38 +43,70 @@ public class HelloWorldTopology {
 	 */
 	public static void main(String[] args) throws AlreadyAliveException,
 			InvalidTopologyException, AuthorizationException {
-		if ( args != null && args.length == 3 ) {
-			String Topology_name = args[0];
+		String Topology_name = "helloworld";
+		
+		// åˆ›å»ºtopologyçš„ç”Ÿæˆå™¨
+		TopologyBuilder builder = new TopologyBuilder();
+		// åˆ›å»ºSpoutï¼Œå…¶ä¸­new HelloWorldSpout() ä¸ºçœŸæ­£spoutå¯¹è±¡
+		// randomHelloWorld ä¸ºspoutçš„åå­—ï¼Œæ³¨æ„åå­—ä¸­ä¸è¦å«æœ‰ç©ºæ ¼
+		// spoutçš„å¹¶å‘è®¾ç½®ï¼Œè¿™é‡Œè®¾ç½®ä¸º1
+		SpoutDeclarer spout = builder.setSpout("randomHelloWorld", new HelloWorldSpout(), 1);
+		// åˆ›å»ºboltï¼ŒHelloWorldBoltä¸ºboltåå­—
+		// HelloWorldBolt ä¸ºboltå¯¹è±¡
+		// 1ä¸ºboltå¹¶å‘æ•°
+		// shuffleGroupingï¼ˆSequenceTopologyDef.SEQUENCE_SPOUT_NAMEï¼‰ï¼Œ
+		// è¡¨ç¤ºæ¥æ”¶SequenceTopologyDef.SEQUENCE_SPOUT_NAMEçš„æ•°æ®ï¼Œå¹¶ä¸”ä»¥shuffleæ–¹å¼ï¼Œ
+		// å³æ¯ä¸ªspoutéšæœºè½®è¯¢å‘é€tupleåˆ°ä¸‹ä¸€çº§boltä¸­
+		BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 1)
+				.shuffleGrouping("randomHelloWorld");
+		Config conf = new Config();
+		// å…è®¸debug
+		conf.setDebug(true);
+		// è¡¨ç¤ºæ•´ä¸ªtopologyå°†ä½¿ç”¨å‡ ä¸ªworker
+		conf.setNumWorkers(1);
+		// è®¾ç½®ackä¸º1
+		conf.setNumAckers(1);
+		
+		// è¿œç¨‹æäº¤é›†ç¾¤æ¨¡å¼
+		if ( args != null && args.length == 6 ) {
+			Topology_name = args[0];
 			String NIMBUS_HOST = args[1];
 			String NIMBUS_THRIFT_PORT = args[2];
-			// ´´½¨topologyµÄÉú³ÉÆ÷
-			TopologyBuilder builder = new TopologyBuilder();
-			// ´´½¨Spout£¬ÆäÖĞnew HelloWorldSpout() ÎªÕæÕıspout¶ÔÏó
-			// randomHelloWorld ÎªspoutµÄÃû×Ö£¬×¢ÒâÃû×ÖÖĞ²»Òªº¬ÓĞ¿Õ¸ñ
-			// spoutµÄ²¢·¢ÉèÖÃ£¬ÕâÀïÉèÖÃÎª1
-			SpoutDeclarer spout = builder.setSpout("randomHelloWorld", new HelloWorldSpout(), 1);
-			// ´´½¨bolt£¬HelloWorldBoltÎªboltÃû×Ö
-			// HelloWorldBolt Îªbolt¶ÔÏó
-			// 1Îªbolt²¢·¢Êı
-			// shuffleGrouping£¨SequenceTopologyDef.SEQUENCE_SPOUT_NAME£©£¬
-			// ±íÊ¾½ÓÊÕSequenceTopologyDef.SEQUENCE_SPOUT_NAMEµÄÊı¾İ£¬²¢ÇÒÒÔshuffle·½Ê½£¬
-			// ¼´Ã¿¸öspoutËæ»úÂÖÑ¯·¢ËÍtupleµ½ÏÂÒ»¼¶boltÖĞ
-			BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 1)
-					.shuffleGrouping("randomHelloWorld");
-			Config conf = new Config();
-			// nimbusµØÖ·
+			String[] STORM_ZOOKEEPER_SERVERS = new String[]{args[3]};
+			String STORM_ZOOKEEPER_PORT = args[4];
+			String STORM_ZOOKEEPER_ROOT = args[5];
+			// nimbusåœ°å€
 			conf.put(Config.NIMBUS_HOST, NIMBUS_HOST);
-			// nimbus thrift¶Ë¿Ú
+			// nimbus thriftç«¯å£
 			conf.put(Config.NIMBUS_THRIFT_PORT, Integer.valueOf(NIMBUS_THRIFT_PORT));
-			// ÔÊĞídebug
-			conf.setDebug(true);
-			// ±íÊ¾Õû¸ötopology½«Ê¹ÓÃ¼¸¸öworker
-			conf.setNumWorkers(1);
-			// Ìá½»topology
-			StormSubmitter.submitTopology(Topology_name, conf,
-					builder.createTopology());
-		} else {
-			System.out.println("You need input Topology name¡¢NIMBUS_HOST¡¢NIMBUS_THRIFT_PORT.");
+			// zookeeperåœ°å€
+			conf.put(Config.STORM_ZOOKEEPER_SERVERS, Arrays.asList(STORM_ZOOKEEPER_SERVERS));
+			// zookeeperç«¯å£
+			conf.put(Config.STORM_ZOOKEEPER_PORT, STORM_ZOOKEEPER_PORT);
+			// zookeeperä¸Šjstormè·¯å¾„
+			conf.put(Config.STORM_ZOOKEEPER_ROOT, STORM_ZOOKEEPER_ROOT);
+			// æäº¤topology
+			StormSubmitter.submitTopology(Topology_name, conf, builder.createTopology(), null,
+					Arrays.asList(new File[]{new File("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJStorm\\target\\TestJStorm-1.0.0.jar")}));
+		}
+		// æœ¬åœ°æäº¤é›†ç¾¤æ¨¡å¼
+		else if ( args != null && args.length == 3 ) {
+			Topology_name = args[0];
+			String NIMBUS_HOST = args[1];
+			String NIMBUS_THRIFT_PORT = args[2];
+			// nimbusåœ°å€
+			conf.put(Config.NIMBUS_HOST, NIMBUS_HOST);
+			// nimbus thriftç«¯å£
+			conf.put(Config.NIMBUS_THRIFT_PORT, Integer.valueOf(NIMBUS_THRIFT_PORT));
+			// æäº¤topology
+			StormSubmitter.submitTopology(Topology_name, conf, builder.createTopology());
+			}
+		// æœ¬åœ°æ¨¡å¼
+		else {
+			LocalCluster cluster = new LocalCluster();
+			cluster.submitTopology(Topology_name, conf, builder.createTopology());
+			Utils.sleep(10000);
+			cluster.shutdown();
 		}
 	}
 }

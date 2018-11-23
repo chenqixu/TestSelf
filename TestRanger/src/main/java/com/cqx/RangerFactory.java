@@ -8,34 +8,34 @@ public class RangerFactory {
 	}
 	
 	public void exec(String police, boolean isplit, String params){
-		// ²ÎÊı´¦Àí
+		// å‚æ•°å¤„ç†
 		String[] paramarry = null;
 		String param = params;
 		if(isplit){
 			paramarry = params.split(",");
 		}
-		// °´²ßÂÔÖ´ĞĞ
+		// æŒ‰ç­–ç•¥æ‰§è¡Œ
 		if(police.equals("getAllValidPolice")){
-			// »ñÈ¡ËùÓĞÓĞĞ§µÄ²ßÂÔ
+			// è·å–æ‰€æœ‰æœ‰æ•ˆçš„ç­–ç•¥
 			String allValidPolice = rangerImpl.getAllValidPolice();
 			System.out.println("allValidPolice: " + allValidPolice);
 		}else if(police.equals("getPolicyByName")){
-			// ¸ù¾İ²ßÂÔÃû»ñÈ¡
+			// æ ¹æ®ç­–ç•¥åè·å–
 			System.out.println("getPolicyByName("+param+")");
 			String response = rangerImpl.getPolicyByName(param);
 			System.out.println(response);
 		}else if(police.equals("deletePoliceByPoliceName")){
-			// É¾³ı²ßÂÔ£¨¸ù¾İ²ßÂÔÃû³Æ£©
+			// åˆ é™¤ç­–ç•¥ï¼ˆæ ¹æ®ç­–ç•¥åç§°ï¼‰
 			System.out.println("deletePoliceByPoliceName("+param+")");
 			boolean flag = rangerImpl.deletePoliceByPoliceName(param);
 			System.out.println(flag);
 		}else if(police.equals("deletePoliceByPoliceId")){
-			// É¾³ı²ßÂÔ£¨¸ù¾İ²ßÂÔID£©
+			// åˆ é™¤ç­–ç•¥ï¼ˆæ ¹æ®ç­–ç•¥IDï¼‰
 			System.out.println("deletePoliceByPoliceId("+param+")");
 			boolean flag = rangerImpl.deletePoliceByPoliceId(param);
 			System.out.println(flag);
 		}else if(police.equals("createPolice") && paramarry!=null){
-			// ´´½¨²ßÂÔ
+			// åˆ›å»ºç­–ç•¥
 			CreatePoliceReq createPoliceReq = new CreatePoliceReq();
 			createPoliceReq.setPoliceName(paramarry[0]);// "12tUpdate13"
 			createPoliceReq.setPoliceUser(paramarry[1]);// "hive,hbase"
@@ -46,7 +46,7 @@ public class RangerFactory {
 			boolean createPoliceFlag = rangerImpl.createPolice(createPoliceReq);
 			System.out.println(createPoliceFlag);
 		}else if(police.equals("updatePolicyById") && paramarry!=null){
-			// ¸üĞÂ²ßÂÔ
+			// æ›´æ–°ç­–ç•¥
 			UpdatePoliceReq updatePoliceReq = new UpdatePoliceReq();
 			updatePoliceReq.setPoliceName(paramarry[0]);// "12tUpdate13"
 			updatePoliceReq.setPoliceId(paramarry[1]);// "36"
@@ -59,7 +59,7 @@ public class RangerFactory {
 			boolean flag = rangerImpl.updatePolicyById(updatePoliceReq);
 			System.out.println(flag);
 		}else if(police.equals("updatePolicyByName") && paramarry!=null){
-			// ¸üĞÂ²ßÂÔ
+			// æ›´æ–°ç­–ç•¥
 			UpdatePoliceReq updatePoliceReq = new UpdatePoliceReq();
 			updatePoliceReq.setPoliceName(paramarry[0]);// "12tUpdate13"
 			updatePoliceReq.setPoliceUser(paramarry[1]);// "hive,hbase"
@@ -71,15 +71,15 @@ public class RangerFactory {
 			boolean flag = rangerImpl.updatePolicyByName(updatePoliceReq);
 			System.out.println(flag);
 		}
-		// É¾³ıÓÃ»§²ßÂÔ
+		// åˆ é™¤ç”¨æˆ·ç­–ç•¥
 //		boolean deleteFlag = rangerImpl.deleteUserByUserName("bmsoft_test");
 //		System.out.println(deleteFlag);
 	}
 	
 	/**
-	 * ²ÎÊı0£º²ßÂÔ
-	 * ²ÎÊı1£ºÊÇ·ñ¶à¸ö²ÎÊı
-	 * ²ÎÊı2£º²ßÂÔÃû³Æ/²ßÂÔID/ÆäËûÊ¹ÓÃ¶ººÅ·Ö¸î
+	 * å‚æ•°0ï¼šç­–ç•¥
+	 * å‚æ•°1ï¼šæ˜¯å¦å¤šä¸ªå‚æ•°
+	 * å‚æ•°2ï¼šç­–ç•¥åç§°/ç­–ç•¥ID/å…¶ä»–ä½¿ç”¨é€—å·åˆ†å‰²
 	 * */
 	public static void main(String[] args) {
 		if(args.length!=3){

@@ -15,7 +15,7 @@ public class SortCompare extends WritableComparator{
 		try {
 			TempKey tempKeyA = (TempKey)a;
 			TempKey tempKeyB  = (TempKey)b;
-			//首先比较一个key,相同则比较第二key
+			//棣栧厛姣旇緝涓�涓猭ey,鐩稿悓鍒欐瘮杈冪浜宬ey
 			if(!tempKeyA.getFirstKey().equals(tempKeyB.getFirstKey()))
 				compareValue = tempKeyA.getFirstKey().compareTo(tempKeyB.getFirstKey());
 			else

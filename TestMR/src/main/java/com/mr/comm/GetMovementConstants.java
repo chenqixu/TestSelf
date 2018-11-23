@@ -2,33 +2,33 @@ package com.mr.comm;
 
 public class GetMovementConstants {
 	
-	//Êı¾İÊ±¼ä
+	//æ•°æ®æ—¶é—´
 	public static final String SOURCE_DATA_DATE = "SOURCE_DATA_DATE";
-	//sÊä³öÎÄ¼şÃûÇ°×º
+	//sè¾“å‡ºæ–‡ä»¶åå‰ç¼€
 	public static final String PREFIX_NAME = "PREFIX_NAME";
-	//Êä³öÎÄ¼şÃû
+	//è¾“å‡ºæ–‡ä»¶å
 	public static final String OUTPUT_NAME = "OUTPUT_NAME";
-	//Êä³öÂ·¾¶
+	//è¾“å‡ºè·¯å¾„
 	public static final String OUTPUT_PATH = "OUTPUT_PATH";
-	//Êä³öÈ«Â·¾¶
+	//è¾“å‡ºå…¨è·¯å¾„
 	public static final String FULL_OUTPUT_PATH = "FULL_OUTPUT_PATH";
-	//MC_CDRÊäÈëÂ·¾¶
+	//MC_CDRè¾“å…¥è·¯å¾„
 	public static final String INPUT_PAHT_MC_CDR = "INPUT_PAHT_MC_CDR";
-	//MC_SGSÊäÈëÂ·¾¶
+	//MC_SGSè¾“å…¥è·¯å¾„
 	public static final String INPUT_PAHT_LTE_S1MME = "INPUT_PAHT_LTE_S1MME";
-	//ÊÇ·ñĞ£ÑéÔ´Êı¾İ½Ó¿ÚÎÄ¼şµÄ×Ö¶Î×ÜÊı
+	//æ˜¯å¦æ ¡éªŒæºæ•°æ®æ¥å£æ–‡ä»¶çš„å­—æ®µæ€»æ•°
 	public static final String IF_CHECK_SOURCE_DATA_LENGTH = "IF_CHECK_SOURCE_DATA_LENGTH";
-	//MC_CDRÔ´Êı¾İ×Ö¶Î×ÜÊı
+	//MC_CDRæºæ•°æ®å­—æ®µæ€»æ•°
 	public static final String MC_CDR_DATA_LENGTH = "MC_CDR_DATA_LENGTH";
-	//MC_SGSÔ´Êı¾İ×Ö¶Î×ÜÊı
+	//MC_SGSæºæ•°æ®å­—æ®µæ€»æ•°
 	public static final String LTE_S1MME_DATA_LENGTH = "LTE_S1MME_DATA_LENGTH";
-	//¶ººÅ·Ö¸ô·û
+	//é€—å·åˆ†éš”ç¬¦
 	public static final String COMMA_SPLIT_STR = ",";
-	//»ªÎª·Ö¸ô·û
+	//åä¸ºåˆ†éš”ç¬¦
 	public static final String  VERTICLE_LINE_SEPARATOR = "\\|";
-	//MCÊ±¼ä¸ñÊ½
+	//MCæ—¶é—´æ ¼å¼
 	public static final String MC_TIME_FORMAT = "yyyyMMddHHmmss";
-	//Êä³öÊ±¼ä¸ñÊ½
+	//è¾“å‡ºæ—¶é—´æ ¼å¼
 	public static final String OUTPUT_TIME_FORMAT = "yyyy-MM-dd HH-mm-ss";
 	
 	

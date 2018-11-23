@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class A38 {
 	public static void main(String[] args) {
-		// Ä£ÄâÈÓÓ²±Ò
+		// æ¨¡æ‹Ÿæ‰”ç¡¬å¸
 		Random rand = new Random();
 		for(int i=0;i<5;i++)
-			System.out.println("[µÚ"+i+"´ÎÄ£ÄâÈÓÓ²±Ò½á¹û] "+(rand.nextInt(2)==0?"ÕıÃæ":"·´Ãæ"));		
+			System.out.println("[ç¬¬"+i+"æ¬¡æ¨¡æ‹Ÿæ‰”ç¡¬å¸ç»“æœ] "+(rand.nextInt(2)==0?"æ­£é¢":"åé¢"));		
 	}
 }

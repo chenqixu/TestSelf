@@ -18,8 +18,8 @@ import com.newland.bi.bigdata.changecode.ChangeCode;
 public class RmRemoveList extends ChangeCode {
 
 	@Override
-	public void Change(){
-		List<String> changelist = Scan(this.getScan_path());
+	public void change(){
+		List<String> changelist = scan(this.getScan_path());
 		BufferedReader reader = null;
 		BufferedWriter writer = null;	
 		try{
@@ -76,6 +76,6 @@ public class RmRemoveList extends ChangeCode {
 		cc.setRead_code("GBK");
 		cc.setWrite_code("GBK");
 		cc.setLoop(false);// 不需要-r
-		cc.Change();
+		cc.change();
 	}
 }

@@ -13,38 +13,38 @@ import com.mr.comm.GetMovementConstants;
 import com.mr.util.TempKey;
 
 public class LTES1MMEMapper extends Mapper<LongWritable,Text,TempKey,Text> {
-	// ÅäÖÃĞÅÏ¢ÊµÌåÀà
+	// é…ç½®ä¿¡æ¯å®ä½“ç±»
 	private static Configuration conf = null;
-	// ÖğĞĞ¶ÁÈëµÄÊı¾İ
+	// é€è¡Œè¯»å…¥çš„æ•°æ®
 	private String lineValue;
-	// ÊÇ·ñĞ£ÑéÔ´Êı¾İ½Ó¿ÚÎÄ¼şµÄ×Ö¶Î×ÜÊı
+	// æ˜¯å¦æ ¡éªŒæºæ•°æ®æ¥å£æ–‡ä»¶çš„å­—æ®µæ€»æ•°
 	private static boolean ifCheckSourceDataLength;
-	// Ô´Êı¾İ×Ö¶Î×ÜÊı
+	// æºæ•°æ®å­—æ®µæ€»æ•°
 	private static int sourceDataLength = 0;
-	// ´æ·ÅÔ´Êı¾İµÄÊı×é
+	// å­˜æ”¾æºæ•°æ®çš„æ•°ç»„
 	private String[] sourceDataValueArr = null;
-	// mapper Êä³ökey
+	// mapper è¾“å‡ºkey
 	public TempKey outputKey = new TempKey();
-	//Í³Ò»Ê±¼ä¸ñÊ½ÎªMCµÄÊ±¼äµÄ¸ñÊ½
+	//ç»Ÿä¸€æ—¶é—´æ ¼å¼ä¸ºMCçš„æ—¶é—´çš„æ ¼å¼
 	private SimpleDateFormat sdf;
 	private String firstTime =null;
 	private String lastTime = null;
 	
 	protected void setup(Context context) {
 		try {
-			// Èç¹ûÅäÖÃĞÅÏ¢ÊµÌåÀàÎª¿Õ£¬Ôò»ñÈ¡¶ÔÏó
+			// å¦‚æœé…ç½®ä¿¡æ¯å®ä½“ç±»ä¸ºç©ºï¼Œåˆ™è·å–å¯¹è±¡
 			if (conf == null)
 				conf = context.getConfiguration();
-			// »ñÈ¡ÅäÖÃÎÄ¼şÊÇ·ñĞèÒªĞ£ÑéÔ´Êı¾İ×Ö¶Î×ÜÊı
+			// è·å–é…ç½®æ–‡ä»¶æ˜¯å¦éœ€è¦æ ¡éªŒæºæ•°æ®å­—æ®µæ€»æ•°
 			ifCheckSourceDataLength = conf.getBoolean(
 					GetMovementConstants.IF_CHECK_SOURCE_DATA_LENGTH, false);
-			// »ñÈ¡ÅäÖÃÎÄ¼şÊÇÅäÖÃµÄ¸÷ÖÖ½Ó¿ÚÎÄ¼şµÄ×Ö¶Î×ÜÊı
+			// è·å–é…ç½®æ–‡ä»¶æ˜¯é…ç½®çš„å„ç§æ¥å£æ–‡ä»¶çš„å­—æ®µæ€»æ•°
 			if (ifCheckSourceDataLength) {
 				sourceDataLength = conf.getInt(
 						GetMovementConstants.LTE_S1MME_DATA_LENGTH, 0);
 			}
 			
-			//Ê±¼ä¸ñÊ½×ª»»
+			//æ—¶é—´æ ¼å¼è½¬æ¢
 			sdf = new SimpleDateFormat(GetMovementConstants.MC_TIME_FORMAT);
 			firstTime = conf.get(GetMovementConstants.SOURCE_DATA_DATE) + "000000";
 			lastTime = conf.get(GetMovementConstants.SOURCE_DATA_DATE) + "235959";
@@ -55,27 +55,27 @@ public class LTES1MMEMapper extends Mapper<LongWritable,Text,TempKey,Text> {
 	
 	public void map(LongWritable key, Text value, Context context)
 	throws IOException, InterruptedException {
-		// ÖğĞĞ¶ÁÈëÊı¾İ
+		// é€è¡Œè¯»å…¥æ•°æ®
 		lineValue = value.toString();
-		// ¶ÔÔ´Êı¾İ½øĞĞ°´×Ö¶Î·Ö¸ô£¬·ÅÈëÊı×éÖĞÈ¥
+		// å¯¹æºæ•°æ®è¿›è¡ŒæŒ‰å­—æ®µåˆ†éš”ï¼Œæ”¾å…¥æ•°ç»„ä¸­å»
 		sourceDataValueArr = lineValue.split(
 				GetMovementConstants.VERTICLE_LINE_SEPARATOR, -1);
-		// ÅĞ¶ÏÊı¾İÊÇ·ñ³ö´í
+		// åˆ¤æ–­æ•°æ®æ˜¯å¦å‡ºé”™
 		if (sourceDataValueArr == null || sourceDataValueArr.length == 0) {
 			return;
 		}
-		// ÅäÖÃÎÄ¼şÅäÖÃ³ÉĞèÒªĞ£Ñé£¬ÔòĞ£ÑéÔ´Êı¾İµÄ×Ö¶Î×ÜÊı
+		// é…ç½®æ–‡ä»¶é…ç½®æˆéœ€è¦æ ¡éªŒï¼Œåˆ™æ ¡éªŒæºæ•°æ®çš„å­—æ®µæ€»æ•°
 		if (ifCheckSourceDataLength) {
 			if (sourceDataLength != sourceDataValueArr.length) {
 				return;
 			}
 		}
-		// ´æ·ÅvalueµÄStringBuffer
+		// å­˜æ”¾valueçš„StringBuffer
 		StringBuffer outputValueSB = new StringBuffer();
-		// mapper Êä³övalue
+		// mapper è¾“å‡ºvalue
 		Text outputValue = new Text();
 		
-		//MSISDN  7 È¡³ö¿ªÍ·86
+		//MSISDN  7 å–å‡ºå¼€å¤´86
 		String msisdn = sourceDataValueArr[7];
 		if(msisdn.equals("")|| msisdn == null){
 			return;
@@ -137,11 +137,11 @@ public class LTES1MMEMapper extends Mapper<LongWritable,Text,TempKey,Text> {
 		
 		outputValue.set(outputValueSB.toString());
 		
-		// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+		// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 		outputKey.setFirstKey(msisdn);
-		// ÉèÖÃProcedure Start Time 10ÎªÊä³ökeyµÄsecondKey
+		// è®¾ç½®Procedure Start Time 10ä¸ºè¾“å‡ºkeyçš„secondKey
 		outputKey.setSecondKey(outputTime);
-		// mapper½á¹ûÊä³ö
+		// mapperç»“æœè¾“å‡º
 		context.write(outputKey, outputValue);
 	}
 	

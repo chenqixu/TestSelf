@@ -18,7 +18,7 @@ public class ThreadPoolTest {
 				}
 			}
 		};
-		// ºËĞÄÏß³ÌÊıÎª3£¬×î´óÏß³ÌÊıÎª10¡£³¬Ê±Ê±¼äÎª5Ãë
+		// æ ¸å¿ƒçº¿ç¨‹æ•°ä¸º3ï¼Œæœ€å¤§çº¿ç¨‹æ•°ä¸º10ã€‚è¶…æ—¶æ—¶é—´ä¸º5ç§’
 		TrackingThreadPool executor = new TrackingThreadPool(3, 10, 5, TimeUnit.SECONDS,
 //				new SynchronousQueue<Runnable>());
 //				new LinkedBlockingDeque<Runnable>());
@@ -29,22 +29,22 @@ public class ThreadPoolTest {
 //		executor.awaitTermination(timeout, unit);
 //		executor.submit(task);
 //		executor.invokeAll(tasks);
-		System.out.println("---ÏÈ¿ªÈı¸ö---");
-		System.out.println("ºËĞÄÏß³ÌÊı" + executor.getCorePoolSize());
-		System.out.println("Ïß³Ì³ØÊı" + executor.getPoolSize());
-		System.out.println("¶ÓÁĞÈÎÎñÊı" + executor.getQueue().size());
+		System.out.println("---å…ˆå¼€ä¸‰ä¸ª---");
+		System.out.println("æ ¸å¿ƒçº¿ç¨‹æ•°" + executor.getCorePoolSize());
+		System.out.println("çº¿ç¨‹æ± æ•°" + executor.getPoolSize());
+		System.out.println("é˜Ÿåˆ—ä»»åŠ¡æ•°" + executor.getQueue().size());
 		executor.execute(myRunnable);
 		executor.execute(myRunnable);
 		executor.execute(myRunnable);
-		System.out.println("---ÔÙ¿ªÈı¸ö---");
-		System.out.println("ºËĞÄÏß³ÌÊı" + executor.getCorePoolSize());
-		System.out.println("Ïß³Ì³ØÊı" + executor.getPoolSize());
-		System.out.println("¶ÓÁĞÈÎÎñÊı" + executor.getQueue().size());
+		System.out.println("---å†å¼€ä¸‰ä¸ª---");
+		System.out.println("æ ¸å¿ƒçº¿ç¨‹æ•°" + executor.getCorePoolSize());
+		System.out.println("çº¿ç¨‹æ± æ•°" + executor.getPoolSize());
+		System.out.println("é˜Ÿåˆ—ä»»åŠ¡æ•°" + executor.getQueue().size());
 //		Thread.sleep(8000);
-//		System.out.println("----8ÃëÖ®ºó----");
-//		System.out.println("ºËĞÄÏß³ÌÊı" + executor.getCorePoolSize());
-//		System.out.println("Ïß³Ì³ØÊı" + executor.getPoolSize());
-//		System.out.println("¶ÓÁĞÈÎÎñÊı" + executor.getQueue().size());
+//		System.out.println("----8ç§’ä¹‹å----");
+//		System.out.println("æ ¸å¿ƒçº¿ç¨‹æ•°" + executor.getCorePoolSize());
+//		System.out.println("çº¿ç¨‹æ± æ•°" + executor.getPoolSize());
+//		System.out.println("é˜Ÿåˆ—ä»»åŠ¡æ•°" + executor.getQueue().size());
 		if (executor.isEndTask()) {
 			executor.shutdown();
 		}

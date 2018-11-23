@@ -4,9 +4,9 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
 
 public class SftpConnection {
-	//SSHµÄchannel
+	//SSHçš„channel
 	private ChannelSftp channelSftp;
-	//SSHµÄSession
+	//SSHçš„Session
 	private Session sshSession ;
 	public ChannelSftp getChannelSftp() {
 		return channelSftp;

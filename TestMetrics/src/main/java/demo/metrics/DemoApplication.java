@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class DemoApplication {
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(DemoApplication.class, args);
-		// ∆Ù∂ØReporter
+		// ÂêØÂä®Reporter
 		ConsoleReporter reporter = ctx.getBean(ConsoleReporter.class);
 		reporter.start(2, TimeUnit.SECONDS);
 	}

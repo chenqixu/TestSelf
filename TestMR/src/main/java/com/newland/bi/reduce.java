@@ -10,66 +10,66 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 public class reduce extends Reducer<Text,Text,Text,Text>{
-	// ÅäÖÃÊµÀı
+	// é…ç½®å®ä¾‹
 	private Configuration conf = null;
-	// ·Ö²¼Ê½ÎÄ¼şÏµÍ³
+	// åˆ†å¸ƒå¼æ–‡ä»¶ç³»ç»Ÿ
 	private FileSystem fs = null;
-	// ÉùÃ÷ MultipleOutputs µÄ±äÁ¿
+	// å£°æ˜ MultipleOutputs çš„å˜é‡
 	private MultipleOutputs<Text,NullWritable> multipleOutputs;
-	// Êä³öÎÄ¼şÃû
+	// è¾“å‡ºæ–‡ä»¶å
 	private String outputName;
 	private String outputPath;
     
 	/**
-	 * ÔÚÈÎÎñ¿ªÊ¼Ê±µ÷ÓÃÒ»´Î
+	 * åœ¨ä»»åŠ¡å¼€å§‹æ—¶è°ƒç”¨ä¸€æ¬¡
 	 * */
 	protected void setup(Context context) throws IOException,InterruptedException{
 		super.setup(context);
-		// »ñÈ¡Configuration¶ÔÏó
+		// è·å–Configurationå¯¹è±¡
     	if(null == conf) conf = context.getConfiguration();
-		// »ñÈ¡ÎÄ¼şÏµÍ³ÊµÀı
+		// è·å–æ–‡ä»¶ç³»ç»Ÿå®ä¾‹
 		fs = FileSystem.newInstance(conf);
-		// ¶àÎÄ¼şÊä³ö
+		// å¤šæ–‡ä»¶è¾“å‡º
 		multipleOutputs = new MultipleOutputs(context);
-		// reduceÊä³öÂ·¾¶ºÍÎÄ¼şÃû
+		// reduceè¾“å‡ºè·¯å¾„å’Œæ–‡ä»¶å
     	outputName = conf.get(Contants.OUTPUTNAME);
     	outputPath =  conf.get(Contants.OUTPUTPATH)+outputName;		
 	}
 	
 	/**
-	 * ÔÚÈÎÎñ½áÊøÊ±µ÷ÓÃÒ»´Î
+	 * åœ¨ä»»åŠ¡ç»“æŸæ—¶è°ƒç”¨ä¸€æ¬¡
 	 * */
 	protected void cleanup(Context context) throws IOException,InterruptedException {
-		// ¹Ø±Õ¶àÎÄ¼şÊä³ö
+		// å…³é—­å¤šæ–‡ä»¶è¾“å‡º
 		multipleOutputs.close();
-		// ¹Ø±Õ·Ö²¼Ê½ÎÄ¼şÏµÍ³ÊµÀı
+		// å…³é—­åˆ†å¸ƒå¼æ–‡ä»¶ç³»ç»Ÿå®ä¾‹
 		fs.close();
-		// µ÷ÓÃ¸¸ÀàµÄcleanup·½·¨
+		// è°ƒç”¨çˆ¶ç±»çš„cleanupæ–¹æ³•
 		super.cleanup(context);
 	}
 	
 	/**
-	 * ¸ù¾İmapÊä³öµÄÃ¿¸ö·Ö×éid,name,code½øĞĞ»ã×Ü´¦Àí£¨sum(cnt),sum(user_time)£©
+	 * æ ¹æ®mapè¾“å‡ºçš„æ¯ä¸ªåˆ†ç»„id,name,codeè¿›è¡Œæ±‡æ€»å¤„ç†ï¼ˆsum(cnt),sum(user_time)ï¼‰
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 * */
 	@Override
 	protected void reduce(Text key, Iterable<Text> values, Context context) {
-		// mapÖĞÊä³öµÄ·Ö×é×Ö¶Î£¨id,name,code£©
+		// mapä¸­è¾“å‡ºçš„åˆ†ç»„å­—æ®µï¼ˆid,name,codeï¼‰
 		String keyStr = key.toString();
-		// ½øĞĞ»ã×Ü²Ù×÷
-		int all_cnt = 0;// »ã×ÜÖµ
-		int all_user_time = 0;// »ã×ÜÖµ
-		// Ñ­»·mapÖĞÊä³öµÄvalue£¬Ê¹ÓÃ¶àÎÄ¼şÊä³öÊµÀıÊä³öµ½ÎÄ¼ş
+		// è¿›è¡Œæ±‡æ€»æ“ä½œ
+		int all_cnt = 0;// æ±‡æ€»å€¼
+		int all_user_time = 0;// æ±‡æ€»å€¼
+		// å¾ªç¯mapä¸­è¾“å‡ºçš„valueï¼Œä½¿ç”¨å¤šæ–‡ä»¶è¾“å‡ºå®ä¾‹è¾“å‡ºåˆ°æ–‡ä»¶
 		for(Text value : values){
-			// ÇĞ¸îmapÖĞÊä³öµÄÖµ×Ö¶Î£¬½øĞĞ»ã×Ü
+			// åˆ‡å‰²mapä¸­è¾“å‡ºçš„å€¼å­—æ®µï¼Œè¿›è¡Œæ±‡æ€»
 			String arr[] = value.toString().split(Contants.SPLIT_DICT, -1);
 			String cnt = arr[0];
 			String user_time = arr[1];
-			all_cnt += Integer.valueOf(cnt);// Í¬Ò»·Ö×é½øĞĞ»ã×Ü
-			all_user_time += Integer.valueOf(user_time);// Í¬Ò»·Ö×é½øĞĞ»ã×Ü
+			all_cnt += Integer.valueOf(cnt);// åŒä¸€åˆ†ç»„è¿›è¡Œæ±‡æ€»
+			all_user_time += Integer.valueOf(user_time);// åŒä¸€åˆ†ç»„è¿›è¡Œæ±‡æ€»
 		}
-		// Êä³ö£¬keyºÍ»ã×ÜºóµÄvalue
+		// è¾“å‡ºï¼Œkeyå’Œæ±‡æ€»åçš„value
 		String outputStr = keyStr+Contants.SPLIT_DICT+all_cnt+Contants.SPLIT_DICT+all_user_time;
 		try {
 			multipleOutputs.write(outputName,new Text(outputStr),NullWritable.get(),outputPath);

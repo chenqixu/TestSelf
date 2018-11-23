@@ -8,19 +8,19 @@ import org.apache.hadoop.io.WritableComparable;
 
 public class TempKey implements WritableComparable<Object>{
 
-	//µÚÒ»¸ö¼üÊÖ»úºÅÂë£¬ÓÃÓÚÊı¾İ·Ö×é
+	//ç¬¬ä¸€ä¸ªé”®æ‰‹æœºå·ç ï¼Œç”¨äºæ•°æ®åˆ†ç»„
 	private String firstKey;
-	//µÚ¶ş¸ö¼üÊ±¼ä£¬ÓÃÓÚÊı¾İÅÅĞò
+	//ç¬¬äºŒä¸ªé”®æ—¶é—´ï¼Œç”¨äºæ•°æ®æ’åº
 	private String secondKey;
 	
 	@Override
 	public void readFields(DataInput dataInput) throws IOException {
 		try {
 			System.out.println("dataInput.toString():"+dataInput.toString());
-			//ÒÔUTF±àÂë¶ÁÈëfirstKey
+			//ä»¥UTFç¼–ç è¯»å…¥firstKey
 			firstKey = dataInput.readUTF();
 			System.out.println("firstKey dataInput.readUTF():"+firstKey);
-			//ÒÔUTF±àÂë¶ÁÈësecondKey
+			//ä»¥UTFç¼–ç è¯»å…¥secondKey
 			secondKey = dataInput.readUTF();
 			System.out.println("secondKey dataInput.readUTF():"+secondKey);
 		} catch (Exception e) {
@@ -33,9 +33,9 @@ public class TempKey implements WritableComparable<Object>{
 	@Override
 	public void write(DataOutput dataOutput) throws IOException {
 		try {
-			//ÒÔUTF±àÂëÊä³öfirstKey
+			//ä»¥UTFç¼–ç è¾“å‡ºfirstKey
 			dataOutput.writeUTF(firstKey);
-			//ÒÔUTF±àÂëÊä³ösecondKey
+			//ä»¥UTFç¼–ç è¾“å‡ºsecondKey
 			dataOutput.writeUTF(secondKey);
 		} catch (Exception e) {
 			System.out.println("%%%%%CombineKey---write() firstKey="+firstKey);
@@ -47,9 +47,9 @@ public class TempKey implements WritableComparable<Object>{
 	@Override
 	public int compareTo(Object obj) {
 		TempKey combineKye = (TempKey) obj;
-		//ÀûÓÃÕâ¸öÀ´¿ØÖÆÉıĞò»òÕß½µĞò
-		//this±¾¶ÔÏóĞ´ÔÚÇ°Ãæ´ú±íÊÇÉıĞò
-		//thsi±¾¶ÔÏóĞ´ÔÚºóÃæ´ú±íÊÇ½µĞò
+		//åˆ©ç”¨è¿™ä¸ªæ¥æ§åˆ¶å‡åºæˆ–è€…é™åº
+		//thisæœ¬å¯¹è±¡å†™åœ¨å‰é¢ä»£è¡¨æ˜¯å‡åº
+		//thsiæœ¬å¯¹è±¡å†™åœ¨åé¢ä»£è¡¨æ˜¯é™åº
 		if(!this.getFirstKey().equals(combineKye.getFirstKey())){
 			return this.getFirstKey().compareTo(combineKye.getFirstKey());
 		}else{

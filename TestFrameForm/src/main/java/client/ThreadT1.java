@@ -3,9 +3,9 @@ package client;
 public class ThreadT1 {
 	public static void main(String[] args) {
 		try {
-			ThreadT2 dog = new ThreadT2("¹·¹·");
-			ThreadT2 cat = new ThreadT2("ß÷ß÷");
-			ThreadT2 pig = new ThreadT2("ÖíÖí");
+			ThreadT2 dog = new ThreadT2("ç‹—ç‹—");
+			ThreadT2 cat = new ThreadT2("å–µå–µ");
+			ThreadT2 pig = new ThreadT2("çŒªçŒª");
 
 			System.out.println("--- start sprites");
 			dog.start();

@@ -12,23 +12,23 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 public class GetMovementCommonUtils {
 	/**
-	 * @description: ÔÚÊäÈëÂ·¾¶ÏÂ¸ù¾İ»ã×ÜÊ±¼äÌõ¼ş¹ıÂËÎÄ¼şÃû£¬ÅäÖÃ¶ÔÓ¦µÄmapperÀà½øĞĞ´¦Àí
-	 * @param job ÈÎÎñ¶ÔÏó
-	 * @param fs ÎÄ¼şÏµÍ³¶ÔÏó
-	 * @param path ÊäÈëÂ·¾¶
-	 * @param mapper ¶ÔÓ¦µÄmapper´¦ÀíÀà
+	 * @description: åœ¨è¾“å…¥è·¯å¾„ä¸‹æ ¹æ®æ±‡æ€»æ—¶é—´æ¡ä»¶è¿‡æ»¤æ–‡ä»¶åï¼Œé…ç½®å¯¹åº”çš„mapperç±»è¿›è¡Œå¤„ç†
+	 * @param job ä»»åŠ¡å¯¹è±¡
+	 * @param fs æ–‡ä»¶ç³»ç»Ÿå¯¹è±¡
+	 * @param path è¾“å…¥è·¯å¾„
+	 * @param mapper å¯¹åº”çš„mapperå¤„ç†ç±»
 	 */
 	@SuppressWarnings("unchecked")
 	public static void addInputPath(Job job, FileSystem fs, String path, Class mapper) {
-		//ÊäÈëÂ·¾¶
+		//è¾“å…¥è·¯å¾„
 		Path inputPath=new Path(path);
 		try {
 			if(fs.exists(inputPath)){
-				//ÁĞ³öÄ¿Â¼ÏÂÎÄ¼şµÄÔªÊı¾İĞÅÏ¢
+				//åˆ—å‡ºç›®å½•ä¸‹æ–‡ä»¶çš„å…ƒæ•°æ®ä¿¡æ¯
 				FileStatus[] fileStatusArr=fs.listStatus(inputPath);
 				for(FileStatus fileStatus:fileStatusArr){
-					System.out.println("ÊäÈëÎÄ¼ş£º" + fileStatus.getPath().toString());
-					//È¡ÎÄ¼ş×÷ÎªÊäÈë
+					System.out.println("è¾“å…¥æ–‡ä»¶ï¼š" + fileStatus.getPath().toString());
+					//å–æ–‡ä»¶ä½œä¸ºè¾“å…¥
 					MultipleInputs.addInputPath(job, fileStatus.getPath(), TextInputFormat.class,mapper);
 				}
 			}

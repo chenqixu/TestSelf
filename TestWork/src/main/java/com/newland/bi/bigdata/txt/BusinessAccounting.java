@@ -29,12 +29,12 @@ public class BusinessAccounting extends ChangeCode implements Runnable {
 	 * 输出文件及文件行数<br>
 	 * */
 	@Override
-	public void Change(){
+	public void change(){
 		String _scanpath = "";
 		while((_scanpath=scanPathQueue.poll())!=null){
-			List<String> javalist = Scan(_scanpath);
-			List<String> xmllist = Scan(_scanpath, ".*\\.xml");
-			List<String> propertieslist = Scan(_scanpath, ".*\\.properties");
+			List<String> javalist = scan(_scanpath);
+			List<String> xmllist = scan(_scanpath, ".*\\.xml");
+			List<String> propertieslist = scan(_scanpath, ".*\\.properties");
 			try{
 				// javalist
 				for(int i=0;i<javalist.size();i++){
@@ -93,7 +93,7 @@ public class BusinessAccounting extends ChangeCode implements Runnable {
 	
 	@Override
 	public void run() {
-		Change();
+		change();
 	}
 
 	public static void main(String[] args) {

@@ -18,19 +18,19 @@ public class TempMain {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException,
 			InterruptedException, ClassNotFoundException {
-		//ÊäÈëÂ·¾¶
+		//è¾“å…¥è·¯å¾„
 //		String dst = "hdfs://streamslab.localdomain:8020/test/input.txt";
 		String dst = "hdfs://streamslab.localdomain:9000/test/input.txt";
-		//Êä³öÂ·¾¶£¬±ØĞëÊÇ²»´æÔÚµÄ£¬¿ÕÎÄ¼ş¼ÓÒ²²»ĞĞ¡£
+		//è¾“å‡ºè·¯å¾„ï¼Œå¿…é¡»æ˜¯ä¸å­˜åœ¨çš„ï¼Œç©ºæ–‡ä»¶åŠ ä¹Ÿä¸è¡Œã€‚
 //		String dstOut = "hdfs://streamslab.localdomain:8020/test/output";
 		String dstOut = "hdfs://streamslab.localdomain:9000/test/output";		
 		Configuration hadoopConfig = new Configuration();
-		//2.0.0ÕâÀïÃ»ÓĞ
+		//2.0.0è¿™é‡Œæ²¡æœ‰
 //		hadoopConfig.set("fs.hdfs.impl",
 //				org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
 //		hadoopConfig.set("fs.file.impl",
 //				org.apache.hadoop.fs.LocalFileSystem.class.getName());
-		//ÏÈ¼ÓÔØÅäÖÃ,FileSystemĞèÒª
+		//å…ˆåŠ è½½é…ç½®,FileSysteméœ€è¦
 		String path = "/opt/hadoop/hadoop-2.4.0/etc/hadoop/";
 //		String path = "/home/hadoop/app/hadoop-2.0.0-cdh4.3.0/etc/hadoop/";
 		hadoopConfig.addResource(new Path(path + "core-site.xml"));
@@ -42,26 +42,26 @@ public class TempMain {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//Èç¹ûÊä³öÂ·¾¶´æÔÚ£¬ÏÈÉ¾³ı
+		//å¦‚æœè¾“å‡ºè·¯å¾„å­˜åœ¨ï¼Œå…ˆåˆ é™¤
 		Path p = new Path(dstOut);
 		if (fs.exists(p)) {
 			fs.delete(p, true);
-			System.out.println("=====delPath É¾³ı£º" + p.toString() + "=====");
+			System.out.println("=====delPath åˆ é™¤ï¼š" + p.toString() + "=====");
 		}
-		//ÈÎÎñ
+		//ä»»åŠ¡
 		Job job = new Job(hadoopConfig);
-		//Èç¹ûĞèÒª´ò³ÉjarÔËĞĞ£¬ĞèÒªÏÂÃæÕâ¾ä
+		//å¦‚æœéœ€è¦æ‰“æˆjarè¿è¡Œï¼Œéœ€è¦ä¸‹é¢è¿™å¥
 		job.setJarByClass(TempMain.class);
-		//jobÖ´ĞĞ×÷ÒµÊ±ÊäÈëºÍÊä³öÎÄ¼şµÄÂ·¾¶
+		//jobæ‰§è¡Œä½œä¸šæ—¶è¾“å…¥å’Œè¾“å‡ºæ–‡ä»¶çš„è·¯å¾„
 		FileInputFormat.addInputPath(job, new Path(dst));
 		FileOutputFormat.setOutputPath(job, new Path(dstOut));
-		//Ö¸¶¨×Ô¶¨ÒåµÄMapperºÍReducer×÷ÎªÁ½¸ö½×¶ÎµÄÈÎÎñ´¦ÀíÀà
+		//æŒ‡å®šè‡ªå®šä¹‰çš„Mapperå’ŒReducerä½œä¸ºä¸¤ä¸ªé˜¶æ®µçš„ä»»åŠ¡å¤„ç†ç±»
 		job.setMapperClass(TempMapper.class);
 		job.setReducerClass(TempReducer.class);
-		//ÉèÖÃ×îºóÊä³ö½á¹ûµÄKeyºÍValueµÄÀàĞÍ
+		//è®¾ç½®æœ€åè¾“å‡ºç»“æœçš„Keyå’ŒValueçš„ç±»å‹
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
-		//Ö´ĞĞjob£¬Ö±µ½Íê³É
+		//æ‰§è¡Œjobï¼Œç›´åˆ°å®Œæˆ
 		job.waitForCompletion(true);
 		System.out.println("TrackingURL:"+job.getTrackingURL());
 		System.out.println("Finished");

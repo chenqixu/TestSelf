@@ -15,46 +15,46 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 /**
- * ¶à¸ö½á¹ûtabÃæ°å
+ * å¤šä¸ªç»“æœtabé¢æ¿
  * */
 @SuppressWarnings("serial")
 public class ResultTabPanel extends JPanel {
 	public ResultTabPanel(List<List<List<String>>> allResultList){
-		// ÉèÖÃ²¼¾Ö¹ÜÀíÆ÷£¬Ä¬ÈÏµÄ²¼¾Ö¹ÜÀíÆ÷ÊÇ BorderLayout,ÕâÀïÃ»ÄÇÃ´¸´ÔÓ
-		// Ñ¡ÔñGridLayout(1,1)¼´¿É£¬¾ÍÊÇÕû¸öÎªÒ»¿é
+		// è®¾ç½®å¸ƒå±€ç®¡ç†å™¨ï¼Œé»˜è®¤çš„å¸ƒå±€ç®¡ç†å™¨æ˜¯ BorderLayout,è¿™é‡Œæ²¡é‚£ä¹ˆå¤æ‚
+		// é€‰æ‹©GridLayout(1,1)å³å¯ï¼Œå°±æ˜¯æ•´ä¸ªä¸ºä¸€å—
 		super(new GridLayout(1, 1));
-		// ´´½¨JTabbedPane
+		// åˆ›å»ºJTabbedPane
 		JTabbedPane tp = new JTabbedPane();
-		// Èç¹ûÓĞÊı¾İ
+		// å¦‚æœæœ‰æ•°æ®
 		if(allResultList!=null&&allResultList.size()>0){
 			for(int i=0;i<allResultList.size();i++){
-				// ´´½¨±êÇ©ÏÂµÄpanel
+				// åˆ›å»ºæ ‡ç­¾ä¸‹çš„panel
 				JPanel panel0 = createPanel("panel"+(i+1));
-				// Ö¸¶¨±êÇ©Ãû£¬±êÇ©Í¼±ê£¬panel£¬ºÍÌáÊ¾ĞÅÏ¢
+				// æŒ‡å®šæ ‡ç­¾åï¼Œæ ‡ç­¾å›¾æ ‡ï¼Œpanelï¼Œå’Œæç¤ºä¿¡æ¯
 				tp.addTab("panel"+(i+1), null, panel0, "result"+(i+1));
-				// »æÖÆ½á¹û
+				// ç»˜åˆ¶ç»“æœ
 				buisnessDeal(allResultList.get(i),panel0);
 			}
-			// ÉèÖÃºÏÊÊµÄÏÔÊ¾³ß´ç£¬Õâ¸öÊÇ±ØĞëµÄ£¬ÒòÎªÈç¹ûËùÓĞµÄ±êÇ©¶¼
-			// ²»Ö¸¶¨ÊÊºÏµÄÏÔÊ¾³ß´ç£¬ÏµÍ³ÎŞ·¨ÅĞ¶Ï³õÊ¼ÏÔÊ¾³ß´ç´óĞ¡
-			// Ä¬ÈÏÊÇÊ¹ÓÃ×îĞ¡»¯£¬²¢ÇÒ¶ÔÒ»¸ö±êÇ©Éè¼Æ¼´¿É
+			// è®¾ç½®åˆé€‚çš„æ˜¾ç¤ºå°ºå¯¸ï¼Œè¿™ä¸ªæ˜¯å¿…é¡»çš„ï¼Œå› ä¸ºå¦‚æœæ‰€æœ‰çš„æ ‡ç­¾éƒ½
+			// ä¸æŒ‡å®šé€‚åˆçš„æ˜¾ç¤ºå°ºå¯¸ï¼Œç³»ç»Ÿæ— æ³•åˆ¤æ–­åˆå§‹æ˜¾ç¤ºå°ºå¯¸å¤§å°
+			// é»˜è®¤æ˜¯ä½¿ç”¨æœ€å°åŒ–ï¼Œå¹¶ä¸”å¯¹ä¸€ä¸ªæ ‡ç­¾è®¾è®¡å³å¯
 			tp.setPreferredSize(new Dimension(500, 500));
-			// ½«tabbedPanelÌí¼Óµ½JpanelÖĞ
+			// å°†tabbedPanelæ·»åŠ åˆ°Jpanelä¸­
 			add(tp);
-			// ÉèÖÃ´°¿Ú¹ıĞ¡Ê±£¬±êÇ©µÄÏÔÊ¾²ßÂÔ
+			// è®¾ç½®çª—å£è¿‡å°æ—¶ï¼Œæ ‡ç­¾çš„æ˜¾ç¤ºç­–ç•¥
 			tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-			// ÉèÖÃ±êÇ©Í£·ÅµÄÎ»ÖÃ£¬ÕâÀïÉèÖÃÎª×ó²àÍ£·Å
+			// è®¾ç½®æ ‡ç­¾åœæ”¾çš„ä½ç½®ï¼Œè¿™é‡Œè®¾ç½®ä¸ºå·¦ä¾§åœæ”¾
 			tp.setTabPlacement(JTabbedPane.TOP);
 		}
 	}
 	
 	private JPanel createPanel(String string) {
-		// ´´½¨Ò»¸öJPanel£¬²¢Îª¹¹Ôìº¯Êı³õÊ¼false
-		// ±íÊ¾²»ÊÊÓÃË«»º³å
+		// åˆ›å»ºä¸€ä¸ªJPanelï¼Œå¹¶ä¸ºæ„é€ å‡½æ•°åˆå§‹false
+		// è¡¨ç¤ºä¸é€‚ç”¨åŒç¼“å†²
 		JPanel panel = new JPanel(false);
-		// ÉèÖÃ²¼¾Ö
+		// è®¾ç½®å¸ƒå±€
 		panel.setLayout(new GridLayout(1, 1));
-		// ´´½¨Ò»¸ölabel·Åµ½panelÖĞ
+		// åˆ›å»ºä¸€ä¸ªlabelæ”¾åˆ°panelä¸­
 		JLabel filler = new JLabel(string);
 		filler.setHorizontalAlignment(JLabel.CENTER);
 		panel.add(filler);
@@ -62,7 +62,7 @@ public class ResultTabPanel extends JPanel {
 	}
 	
 	/**
-	 * ÒµÎñ´¦Àí
+	 * ä¸šåŠ¡å¤„ç†
 	 * */
 	@SuppressWarnings("unchecked")
 	private void buisnessDeal(List<List<String>> str, JPanel jp){
@@ -87,16 +87,16 @@ public class ResultTabPanel extends JPanel {
 			i++;
 		}
 		JTable table = new JTable(cellData, columnNames);
-		table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);//Ë®Æ½¹ö¶¯Ìõ
+		table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);//æ°´å¹³æ»šåŠ¨æ¡
 		table = FitTableColumns(table);
 		JScrollPane js2 = new JScrollPane(table);
 		jp.removeAll();
 		jp.add(js2);
-		jp.revalidate();//Ë¢ĞÂ
+		jp.revalidate();//åˆ·æ–°
 	}
 	
 	/**
-	 * ÔOÖÃtableµÄÁĞŒ’ëSƒÈÈİÕ{Õû
+	 * è¨­ç½®tableçš„åˆ—å¯¬éš¨å…§å®¹èª¿æ•´
 	 * */
 	public JTable FitTableColumns(JTable tmpTable) {
 		JTable myTable = tmpTable;

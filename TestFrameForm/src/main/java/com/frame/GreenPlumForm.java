@@ -29,7 +29,7 @@ public class GreenPlumForm {
 		try{
 			Connection db = DriverManager.getConnection(url, usr, pwd);
 			System.out.println("Success connecting server!");
-			//²éÑ¯
+			//æŸ¥è¯¢
 			Statement st = db.createStatement();
 			ResultSet rs = st.executeQuery(sql);
 			while (rs.next()) {
@@ -37,7 +37,7 @@ public class GreenPlumForm {
 				System.out.print("  ");
 				System.out.println(rs.getString(2));
 			}
-			afterQueryProcess(st, db, rs);//²éÑ¯½áÊøºóÖ´ĞĞ²Ù×÷
+			afterQueryProcess(st, db, rs);//æŸ¥è¯¢ç»“æŸåæ‰§è¡Œæ“ä½œ
 		}catch(Exception e){
 			System.out.println("Connection URL or username or password errors!");
 			result1 = " " + result1 + "Connection URL or username or password errors!";
@@ -47,7 +47,7 @@ public class GreenPlumForm {
 	}
 	
 	/**
-	 * ²éÑ¯½áÊøºóÖ´ĞĞ²Ù×÷
+	 * æŸ¥è¯¢ç»“æŸåæ‰§è¡Œæ“ä½œ
 	 * 
 	 * @param st
 	 * @param connobj

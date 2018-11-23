@@ -4,9 +4,9 @@ import com.gnxdr.constant.Constants;
 
 public class Record {
 	
-	//±êÊ¶¼ÇÂ¼¹éÊôÒµÎñÀàĞÍ
+	//æ ‡è¯†è®°å½•å½’å±ä¸šåŠ¡ç±»å‹
 	private String flag;
-	//Êä³ö×Ö¶Î
+	//è¾“å‡ºå­—æ®µ
 	private String ip_id;
 	private String msisdn;
 	private String terminal_model;
@@ -34,27 +34,27 @@ public class Record {
 	private String dl_ip_frag_packets;
 	
 	
-	//http¶ÀÓĞÊôĞÔ
+	//httpç‹¬æœ‰å±æ€§
 	private String host;
 	private String uri;
 	private String user_agent;
 	
-	//rtsp¶ÀÓĞÊôĞÔ
+	//rtspç‹¬æœ‰å±æ€§
 	private String rtp_server_ip;
-	//email¶ÀÓĞÊôĞÔ-ÊÕ¼şÈË
+	//emailç‹¬æœ‰å±æ€§-æ”¶ä»¶äºº
 	private String user_name;
 	
-	//ĞèÒªimei¹ØÁªÖÕ¶ËÅäÖÃ±íµÃ³öÖÕ¶ËÀàĞÍterminaltype
+	//éœ€è¦imeiå…³è”ç»ˆç«¯é…ç½®è¡¨å¾—å‡ºç»ˆç«¯ç±»å‹terminaltype
 	private String imei;
 	private String terminaltype;
 	
-	//¼ÆËãÁ÷Á¿¾ùÌ¯ĞèÒªÊ¹ÓÃµÄ×Ö¶Î
+	//è®¡ç®—æµé‡å‡æ‘Šéœ€è¦ä½¿ç”¨çš„å­—æ®µ
 	private String up_ip_pkgs;
 	private String down_ip_pkgs;
 	
-	//»ã×Ü¼ÆËãÊ¹ÓÃµÄ×Ö¶Î£¬¾«È·µ½Ğ¡Ê±
+	//æ±‡æ€»è®¡ç®—ä½¿ç”¨çš„å­—æ®µï¼Œç²¾ç¡®åˆ°å°æ—¶
 	private String period_of_time;
-	//»ã×Ü¼ÆËãÊ¹ÓÃµÄ×Ö¶Î£¬¾«È·µ½ÈÕ
+	//æ±‡æ€»è®¡ç®—ä½¿ç”¨çš„å­—æ®µï¼Œç²¾ç¡®åˆ°æ—¥
 	private String sum_date;
 	
 	
@@ -71,7 +71,7 @@ public class Record {
 	public void setFlag(String flag) {
 		this.flag = flag;
 	}
-	//¸ù¾İ¸÷¸öÒµÎñ¾ö¶¨·µ»ØÖµ
+	//æ ¹æ®å„ä¸ªä¸šåŠ¡å†³å®šè¿”å›å€¼
 	public String getUrl() {
 		
 		if(Constants.DNS_FILE_FLAG.equals(this.getFlag().toString())){
@@ -358,7 +358,7 @@ public class Record {
 		this.sum_date = sum_date;
 	}
 	
-	//»ªÎªÓ¦ÓÃÊ¶±ğ
+	//åä¸ºåº”ç”¨è¯†åˆ«
 	public String  getWeb_classify(){
 		return web_classify;
 	}

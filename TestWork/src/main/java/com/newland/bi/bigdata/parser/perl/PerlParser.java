@@ -27,7 +27,7 @@ import com.newland.bi.bigdata.parser.perl.bean.INode;
  * */
 public class PerlParser {
 
-	private LogInfoFactory log = LogInfoFactory.getInstance();
+	private LogInfoFactory log = LogInfoFactory.getInstance(PerlParser.class);
 	public static final String Return_And_Line = "\r\n";
 	public static final String Well_Number = "#";
 	public static final String Print_KeyWord = "print";
@@ -135,7 +135,6 @@ public class PerlParser {
 	public PerlParser(String file_name){
 		this.file_name = file_name;
 		this.ps = new HashMap<String, PerlSub>();
-		log.setNeedTime(false);
 		log.setLevel(1);
 	}
 	

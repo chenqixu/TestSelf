@@ -11,20 +11,20 @@ import java.util.List;
 import java.util.Vector;
 
 public class LoadOracle {
-	//hiveÊı¾İ¿âÁ¬½ÓĞÅÏ¢
+	//hiveæ•°æ®åº“è¿æ¥ä¿¡æ¯
 	private String driverName = "";
-	private String url = "";//10.46.219.33Éú²ú²âÊÔ¿â;10.46.219.32Éú²ú¿â;10.1.4.53¿ª·¢¿â
+	private String url = "";//10.46.219.33ç”Ÿäº§æµ‹è¯•åº“;10.46.219.32ç”Ÿäº§åº“;10.1.4.53å¼€å‘åº“
 	private String user = "";
 	private String password = "";
 	
-	//Êı¾İ¿â
+	//æ•°æ®åº“
 	private Connection conn = null;
 	private Statement stmt = null;
 	private PreparedStatement pst = null;
 	
-	private ResultSet rs = null;//²éÑ¯½á¹û¼¯
+	private ResultSet rs = null;//æŸ¥è¯¢ç»“æœé›†
 	
-	//²âÊÔ¿ª¹Ø trueÎª²âÊÔ
+	//æµ‹è¯•å¼€å…³ trueä¸ºæµ‹è¯•
 	private boolean test_flag = true;
 
 	public void setTest_flag(boolean test_flag) {
@@ -32,10 +32,10 @@ public class LoadOracle {
 	}
 	
 	/**
-	 * ²éÑ¯ÅäÖÃ-±¾»ú²âÊÔ
+	 * æŸ¥è¯¢é…ç½®-æœ¬æœºæµ‹è¯•
 	 * */
 	private void getConfTest(int dbType) {
-		if(test_flag){//²âÊÔÎªÕæ
+		if(test_flag){//æµ‹è¯•ä¸ºçœŸ
 			if(dbType==1){//hive
 				this.driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
 				this.url = "jdbc:hive://10.1.4.53:10000/default";
@@ -52,7 +52,7 @@ public class LoadOracle {
 				this.user = "web";
 				this.password = "qwE_60";
 			}
-		}else{//·Ç²âÊÔÎª¼Ù
+		}else{//éæµ‹è¯•ä¸ºå‡
 			if(dbType==1){//hive
 				this.driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
 				this.url = "jdbc:hive://10.46.219.32:10000/default";
@@ -73,28 +73,28 @@ public class LoadOracle {
 	}
     
 	/**
-	 * Ö´ĞĞselectÓï¾ä
-	 * dbType 1:hive¿â  2:bishowĞÅÏ¢¿â
+	 * æ‰§è¡Œselectè¯­å¥
+	 * dbType 1:hiveåº“  2:bishowä¿¡æ¯åº“
 	 */
     public List executeQuery(int dbType, String sSQL) throws Exception {
-		Vector<String> resultList = new Vector<String>();//·µ»Ø¼ÇÂ¼¼¯
-		//ÏÈ¶Ï¿ªµ±Ç°ËùÓĞÁ¬½Ó,
+		Vector<String> resultList = new Vector<String>();//è¿”å›è®°å½•é›†
+		//å…ˆæ–­å¼€å½“å‰æ‰€æœ‰è¿æ¥,
 		closeDB();
-		//ÔÙÁ¬½ÓÊı¾İ¿â·ÀÖ¹Á¬½ÓÓï¾äÖ´ĞĞÌ«¾ÃÓĞÊ²Ã´Òì³£
-		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//Ê±¼ä¸ñÊ½
+		//å†è¿æ¥æ•°æ®åº“é˜²æ­¢è¿æ¥è¯­å¥æ‰§è¡Œå¤ªä¹…æœ‰ä»€ä¹ˆå¼‚å¸¸
+		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//æ—¶é—´æ ¼å¼
 		try{
-			//ÅäÖÃ²éÑ¯
-			getConfTest(dbType);//²âÊÔ
-			Class.forName(driverName);//¼ÓÔØÇı¶¯
-			conn = DriverManager.getConnection(url, user, password);//Á¬½ÓÊı¾İ¿â	
+			//é…ç½®æŸ¥è¯¢
+			getConfTest(dbType);//æµ‹è¯•
+			Class.forName(driverName);//åŠ è½½é©±åŠ¨
+			conn = DriverManager.getConnection(url, user, password);//è¿æ¥æ•°æ®åº“	
 			stmt = conn.createStatement();
-			System.out.println("OracleTest executeQuery Óï¾äÖ´ĞĞ¿ªÊ¼Ê±¼ä:"+sim.format(new Date()));
-			System.out.println("OracleTest executeQuery Ö´ĞĞÓï¾ä:" + sSQL.toString());
-			rs = stmt.executeQuery(sSQL.toString());//Ö´ĞĞÓï¾ä
-			System.out.println("OracleTest executeQuery Óï¾äÖ´ĞĞ½áÊøÊ±¼ä:"+sim.format(new Date()));
+			System.out.println("OracleTest executeQuery è¯­å¥æ‰§è¡Œå¼€å§‹æ—¶é—´:"+sim.format(new Date()));
+			System.out.println("OracleTest executeQuery æ‰§è¡Œè¯­å¥:" + sSQL.toString());
+			rs = stmt.executeQuery(sSQL.toString());//æ‰§è¡Œè¯­å¥
+			System.out.println("OracleTest executeQuery è¯­å¥æ‰§è¡Œç»“æŸæ—¶é—´:"+sim.format(new Date()));
 			
 			String result_str = "";
-			//»ñÈ¡×Ö¶Î¸öÊı
+			//è·å–å­—æ®µä¸ªæ•°
 			int colCnt = rs.getMetaData().getColumnCount();			
 			for (int i = 1; i <= colCnt; i++) {
 				String columnname = rs.getMetaData().getColumnName(i);
@@ -113,7 +113,7 @@ public class LoadOracle {
 			System.out.println(result_str);
 			
 			
-//			while (rs != null && rs.next()) {//½«²éÑ¯½á¹û´æ´¢µ½listÖĞ
+//			while (rs != null && rs.next()) {//å°†æŸ¥è¯¢ç»“æœå­˜å‚¨åˆ°listä¸­
 //				//tmpList = new Vector<String>();
 //				String tmpstr = "";
 //				for (int i = 1; i <= colCnt; i++) {
@@ -129,11 +129,11 @@ public class LoadOracle {
 //				System.out.println();
 //			}
 		}catch(Exception ex){
-			System.out.println("OracleTest executeQuery Ö´ĞĞÊı¾İ¿â²éÑ¯²Ù×÷³öÏÖÒì³£:"+ex.toString());
+			System.out.println("OracleTest executeQuery æ‰§è¡Œæ•°æ®åº“æŸ¥è¯¢æ“ä½œå‡ºç°å¼‚å¸¸:"+ex.toString());
 			System.out.println(ex.toString());
-			throw ex;//Å×³öÒì³£
+			throw ex;//æŠ›å‡ºå¼‚å¸¸
 		}finally{
-			//¹Ø±ÕÊı¾İ¿âÁ¬½Ó
+			//å…³é—­æ•°æ®åº“è¿æ¥
 			closeDB();
 		}
 		return resultList;
@@ -142,51 +142,51 @@ public class LoadOracle {
 
     
 	/**
-	 * Ö´ĞĞupdateÓï¾ä
+	 * æ‰§è¡Œupdateè¯­å¥
 	 */
     public int executeUpdate(int dbType, String sSQL) throws Exception {
-		int flag = -1;////·µ»Ø½á¹û
-		//ÏÈ¶Ï¿ªµ±Ç°ËùÓĞÁ¬½Ó,
+		int flag = -1;////è¿”å›ç»“æœ
+		//å…ˆæ–­å¼€å½“å‰æ‰€æœ‰è¿æ¥,
 		closeDB();
-		//ÔÙÁ¬½ÓÊı¾İ¿â·ÀÖ¹Á¬½ÓÓï¾äÖ´ĞĞÌ«¾ÃÓĞÊ²Ã´Òì³£
-		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//Ê±¼ä¸ñÊ½
+		//å†è¿æ¥æ•°æ®åº“é˜²æ­¢è¿æ¥è¯­å¥æ‰§è¡Œå¤ªä¹…æœ‰ä»€ä¹ˆå¼‚å¸¸
+		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//æ—¶é—´æ ¼å¼
 		try{
-			//ÅäÖÃ²éÑ¯
-			getConfTest(dbType);//²âÊÔ
-			Class.forName(driverName);//¼ÓÔØÇı¶¯
-			conn = DriverManager.getConnection(url, user, password);//Á¬½ÓÊı¾İ¿â	
+			//é…ç½®æŸ¥è¯¢
+			getConfTest(dbType);//æµ‹è¯•
+			Class.forName(driverName);//åŠ è½½é©±åŠ¨
+			conn = DriverManager.getConnection(url, user, password);//è¿æ¥æ•°æ®åº“	
 			stmt = conn.createStatement();
-			System.out.println("OracleTest executeUpdate Óï¾äÖ´ĞĞ¿ªÊ¼Ê±¼ä:"+sim.format(new Date()));
-			System.out.println("OracleTest executeUpdate Ö´ĞĞÓï¾ä:" + sSQL.toString());
-			flag = stmt.executeUpdate(sSQL.toString());//Ö´ĞĞÓï¾ä
+			System.out.println("OracleTest executeUpdate è¯­å¥æ‰§è¡Œå¼€å§‹æ—¶é—´:"+sim.format(new Date()));
+			System.out.println("OracleTest executeUpdate æ‰§è¡Œè¯­å¥:" + sSQL.toString());
+			flag = stmt.executeUpdate(sSQL.toString());//æ‰§è¡Œè¯­å¥
 			if(flag==1)
-				conn.commit();//Ìá½»
+				conn.commit();//æäº¤
 			else
-				conn.rollback();//»Ø¹ö
-			System.out.println("OracleTest executeUpdate Óï¾äÖ´ĞĞ½áÊøÊ±¼ä:"+sim.format(new Date()));
-			System.out.println("OracleTest executeUpdate Ö´ĞĞ½á¹û:"+flag);
+				conn.rollback();//å›æ»š
+			System.out.println("OracleTest executeUpdate è¯­å¥æ‰§è¡Œç»“æŸæ—¶é—´:"+sim.format(new Date()));
+			System.out.println("OracleTest executeUpdate æ‰§è¡Œç»“æœ:"+flag);
 		}catch(Exception ex){
-			System.out.println("OracleTest executeQuery Ö´ĞĞÊı¾İ¿â¸üĞÂ²Ù×÷³öÏÖÒì³£:"+ex.toString());
+			System.out.println("OracleTest executeQuery æ‰§è¡Œæ•°æ®åº“æ›´æ–°æ“ä½œå‡ºç°å¼‚å¸¸:"+ex.toString());
 			System.out.println(ex.toString());
-			throw ex;//Å×³öÒì³£
+			throw ex;//æŠ›å‡ºå¼‚å¸¸
 		}finally{
-			//¹Ø±ÕÊı¾İ¿âÁ¬½Ó
+			//å…³é—­æ•°æ®åº“è¿æ¥
 			closeDB();
 		}
 		return flag;
 	}
 	
     /**
-     * Êı¾İ¿â²Ù×÷Íê³Éºó£¬¹Ø±ÕÏà¹ØµÄÁ¬½Ó×ÊÔ´
+     * æ•°æ®åº“æ“ä½œå®Œæˆåï¼Œå…³é—­ç›¸å…³çš„è¿æ¥èµ„æº
 	 */
     public void closeDB() throws Exception {
         try {
-        	//¹Ø±Õ½á¹û¼¯
+        	//å…³é—­ç»“æœé›†
             if (rs != null) {
                 rs.close();
                 rs = null;
             }
-            //¹Ø±ÕStatement
+            //å…³é—­Statement
             if (stmt != null) {
             	stmt.close();
             	stmt = null;
@@ -195,17 +195,17 @@ public class LoadOracle {
 				pst.close();
 				pst = null;
 			}
-            //¹Ø±ÕÊı¾İÁ¬½Ó
+            //å…³é—­æ•°æ®è¿æ¥
             if (conn != null) {
                 if (!conn.isClosed())
                     conn.close();
                 conn = null;
             }
         }catch (Exception e) {
-			System.out.println("OracleTest closeDB ¹Ø±ÕÊı¾İÁ¬½Ó×ÊÔ´³öÏÖÒì³£:"+e.toString());
+			System.out.println("OracleTest closeDB å…³é—­æ•°æ®è¿æ¥èµ„æºå‡ºç°å¼‚å¸¸:"+e.toString());
         	System.out.println(e.toString());
         	e.printStackTrace();
-			throw e;//Å×³öÒì³£
+			throw e;//æŠ›å‡ºå¼‚å¸¸
         }
     }
     

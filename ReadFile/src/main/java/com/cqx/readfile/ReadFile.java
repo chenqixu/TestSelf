@@ -26,7 +26,7 @@ public class ReadFile {
 				while((lineNumberReader.readLine())!=null){
 					filecount++;
 				}
-				System.out.println("读到的文件["+file_name+"]记录数为["+filecount+"].");
+				System.out.println("璇诲埌鐨勬枃浠禰"+file_name+"]璁板綍鏁颁负["+filecount+"].");
 				lineNumberReader.close();
 				reader.close();
 			}catch(Exception e){

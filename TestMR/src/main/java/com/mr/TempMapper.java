@@ -8,11 +8,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * ËÄ¸ö·ºĞÍÀàĞÍ·Ö±ğ´ú±í£º
- * KeyIn        MapperµÄÊäÈëÊı¾İµÄKey£¬ÕâÀïÊÇÃ¿ĞĞÎÄ×ÖµÄÆğÊ¼Î»ÖÃ£¨0,11,...£©
- * ValueIn      MapperµÄÊäÈëÊı¾İµÄValue£¬ÕâÀïÊÇÃ¿ĞĞÎÄ×Ö
- * KeyOut       MapperµÄÊä³öÊı¾İµÄKey£¬ÕâÀïÊÇÃ¿ĞĞÎÄ×ÖÖĞµÄ¡°Äê·İ¡±
- * ValueOut     MapperµÄÊä³öÊı¾İµÄValue£¬ÕâÀïÊÇÃ¿ĞĞÎÄ×ÖÖĞµÄ¡°ÆøÎÂ¡±
+ * å››ä¸ªæ³›å‹ç±»å‹åˆ†åˆ«ä»£è¡¨ï¼š
+ * KeyIn        Mapperçš„è¾“å…¥æ•°æ®çš„Keyï¼Œè¿™é‡Œæ˜¯æ¯è¡Œæ–‡å­—çš„èµ·å§‹ä½ç½®ï¼ˆ0,11,...ï¼‰
+ * ValueIn      Mapperçš„è¾“å…¥æ•°æ®çš„Valueï¼Œè¿™é‡Œæ˜¯æ¯è¡Œæ–‡å­—
+ * KeyOut       Mapperçš„è¾“å‡ºæ•°æ®çš„Keyï¼Œè¿™é‡Œæ˜¯æ¯è¡Œæ–‡å­—ä¸­çš„â€œå¹´ä»½â€
+ * ValueOut     Mapperçš„è¾“å‡ºæ•°æ®çš„Valueï¼Œè¿™é‡Œæ˜¯æ¯è¡Œæ–‡å­—ä¸­çš„â€œæ°”æ¸©â€
  */
 public class TempMapper extends
 		Mapper<LongWritable, Text, Text, IntWritable> {
@@ -22,13 +22,13 @@ public class TempMapper extends
 	protected void map(LongWritable key, Text value,
 			org.apache.hadoop.mapreduce.Mapper.Context context)
 			throws IOException, InterruptedException {
-		// ´òÓ¡Ñù±¾: Before Mapper: 0, 2000010115
+		// æ‰“å°æ ·æœ¬: Before Mapper: 0, 2000010115
 		System.out.print("Before Mapper: " + key + ", " + value);
 		String line = value.toString();
 		String year = line.substring(0, 4);
 		int temperature = Integer.parseInt(line.substring(8));
 		context.write(new Text(year), new IntWritable(temperature));
-		// ´òÓ¡Ñù±¾: After Mapper:2000, 15
+		// æ‰“å°æ ·æœ¬: After Mapper:2000, 15
 		System.out.println("======" + "After Mapper:" + new Text(year) + ", "
 				+ new IntWritable(temperature));
 	}

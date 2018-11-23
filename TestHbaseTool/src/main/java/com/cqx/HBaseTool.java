@@ -39,37 +39,37 @@ import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public abstract class HBaseTool {
-	// ÅäÖÃÎÄ¼ş
+	// é…ç½®æ–‡ä»¶
 	private Configuration conf = null;
-	// ±íµÄÁ¬½Ó³Ø
+	// è¡¨çš„è¿æ¥æ± 
 	private HTablePool tablePool = null;
-	// ±í½Ó¿Ú
+	// è¡¨æ¥å£
 	private HTableInterface hTable = null;
-	// Pool´óĞ¡
+	// Poolå¤§å°
 	private static final int POOL_SIZE = 5;
-	// ·ÖÇø
+	// åˆ†åŒº
 	private static final int REGION_PARTITION_NUM = 1024;
 //	private static final int REGION_PARTITION_NUM_OLD = 200;
-	// ÓÃÓÚÈ¡Ä£
+	// ç”¨äºå–æ¨¡
 	private Random random = new Random();
-	// ·Ö¸ô·û
+	// åˆ†éš”ç¬¦
 	public final String split_str = ""+((char)((int)01));
 	
-	// ³õÊ¼»¯¼°¼ÓÔØÅäÖÃÎÄ¼ş
+	// åˆå§‹åŒ–åŠåŠ è½½é…ç½®æ–‡ä»¶
 	public HBaseTool(){
 		conf = HBaseConfiguration.create();
-//		// ¼ÓÔØÅäÖÃÎÄ¼ş
+//		// åŠ è½½é…ç½®æ–‡ä»¶
 //		conf.addResource(new Path("/etc/hbase/conf/hbase-site.xml"));
 //		conf.addResource(new Path("/etc/hadoop/conf/core-site.xml"));
 //		conf.addResource(new Path("/etc/hadoop/conf/hdfs-site.xml"));
 	}
 	
 	/**
-	 * ¼ÓÔØÅäÖÃÎÄ¼ş
+	 * åŠ è½½é…ç½®æ–‡ä»¶
 	 * */
 	public void initConf(HbaseInputBean hib){
 		String confpath = hib.getConfpath();
-		// É¨Ãèconf pathÏÂµÄËùÓĞxmlÅäÖÃÎÄ¼ş
+		// æ‰«æconf pathä¸‹çš„æ‰€æœ‰xmlé…ç½®æ–‡ä»¶
 		File cp = new File(confpath);
 		if(cp.isDirectory()){
 			for(File resource : cp.listFiles()){
@@ -79,13 +79,13 @@ public abstract class HBaseTool {
 				}
 			}
 			System.out.println("[conf]"+conf);
-			// ´´½¨HbaseµÄÁ¬½Ó³Ø
+			// åˆ›å»ºHbaseçš„è¿æ¥æ± 
 			tablePool = new HTablePool(conf, POOL_SIZE);
 		}
 	}
 
 	/**
-	 * ¸ù¾İ rowkeyÉ¾³ıÒ»Ìõ¼ÇÂ¼
+	 * æ ¹æ® rowkeyåˆ é™¤ä¸€æ¡è®°å½•
 	 * @param tablename
 	 * @param rowkey
 	 */
@@ -101,7 +101,7 @@ public abstract class HBaseTool {
 				list.add(d1);
 			}				
 			table.delete(list);
-			System.out.println("É¾³ıĞĞ³É¹¦!");
+			System.out.println("åˆ é™¤è¡ŒæˆåŠŸ!");
 			d1 = null;
 			list = null;
 		} catch (IOException e) {
@@ -114,7 +114,7 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * ²åÈëÊı¾İ
+	 * æ’å…¥æ•°æ®
 	 * @param tableName
 	 * @param data_rowkey
 	 */
@@ -126,15 +126,15 @@ public abstract class HBaseTool {
 		HTableInterface table = tablePool.getTable(Bytes.toBytes(tableName));
 		System.out.println("start insert data for rowkey ......");
 		for(int i=0;i<rowkey.size();i++){
-			//ÕâÀïÓÃrowkey³õÊ¼»¯
-			Put put = new Put(rowkey.get(i).toString().getBytes());// Ò»¸öPUT´ú±íÒ»ĞĞÊı¾İ£¬ÔÙNEWÒ»¸öPUT±íÊ¾µÚ¶şĞĞÊı¾İ,Ã¿ĞĞÒ»¸öÎ¨Ò»µÄROWKEY£¬´Ë´¦rowkeyÎªput¹¹Ôì·½·¨ÖĞ´«ÈëµÄÖµ
+			//è¿™é‡Œç”¨rowkeyåˆå§‹åŒ–
+			Put put = new Put(rowkey.get(i).toString().getBytes());// ä¸€ä¸ªPUTä»£è¡¨ä¸€è¡Œæ•°æ®ï¼Œå†NEWä¸€ä¸ªPUTè¡¨ç¤ºç¬¬äºŒè¡Œæ•°æ®,æ¯è¡Œä¸€ä¸ªå”¯ä¸€çš„ROWKEYï¼Œæ­¤å¤„rowkeyä¸ºputæ„é€ æ–¹æ³•ä¸­ä¼ å…¥çš„å€¼
 //			String iso = "";
 			try {
-				//ÓÉÓÚÊı¾İÓĞÖĞÎÄ,ĞèÒª×ª³Éutf-8,µ«utf-8ÓÉÓÚÊÇ3¸ö×Ö½Ú,Èç¹ûÖĞÎÄÊÇÆæÊı¾Í»áÒì³£,ËùÒÔÒªÏÈ×ªiso-8859-1
+				//ç”±äºæ•°æ®æœ‰ä¸­æ–‡,éœ€è¦è½¬æˆutf-8,ä½†utf-8ç”±äºæ˜¯3ä¸ªå­—èŠ‚,å¦‚æœä¸­æ–‡æ˜¯å¥‡æ•°å°±ä¼šå¼‚å¸¸,æ‰€ä»¥è¦å…ˆè½¬iso-8859-1
 //				iso = new String(data.get(i).toString().getBytes("UTF-8"),"ISO-8859-1");
-//				put.add("info".getBytes(), "gn".getBytes(), iso.getBytes("ISO-8859-1"));//±¾ĞĞÊı¾İµÄµÚÒ»ÁĞ
-				//putµÄ3¸ö²ÎÊı:family,qualifier,value
-				put.add("info".getBytes(), "gn".getBytes(), Bytes.toBytes(data.get(i).toString()));//±¾ĞĞÊı¾İµÄµÚÒ»ÁĞ
+//				put.add("info".getBytes(), "gn".getBytes(), iso.getBytes("ISO-8859-1"));//æœ¬è¡Œæ•°æ®çš„ç¬¬ä¸€åˆ—
+				//putçš„3ä¸ªå‚æ•°:family,qualifier,value
+				put.add("info".getBytes(), "gn".getBytes(), Bytes.toBytes(data.get(i).toString()));//æœ¬è¡Œæ•°æ®çš„ç¬¬ä¸€åˆ—
 				table.put(put);
 				if(i%5000==0)System.out.println("put "+i);
 			} catch (Exception e) {
@@ -149,7 +149,7 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * ²éÑ¯
+	 * æŸ¥è¯¢
 	 * */
 	private StringBuffer queryData(String tableName, String startRowKey, String endRowKey){
 		StringBuffer sb = new StringBuffer("");
@@ -158,18 +158,18 @@ public abstract class HBaseTool {
 				+startRowKey+"[endRowKey]"+endRowKey);
 		try{
 			Scan scan = null;
-			// Í¨¹ı²éÑ¯RowKeyµÄ·¶Î§»ñÈ¡ËùÓĞµÄ¼ÇÂ¼Êı
-			//hbaseµÄ¹ıÂËÆ÷
+			// é€šè¿‡æŸ¥è¯¢RowKeyçš„èŒƒå›´è·å–æ‰€æœ‰çš„è®°å½•æ•°
+			//hbaseçš„è¿‡æ»¤å™¨
 //			FilterList filterList = new FilterList();
 //			Filter filter = new FilterList(filterList);
 			scan = new Scan(Bytes.toBytes(startRowKey), Bytes.toBytes(endRowKey));
-			// ÉèÖÃrowkey¹ıÂË
+			// è®¾ç½®rowkeyè¿‡æ»¤
 //			scan.setFilter(filterList);
-			// ÉèÖÃÁĞ´Ø
+			// è®¾ç½®åˆ—ç°‡
 	    	scan.addFamily(Bytes.toBytes("info"));
-	    	// ÉèÖÃ±íÃû
+	    	// è®¾ç½®è¡¨å
 	    	hTable = tablePool.getTable(Bytes.toBytes(tableName));
-	    	// ²éÑ¯HbaseÊı¾İ¿â·µ»Ø½á¹û¼¯
+	    	// æŸ¥è¯¢Hbaseæ•°æ®åº“è¿”å›ç»“æœé›†
 	    	ResultScanner rs = hTable.getScanner(scan);
 	    	for(Result r:rs){
 				for (KeyValue keyValue : r.raw()) {
@@ -179,7 +179,7 @@ public abstract class HBaseTool {
 					sb.append("\r\n");
 				}
 	    	}
-	    	// ¹Ø±Õ½á¹û¼¯ºÍ±í
+	    	// å…³é—­ç»“æœé›†å’Œè¡¨
 	    	relase(rs, hTable, null);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -188,7 +188,7 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * ÊÍ·Å×ÊÔ´
+	 * é‡Šæ”¾èµ„æº
 	 * */
 	private void relase(ResultScanner rs, HTableInterface table, HTablePool tablePool){		
 		try {
@@ -212,7 +212,7 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * ×îºó³ÌĞò¹Ø±ÕµÄÊ±ºòÊÍ·Å±íºÍÁ¬½Ó³Ø×ÊÔ´
+	 * æœ€åç¨‹åºå…³é—­çš„æ—¶å€™é‡Šæ”¾è¡¨å’Œè¿æ¥æ± èµ„æº
 	 * */
 	public void relaseEnd(){
 		try {
@@ -230,23 +230,23 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * @description: Éú³ÉRowKeyµÄ·½·¨
+	 * @description: ç”ŸæˆRowKeyçš„æ–¹æ³•
 	 */
 	public String generateRowKey(String telNumber, String time) {
-		//ÊÖ»úºÅÓë22È¡Ä£,¿ªÊ¼Ê¹ÓÃ1024È¡Ä£°æ±¾
+		//æ‰‹æœºå·ä¸22å–æ¨¡,å¼€å§‹ä½¿ç”¨1024å–æ¨¡ç‰ˆæœ¬
 		String partitionId = "";
 		partitionId = generateModKey(Long.valueOf(telNumber));
-		//·µ»ØRowKey
+		//è¿”å›RowKey
 		return partitionId + "," + telNumber + "," + time ;
 	}
 	
 	/**
-	 * @description: ¶ÔºÅÂëÈ¡Ä£
+	 * @description: å¯¹å·ç å–æ¨¡
 	 * */
 	private String generateModKey(long telnumber){
 		long tempLong;
 		try{
-			// ÉèÖÃËæ»úÒò×Ó
+			// è®¾ç½®éšæœºå› å­
 			random.setSeed(telnumber);
 			tempLong =  Math.abs(random.nextLong()%REGION_PARTITION_NUM);
 			if(tempLong < 10){
@@ -272,7 +272,7 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * °Ñ´«ÈëµÄÄÚÈİĞ´ÈëÎÄ¼ş
+	 * æŠŠä¼ å…¥çš„å†…å®¹å†™å…¥æ–‡ä»¶
 	 * */
 	private void writeDataByQuery(String filenamepath, StringBuffer datas){
 		FileWriter fw = null;
@@ -308,7 +308,7 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * Í¨¹ıÎÄ¼ş°ÑÊı¾İ¶ÁÈ¡µ½Vector
+	 * é€šè¿‡æ–‡ä»¶æŠŠæ•°æ®è¯»å–åˆ°Vector
 	 * */
 	private Vector<?>[] readDataByfile(String filenamepath){
 		Vector<String> data = new Vector<String>();
@@ -352,37 +352,37 @@ public abstract class HBaseTool {
 	}
 	
 	/**
-	 * ¸ù¾İÎÄ¼şÉ¾³ı¼ÇÂ¼
+	 * æ ¹æ®æ–‡ä»¶åˆ é™¤è®°å½•
 	 * */
 	public void deleteByFile(HbaseInputBean hib){
 		String filenamepath = hib.getFilepath();
 		String table_name = hib.getTableName();
-		// ¶ÁÈ¡txt
+		// è¯»å–txt
 		Vector<?>[] result = readDataByfile(filenamepath);
 		Vector<?> rowkey = result[0];
-		// ¸ù¾İrowkeyÉ¾³ı¶ÔÓ¦¼ÇÂ¼
+		// æ ¹æ®rowkeyåˆ é™¤å¯¹åº”è®°å½•
 		deleteRow(table_name, rowkey);
 	}
 	
 	/**
-	 * ²éÑ¯
+	 * æŸ¥è¯¢
 	 * */
 	public void query(HbaseInputBean hib){
 		String table_name = hib.getTableName();
 		String telnumber = hib.getMsisdn();
 		String starttime_s = hib.getStarttime_s();
 		String starttime_e = hib.getStarttime_e();
-		// Éú³ÉstartRowKey£¬ÓÃ¿ªÊ¼Ê±¼äÉú³É
+		// ç”ŸæˆstartRowKeyï¼Œç”¨å¼€å§‹æ—¶é—´ç”Ÿæˆ
 		String startRowKey = generateRowKey(telnumber, starttime_s);
-		// Éú³ÉendRowKey £¬ÓÃ½áÊøÊ±¼äÉú³É
+		// ç”ŸæˆendRowKey ï¼Œç”¨ç»“æŸæ—¶é—´ç”Ÿæˆ
 		String endRowKey = generateRowKey(telnumber, starttime_e);
-		// ²éÑ¯³ö½á¹û
+		// æŸ¥è¯¢å‡ºç»“æœ
 		StringBuffer sb = queryData(table_name, startRowKey, endRowKey);
 		System.out.println(sb.toString());
 	}
 		
 	/**
-	 * ±£´æµ½±¾µØ
+	 * ä¿å­˜åˆ°æœ¬åœ°
 	 * */
 	public void save(HbaseInputBean hib){
 		String filenamepath = hib.getFilepath();
@@ -390,50 +390,50 @@ public abstract class HBaseTool {
 		String telnumber = hib.getMsisdn();
 		String starttime_s = hib.getStarttime_s();
 		String starttime_e = hib.getStarttime_e();
-		// Éú³ÉstartRowKey£¬ÓÃ¿ªÊ¼Ê±¼äÉú³É
+		// ç”ŸæˆstartRowKeyï¼Œç”¨å¼€å§‹æ—¶é—´ç”Ÿæˆ
 		String startRowKey = generateRowKey(telnumber, starttime_s);
-		// Éú³ÉendRowKey £¬ÓÃ½áÊøÊ±¼äÉú³É
+		// ç”ŸæˆendRowKey ï¼Œç”¨ç»“æŸæ—¶é—´ç”Ÿæˆ
 		String endRowKey = generateRowKey(telnumber, starttime_e);
-		// ²éÑ¯³ö½á¹û
+		// æŸ¥è¯¢å‡ºç»“æœ
 		StringBuffer sb = queryData(table_name, startRowKey, endRowKey);
-		// °Ñ½á¹ûĞ´ÈëÎÄ¼ş
+		// æŠŠç»“æœå†™å…¥æ–‡ä»¶
 		writeDataByQuery(filenamepath, sb);
 	}
 	
 //	/**
-//	 * ±£´æËùÓĞ¼ÇÂ¼µ½±¾µØ
+//	 * ä¿å­˜æ‰€æœ‰è®°å½•åˆ°æœ¬åœ°
 //	 * */
 //	public void saveAll(String filenamepath, String table_name){
 //		for(int i=0;i<1024;i++){
 //			
 //		}
-//		// Éú³ÉstartRowKey£¬ÓÃ¿ªÊ¼Ê±¼äÉú³É
+//		// ç”ŸæˆstartRowKeyï¼Œç”¨å¼€å§‹æ—¶é—´ç”Ÿæˆ
 //		String startRowKey = "0000,";
-//		// Éú³ÉendRowKey £¬ÓÃ½áÊøÊ±¼äÉú³É
+//		// ç”ŸæˆendRowKey ï¼Œç”¨ç»“æŸæ—¶é—´ç”Ÿæˆ
 //		String endRowKey = "1023,";
-//		// ²éÑ¯³ö½á¹û
+//		// æŸ¥è¯¢å‡ºç»“æœ
 //		StringBuffer sb = queryData(table_name, startRowKey, endRowKey);
-//		// °Ñ½á¹ûĞ´ÈëÎÄ¼ş
+//		// æŠŠç»“æœå†™å…¥æ–‡ä»¶
 //		writeDataByQuery(filenamepath, sb);
 //	}
 	
 	/**
-	 * ¼ÓÔØµ½HBase
+	 * åŠ è½½åˆ°HBase
 	 * */
 	public void load(HbaseInputBean hib){
 		String filenamepath = hib.getFilepath();
 		String table_name = hib.getTableName();
-		// ¶ÁÈ¡txt
+		// è¯»å–txt
 		Vector<?>[] result = readDataByfile(filenamepath);
-		// ²åÈëÊı¾İµ½HBase
+		// æ’å…¥æ•°æ®åˆ°HBase
 		insertData(table_name, result);
 	}
 	
 	/**
-	 * ½âÎö²ÎÊı
+	 * è§£æå‚æ•°
 	 * */
 	public HbaseInputBean parseArgs(String[] args){
-		// ÊäÈë²ÎÊı
+		// è¾“å…¥å‚æ•°
 		HbaseInputBean hib = null;
 		Options options = new Options();
 		// -c conf
@@ -476,24 +476,24 @@ public abstract class HBaseTool {
 		String starttime_e = commandLine.getOptionValue('e');
 		String filepath = commandLine.getOptionValue('f');
 		hib = new HbaseInputBean(confpath,tableName,msisdn,starttime_s,starttime_e,filepath);
-		// ¼ÓÔØÅäÖÃ
+		// åŠ è½½é…ç½®
 		initConf(hib);
 		return hib;
 	}
 	
 	/**
-	 * Ê¹ÓÃbulkload·½Ê½¼ÓÔØÊı¾İ
+	 * ä½¿ç”¨bulkloadæ–¹å¼åŠ è½½æ•°æ®
 	 * */
 	public boolean BulkLoad(HbaseInputBean hib){
-		// »ñÈ¡³ÌĞòÔËĞĞ¿ªÊ¼Ê±¼ä
+		// è·å–ç¨‹åºè¿è¡Œå¼€å§‹æ—¶é—´
 		long starttime = System.currentTimeMillis();
 		try {
 			HTable table = new HTable(conf, hib.getTableName());			
 			StringBuilder compressionConfigValue = new StringBuilder();
 			HTableDescriptor tableDescriptor = table.getTableDescriptor();
-			// ÅĞ¶Ï±íÃèÊöÊÇ·ñÎª¿Õ£¬Îª¿ÕÔòÍË³ö
+			// åˆ¤æ–­è¡¨æè¿°æ˜¯å¦ä¸ºç©ºï¼Œä¸ºç©ºåˆ™é€€å‡º
 			if (tableDescriptor == null) {
-				System.out.println("±íÃèÊöÊÇ·ñÎª¿Õ");
+				System.out.println("è¡¨æè¿°æ˜¯å¦ä¸ºç©º");
 				System.exit(-1);
 			}
 			Collection<?> families = tableDescriptor.getFamilies();
@@ -517,7 +517,7 @@ public abstract class HBaseTool {
 			e1.printStackTrace();
 		}
 		
-		// °ÑhfileÔØÈëµ½hbaseÖĞ
+		// æŠŠhfileè½½å…¥åˆ°hbaseä¸­
 		LoadIncrementalHFiles loader;
 		String tbName = hib.getTableName();
 		Path outputPath = new Path(hib.getFilepath());
@@ -536,7 +536,7 @@ public abstract class HBaseTool {
 			return false;
 		}
 		
-		// ºÏ²¢ÎÄ¼ş²Ù×÷
+		// åˆå¹¶æ–‡ä»¶æ“ä½œ
 		try{
 			HBaseAdmin admin = new HBaseAdmin(conf);
 			admin.compact(tbName);
@@ -547,7 +547,7 @@ public abstract class HBaseTool {
 			System.out.println("minor compact for " + tbName + " failed.");
 		}
 
-//		// ¼ÓÔØÍê³ÉÉ¾³ıÊä³öÎÄ¼şÒÔ¼°ÊäÈëÎÄ¼ş
+//		// åŠ è½½å®Œæˆåˆ é™¤è¾“å‡ºæ–‡ä»¶ä»¥åŠè¾“å…¥æ–‡ä»¶
 //		if (!conf.getBoolean(Constant.IS_DEBUG, true)) {
 //			for (int jj = 0; jj < data.length; jj++) {
 //				String inputPath = conf.get(Constant.INPUT_PATH) + data[jj]
@@ -558,7 +558,7 @@ public abstract class HBaseTool {
 //				}
 //			}
 //			fileSystem.delete(outputPath, true);
-//			System.out.println("¼ÓÔØÍê³ÉÉ¾³ıÊä³öÎÄ¼şÒÔ¼°ÊäÈëÎÄ¼ş.....");
+//			System.out.println("åŠ è½½å®Œæˆåˆ é™¤è¾“å‡ºæ–‡ä»¶ä»¥åŠè¾“å…¥æ–‡ä»¶.....");
 //		}
 		return true;
 	}

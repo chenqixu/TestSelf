@@ -9,12 +9,12 @@ import com.jcraft.jsch.SftpProgressMonitor;
 
 public class SFtpFileProgressMonitor extends TimerTask implements
 		SftpProgressMonitor {
-	private long progressInterval = 5 * 1000; // Ä¬ÈÏ¼ä¸ôÊ±¼äÎª5Ãë
-	private boolean isEnd = false; // ¼ÇÂ¼´«ÊäÊÇ·ñ½áÊø
-	private long transfered; // ¼ÇÂ¼ÒÑ´«ÊäµÄÊı¾İ×Ü´óĞ¡
-	private long fileSize; // ¼ÇÂ¼ÎÄ¼ş×Ü´óĞ¡
-	private Timer timer; // ¶¨Ê±Æ÷¶ÔÏó
-	private boolean isScheduled = false; // ¼ÇÂ¼ÊÇ·ñÒÑÆô¶¯timer¼ÇÊ±Æ÷
+	private long progressInterval = 5 * 1000; // é»˜è®¤é—´éš”æ—¶é—´ä¸º5ç§’
+	private boolean isEnd = false; // è®°å½•ä¼ è¾“æ˜¯å¦ç»“æŸ
+	private long transfered; // è®°å½•å·²ä¼ è¾“çš„æ•°æ®æ€»å¤§å°
+	private long fileSize; // è®°å½•æ–‡ä»¶æ€»å¤§å°
+	private Timer timer; // å®šæ—¶å™¨å¯¹è±¡
+	private boolean isScheduled = false; // è®°å½•æ˜¯å¦å·²å¯åŠ¨timerè®°æ—¶å™¨
 
 	public SFtpFileProgressMonitor(long fileSize) {
 		this.fileSize = fileSize;
@@ -22,22 +22,22 @@ public class SFtpFileProgressMonitor extends TimerTask implements
 
 	@Override
 	public void run() {
-		if (!isEnd()) { // ÅĞ¶Ï´«ÊäÊÇ·ñÒÑ½áÊø
+		if (!isEnd()) { // åˆ¤æ–­ä¼ è¾“æ˜¯å¦å·²ç»“æŸ
 			System.out.println("Transfering is in progress.");
 			long transfered = getTransfered();
-			if (transfered != fileSize) { // ÅĞ¶Ïµ±Ç°ÒÑ´«ÊäÊı¾İ´óĞ¡ÊÇ·ñµÈÓÚÎÄ¼ş×Ü´óĞ¡
+			if (transfered != fileSize) { // åˆ¤æ–­å½“å‰å·²ä¼ è¾“æ•°æ®å¤§å°æ˜¯å¦ç­‰äºæ–‡ä»¶æ€»å¤§å°
 				System.out.println("Current transfered: " + transfered
 						+ " bytes");
 				sendProgressMessage(transfered);
 			} else {
 				System.out.println("Sending progress message: 100%");
 				System.out.println("File transfering is done.");
-				setEnd(true); // Èç¹ûµ±Ç°ÒÑ´«ÊäÊı¾İ´óĞ¡µÈÓÚÎÄ¼ş×Ü´óĞ¡£¬ËµÃ÷ÒÑÍê³É£¬ÉèÖÃend
+				setEnd(true); // å¦‚æœå½“å‰å·²ä¼ è¾“æ•°æ®å¤§å°ç­‰äºæ–‡ä»¶æ€»å¤§å°ï¼Œè¯´æ˜å·²å®Œæˆï¼Œè®¾ç½®end
 			}
 		} else {
 			System.out.println("Sending progress message: 100%");
 			System.out.println("Transfering done. Cancel timer.");
-			stop(); // Èç¹û´«Êä½áÊø£¬Í£Ö¹timer¼ÇÊ±Æ÷
+			stop(); // å¦‚æœä¼ è¾“ç»“æŸï¼Œåœæ­¢timerè®°æ—¶å™¨
 			return;
 		}
 	}
@@ -64,7 +64,7 @@ public class SFtpFileProgressMonitor extends TimerTask implements
 	}
 
 	/**
-	 * ´òÓ¡progressĞÅÏ¢
+	 * æ‰“å°progressä¿¡æ¯
 	 * 
 	 * @param transfered
 	 */
@@ -80,7 +80,7 @@ public class SFtpFileProgressMonitor extends TimerTask implements
 	}
 
 	/**
-	 * ÊµÏÖÁËSftpProgressMonitor½Ó¿ÚµÄcount·½·¨
+	 * å®ç°äº†SftpProgressMonitoræ¥å£çš„countæ–¹æ³•
 	 */
 	public boolean count(long count) {
 		if (isEnd())
@@ -93,7 +93,7 @@ public class SFtpFileProgressMonitor extends TimerTask implements
 	}
 
 	/**
-	 * ÊµÏÖÁËSftpProgressMonitor½Ó¿ÚµÄend·½·¨
+	 * å®ç°äº†SftpProgressMonitoræ¥å£çš„endæ–¹æ³•
 	 */
 	public void end() {
 		setEnd(true);

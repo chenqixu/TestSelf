@@ -71,15 +71,15 @@ public class GetJavaLastVersionList extends ChangeCode implements Runnable {
 	 * 输出CVS清单<br>
 	 * */
 	@Override
-	public void Change(){
+	public void change(){
 		String _scanpath = "";
 		while((_scanpath=scanPathQueue.poll())!=null){
 			String projectname = new Path(_scanpath).getName();
-			List<String> javalist = Scan(_scanpath);	
-			List<String> liblist = Scan(_scanpath, ".*\\.jar");
-			List<String> xmllist = Scan(_scanpath, ".*\\.xml");
-			List<String> jsplist = Scan(_scanpath, ".*\\.jsp");
-			List<String> propertieslist = Scan(_scanpath, ".*\\.properties");
+			List<String> javalist = scan(_scanpath);	
+			List<String> liblist = scan(_scanpath, ".*\\.jar");
+			List<String> xmllist = scan(_scanpath, ".*\\.xml");
+			List<String> jsplist = scan(_scanpath, ".*\\.jsp");
+			List<String> propertieslist = scan(_scanpath, ".*\\.properties");
 			BufferedWriter writer = null;	
 			try{
 				File writeFile = new File(this.writepath+"/"+projectname+".list");
@@ -260,7 +260,7 @@ public class GetJavaLastVersionList extends ChangeCode implements Runnable {
 
 	@Override
 	public void run() {
-		Change();
+		change();
 	}
 	
 	public static void main(String[] args) {

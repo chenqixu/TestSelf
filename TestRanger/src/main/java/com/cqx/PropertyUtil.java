@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 public class PropertyUtil {
-	public final static String spltstr = File.separator;//ÎÄ¼þÂ·¾¶·Ö¸ô·û(Çø·ÖwindowsºÍlinux)
+	public final static String spltstr = File.separator;//æ–‡ä»¶è·¯å¾„åˆ†éš”ç¬¦(åŒºåˆ†windowså’Œlinux)
 	public final static String rootPath = System.getProperty("user.dir");
 	public final static String commonpath = rootPath+spltstr+"config"+spltstr+"common.properties";
 	//PropertyUtil.class.getResource("/config/application_360.properties").getFile();

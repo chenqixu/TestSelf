@@ -18,9 +18,9 @@ public class RangerImpl implements Ranger {
 //			.getProperty("expected_mime_type");
 	private static String rangerBaseUrl = PropertyUtil
 			.getProperty("rangerBaseUrl");
-	private static String service = PropertyUtil.getProperty("service"); // hiveµÄ·şÎñÃû
+	private static String service = PropertyUtil.getProperty("service"); // hiveçš„æœåŠ¡å
 	private static String adminUser = PropertyUtil.getProperty("adminUser");
-	private static String adminPwd = PropertyUtil.getProperty("adminPwd"); // ranger×Ô¼ºµÄµÇÂ¼ÃÜÂë£¨²»ÊÇÍ¨¹ıµ¥µãµÇÂ¼µÄÃÜÂë£©
+	private static String adminPwd = PropertyUtil.getProperty("adminPwd"); // rangerè‡ªå·±çš„ç™»å½•å¯†ç ï¼ˆä¸æ˜¯é€šè¿‡å•ç‚¹ç™»å½•çš„å¯†ç ï¼‰
 
 	public String getAllValidPolice() {
 		String url = rangerBaseUrl + "/service/plugins/policies/download/"
@@ -104,7 +104,7 @@ public class RangerImpl implements Ranger {
 		boolean flag = false;
 		String url = rangerBaseUrl + "/service/public/v2/api/policy";
 		log.info("CreatePolice of reqUrl=" + url);
-		// Ìí¼Ó¶à¸öÓÃ»§Ê±½«·Ö¸î·û¶ººÅÌæ»»³ÉÏÂ»®Ïß£¬ÓÃÀ´Éú³ÉĞÂµÄ²ßÂÔÃû³Æ
+		// æ·»åŠ å¤šä¸ªç”¨æˆ·æ—¶å°†åˆ†å‰²ç¬¦é€—å·æ›¿æ¢æˆä¸‹åˆ’çº¿ï¼Œç”¨æ¥ç”Ÿæˆæ–°çš„ç­–ç•¥åç§°
 //		String newPoliceUser = req.getPoliceUser();
 //		if (req.getPoliceUser().contains(",")) {
 //			newPoliceUser = req.getPoliceUser().replace(",", "_");
@@ -300,8 +300,8 @@ public class RangerImpl implements Ranger {
 	}
 
 	/**
-	 * ÕâÀïµÄÉ¾³ıÖ»ÊÇ°ÑÓÃ»§ÉèÎª²»¿É¼û£¬²»¿É¼ûÖ®ºóÔÚÅäÖÃ²ßÂÔÊ±£¬Õâ¸öÓÃ»§¾Í±ä³É²»¿ÉÑ¡£¬µ«ÊÇÔ­ÏÈÕâ¸öÓÃ»§ËùÓµÓĞµÄ²ßÂÔ»¹ÊÇ´æÔÚµÄ¡£ÕæÕıÉ¾³ıÕâ¸öÓÃ»§ºó£¬
-	 * ÆäËùÓµÓĞµÄ²ßÂÔ²Å²»´æÔÚ¡£
+	 * è¿™é‡Œçš„åˆ é™¤åªæ˜¯æŠŠç”¨æˆ·è®¾ä¸ºä¸å¯è§ï¼Œä¸å¯è§ä¹‹ååœ¨é…ç½®ç­–ç•¥æ—¶ï¼Œè¿™ä¸ªç”¨æˆ·å°±å˜æˆä¸å¯é€‰ï¼Œä½†æ˜¯åŸå…ˆè¿™ä¸ªç”¨æˆ·æ‰€æ‹¥æœ‰çš„ç­–ç•¥è¿˜æ˜¯å­˜åœ¨çš„ã€‚çœŸæ­£åˆ é™¤è¿™ä¸ªç”¨æˆ·åï¼Œ
+	 * å…¶æ‰€æ‹¥æœ‰çš„ç­–ç•¥æ‰ä¸å­˜åœ¨ã€‚
 	 * 
 	 * @param UserName
 	 * @return

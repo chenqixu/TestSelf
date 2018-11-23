@@ -12,30 +12,30 @@ import com.mr.util.TempKey;
 
 public class MCcdrDataMapper extends
 		Mapper<LongWritable, Text, TempKey, Text> {
-	// ÅäÖÃĞÅÏ¢ÊµÌåÀà
+	// é…ç½®ä¿¡æ¯å®ä½“ç±»
 	private static Configuration conf = null;
-	// ÖğĞĞ¶ÁÈëµÄÊı¾İ
+	// é€è¡Œè¯»å…¥çš„æ•°æ®
 	private String lineValue;
-	// ÊÇ·ñĞ£ÑéÔ´Êı¾İ½Ó¿ÚÎÄ¼şµÄ×Ö¶Î×ÜÊı
+	// æ˜¯å¦æ ¡éªŒæºæ•°æ®æ¥å£æ–‡ä»¶çš„å­—æ®µæ€»æ•°
 	private static boolean ifCheckSourceDataLength;
-	// Ô´Êı¾İ×Ö¶Î×ÜÊı
+	// æºæ•°æ®å­—æ®µæ€»æ•°
 	private static int sourceDataLength = 0;
-	// ´æ·ÅÔ´Êı¾İµÄÊı×é
+	// å­˜æ”¾æºæ•°æ®çš„æ•°ç»„
 	private String[] sourceDataValueArr = null;
-	// mapper Êä³ökey
+	// mapper è¾“å‡ºkey
 	public TempKey outputKey = new TempKey();
 	private String firstTime =null;
 	private String lastTime = null;
 
 	protected void setup(Context context) {
 		try {
-			// Èç¹ûÅäÖÃĞÅÏ¢ÊµÌåÀàÎª¿Õ£¬Ôò»ñÈ¡¶ÔÏó
+			// å¦‚æœé…ç½®ä¿¡æ¯å®ä½“ç±»ä¸ºç©ºï¼Œåˆ™è·å–å¯¹è±¡
 			if (conf == null)
 				conf = context.getConfiguration();
-			// »ñÈ¡ÅäÖÃÎÄ¼şÊÇ·ñĞèÒªĞ£ÑéÔ´Êı¾İ×Ö¶Î×ÜÊı
+			// è·å–é…ç½®æ–‡ä»¶æ˜¯å¦éœ€è¦æ ¡éªŒæºæ•°æ®å­—æ®µæ€»æ•°
 			ifCheckSourceDataLength = conf.getBoolean(
 					GetMovementConstants.IF_CHECK_SOURCE_DATA_LENGTH, false);
-			// »ñÈ¡ÅäÖÃÎÄ¼şÊÇÅäÖÃµÄ¸÷ÖÖ½Ó¿ÚÎÄ¼şµÄ×Ö¶Î×ÜÊı
+			// è·å–é…ç½®æ–‡ä»¶æ˜¯é…ç½®çš„å„ç§æ¥å£æ–‡ä»¶çš„å­—æ®µæ€»æ•°
 			if (ifCheckSourceDataLength) {
 				sourceDataLength = conf.getInt(
 						GetMovementConstants.MC_CDR_DATA_LENGTH, 0);
@@ -50,30 +50,30 @@ public class MCcdrDataMapper extends
 
 	public void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
-		// ÖğĞĞ¶ÁÈëÊı¾İ
+		// é€è¡Œè¯»å…¥æ•°æ®
 		lineValue = value.toString();
-		// ¶ÔÔ´Êı¾İ½øĞĞ°´×Ö¶Î·Ö¸ô£¬·ÅÈëÊı×éÖĞÈ¥
+		// å¯¹æºæ•°æ®è¿›è¡ŒæŒ‰å­—æ®µåˆ†éš”ï¼Œæ”¾å…¥æ•°ç»„ä¸­å»
 		sourceDataValueArr = lineValue.split(
 				GetMovementConstants.COMMA_SPLIT_STR, -1);
-		// ÅĞ¶ÏÊı¾İÊÇ·ñ³ö´í
+		// åˆ¤æ–­æ•°æ®æ˜¯å¦å‡ºé”™
 		if (sourceDataValueArr == null || sourceDataValueArr.length == 0) {
 			return;
 		}
-		// ÅäÖÃÎÄ¼şÅäÖÃ³ÉĞèÒªĞ£Ñé£¬ÔòĞ£ÑéÔ´Êı¾İµÄ×Ö¶Î×ÜÊı
+		// é…ç½®æ–‡ä»¶é…ç½®æˆéœ€è¦æ ¡éªŒï¼Œåˆ™æ ¡éªŒæºæ•°æ®çš„å­—æ®µæ€»æ•°
 		if (ifCheckSourceDataLength) {
 			if (sourceDataLength != sourceDataValueArr.length) {
 				return;
 			}
 		}
-		// ´æ·ÅvalueµÄStringBuffer
+		// å­˜æ”¾valueçš„StringBuffer
 		StringBuffer outputValueSB = new StringBuffer();
-		// mapper Êä³övalue
+		// mapper è¾“å‡ºvalue
 		Text outputValue = new Text();
 
 		String Eventresult = sourceDataValueArr[36];
 		if (!Eventresult.equals("0"))
 			return;
-		// ×Ö¶ÎÓëĞòºÅ¶ÔÓ¦¹ØÏµ£¬´Ó0¿ªÊ¼
+		// å­—æ®µä¸åºå·å¯¹åº”å…³ç³»ï¼Œä»0å¼€å§‹
 		// lac, 12
 		// ci, 13
 		// firstlac 18
@@ -93,11 +93,11 @@ public class MCcdrDataMapper extends
 		// pagingresptype 76
 		// hoflag 21
 
-		// ¸ù¾İÊÂ¼şID½øĞĞ´¦Àí
+		// æ ¹æ®äº‹ä»¶IDè¿›è¡Œå¤„ç†
 		int eventid = Integer.parseInt(sourceDataValueArr[6]);
 		if (eventid == 12 || eventid == 13 || eventid == 14 || eventid == 15
 				|| eventid == 17 || eventid == 28) {
-			// -----ĞÅÁîÊı¾İ-----11 eventid in (12,13,14,15,17,28)
+			// -----ä¿¡ä»¤æ•°æ®-----11 eventid in (12,13,14,15,17,28)
 
 			String callingnum = sourceDataValueArr[23].trim();
 			if (callingnum.equals("") || callingnum == null) {
@@ -116,9 +116,9 @@ public class MCcdrDataMapper extends
 				return;
 			}
 
-			// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+			// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 			outputKey.setFirstKey(callingnum);
-			// ÉèÖÃ vlr_report_time¼´btimeÎªÊä³ökeyµÄsecondKey
+			// è®¾ç½® vlr_report_timeå³btimeä¸ºè¾“å‡ºkeyçš„secondKey
 			String btime = sourceDataValueArr[0];
 			if (btime.equals("") || btime == null) {
 				return;
@@ -128,7 +128,7 @@ public class MCcdrDataMapper extends
 			}
 			outputKey.setSecondKey(btime);
 
-			// Êä³övalue
+			// è¾“å‡ºvalue
 			// callingnum
 			outputValueSB.append(callingnum).append(
 					GetMovementConstants.COMMA_SPLIT_STR);
@@ -161,11 +161,11 @@ public class MCcdrDataMapper extends
 			outputValueSB.append("MC");
 
 			outputValue.set(outputValueSB.toString());
-			// mapper½á¹ûÊä³ö
+			// mapperç»“æœè¾“å‡º
 			context.write(outputKey, outputValue);
 
 		} else if (eventid == 16 || eventid == 25) {
-			// ---ĞÅÁîÊı¾İ---11 eventid in (16,25)
+			// ---ä¿¡ä»¤æ•°æ®---11 eventid in (16,25)
 			if (eventid == 16) {
 				String pagingresptype = sourceDataValueArr[76];
 				if (!pagingresptype.equals("0") && !pagingresptype.equals("1")
@@ -201,9 +201,9 @@ public class MCcdrDataMapper extends
 				return;
 			}
 
-			// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+			// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 			outputKey.setFirstKey(callednum);
-			// ÉèÖÃ vlr_report_time¼´btimeÎªÊä³ökeyµÄsecondKey
+			// è®¾ç½® vlr_report_timeå³btimeä¸ºè¾“å‡ºkeyçš„secondKey
 			String btime = sourceDataValueArr[0];
 			if (btime.equals("") || btime == null) {
 				return;
@@ -214,7 +214,7 @@ public class MCcdrDataMapper extends
 			
 			outputKey.setSecondKey(btime);
 
-			// Êä³övalue
+			// è¾“å‡ºvalue
 			// callednum
 			outputValueSB.append(callednum).append(
 					GetMovementConstants.COMMA_SPLIT_STR);
@@ -247,14 +247,14 @@ public class MCcdrDataMapper extends
 			outputValueSB.append("MC");
 
 			outputValue.set(outputValueSB.toString());
-			// mapper½á¹ûÊä³ö
+			// mapperç»“æœè¾“å‡º
 			context.write(outputKey, outputValue);
 
 		} else if (eventid == 9 || eventid == 10 || eventid == 26) {
 
 			String hoflag = sourceDataValueArr[21];
 			if (hoflag.equals("0")) {
-				// ---ĞÅÁîÊı¾İ---11 eventid in (9,10,26) hoflag = 0 Ö÷½Ğ
+				// ---ä¿¡ä»¤æ•°æ®---11 eventid in (9,10,26) hoflag = 0 ä¸»å«
 				String callingnum = sourceDataValueArr[23].trim();
 				if (callingnum.equals("") || callingnum == null) {
 					return;
@@ -282,9 +282,9 @@ public class MCcdrDataMapper extends
 					return;
 				}
 
-				// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+				// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 				outputKey.setFirstKey(callingnum);
-				// ÉèÖÃ vlr_report_time¼´btimeÎªÊä³ökeyµÄsecondKey
+				// è®¾ç½® vlr_report_timeå³btimeä¸ºè¾“å‡ºkeyçš„secondKey
 				String etime = sourceDataValueArr[1];
 				if (etime.equals("") || etime == null) {
 					return;
@@ -294,7 +294,7 @@ public class MCcdrDataMapper extends
 				}
 				outputKey.setSecondKey(etime);
 
-				// Êä³övalue
+				// è¾“å‡ºvalue
 				// callingnum
 				outputValueSB.append(callingnum).append(
 						GetMovementConstants.COMMA_SPLIT_STR);
@@ -326,11 +326,11 @@ public class MCcdrDataMapper extends
 				outputValueSB.append("MC");
 
 				outputValue.set(outputValueSB.toString());
-				// mapper½á¹ûÊä³ö
+				// mapperç»“æœè¾“å‡º
 				context.write(outputKey, outputValue);
 
 			} else if (hoflag.equals("1")) {
-				// ---ĞÅÁîÊı¾İ---11 eventid in (9,10,26) hoflag = 1 ±»½Ğ
+				// ---ä¿¡ä»¤æ•°æ®---11 eventid in (9,10,26) hoflag = 1 è¢«å«
 
 				String callednum = sourceDataValueArr[24].trim();
 				if (callednum.equals("") || callednum == null) {
@@ -359,9 +359,9 @@ public class MCcdrDataMapper extends
 					return;
 				}
 
-				// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+				// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 				outputKey.setFirstKey(callednum);
-				// ÉèÖÃ vlr_report_time¼´btimeÎªÊä³ökeyµÄsecondKey
+				// è®¾ç½® vlr_report_timeå³btimeä¸ºè¾“å‡ºkeyçš„secondKey
 				String etime = sourceDataValueArr[1];
 				if (etime.equals("") || etime == null) {
 					return;
@@ -371,7 +371,7 @@ public class MCcdrDataMapper extends
 				}
 				outputKey.setSecondKey(etime);
 
-				// Êä³övalue
+				// è¾“å‡ºvalue
 				// callingnum
 				outputValueSB.append(callednum).append(
 						GetMovementConstants.COMMA_SPLIT_STR);
@@ -403,12 +403,12 @@ public class MCcdrDataMapper extends
 				outputValueSB.append("MC");
 
 				outputValue.set(outputValueSB.toString());
-				// mapper½á¹ûÊä³ö
+				// mapperç»“æœè¾“å‡º
 				context.write(outputKey, outputValue);
 			}
 
 		} else if (eventid == 1 || eventid == 2 || eventid == 4 || eventid == 6) {
-			// --Ö÷½Ğ¿ªÊ¼Î»ÖÃ 21|eventid (1,2,4) 31|eventid = 6
+			// --ä¸»å«å¼€å§‹ä½ç½® 21|eventid (1,2,4) 31|eventid = 6
 
 			String callingnum = sourceDataValueArr[23].trim();
 			if (callingnum.equals("") || callingnum == null) {
@@ -430,9 +430,9 @@ public class MCcdrDataMapper extends
 			}
 
 			if (comformFlag) {
-				// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+				// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 				outputKey.setFirstKey(callingnum);
-				// ÉèÖÃ vlr_report_time¼´btimeÎªÊä³ökeyµÄsecondKey
+				// è®¾ç½® vlr_report_timeå³btimeä¸ºè¾“å‡ºkeyçš„secondKey
 				String btime = sourceDataValueArr[0];
 				if (btime.equals("") || btime == null) {
 					return;
@@ -442,8 +442,8 @@ public class MCcdrDataMapper extends
 				}
 				outputKey.setSecondKey(btime);
 
-				// Êä³övalue
-				//Çå¿ÕoutputValueSB
+				// è¾“å‡ºvalue
+				//æ¸…ç©ºoutputValueSB
 				outputValueSB.setLength(0);
 				// callingnum
 				outputValueSB.append(callingnum).append(
@@ -482,11 +482,11 @@ public class MCcdrDataMapper extends
 				outputValueSB.append("MC");
 
 				outputValue.set(outputValueSB.toString());
-				// mapper½á¹ûÊä³ö
+				// mapperç»“æœè¾“å‡º
 				context.write(outputKey, outputValue);
 			}
 
-			// --Ö÷½Ğ½áÊøÎ»ÖÃ 21|eventid (1,2,4) 31|eventid = 6
+			// --ä¸»å«ç»“æŸä½ç½® 21|eventid (1,2,4) 31|eventid = 6
 
 			String lastlac = sourceDataValueArr[20];
 			String lastci = sourceDataValueArr[21];
@@ -507,9 +507,9 @@ public class MCcdrDataMapper extends
 				return;
 			}
 
-			// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+			// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 			outputKey.setFirstKey(callingnum);
-			// ÉèÖÃ vlr_report_time¼´etimeÎªÊä³ökeyµÄsecondKey
+			// è®¾ç½® vlr_report_timeå³etimeä¸ºè¾“å‡ºkeyçš„secondKey
 			String etime = sourceDataValueArr[1];
 			if (etime.equals("") || etime == null) {
 				return;
@@ -519,8 +519,8 @@ public class MCcdrDataMapper extends
 			}
 			outputKey.setSecondKey(etime);
 
-			// Êä³övalue
-			//Çå¿ÕoutputValueSB
+			// è¾“å‡ºvalue
+			//æ¸…ç©ºoutputValueSB
 			outputValueSB.setLength(0);
 			// callingnum
 			outputValueSB.append(callingnum).append(
@@ -557,14 +557,14 @@ public class MCcdrDataMapper extends
 
 			// MC
 			outputValueSB.append("MC");
-			// mapper Êä³övalue
+			// mapper è¾“å‡ºvalue
 			Text outputValue2 = new Text();
 			outputValue2.set(outputValueSB.toString());
-			// mapper½á¹ûÊä³ö
+			// mapperç»“æœè¾“å‡º
 			context.write(outputKey, outputValue2);
 
 		} else if (eventid == 3 || eventid == 5 || eventid == 7) {
-			// --±»½Ğ¿ªÊ¼Î»ÖÃ 21|eventid (3,5) 31|eventid = 7
+			// --è¢«å«å¼€å§‹ä½ç½® 21|eventid (3,5) 31|eventid = 7
 
 			String callednum = sourceDataValueArr[24].trim();
 			if (callednum.equals("") || callednum == null) {
@@ -586,9 +586,9 @@ public class MCcdrDataMapper extends
 			}
 
 			if (comformFlag) {
-				// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+				// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 				outputKey.setFirstKey(callednum);
-				// ÉèÖÃ vlr_report_time¼´btimeÎªÊä³ökeyµÄsecondKey
+				// è®¾ç½® vlr_report_timeå³btimeä¸ºè¾“å‡ºkeyçš„secondKey
 				String btime = sourceDataValueArr[0];
 				if (btime.equals("") || btime == null) {
 					return;
@@ -598,8 +598,8 @@ public class MCcdrDataMapper extends
 				}
 				outputKey.setSecondKey(btime);
 
-				// Êä³övalue
-				//Çå¿ÕoutputValueSB
+				// è¾“å‡ºvalue
+				//æ¸…ç©ºoutputValueSB
 				outputValueSB.setLength(0);
 				// callednum
 				outputValueSB.append(callednum).append(
@@ -637,11 +637,11 @@ public class MCcdrDataMapper extends
 				outputValueSB.append("MC");
 
 				outputValue.set(outputValueSB.toString());
-				// mapper½á¹ûÊä³ö
+				// mapperç»“æœè¾“å‡º
 				context.write(outputKey, outputValue);
 			}
 
-			// --±»½Ğ½áÊøÎ»ÖÃ 21|eventid (3,5) 31|eventid = 7
+			// --è¢«å«ç»“æŸä½ç½® 21|eventid (3,5) 31|eventid = 7
 
 			String lastlac = sourceDataValueArr[20];
 			String lastci = sourceDataValueArr[21];
@@ -662,9 +662,9 @@ public class MCcdrDataMapper extends
 				return;
 			}
 
-			// ÉèÖÃµç»°ºÅÂëÎªÊä³ökeyµÄfirstKey
+			// è®¾ç½®ç”µè¯å·ç ä¸ºè¾“å‡ºkeyçš„firstKey
 			outputKey.setFirstKey(callednum);
-			// ÉèÖÃ vlr_report_time¼´etimeÎªÊä³ökeyµÄsecondKey
+			// è®¾ç½® vlr_report_timeå³etimeä¸ºè¾“å‡ºkeyçš„secondKey
 			String etime = sourceDataValueArr[1];
 			if (etime.equals("") || etime == null) {
 				return;
@@ -674,8 +674,8 @@ public class MCcdrDataMapper extends
 			}
 			outputKey.setSecondKey(etime);
 
-			// Êä³övalue
-			//Çå¿ÕoutputValueSB
+			// è¾“å‡ºvalue
+			//æ¸…ç©ºoutputValueSB
 			outputValueSB.setLength(0);
 			// callednum
 			outputValueSB.append(callednum).append(
@@ -712,10 +712,10 @@ public class MCcdrDataMapper extends
 			// MC
 			outputValueSB.append("MC");
 
-			// mapper Êä³övalue
+			// mapper è¾“å‡ºvalue
 			Text outputValue2 = new Text();
 			outputValue2.set(outputValueSB.toString());
-			// mapper½á¹ûÊä³ö
+			// mapperç»“æœè¾“å‡º
 			context.write(outputKey, outputValue2);
 
 		}

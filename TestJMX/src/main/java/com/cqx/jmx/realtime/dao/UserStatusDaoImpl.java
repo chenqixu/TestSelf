@@ -8,13 +8,13 @@ import com.cqx.jmx.realtime.bean.UserStatus;
 import com.cqx.jmx.realtime.util.DBUtil;
 
 public class UserStatusDaoImpl {
-	//ÅäÖÃÎÄ¼ş
+	//é…ç½®æ–‡ä»¶
 	private Common common;
-	//Êı¾İ¿â¹¤¾ßÀà
+	//æ•°æ®åº“å·¥å…·ç±»
 	private DBUtil dbutil;
 	
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 * */
 	public UserStatusDaoImpl(DBUtil _dbutil, Common _common){
 		dbutil = _dbutil;
@@ -22,7 +22,7 @@ public class UserStatusDaoImpl {
 	}	
 	
 	/**
-	 * Í¨¹ı²ÎÊı²éÑ¯
+	 * é€šè¿‡å‚æ•°æŸ¥è¯¢
 	 * */
 	public List<UserStatus> queryUserbyStationByDataSource(Map<String, String> params) {
 		return null;

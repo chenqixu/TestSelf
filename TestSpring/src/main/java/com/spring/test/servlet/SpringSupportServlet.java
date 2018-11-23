@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * 让Servlet支持spring注入方式使用Spring Bean
+ * 璁㏒ervlet鏀寔spring娉ㄥ叆鏂瑰紡浣跨敤Spring Bean
  * */
 public class SpringSupportServlet extends HttpServlet {
 

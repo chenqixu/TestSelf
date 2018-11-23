@@ -10,18 +10,18 @@ import com.cqx.jmx.realtime.bean.UserStatus;
 import com.cqx.jmx.realtime.dao.UserStatusDaoImpl;
 
 public class ThreadUtil {
-	//ÅäÖÃÎÄ¼ş
+	//é…ç½®æ–‡ä»¶
 	private Common common;
-	//²ÎÊı
+	//å‚æ•°
 	private Map<String, String> paramsMap = null;
-	//DaoÏß³ÌÁĞ±í
+	//Daoçº¿ç¨‹åˆ—è¡¨
 	private List<ThreadDao> daoThreadList = new ArrayList<ThreadDao>();
-	//Á¬½Ó³Ø
+	//è¿æ¥æ± 
 	private static List<DBUtil> dbutillist = null;
-	//´¦ÀíÊ±¼ä
+	//å¤„ç†æ—¶é—´
 	private long dealtime = 0;
 	
-	//Á¬½Ó³Ø³õÊ¼»¯	
+	//è¿æ¥æ± åˆå§‹åŒ–	
 	public static synchronized void init(){
 		if(dbutillist==null){
 			dbutillist = new ArrayList<DBUtil>();
@@ -34,7 +34,7 @@ public class ThreadUtil {
 	}
 	
 	/**
-	 * »ñÈ¡Ïß³ÌÄÚÈİ
+	 * è·å–çº¿ç¨‹å†…å®¹
 	 * */
 	public List<?> getDaoThreadList() {
 		List<String> result = new ArrayList<String>();
@@ -45,14 +45,14 @@ public class ThreadUtil {
 	}
 
 	/**
-	 * »ñÈ¡´¦ÀíÊ±¼ä
+	 * è·å–å¤„ç†æ—¶é—´
 	 * */
 	public long getDealtime() {
 		return dealtime;
 	}
 
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 * */
 	public ThreadUtil(Map<String, String> _paramsMap
 			,Common _common){
@@ -61,22 +61,22 @@ public class ThreadUtil {
 	}
 	
 	/**
-	 * »ñÈ¡½á¹û£¬¾ßÌå´¦ÀíÁ÷³Ì<br>
-	 * 1¡¢ÇåÀíÏß³ÌÁĞ±í<br>
-	 * 2¡¢³õÊ¼»¯¼°Æô¶¯Ïß³Ì<br>
-	 * 3¡¢»ñÈ¡²¢·µ»Ø½á¹û
+	 * è·å–ç»“æœï¼Œå…·ä½“å¤„ç†æµç¨‹<br>
+	 * 1ã€æ¸…ç†çº¿ç¨‹åˆ—è¡¨<br>
+	 * 2ã€åˆå§‹åŒ–åŠå¯åŠ¨çº¿ç¨‹<br>
+	 * 3ã€è·å–å¹¶è¿”å›ç»“æœ
 	 * */
 	public List<UserStatus> getResult(){
         long begin = new Date().getTime();
-		//ÇåÀíÏß³ÌÁĞ±í
+		//æ¸…ç†çº¿ç¨‹åˆ—è¡¨
 		cleanList();
-		//³õÊ¼»¯¼°Æô¶¯Ïß³Ì
+		//åˆå§‹åŒ–åŠå¯åŠ¨çº¿ç¨‹
 //		for(NamedParameterJdbcTemplate _npjt : npjtlist){
 		for(DBUtil _db : dbutillist){
 //			setAndStart(paramsMap, new UserStatusDaoImpl(_npjt, common));
 			setAndStart(paramsMap, new UserStatusDaoImpl(_db, common));
 		}
-		//»ñÈ¡½á¹û
+		//è·å–ç»“æœ
 		List<UserStatus> result = joinAndUnion();
         long end = new Date().getTime();
         dealtime = end-begin;
@@ -85,14 +85,14 @@ public class ThreadUtil {
 	}
 	
 	/**
-	 * ÇåÀíÏß³ÌÁĞ±í
+	 * æ¸…ç†çº¿ç¨‹åˆ—è¡¨
 	 * */
 	private void cleanList(){
 		daoThreadList.clear();
 	}
 	
 	/**
-	 * ÉèÖÃ²ÎÊıÆô¶¯Ïß³Ì¼ÓÈëÏß³ÌÁĞ±í
+	 * è®¾ç½®å‚æ•°å¯åŠ¨çº¿ç¨‹åŠ å…¥çº¿ç¨‹åˆ—è¡¨
 	 * */
 	private void setAndStart(Map<String, String> paramsMap, UserStatusDaoImpl dao){
 		ThreadDao tdao = new ThreadDao(dao);
@@ -102,38 +102,38 @@ public class ThreadUtil {
 	}
 	
 	/**
-	 * µÈ´ıÏß³ÌÍê³ÉÒÔ¼°½á¹ûºÏ²¢
+	 * ç­‰å¾…çº¿ç¨‹å®Œæˆä»¥åŠç»“æœåˆå¹¶
 	 * */
 	private List<UserStatus> joinAndUnion(){
-		//·µ»Ø½á¹û
+		//è¿”å›ç»“æœ
 		List<UserStatus> userstatus = new ArrayList<UserStatus>();
 		try {
 //			System.out.println("this:"+this+" daoThreadList:"+daoThreadList+" size:"+daoThreadList.size());
-			//µÈ´ıÏß³ÌÍê³É
+			//ç­‰å¾…çº¿ç¨‹å®Œæˆ
 			for(ThreadDao t : daoThreadList){
 				t.join();
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		//½á¹ûºÏ²¢
+		//ç»“æœåˆå¹¶
 		for(ThreadDao t : daoThreadList){
 			if(t.getUserstatus()!=null)
 				userstatus.addAll(t.getUserstatus());
 		}
-//		//ÇåÀíÏß³Ì
+//		//æ¸…ç†çº¿ç¨‹
 //		cleanList();
 		return userstatus;
 	}
 	
 	/**
-	 * Dao¶àÏß³Ì²¢·¢ÄÚ²¿Àà
+	 * Daoå¤šçº¿ç¨‹å¹¶å‘å†…éƒ¨ç±»
 	 * */
 	class ThreadDao extends Thread {
 		private UserStatusDaoImpl dao;
-		//²ÎÊı
+		//å‚æ•°
 		private Map<String, String> params = null;
-		//½á¹û
+		//ç»“æœ
 		private List<UserStatus> userstatus = null;
 		private long begin = 0;
 		private long end = 0;

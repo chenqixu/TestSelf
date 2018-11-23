@@ -20,23 +20,23 @@ import com.mr.util.TempKey;
 public class GetMovementTrackDataReducer extends
 		Reducer<TempKey, Text, Text, Text> {
 
-	// ÅäÖÃÊµÀı
+	// é…ç½®å®ä¾‹
 	private Configuration conf = null;
-	// ÉùÃ÷ MultipleOutputs µÄ±äÁ¿
+	// å£°æ˜ MultipleOutputs çš„å˜é‡
 	private MultipleOutputs<Text, NullWritable> multipleOutputs;
-	// Êä³öÎÄ¼şÃûÇ°×º
+	// è¾“å‡ºæ–‡ä»¶åå‰ç¼€
 	private static String outputName = null;
-	// Êı¾İÊ±¼ä
+	// æ•°æ®æ—¶é—´
 	private static String sumDate = null;
-	// ´æ·ÅÊäÈëvalueµÄlist
+	// å­˜æ”¾è¾“å…¥valueçš„list
 	private List<String> inputValueList = new ArrayList<String>();
-	// ´æ·ÅÊäÈëvalueµÄ×ª»»ºóµÄlist
+	// å­˜æ”¾è¾“å…¥valueçš„è½¬æ¢åçš„list
 	private List<MoveRecord> recordList = new ArrayList<MoveRecord>();
-	// ´æ·Åµ¥ÌõÔ´Êı¾İ¼ÇÂ¼µÄÊı×é
+	// å­˜æ”¾å•æ¡æºæ•°æ®è®°å½•çš„æ•°ç»„
 	private String[] sourceDataValueArr = null;
-	// Í³Ò»Ê±¼ä¸ñÊ½ÎªMCµÄÊ±¼äµÄ¸ñÊ½
+	// ç»Ÿä¸€æ—¶é—´æ ¼å¼ä¸ºMCçš„æ—¶é—´çš„æ ¼å¼
 	private SimpleDateFormat sdf_MC;
-	// Êä³öÊ±¼äµÄ¸ñÊ½
+	// è¾“å‡ºæ—¶é—´çš„æ ¼å¼
 	private SimpleDateFormat sdf_output;
 
 	@SuppressWarnings("unchecked")
@@ -44,16 +44,16 @@ public class GetMovementTrackDataReducer extends
 			InterruptedException {
 		multipleOutputs = new MultipleOutputs(context);
 		super.setup(context);
-		// »ñÈ¡Configuration¶ÔÏó
+		// è·å–Configurationå¯¹è±¡
 		if (conf == null)
 			conf = context.getConfiguration();
-		// Êä³öÎÄ¼şÃûÇ°×º
+		// è¾“å‡ºæ–‡ä»¶åå‰ç¼€
 		outputName = conf.get(GetMovementConstants.OUTPUT_NAME);
-		// Êı¾İÊ±¼ä
+		// æ•°æ®æ—¶é—´
 		sumDate = conf.get(GetMovementConstants.SOURCE_DATA_DATE);
-		// MCµÄÊ±¼äµÄ¸ñÊ½
+		// MCçš„æ—¶é—´çš„æ ¼å¼
 		sdf_MC = new SimpleDateFormat(GetMovementConstants.MC_TIME_FORMAT);
-		// Êä³öÊ±¼äµÄ¸ñÊ½
+		// è¾“å‡ºæ—¶é—´çš„æ ¼å¼
 		sdf_output = new SimpleDateFormat(
 				GetMovementConstants.OUTPUT_TIME_FORMAT);
 	}
@@ -69,22 +69,22 @@ public class GetMovementTrackDataReducer extends
 		// seu_type 6
 		// dataType 7
 		try {
-			// ÓÃÓÚ´æ·ÅÇ°Ò»Ìõ¼ÇÂ¼µÄĞÅÏ¢
+			// ç”¨äºå­˜æ”¾å‰ä¸€æ¡è®°å½•çš„ä¿¡æ¯
 			String old_lac = null;
 			String old_cell = null;
 			long old_time = 0;
 
-			// ´æ·Åµ±Ç°¼ÇÂ¼µÄĞÅÏ¢
+			// å­˜æ”¾å½“å‰è®°å½•çš„ä¿¡æ¯
 			String new_lac = null;
 			String new_cell = null;
 			long new_time = 0;
-			// Ê±¼ä×ª»»Ê±ÓÃµ½µÄÁÙÊ±±äÁ¿
+			// æ—¶é—´è½¬æ¢æ—¶ç”¨åˆ°çš„ä¸´æ—¶å˜é‡
 			Date newTimeDate = new Date();
 			Date oldTimeDate = new Date();
 
-			// ÊäÈëÊı¾İlistÇå¿Õ
+			// è¾“å…¥æ•°æ®listæ¸…ç©º
 			recordList.clear();
-			// ½«Êı¾İ·ÅÈëlistÖĞÈ¥
+			// å°†æ•°æ®æ”¾å…¥listä¸­å»
 			for (Text text : values) {
 				inputValueList.add(text.toString());
 			}
@@ -92,45 +92,45 @@ public class GetMovementTrackDataReducer extends
 			for (int i = 0; i < inputValueList.size(); i++) {
 				MoveRecord record = new MoveRecord();
 				if (i == 0) {
-					// ·Ö¸ôÊäÈëÊı¾İµ½Êı×é
+					// åˆ†éš”è¾“å…¥æ•°æ®åˆ°æ•°ç»„
 					sourceDataValueArr = inputValueList.get(i).split(
 							GetMovementConstants.COMMA_SPLIT_STR, -1);
-					// ÉèÖÃrecord
+					// è®¾ç½®record
 					record.setMsisdn(sourceDataValueArr[0]);
 					record.setVlr_imei(sourceDataValueArr[1]);
 					record.setVlr_event_type(sourceDataValueArr[2]);
 					new_lac = sourceDataValueArr[3];
 					record.setVlr_lac(new_lac);
-					// µÚÒ»Ìõ¼ÇÂ¼µÄlac×÷ÎªÏÂÒ»Ìõ¼ÇÂ¼old_lacµÄ³õÊ¼Öµ
+					// ç¬¬ä¸€æ¡è®°å½•çš„lacä½œä¸ºä¸‹ä¸€æ¡è®°å½•old_lacçš„åˆå§‹å€¼
 					old_lac = new_lac;
 					new_cell = sourceDataValueArr[4];
 					record.setVlr_cell(new_cell);
-					// µÚÒ»Ìõ¼ÇÂ¼µÄcell×÷ÎªÏÂÒ»Ìõ¼ÇÂ¼old_cellµÄ³õÊ¼Öµ
+					// ç¬¬ä¸€æ¡è®°å½•çš„cellä½œä¸ºä¸‹ä¸€æ¡è®°å½•old_cellçš„åˆå§‹å€¼
 					old_cell = new_cell;
-					// Ê±¼ä¸ñÊ½×ª»»
+					// æ—¶é—´æ ¼å¼è½¬æ¢
 					newTimeDate = sdf_MC.parse(sourceDataValueArr[5]);
 					record.setVlr_report_time(sdf_output.format(newTimeDate));
-					// µÚÒ»Ìõ¼ÇÂ¼µÄtime×÷Îªold_timeµÄ³õÊ¼Öµ
+					// ç¬¬ä¸€æ¡è®°å½•çš„timeä½œä¸ºold_timeçš„åˆå§‹å€¼
 					new_time = newTimeDate.getTime();
 					old_time = new_time;
 					record.setSeu_type(sourceDataValueArr[6]);
 					record.setDataType(sourceDataValueArr[7]);
-					// È¡Ò»Ìì×îÔçµÄÊ±¼ä×÷µÚÒ»Ìõ¼ÇÂ¼µÄold_time
+					// å–ä¸€å¤©æœ€æ—©çš„æ—¶é—´ä½œç¬¬ä¸€æ¡è®°å½•çš„old_time
 					Date firstTimeDate = sdf_MC.parse(sumDate + "000000");
 					record.setOld_time(sdf_output.format(firstTimeDate));
 					record.setOld_lac(old_lac);
 					record.setOld_cell(old_cell);
-					// Ê±¼ä¼ä¸ô´óÓÚ3Ğ¡Ê±±êÖ¾Î»1£¬·ñÔò0
+					// æ—¶é—´é—´éš”å¤§äº3å°æ—¶æ ‡å¿—ä½1ï¼Œå¦åˆ™0
 					long firstTime = sdf_MC.parse(sumDate + "000000").getTime();
 					if (new_time - firstTime <= 10800000) {
 						record.setIs_exception("0");
 					} else {
 						record.setIs_exception("1");
 					}
-					// ´æÈëlist
+					// å­˜å…¥list
 					recordList.add(record);
 				} else {
-					// ·Ö¸ôÊäÈëÊı¾İµ½Êı×é
+					// åˆ†éš”è¾“å…¥æ•°æ®åˆ°æ•°ç»„
 					sourceDataValueArr = inputValueList.get(i).split(
 							GetMovementConstants.COMMA_SPLIT_STR, -1);
 
@@ -139,20 +139,20 @@ public class GetMovementTrackDataReducer extends
 					new_time = sdf_MC.parse(sourceDataValueArr[5]).getTime();
 
 					long timeDifference = new_time - old_time;
-					// Ê±¼ä¼ä¸ô´óÓÚ3Ğ¡Ê±±êÖ¾Î»1£¬·ñÔò0
+					// æ—¶é—´é—´éš”å¤§äº3å°æ—¶æ ‡å¿—ä½1ï¼Œå¦åˆ™0
 					if (new_cell.equals(old_cell) && new_lac.equals(old_lac)
 							&& timeDifference <= 10800000) {
 						old_time = new_time;
 						continue;
 					}
 
-					// ÉèÖÃrecord
+					// è®¾ç½®record
 					record.setMsisdn(sourceDataValueArr[0]);
 					record.setVlr_imei(sourceDataValueArr[1]);
 					record.setVlr_event_type(sourceDataValueArr[2]);
 					record.setVlr_lac(new_lac);
 					record.setVlr_cell(new_cell);
-					// Ê±¼ä¸ñÊ½×ª»»
+					// æ—¶é—´æ ¼å¼è½¬æ¢
 					newTimeDate = sdf_MC.parse(sourceDataValueArr[5]);
 					record.setVlr_report_time(sdf_output.format(newTimeDate));
 					record.setSeu_type(sourceDataValueArr[6]);
@@ -161,7 +161,7 @@ public class GetMovementTrackDataReducer extends
 					record.setOld_time(sdf_output.format(oldTimeDate));
 					record.setOld_lac(old_lac);
 					record.setOld_cell(old_cell);
-					// ¸ù¾İÊ±¼ä²îÅĞ¶ÏÒì³£±êÖ¾Î»È¡Öµ
+					// æ ¹æ®æ—¶é—´å·®åˆ¤æ–­å¼‚å¸¸æ ‡å¿—ä½å–å€¼
 					if (i < inputValueList.size() - 1) {
 						if (timeDifference <= 10800000) {
 							record.setIs_exception("0");
@@ -169,7 +169,7 @@ public class GetMovementTrackDataReducer extends
 							record.setIs_exception("1");
 						}
 					} else {
-						// ×îºóÒ»Ìõ¼ÇÂ¼Óëµ±Ìì235959±È½Ï
+						// æœ€åä¸€æ¡è®°å½•ä¸å½“å¤©235959æ¯”è¾ƒ
 						long lasttTime = sdf_MC.parse(sumDate + "235959")
 								.getTime();
 						if (lasttTime - new_time <= 10800000) {
@@ -178,23 +178,23 @@ public class GetMovementTrackDataReducer extends
 							record.setIs_exception("1");
 						}
 					}
-					// ´æÈëlist
+					// å­˜å…¥list
 					recordList.add(record);
-					// ¸üĞÂ±äÁ¿
+					// æ›´æ–°å˜é‡
 					old_time = new_time;
 					old_lac = new_lac;
 					old_cell = new_cell;
 				}
 			}
-			//Çå¿ÕÊäÈëÊı¾İµÄlist
+			//æ¸…ç©ºè¾“å…¥æ•°æ®çš„list
 			inputValueList.clear();
-			//´´½¨MoveRecord¶ÔÏó
+			//åˆ›å»ºMoveRecordå¯¹è±¡
 			MoveRecord record = new MoveRecord();
 			
 			for (int j = 0; j < recordList.size(); j++) {
-				//´´½¨ÓÃÓÚÊä³öµÄStringBuffer
+				//åˆ›å»ºç”¨äºè¾“å‡ºçš„StringBuffer
 				StringBuffer outputSB = new StringBuffer();
-				//È¡³ö¼ÇÂ¼
+				//å–å‡ºè®°å½•
 				record = recordList.get(j);
 //				msisdn,
 				outputSB.append(record.getMsisdn()).append(
@@ -263,7 +263,7 @@ public class GetMovementTrackDataReducer extends
 //				dataType
 				outputSB.append(record.getDataType());
 				
-				//ÉèÖÃÊä³ö
+				//è®¾ç½®è¾“å‡º
 				Text outputText = new Text();
 				outputText.set(outputSB.toString());
 				multipleOutputs.write(outputName, outputText, NullWritable.get());

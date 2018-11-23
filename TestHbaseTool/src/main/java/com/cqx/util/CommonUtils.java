@@ -7,14 +7,14 @@ import java.util.StringTokenizer;
 public class CommonUtils {
 	
 	/**
-	 * ÅĞ¶Ï×Ö·û´®ÊÇ·ñÎª¿Õ
+	 * åˆ¤æ–­å­—ç¬¦ä¸²æ˜¯å¦ä¸ºç©º
 	 * */
 	public static boolean isEmpty(String dest){
 		return "".equals(dest)||dest==null;
 	}
 
 	/**
-	 * ·Ö¸î×Ö·û´®
+	 * åˆ†å‰²å­—ç¬¦ä¸²
 	 * */
 	public static List<String> splitStringByComma(String valueString) {
 
@@ -23,7 +23,7 @@ public class CommonUtils {
 		try {
 			StringTokenizer st = new StringTokenizer(valueString, ",");
 			while (st.hasMoreTokens()) {
-				// ÏÈÅĞ¶Ïµ±Ç°tokenÖ®ºóÖª·ñÊÇ,Èç¹ûÊÇ¶ººÅ£¬Ôò¼ÓÈëlistÖĞ
+				// å…ˆåˆ¤æ–­å½“å‰tokenä¹‹åçŸ¥å¦æ˜¯,å¦‚æœæ˜¯é€—å·ï¼Œåˆ™åŠ å…¥listä¸­
 				if (valueString.charAt(tempSB.length()) == ',') {
 					list.add("");
 					tempSB.append(",");
@@ -31,28 +31,28 @@ public class CommonUtils {
 				}
 				String temp = st.nextToken();
 				if (temp.startsWith("'")) {
-					//newÒ»¸öĞÂ¶ÔÏó·ÀÖ¹ÄÚ´æÒç³ö
+					//newä¸€ä¸ªæ–°å¯¹è±¡é˜²æ­¢å†…å­˜æº¢å‡º
 					temp = new String(temp.substring(1));
 					StringBuffer sb = new StringBuffer();
 
 					int index = temp.indexOf("'");
 					if (-1 == index) {
-						// ËµÃ÷¸Ã×Ö¶ÎÖĞº¬ÓĞ,´ÓÔ´×Ö·û´®ÖĞ²éÕÒµÚn¸ö¶ººÅÖ®ºó
+						// è¯´æ˜è¯¥å­—æ®µä¸­å«æœ‰,ä»æºå­—ç¬¦ä¸²ä¸­æŸ¥æ‰¾ç¬¬nä¸ªé€—å·ä¹‹å
 						int end = valueString.indexOf("'", tempSB.length() + 1);
 						sb.append(new String(valueString.substring(tempSB.length(), end)));
-						// È¥µôÇ°ºóµÄµ¥ÒıºÅ
+						// å»æ‰å‰åçš„å•å¼•å·
 						list.add(new String(valueString.substring(tempSB.length() + 1, end)));
 						tempSB.append(new String(valueString.substring(tempSB.length(), end + 1)));
-						// Èç¹ûÕâ¸ö×Ö¶ÎÊÇ×îºóÒ»¸ö×Ö¶Î£¬Ôò½áÊø
+						// å¦‚æœè¿™ä¸ªå­—æ®µæ˜¯æœ€åä¸€ä¸ªå­—æ®µï¼Œåˆ™ç»“æŸ
 						if (end + 2 > valueString.length()) {
 							break;
 						}
 						tempSB.append(",");
 						st = new StringTokenizer(new String(valueString.substring(end + 2)), ",");
 						continue;
-						// ²éÕÒÏÂÒ»¸öµ¥ÒıºÅµÄÎ»ÖÃ£¬Èç¹ûÏÂ¸ö×Ö·û´®ÖĞÒ²²»´æÔÚ£¬ÔòÒ»Ö±ÕÒµ½´æÔÚµÄ×Ö·û´®Î»ÖÃ
+						// æŸ¥æ‰¾ä¸‹ä¸€ä¸ªå•å¼•å·çš„ä½ç½®ï¼Œå¦‚æœä¸‹ä¸ªå­—ç¬¦ä¸²ä¸­ä¹Ÿä¸å­˜åœ¨ï¼Œåˆ™ä¸€ç›´æ‰¾åˆ°å­˜åœ¨çš„å­—ç¬¦ä¸²ä½ç½®
 					} else {
-						// index²»Îª-1ÔòËµÃ÷£¬¸Ã×Ö·û´®ÖĞ°üº¬ÏÂÒ»¸öµ¥ÒıºÅ£¬¼´¸Ãµ¥ÒıºÅÀ¨ÆğÀ´µÄ×Ö·û´®ÖĞÃ»ÓĞ¶ººÅ
+						// indexä¸ä¸º-1åˆ™è¯´æ˜ï¼Œè¯¥å­—ç¬¦ä¸²ä¸­åŒ…å«ä¸‹ä¸€ä¸ªå•å¼•å·ï¼Œå³è¯¥å•å¼•å·æ‹¬èµ·æ¥çš„å­—ç¬¦ä¸²ä¸­æ²¡æœ‰é€—å·
 						list.add(new String(temp.substring(0, temp.length() - 1)));
 						tempSB.append(temp).append("',");
 						continue;
@@ -80,12 +80,12 @@ public class CommonUtils {
 	}
 	
 	/**
-	 * ×öÒ»¸ö´¦Àí£¬°Ñindex.10ÒÔºó,index.length-3Ö®Ç°µÄ¶¼¹éµ½10
-	 * ×¨ÃÅ´¦ÀíurlÖĞ´øÓĞ°ë½Ç¶ººÅµÄÇé¿ö
+	 * åšä¸€ä¸ªå¤„ç†ï¼ŒæŠŠindex.10ä»¥å,index.length-3ä¹‹å‰çš„éƒ½å½’åˆ°10
+	 * ä¸“é—¨å¤„ç†urlä¸­å¸¦æœ‰åŠè§’é€—å·çš„æƒ…å†µ
 	 * */
 	public static List<String> mvUrl(List<String> entityList){
 		List<String> result = new ArrayList<String>();
-		// ×öÒ»¸ö´¦Àí£¬°Ñindex.10ÒÔºó,index.length-3Ö®Ç°µÄ¶¼¹éµ½10
+		// åšä¸€ä¸ªå¤„ç†ï¼ŒæŠŠindex.10ä»¥å,index.length-3ä¹‹å‰çš„éƒ½å½’åˆ°10
 		if(entityList.size() > 14){
 			int all_size = entityList.size();
 			int url_start_size = 10;

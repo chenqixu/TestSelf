@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 
 public class ProcessBuilderFactory {
 	private static ProcessBuilderFactory instance;
-	private LogInfoFactory log = LogInfoFactory.getInstance();
+	private LogInfoFactory log = LogInfoFactory.getInstance(ProcessBuilderFactory.class);
 	
 	private ProcessBuilderFactory () {}
 	
@@ -94,20 +94,20 @@ public class ProcessBuilderFactory {
 	                }
 	            }
 	        } catch (IOException ioe) {
-	        	log.err("创建/读取 IO异常", ioe);
+	        	log.error("创建/读取 IO异常", ioe);
 	        } finally {
 	        	if(isr != null){
 	        		try {
 						isr.close();
 					} catch (IOException e) {
-						log.err("InputStreamReader流关闭IO异常", e);
+						log.error("InputStreamReader流关闭IO异常", e);
 					}
 	        	}
 	        	if(br != null){
 	        		try {
 	        			br.close();
 					} catch (IOException e) {
-						log.err("BufferedReader流关闭IO异常", e);
+						log.error("BufferedReader流关闭IO异常", e);
 					}
 	        	}
 	        }

@@ -15,8 +15,8 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 /**
- * ¼òµ¥µÄMR»ã×Ü³ÌĞò
- * <br>ÎÄ¼şÄÚÈİ¹æÔò£ºid,name,code,cnt,user_time
+ * ç®€å•çš„MRæ±‡æ€»ç¨‹åº
+ * <br>æ–‡ä»¶å†…å®¹è§„åˆ™ï¼šid,name,code,cnt,user_time
  * <br>SQL:select id,name,code,sum(cnt),sum(user_time) from table group by id,name,code;
  * */
 public class main extends Configured implements Tool{
@@ -26,86 +26,86 @@ public class main extends Configured implements Tool{
 
 	@Override
 	public int run(String[] args) throws Exception {
-		// ÎÄ¼şÊäÈëÂ·¾¶
+		// æ–‡ä»¶è¾“å…¥è·¯å¾„
 		String InputPath = "";
-		// ÎÄ¼şÃû¹ıÂË¹æÔò
+		// æ–‡ä»¶åè¿‡æ»¤è§„åˆ™
 		String Inputfilter = "";
-		// Êä³öÎÄ¼şÃû
+		// è¾“å‡ºæ–‡ä»¶å
 		String Output_name = "";
-		// Êä³öÎÄ¼şÂ·¾¶
+		// è¾“å‡ºæ–‡ä»¶è·¯å¾„
 		String Output_path = "";
 		if(args!=null && args.length==4){
 			InputPath = args[0];
 			Inputfilter = args[1];
 			Output_name = args[2];
 			Output_path = args[3];
-			System.out.println("ÎÄ¼şÊäÈëÂ·¾¶£º"+InputPath);
-			System.out.println("ÎÄ¼şÃû¹ıÂË£º"+Inputfilter);
-			System.out.println("Êä³öÎÄ¼şÃû£º"+Output_name);
-			System.out.println("Êä³öÎÄ¼şÂ·¾¶£º"+Output_path);
+			System.out.println("æ–‡ä»¶è¾“å…¥è·¯å¾„ï¼š"+InputPath);
+			System.out.println("æ–‡ä»¶åè¿‡æ»¤ï¼š"+Inputfilter);
+			System.out.println("è¾“å‡ºæ–‡ä»¶åï¼š"+Output_name);
+			System.out.println("è¾“å‡ºæ–‡ä»¶è·¯å¾„ï¼š"+Output_path);
 		}else{
-			System.out.println("²ÎÊı²»¶Ô£¬ÍË³ö¡£");
+			System.out.println("å‚æ•°ä¸å¯¹ï¼Œé€€å‡ºã€‚");
 			System.exit(-1);
 		}
 		
 		FileSystem fileSystem = null;
 		Configuration conf = new Configuration();
-		// ¼ÓÔØcore_siteÎÄ¼ş
+		// åŠ è½½core_siteæ–‡ä»¶
 		conf.addResource(new Path("/etc/hadoop/conf/core-site.xml"));
-		// ¼ÓÔØhdfs_siteÎÄ¼ş
+		// åŠ è½½hdfs_siteæ–‡ä»¶
 		conf.addResource(new Path("/etc/hadoop/conf/hdfs-site.xml"));
-		// ¼ÓÔØmr_siteÎÄ¼ş
+		// åŠ è½½mr_siteæ–‡ä»¶
 		conf.addResource(new Path("/etc/hadoop/conf/mapred-site.xml"));
-		// ¼ÓÔØyarnÎÄ¼ş
+		// åŠ è½½yarnæ–‡ä»¶
 		conf.addResource(new Path("/etc/hadoop/conf/yarn-site.xml"));
-		// Í¨¹ıÅäÖÃÊµÀı»ñÈ¡HDFSÎÄ¼şÏµÍ³
+		// é€šè¿‡é…ç½®å®ä¾‹è·å–HDFSæ–‡ä»¶ç³»ç»Ÿ
 		fileSystem = FileSystem.newInstance(conf);
 
-		// ÉèÖÃ²ÎÊı
+		// è®¾ç½®å‚æ•°
 		conf.set(Contants.OUTPUTNAME, Output_name);
 		conf.set(Contants.OUTPUTPATH, Output_path);
-		// ÓÅÏÈ¼¶
+		// ä¼˜å…ˆçº§
 		conf.set("mapreduce.job.priority",  "HIGH");
 
-		// ÉèÖÃjobÃû³Æ
+		// è®¾ç½®jobåç§°
 		@SuppressWarnings("deprecation")
 		Job job = new Job(conf, "nl-test-mr");
-		// ÉèÖÃjobÔËĞĞÀà
+		// è®¾ç½®jobè¿è¡Œç±»
 		job.setJarByClass(main.class);
-		// ÉèÖÃmapperÊä³ö¸ñÊ½
+		// è®¾ç½®mapperè¾“å‡ºæ ¼å¼
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(Text.class);
-		// ÉèÖÃreduceÀà
+		// è®¾ç½®reduceç±»
 		job.setReducerClass(reduce.class);
-		// ÉèÖÃreduceµÄÊä³ökeyÀàĞÍ
+		// è®¾ç½®reduceçš„è¾“å‡ºkeyç±»å‹
 		job.setOutputKeyClass(Text.class);
-		// ÉèÖÃreduceµÄÊä³övalueÀàĞÍ
+		// è®¾ç½®reduceçš„è¾“å‡ºvalueç±»å‹
 		job.setOutputValueClass(Text.class);
-		// ÉèÖÃreducer¸öÊı
+		// è®¾ç½®reducerä¸ªæ•°
 		job.setNumReduceTasks(1);	
 
-		// ÉèÖÃÊäÈëÂ·¾¶ÒÔ¼°¶ÔÓ¦mapper
+		// è®¾ç½®è¾“å…¥è·¯å¾„ä»¥åŠå¯¹åº”mapper
 		Utils.addInputPath(job, fileSystem, InputPath, Inputfilter,
 				map.class);
 
-		// ÉèÖÃÊä³öÎÄ¼şÃû¼°Êä³ö¸ñÊ½
+		// è®¾ç½®è¾“å‡ºæ–‡ä»¶ååŠè¾“å‡ºæ ¼å¼
 		MultipleOutputs.addNamedOutput(job, Output_name,
 				TextOutputFormat.class, Text.class, NullWritable.class);
 
-		// ÉèÖÃÊä³öÂ·¾¶
+		// è®¾ç½®è¾“å‡ºè·¯å¾„
 		FileOutputFormat.setOutputPath(job, new Path(Output_path));
-		// ÉèÖÃÊä³öÂ·¾¶µÄÈ«Â·¾¶
+		// è®¾ç½®è¾“å‡ºè·¯å¾„çš„å…¨è·¯å¾„
 		Path outputPath = new Path(Output_path);
-		// ÅĞ¶ÏÊä³öÂ·¾¶ÊÇ·ñ´æÔÚ£¬Èç¹û´æÔÚÔòÉ¾³ı
+		// åˆ¤æ–­è¾“å‡ºè·¯å¾„æ˜¯å¦å­˜åœ¨ï¼Œå¦‚æœå­˜åœ¨åˆ™åˆ é™¤
 		if (fileSystem.exists(outputPath)) {
 			fileSystem.delete(outputPath, true);
-			System.out.println("Êä³öÂ·¾¶ÒÑ¾­´æÔÚ£¬É¾³ı....." + outputPath);
+			System.out.println("è¾“å‡ºè·¯å¾„å·²ç»å­˜åœ¨ï¼Œåˆ é™¤....." + outputPath);
 		}
 
-		// ±ÜÃâreduceÊä³öÎª¿ÕÎÄ¼ş
+		// é¿å…reduceè¾“å‡ºä¸ºç©ºæ–‡ä»¶
 		LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
 
-		// µÈ´ıjobÖ´ĞĞÖ±µ½³É¹¦
+		// ç­‰å¾…jobæ‰§è¡Œç›´åˆ°æˆåŠŸ
 		boolean returnStatus = job.waitForCompletion(true);
 		System.out.println("exec job result:"+returnStatus);
 		return 0;

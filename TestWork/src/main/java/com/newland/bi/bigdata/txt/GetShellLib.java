@@ -19,7 +19,7 @@ public class GetShellLib extends ChangeCode {
 		gsl.setLoop(true);
 		gsl.setScan_path(scanpath);
 		gsl.setScan_rule(scan_rule);
-		for(String filename: gsl.Scan(scanpath, scan_rule)){
+		for(String filename: gsl.scan(scanpath, scan_rule)){
 			File _tmpFile = new File(filename);
 			String _name = _tmpFile.getName();
 			String _path = _tmpFile.getParent();

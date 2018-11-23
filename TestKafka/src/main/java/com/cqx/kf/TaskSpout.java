@@ -30,9 +30,9 @@ public class TaskSpout {
 		try {
 			msgs = this.kafkaMsgTool.getNLMsgs();
 		} catch (Exception e2) {
-			System.out.println("kafka消息读取异常"+e2.toString());
+			System.out.println("kafka娑堟伅璇诲彇寮傚父"+e2.toString());
 		} finally {
-			System.out.println("消息读取返回==");
+			System.out.println("娑堟伅璇诲彇杩斿洖==");
 		}
 	}
 

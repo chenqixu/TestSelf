@@ -3,7 +3,7 @@ package com.newland.bi.bigdata.datacollector.thread;
 import java.util.Queue;
 
 public class TestThread extends Thread {
-	//线程安全队列，存放当前要下载的所有文件名
+	//绾跨▼瀹夊叏闃熷垪锛屽瓨鏀惧綋鍓嶈涓嬭浇鐨勬墍鏈夋枃浠跺悕
 	private Queue<String> fileNameQueue;
 	private String threadName;
 	private String fileName ;
@@ -11,7 +11,7 @@ public class TestThread extends Thread {
 		this.fileNameQueue = fileNameQueue;
 	}
 	public void run(){
-		//获取当前线程名称
+		//鑾峰彇褰撳墠绾跨▼鍚嶇О
 		threadName = Thread.currentThread().getName();
 		while((fileName = fileNameQueue.poll()) != null){
 			System.out.println(threadName+" "+fileName);

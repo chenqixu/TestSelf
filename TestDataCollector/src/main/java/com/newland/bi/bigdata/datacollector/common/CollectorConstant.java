@@ -6,107 +6,107 @@ public class CollectorConstant {
 //	public static final String COLLECTOR_FILE_CONF_PATH = "../conf/data-collector-config.xml";
 	public static final String LOG4J_CONF_FILE_PATH = "H:/Work/WorkSpace/MyEclipse10/self/TestSelf/TestDataCollector/src/main/resources/conf/log4j.properties";
 //	public static final String LOG4J_CONF_FILE_PATH = "../conf/log4j.properties"; 
-	//²É¼¯³ÌĞòÍË³ö¼ì²âÎÄ¼ş 
+	//é‡‡é›†ç¨‹åºé€€å‡ºæ£€æµ‹æ–‡ä»¶ 
 //	public static final String EXIT_FILE_FULL_NAME = "d:/1/exit.dat";
 	public static final String EXIT_FILE_FULL_NAME = "../bin/exit.dat";
-	//Ô´Êı¾İFTP·şÎñÆ÷µÄIP
+	//æºæ•°æ®FTPæœåŠ¡å™¨çš„IP
 	public static final String FTP_SERVER_IP = "ftpServerIp";
-	//Ô´Êı¾İFTP·şÎñÆ÷FTP·şÎñ¶Ë¿Ú
+	//æºæ•°æ®FTPæœåŠ¡å™¨FTPæœåŠ¡ç«¯å£
 	public static final String FTP_SERVER_PORT = "ftpServerPort";
-	//Ô´Êı¾İ·şÎñÆ÷FTP·şÎñµÄÓÃ»§Ãû
+	//æºæ•°æ®æœåŠ¡å™¨FTPæœåŠ¡çš„ç”¨æˆ·å
 	public static final String FTP_SERVER_USER = "ftpServerUser";
-	//Ô´Êı¾İ·şÎñÆ÷FTP·şÎñµÄÃÜÂë
+	//æºæ•°æ®æœåŠ¡å™¨FTPæœåŠ¡çš„å¯†ç 
 	public static final String FTP_SERVER_PASSWORD = "ftpServerPassword";
-	//FTP·şÎñÆ÷Ô´Êı¾İÂ·¾¶
+	//FTPæœåŠ¡å™¨æºæ•°æ®è·¯å¾„
 	public static final String SOURCE_DATA_PATH = "sourceDataPath";
-	//Êı¾İÎÄ¼şºÍ¿ØÖÆÎÄ¼şÊÇ·ñ·Ö¿ª´æ·Å
+	//æ•°æ®æ–‡ä»¶å’Œæ§åˆ¶æ–‡ä»¶æ˜¯å¦åˆ†å¼€å­˜æ”¾
 	public static final String IF_SAVE_DIFFERENT_PATH = "ifSaveDifferentPath";
-	//FTPÏÂÔØÊı¾İºó£¬Êı¾İ´æ·ÅµÄ±¾µØÂ·¾¶
+	//FTPä¸‹è½½æ•°æ®åï¼Œæ•°æ®å­˜æ”¾çš„æœ¬åœ°è·¯å¾„
 	public static final String SAVE_DATA_PATH= "saveDataPath";
-	//FTPÏÂÔØÊı¾İºó£¬Ğ£ÑéÎÄ¼ş´æ·ÅµÄ±¾µØÂ·¾¶
+	//FTPä¸‹è½½æ•°æ®åï¼Œæ ¡éªŒæ–‡ä»¶å­˜æ”¾çš„æœ¬åœ°è·¯å¾„
 	public static final String SAVE_CTL_PATH= "saveCtlPath";
-	//FTPÏÂÔØ´æ·ÅÎÄ¼şµÄÁÙÊ±Â·¾¶
+	//FTPä¸‹è½½å­˜æ”¾æ–‡ä»¶çš„ä¸´æ—¶è·¯å¾„
 	public static final String SAVE_TMP_PATH= "temporaryPath";
-	//Êı¾İÔ´ÎÄ¼şµÄºó×ºÃû
+	//æ•°æ®æºæ–‡ä»¶çš„åç¼€å
 	public static final String DATA_SOURCE_FILE_SUFFIX_NAME = "dataSourceFileSuffixName";
-	//Ã¿¸öÊı¾İÎÄ¼şÊÇ·ñº¬ÓĞ¶ÔÓ¦µÄ¿ØÖÆÎÄ¼ş
+	//æ¯ä¸ªæ•°æ®æ–‡ä»¶æ˜¯å¦å«æœ‰å¯¹åº”çš„æ§åˆ¶æ–‡ä»¶
 	public static final String IF_HAS_CTL_SOURCE_FILE = "ifHasCtlSourceFile";
-	//¿ØÖÆÔ´ÎÄ¼şµÄºó×ºÃû
+	//æ§åˆ¶æºæ–‡ä»¶çš„åç¼€å
 	public static final String CTL_SOUCE_FILE_SUFFIX_NAME = "ctlSourceFileSuffixName";
-	//ÊÇ·ñÏÂÔØ¿ØÖÆÎÄ¼ş
+	//æ˜¯å¦ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 	public static final String IF_DOWNLOAD_CTL_FILE = "ifDownloadCtlFile";
-	//ÊÇ·ñÏÈÏÂÔØ¿ØÖÆÎÄ¼ş
+	//æ˜¯å¦å…ˆä¸‹è½½æ§åˆ¶æ–‡ä»¶
 	public static final String IF_FIRST_DOWNLOAD_CTL_FILE = "ifFirstDownloadCtlFile";
-	//FTPÏÂÔØ¹ı³ÌµÄÖĞ¼äÃû³ÆµÄºó×ºÃû
+	//FTPä¸‹è½½è¿‡ç¨‹çš„ä¸­é—´åç§°çš„åç¼€å
 	public static final String FTP_TMP_FILE_NAME_SUFFIX = "ftpTmpFileNameSuffix";
-	//²É¼¯³ÌĞòÏÂÔØÍêÒ»¸öÎÄ¼şºó£¬Êı¾İÔ´ÎÄ¼şÊÇ·ñĞèÒªÉ¾³ı
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œä¸€ä¸ªæ–‡ä»¶åï¼Œæ•°æ®æºæ–‡ä»¶æ˜¯å¦éœ€è¦åˆ é™¤
 	public static final String IF_NEED_DELETE_SOURCE_DATA_FILE = "ifNeedDeleteSourceDataFile";
-	//²É¼¯³ÌĞòÏÂÔØÍêÒ»¸öÎÄ¼şºó£¬Êı¾İÔ´ÎÄ¼şÊÇ·ñĞèÒªÒÆ¶¯Ä¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œä¸€ä¸ªæ–‡ä»¶åï¼Œæ•°æ®æºæ–‡ä»¶æ˜¯å¦éœ€è¦ç§»åŠ¨ç›®å½•
 	public static final String IF_NEED_MV_SOURCE_DATA_FILE = "ifNeedMvSourceDataFile";
-	//²É¼¯³ÌĞòÏÂÔØÍêÊı¾İÎÄ¼şºóÒÆ¶¯Ô´ÎÄ¼şµ½Ä¿µÄÄ¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œæ•°æ®æ–‡ä»¶åç§»åŠ¨æºæ–‡ä»¶åˆ°ç›®çš„ç›®å½•
 	public static final  String  MV_SOURCE_DATA_FILE_PATH= "mvSourceDataFilePath";
-	//²É¼¯³ÌĞòÏÂÔØÍêÒ»¸öÎÄ¼şºó£¬¿ØÖÆÔ´ÎÄ¼şÊÇ·ñĞèÒªÉ¾³ı
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œä¸€ä¸ªæ–‡ä»¶åï¼Œæ§åˆ¶æºæ–‡ä»¶æ˜¯å¦éœ€è¦åˆ é™¤
 	public static final String IF_NEED_DELETE_SOURCE_CTL_FILE = "ifNeedDeleteSourceCtlFile";
-	//²É¼¯³ÌĞòÏÂÔØÍêÒ»¸öÎÄ¼şºó£¬¿ØÖÆÔ´ÎÄ¼şÊÇ·ñĞèÒªÒÆ¶¯Ä¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œä¸€ä¸ªæ–‡ä»¶åï¼Œæ§åˆ¶æºæ–‡ä»¶æ˜¯å¦éœ€è¦ç§»åŠ¨ç›®å½•
 	public static final String IF_NEED_MV_SOURCE_CTL_FILE = "ifNeedMvSourceCtlFile";
-	//²É¼¯³ÌĞòÏÂÔØÍê¿ØÖÆÎÄ¼şºóÒÆ¶¯Ô´ÎÄ¼şµ½Ä¿µÄÄ¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œæ§åˆ¶æ–‡ä»¶åç§»åŠ¨æºæ–‡ä»¶åˆ°ç›®çš„ç›®å½•
 	public static final  String  MV_SOURCE_CTL_FILE_PATH= "mvSourceCtlFilePath";
-	//¶à¸öÄ¿Â¼£¬Ã¿¸öÄ¿Â¼·ÖÅäµÄFTPÏÂÔØÏß³ÌÊı
+	//å¤šä¸ªç›®å½•ï¼Œæ¯ä¸ªç›®å½•åˆ†é…çš„FTPä¸‹è½½çº¿ç¨‹æ•°
 	public static final String  FTP_THREAD_NUM_EVERY_DIR = "ftpThreadNumEveryDir";
-	//½ØÈ¡ÎÄ¼şÃûÊ±¼äµãµÄ·Ö¸ô·û
+	//æˆªå–æ–‡ä»¶åæ—¶é—´ç‚¹çš„åˆ†éš”ç¬¦
 	public static final  String  SPLIT_FILE_NAME_FOR_DATE_TIME= "splitFileNameForDateTime";
-	//Ô´Êı¾İÎÄ¼şÃûÖĞµÄÈÕÆÚÓëĞ¡Ê±ÊÇ·ñÔÚÍ¬Ò»¸öÎ»ÖÃ
+	//æºæ•°æ®æ–‡ä»¶åä¸­çš„æ—¥æœŸä¸å°æ—¶æ˜¯å¦åœ¨åŒä¸€ä¸ªä½ç½®
 	public static final  String  IF_DATE_AND_HOUR_THE_SAME_LOCATION= "ifDateAndHourTheSameLocation";
-	//ÎÄ¼şÃûÈÕÆÚ×Ö·û´®ÔÚÎÄ¼şÃûÖĞµÄÎ»ÖÃ
+	//æ–‡ä»¶åæ—¥æœŸå­—ç¬¦ä¸²åœ¨æ–‡ä»¶åä¸­çš„ä½ç½®
 	public static final  String  DATE_LOCATION_AT_FILE_NAME= "dateLocationAtFileName";
-	//½ØÈ¡ÎÄ¼şÃûÈÕÆÚ×Ö·û´®µÄ¿ªÊ¼Î»ÖÃ 
+	//æˆªå–æ–‡ä»¶åæ—¥æœŸå­—ç¬¦ä¸²çš„å¼€å§‹ä½ç½® 
 	public static final  String  DATE_SUB_STRING_BEGIN= "dateSubStringBegin";
-	//½ØÈ¡ÎÄ¼şÃûÈÕÆÚ×Ö·û´®µÄ½áÊøÎ»ÖÃ
+	//æˆªå–æ–‡ä»¶åæ—¥æœŸå­—ç¬¦ä¸²çš„ç»“æŸä½ç½®
 	public static final  String  DATE_SUB_STRING_END= "dateSubStringEnd";
-	//ÎÄ¼şÃûĞ¡Ê±·ÖÖÓÃë×Ö·û´®ÔÚÎÄ¼şÃûÖĞµÄÎ»ÖÃ
+	//æ–‡ä»¶åå°æ—¶åˆ†é’Ÿç§’å­—ç¬¦ä¸²åœ¨æ–‡ä»¶åä¸­çš„ä½ç½®
 	public static final  String  HOUR_LOCATION_AT_FILE_NAME= "hourLocationAtFileName";
-	//½ØÈ¡ÎÄ¼şÃûĞ¡Ê±×Ö·û´®µÄ¿ªÊ¼Î»ÖÃ
+	//æˆªå–æ–‡ä»¶åå°æ—¶å­—ç¬¦ä¸²çš„å¼€å§‹ä½ç½®
 	public static final  String  HOUR_SUB_STRING_BEGIN= "hourSubStringBegin";
-	//½ØÈ¡ÎÄ¼şÃûĞ¡Ê±×Ö·û´®µÄ½áÊøÎ»ÖÃ
+	//æˆªå–æ–‡ä»¶åå°æ—¶å­—ç¬¦ä¸²çš„ç»“æŸä½ç½®
 	public static final  String  HOUR_SUB_STRING_END= "hourSubStringEnd";
-	//FTPÏÂÔØÎÄ¼ş»º³åÇø£¨µ¥Î»M£©
+	//FTPä¸‹è½½æ–‡ä»¶ç¼“å†²åŒºï¼ˆå•ä½Mï¼‰
 	public static final  String  DOWNLOAD_BUFFER_SIZE= "downloadBuffersize";
-	//ÊÇ·ñ°´ÎÄ¼şÃûÊ±¼äÅÅĞò
+	//æ˜¯å¦æŒ‰æ–‡ä»¶åæ—¶é—´æ’åº
 	public static final  String  IF_SORT_BY_FILE_NAME= "ifSortByFileName";
-	//ÊÇ·ñ²É¼¯×îĞÂĞ¡Ê±µÄÎÄ¼ş
+	//æ˜¯å¦é‡‡é›†æœ€æ–°å°æ—¶çš„æ–‡ä»¶
 	public static final  String  IF_DOWNLOAD_NEWEST_FILE= "ifDownloadNewestFile";
-	//ÊÇ·ñ¹ıÂË³öÌØ¶¨ÎÄ¼şÃû
+	//æ˜¯å¦è¿‡æ»¤å‡ºç‰¹å®šæ–‡ä»¶å
 	public static final  String  IF_FILTER_SPECIFIC_FILE_NAME= "ifFilterSpecificFileName";
-	//¹ıÂË³öÌØ¶¨ÎÄ¼şÃûµÄ×Ö·û´®
+	//è¿‡æ»¤å‡ºç‰¹å®šæ–‡ä»¶åçš„å­—ç¬¦ä¸²
 	public static final  String  FILTER_SPECIFIC_FILE_NAME= "filterSpecificFileName";
-	//ÊÇ·ñÅÅ³ıÖ¸¶¨ÎÄ¼şÃûµÄÎÄ¼ş
+	//æ˜¯å¦æ’é™¤æŒ‡å®šæ–‡ä»¶åçš„æ–‡ä»¶
 	public static final  String  IF_EXCLUDE_SPECIFIC_FILE_NAME= "ifExcludeSpecificFileName";
-	//ÅÅ³ıÖ¸¶¨ÎÄ¼şÃûµÄÎÄ¼ş
+	//æ’é™¤æŒ‡å®šæ–‡ä»¶åçš„æ–‡ä»¶
 	public static final  String  EXCLUDE_SPECIFIC_FILE_NAME= "excludeSpecificFileName";
-	//ÊÇ·ñ¹ıÂË³öÌØ¶¨Ê±¼äµãµÄÎÄ¼şÃû
+	//æ˜¯å¦è¿‡æ»¤å‡ºç‰¹å®šæ—¶é—´ç‚¹çš„æ–‡ä»¶å
 	public static final  String  IF_FILTER_SPECIFIC_TIME_FILE_NAME= "ifFilterSpecificTimeFileName";
-	//¹ıÂË³öÌØ¶¨Ê±¼äµãÎÄ¼şÃûµÄ×Ö·û´®
+	//è¿‡æ»¤å‡ºç‰¹å®šæ—¶é—´ç‚¹æ–‡ä»¶åçš„å­—ç¬¦ä¸²
 	public static final  String  FILTER_SPECIFIC_TIME_FILE_NAME= "filterSpecificTimeFileName";
-	//ÊÇ·ñ¹ıÂËÌØ¶¨Ğ¡Ê±ÎÄ¼şÃû×ÔÔö
+	//æ˜¯å¦è¿‡æ»¤ç‰¹å®šå°æ—¶æ–‡ä»¶åè‡ªå¢
 	public static final  String  IF_FILTER_SPECIFIC_HOUR_INCREMENT= "ifFilterSpecificHourIncrement";
-	//²É¼¯ÌØ¶¨Ê±¼äµãµÄÎÄ¼şºó£¬Ê±¼ä×ÔÔöµÄÊıÖµ£¨1¡¢-1£©
+	//é‡‡é›†ç‰¹å®šæ—¶é—´ç‚¹çš„æ–‡ä»¶åï¼Œæ—¶é—´è‡ªå¢çš„æ•°å€¼ï¼ˆ1ã€-1ï¼‰
 	public static final  String  INCREMENT_HOUR_VALUE= "incrementHourValue";
-	//Ê±¼äµã¸ñÊ½
+	//æ—¶é—´ç‚¹æ ¼å¼
 	public static final String FORMAT_0F_HOUR = "yyyyMMdd_HH";
-	//ÊÇ·ñ²ÉÓÃSFTPÁ¬½Ó
+	//æ˜¯å¦é‡‡ç”¨SFTPè¿æ¥
 	public static final String IF_CONNECT_BY_SFTP = "ifConnectBySftp";
 	//sftp channel
 	public static final String SFTP_CHANNEL = "sftp";
-	//¶ººÅ·Ö¸ô·û
+	//é€—å·åˆ†éš”ç¬¦
 	public static final String COMMA_SPLIT_STRING = ",";
 	
-	//ÊÇ·ñ½«Ô´Êı¾İ»®·Ö³É¼¸·İ½øĞĞ²É¼¯
+	//æ˜¯å¦å°†æºæ•°æ®åˆ’åˆ†æˆå‡ ä»½è¿›è¡Œé‡‡é›†
 	public static final String IF_COLLECT_BY_PARTITION = "ifCollectByPartition";
-	//½«Ô´Êı¾İ»®·Ö³É¼¸·İ
+	//å°†æºæ•°æ®åˆ’åˆ†æˆå‡ ä»½
 	public static final String PARTITIONS = "partitions";
-	//±¾²É¼¯³ÌĞò²É¼¯µÚ¼¸·İÊı¾İ
+	//æœ¬é‡‡é›†ç¨‹åºé‡‡é›†ç¬¬å‡ ä»½æ•°æ®
 	public static final String COLLECT_PARTION = "collectPartion";
-	//¸ù¾İÄÇ¸öÎ»ÖÃ½øĞĞ»®·ÖÔ´Êı¾İ
+	//æ ¹æ®é‚£ä¸ªä½ç½®è¿›è¡Œåˆ’åˆ†æºæ•°æ®
 	public static final String LOCATION_TO_PARTITION = "locationToPartition";
 	
     

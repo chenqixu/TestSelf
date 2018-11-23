@@ -17,7 +17,7 @@ public class ThreadPoolJMX {
 		final TrackingThreadPool executor = new TrackingThreadPool(3, 10, 5, TimeUnit.SECONDS,
 //				new SynchronousQueue<Runnable>());
 				new LinkedBlockingDeque<Runnable>());
-		//Ã¿2ÃëÀ´3¸öÇëÇó
+		//æ¯2ç§’æ¥3ä¸ªè¯·æ±‚
 		Runnable myRunnable = new Runnable() {
 			public void run() {
 				try {
@@ -37,7 +37,7 @@ public class ThreadPoolJMX {
 			}
 		};
 		new Thread(myRunnable).start();
-		//¼à¿Ø
+		//ç›‘æ§
 		JMXFactory.startJMX("ThreadPoolStatus", new ThreadPoolStatus(executor));
 	}
 }

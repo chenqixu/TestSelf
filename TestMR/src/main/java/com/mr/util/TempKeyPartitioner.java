@@ -7,7 +7,7 @@ public class TempKeyPartitioner extends Partitioner<TempKey, Text>{
 
 	@Override
 	public int getPartition(TempKey tempKey, Text text, int numPartitioners) {
-	//以firsKey进行分组
+	//浠irsKey杩涜鍒嗙粍
 	return Math.abs(tempKey.getFirstKey().hashCode())%numPartitioners;
 	}
 }

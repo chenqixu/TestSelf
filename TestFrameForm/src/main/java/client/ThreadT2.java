@@ -2,7 +2,7 @@ package client;
 
 public class ThreadT2 implements Runnable {
 	/*
-	 * Ïß³ÌÓÃ±äÁ¿
+	 * çº¿ç¨‹ç”¨å˜é‡
 	 */
 	private boolean running = false;
 
@@ -11,7 +11,7 @@ public class ThreadT2 implements Runnable {
 	private Thread thread;
 
 	/*
-	 * Business ±äÁ¿
+	 * Business å˜é‡
 	 */
 	private String name;
 
@@ -21,7 +21,7 @@ public class ThreadT2 implements Runnable {
 	}
 
 	/**
-	 * Æô¶¯Ïß³Ì
+	 * å¯åŠ¨çº¿ç¨‹
 	 */
 	public void start() {
 		running = true;
@@ -29,10 +29,10 @@ public class ThreadT2 implements Runnable {
 	}
 
 	/**
-	 * ¹ÒÆğÏß³Ì
+	 * æŒ‚èµ·çº¿ç¨‹
 	 */
 	public void suspend() {
-		if (waiting) { // ÊÇ¹ÒÆğ×´Ì¬ÔòÖ±½Ó·µ»Ø
+		if (waiting) { // æ˜¯æŒ‚èµ·çŠ¶æ€åˆ™ç›´æ¥è¿”å›
 			return;
 		}
 		synchronized (this) {
@@ -41,10 +41,10 @@ public class ThreadT2 implements Runnable {
 	}
 
 	/**
-	 * »Ö¸´Ïß³Ì
+	 * æ¢å¤çº¿ç¨‹
 	 */
 	public void resume() {
-		if (!waiting) { // Ã»ÓĞ¹ÒÆğÔòÖ±½Ó·µ»Ø
+		if (!waiting) { // æ²¡æœ‰æŒ‚èµ·åˆ™ç›´æ¥è¿”å›
 			return;
 		}
 		synchronized (this) {
@@ -54,10 +54,10 @@ public class ThreadT2 implements Runnable {
 	}
 
 	/**
-	 * Í£Ö¹Ïß³Ì
+	 * åœæ­¢çº¿ç¨‹
 	 */
 	public void stop() {
-		if (!running) { // Ã»ÓĞÔËĞĞÔòÖ±½Ó·µ»Ø
+		if (!running) { // æ²¡æœ‰è¿è¡Œåˆ™ç›´æ¥è¿”å›
 			return;
 		}
 		synchronized (this) {
@@ -68,7 +68,7 @@ public class ThreadT2 implements Runnable {
 	public void run() {
 		for (;;) {
 			try {
-				// Ïß³Ì¹ÒÆğºÍÍË³ö´¦Àí
+				// çº¿ç¨‹æŒ‚èµ·å’Œé€€å‡ºå¤„ç†
 				synchronized (this) {
 					if (!running) {
 						break;
@@ -78,10 +78,10 @@ public class ThreadT2 implements Runnable {
 					}
 				}
 
-				// Ó¦¸Ã×öµÄÊÂÇé
+				// åº”è¯¥åšçš„äº‹æƒ…
 				cry();
 
-				// ½øÈëµÈ´ı×´Ì¬
+				// è¿›å…¥ç­‰å¾…çŠ¶æ€
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

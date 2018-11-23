@@ -1,10 +1,10 @@
 package com.gnxdr.constant;
 
 /**
- * @version V1.0.1 cqx modify by 68712-1 Ôö¼Óweb_name½âÎö
+ * @version V1.0.1 cqx modify by 68712-1 å¢åŠ web_nameè§£æ
  * */
 public class Constants {
-	//³£Á¿
+	//å¸¸é‡
 	public static final String SEPARATOR = "/";
 	public static final String COMMA_SEPARATOR = ",";
 	public static final String JOIN_KEY = "IP_ID";
@@ -22,7 +22,7 @@ public class Constants {
 	
 	public static final String DEBUG = "DEBUG";
 	
-	//mapÊä³ö´íÎóÎÄ¼şÇ°×º
+	//mapè¾“å‡ºé”™è¯¯æ–‡ä»¶å‰ç¼€
 	public static final String ERR_IP_FILE_FREFIX = "err_ip_";
 	public static final String ERR_DNS_FILE_FREFIX = "err_dns_";
 	public static final String ERR_EMAIL_FILE_FREFIX = "err_email_";
@@ -34,7 +34,7 @@ public class Constants {
 	public static final String ERR_RTSP_FILE_FREFIX = "err_rtsp_";
 	public static final String ERR_VOIP_FILE_FREFIX = "err_voip_";
 	
-	//map±êÊ¶
+	//mapæ ‡è¯†
 	public static final String IP_FILE_FLAG = "IP";
 	public static final String DNS_FILE_FLAG = "DNS";
 	public static final String EMAIL_FILE_FLAG = "EMAIL";
@@ -46,11 +46,11 @@ public class Constants {
 	public static final String RTSP_FILE_FLAG = "RTSP";
 	public static final String VOIP_FILE_FLAG = "VOIP";
 	
-	//³ÌĞòÖĞ¸³Öµ
+	//ç¨‹åºä¸­èµ‹å€¼
 	public static final String TASK_HOUR = "TASK_HOUR";
 	public static final String TASK_DATE = "TASK_DATE";
 	
-	//Â·¾¶
+	//è·¯å¾„
 	public static final String INPUT_IP_FILE_PATH = "INPUT_IP_FILE_PATH";
 	public static final String INPUT_DNS_FILE_PATH = "INPUT_DNS_FILE_PATH";
 	public static final String INPUT_EMAIL_FILE_PATH = "INPUT_EMAIL_FILE_PATH";
@@ -70,7 +70,7 @@ public class Constants {
 	public static final String HBASE_OUTPUT_FILE = "HBASE_OUTPUT_FILE";
 	public static final String FULL_HBASE_OUTPUT_FILE = "FULL_HBASE_OUTPUT_FILE";
 	
-	//MapÊä³ö¹ÜµÀÃüÃû(²âÊÔÓÃ)
+	//Mapè¾“å‡ºç®¡é“å‘½å(æµ‹è¯•ç”¨)
 	public static final String ERR_OUT_PIPE_NAME = "ERROUTPIPENAME";
 	public static final String IP_OUT_PIPE_NAME = "IPOUTPIPENAME";
 	public static final String DNS_OUT_PIPE_NAME = "DNSOUTPIPENAME";
@@ -82,10 +82,10 @@ public class Constants {
 	public static final String P2P_OUT_PIPE_NAME = "P2POUTPIPENAME";
 	public static final String RTSP_OUT_PIPE_NAME = "RTSPOUTPIPENAME";
 	public static final String VOIP_OUT_PIPE_NAME = "VOIPOUTPIPENAME";
-	//ReduceÊä³ö¹ÜµÀÃüÃû
+	//Reduceè¾“å‡ºç®¡é“å‘½å
 	public static final String FILE_OUT_PIPE_NAME = "FILEOUTPIPENAME";
 
-	//ÊäÈëÎÄ¼ş×Ö¶Î
+	//è¾“å…¥æ–‡ä»¶å­—æ®µ
 	public static final String GN_XDR_IP_FIELD = "GN_XDR_IP_FIELD";
 	public static final String GN_XDR_DNS_FIELD = "GN_XDR_DNS_FIELD";
 	public static final String GN_XDR_EMAIL_FIELD = "GN_XDR_EMAIL_FIELD";
@@ -97,7 +97,7 @@ public class Constants {
 	public static final String GN_XDR_RTSP_FIELD = "GN_XDR_RTSP_FIELD";
 	public static final String GN_XDR_VOIP_FIELD = "GN_XDR_VOIP_FIELD";
 	
-	//mapÊä³ö×Ö¶Î
+	//mapè¾“å‡ºå­—æ®µ
 	public static final String MAP_IP_TRANSPORT = "MAP_IP_TRANSPORT";
 	public static final String MAP_DNS_TRANSPORT = "MAP_DNS_TRANSPORT";
 	public static final String MAP_EMAIL_TRANSPORT = "MAP_EMAIL_TRANSPORT";

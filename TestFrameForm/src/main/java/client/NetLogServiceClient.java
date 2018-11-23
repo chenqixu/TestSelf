@@ -30,26 +30,26 @@ import jxl.format.VerticalAlignment;
 
 public class NetLogServiceClient {
 
-	// Îª¿ÕµÄÕûĞÍ½Ó¿Ú¶¨Òå
+	// ä¸ºç©ºçš„æ•´å‹æ¥å£å®šä¹‰
 	public static final String NULL_VALUE = "-999999";
 	
-	private String seldata = "1";//²éÑ¯Êı¾İ¿â 1:greenplum; 2:hbase;
-	private String sUrl = "";//·şÎñµØÖ· ´ÓÊı¾İ¿âÖĞ»ñµÃ
-	private String ClientId = "";//¼øÈ¨ID ´ÓÊı¾İ¿âÖĞ»ñµÃ
-	private String PassWord = "";//¼øÈ¨ÃÜÂë ´ÓÊı¾İ¿âÖĞ»ñµÃ
-	private String targetnamespace = "";//·şÎñÃüÃû¿Õ¼äµØÖ·
-	private boolean flag = false;//ÊÇ·ñ²éÑ¯ÅäÖÃ
-	private StringBuffer error = new StringBuffer();//´íÎóÃèÊö
+	private String seldata = "1";//æŸ¥è¯¢æ•°æ®åº“ 1:greenplum; 2:hbase;
+	private String sUrl = "";//æœåŠ¡åœ°å€ ä»æ•°æ®åº“ä¸­è·å¾—
+	private String ClientId = "";//é‰´æƒID ä»æ•°æ®åº“ä¸­è·å¾—
+	private String PassWord = "";//é‰´æƒå¯†ç  ä»æ•°æ®åº“ä¸­è·å¾—
+	private String targetnamespace = "";//æœåŠ¡å‘½åç©ºé—´åœ°å€
+	private boolean flag = false;//æ˜¯å¦æŸ¥è¯¢é…ç½®
+	private StringBuffer error = new StringBuffer();//é”™è¯¯æè¿°
 	
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 * */
 	public NetLogServiceClient() {
 	}
 
 	public void setSeldata(String seldata) {
 		this.seldata = seldata;
-		this.getConf();//»ñµÃÅäÖÃ
+		this.getConf();//è·å¾—é…ç½®
 	}
 
 	public String getSeldata() {
@@ -57,7 +57,7 @@ public class NetLogServiceClient {
 	}
 	
 	/**
-	 * »ñµÃÅäÖÃ
+	 * è·å¾—é…ç½®
 	 * */
 	public void getConf() {
 		if(this.seldata.equals("1")){//greenplum
@@ -78,7 +78,7 @@ public class NetLogServiceClient {
 	}
 	
 	/**
-	 * ²éÑ¯hbaseÊı¾İ
+	 * æŸ¥è¯¢hbaseæ•°æ®
 	 * */
 	public synchronized NetLogClientBean queryHbaseData(NgReqBean requestBean,String start,String pagecount){
 		NetLogClientBean ncb = new NetLogClientBean();
@@ -86,16 +86,16 @@ public class NetLogServiceClient {
 		List<String> gatherResult = new ArrayList<String>();
 		String heard = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\""+this.targetnamespace+"\">";
 		CallWebService cws = new CallWebService();
-		if(this.flag){//²éÑ¯ÅäÖÃ³É¹¦
+		if(this.flag){//æŸ¥è¯¢é…ç½®æˆåŠŸ
 			String strxml = cws.setSendXML(heard, this.ClientId ,this.PassWord, requestBean, start, pagecount);
 			System.out.println("NetLogServiceClient queryHbaseData request url:"+this.sUrl);
 			System.out.println("NetLogServiceClient queryHbaseData request xml:"+strxml);
-			String resultxml = "";//½á¹ûxml
+			String resultxml = "";//ç»“æœxml
 			try{
 				resultxml = cws.doAction("POST", this.sUrl, strxml.getBytes());
 				System.out.println("NetLogServiceClient queryHbaseData resultxml xml:"+resultxml);
 				
-				if(resultxml.length()>0){//²éÑ¯ÓĞ½á¹û
+				if(resultxml.length()>0){//æŸ¥è¯¢æœ‰ç»“æœ
 					ResultXML rx = new ResultXML();
 					StringBuffer xml = new StringBuffer();
 					xml.append("<?xml version=\"1.0\"  encoding='UTF-8'?>");
@@ -109,21 +109,21 @@ public class NetLogServiceClient {
 					rx.resetParent().node("Body").node("qryNetLogListResponse").node("message").node("HeaderResp").setParentPointer();
 					String RespResult = rx.node("RespResult").getValue();
 					String RespDesc = rx.node("RespDesc").getValue();
-					if(RespResult.equals("0")){//²éÑ¯³É¹¦
-						ncb.setRespCode(RespResult);//ÉèÖÃ×´Ì¬
+					if(RespResult.equals("0")){//æŸ¥è¯¢æˆåŠŸ
+						ncb.setRespCode(RespResult);//è®¾ç½®çŠ¶æ€
 						ncb.setRespDesc(RespDesc);
 						
 						rx.resetParent().node("Body").node("qryNetLogListResponse").node("message").node("BodyResp").node("RespData").setParentPointer();
 				        rx.setRowFlagInfo("NgRespBean");
 				        rx.First();
-				        if(rx.isEof()){//Ã»ÓĞ½á¹û
-				        	ncb.setRespDesc("²éÑ¯³É¹¦,µ«Ã»ÓĞ½á¹û¡£");
-				        }else{//ÓĞ½á¹û
-				        	int i_first = 0;//¼ÆÊıÆ÷
+				        if(rx.isEof()){//æ²¡æœ‰ç»“æœ
+				        	ncb.setRespDesc("æŸ¥è¯¢æˆåŠŸ,ä½†æ²¡æœ‰ç»“æœã€‚");
+				        }else{//æœ‰ç»“æœ
+				        	int i_first = 0;//è®¡æ•°å™¨
 					        while (!rx.isEof()) {
 					        	String str = rx.getColumnsValue("content");
-					        	dataResult.add(str);//ÏêÏ¸Êı¾İ
-					        	if(i_first==0){//»ã×ÜĞÅÏ¢
+					        	dataResult.add(str);//è¯¦ç»†æ•°æ®
+					        	if(i_first==0){//æ±‡æ€»ä¿¡æ¯
 					        		ResultXML rxxRow = rx.GetColumnsResultXML();
 						        	rxxRow.setbFlag(false);
 									rxxRow.setRowFlagInfo("GatherBean");
@@ -141,139 +141,139 @@ public class NetLogServiceClient {
 											cmnet_total_bytes = rxxRow.getColumnsValue("allbytes");
 											cmnet_total_times = rxxRow.getColumnsValue("allDelaytime");
 										}
-										rxxRow.Next();//ÏÂÒ»¸ö
+										rxxRow.Next();//ä¸‹ä¸€ä¸ª
 									}
-									gatherResult.add("cmnetÁ÷Á¿,"+String.valueOf(cmnet_total_bytes)+",cmnetÊ±³¤,"+String.valueOf(cmnet_total_times));
-									gatherResult.add("cmwapÁ÷Á¿,"+String.valueOf(cmwap_total_bytes)+",cmwapÊ±³¤,"+String.valueOf(cmwap_total_times));
+									gatherResult.add("cmnetæµé‡,"+String.valueOf(cmnet_total_bytes)+",cmnetæ—¶é•¿,"+String.valueOf(cmnet_total_times));
+									gatherResult.add("cmwapæµé‡,"+String.valueOf(cmwap_total_bytes)+",cmwapæ—¶é•¿,"+String.valueOf(cmwap_total_times));
 					        	}
 					        	rx.Next();
-					        	i_first++;//¼ÆÊıÆ÷++
+					        	i_first++;//è®¡æ•°å™¨++
 					        }
-					        //Êä³ötotalCount
+					        //è¾“å‡ºtotalCount
 					        rx.resetParent().node("Body").node("qryNetLogListResponse").node("message").node("BodyResp").setParentPointer();
 					        ncb.setTotalCount(rx.node("totalCount").getValue());
 				        }
-				        ncb.setDetailList(dataResult);//ÉèÖÃÇåµ¥½á¹û
-				        ncb.setGatherList(gatherResult);//ÉèÖÃ»ã×Ü½á¹û
-					}else{//²éÑ¯Ê§°Ü
+				        ncb.setDetailList(dataResult);//è®¾ç½®æ¸…å•ç»“æœ
+				        ncb.setGatherList(gatherResult);//è®¾ç½®æ±‡æ€»ç»“æœ
+					}else{//æŸ¥è¯¢å¤±è´¥
 						ncb.setRespCode("-1");
-						ncb.setRespDesc("²éÑ¯Ê§°Ü:"+RespDesc);
+						ncb.setRespDesc("æŸ¥è¯¢å¤±è´¥:"+RespDesc);
 					}
-				}else{//²éÑ¯Ã»½á¹û
+				}else{//æŸ¥è¯¢æ²¡ç»“æœ
 					ncb.setRespCode("-1");
-					ncb.setRespDesc("½Ó¿ÚÃ»ÓĞ·µ»ØÊı¾İ");
+					ncb.setRespDesc("æ¥å£æ²¡æœ‰è¿”å›æ•°æ®");
 				}
 			}catch(Exception e){
 				ncb.setRespCode("-1");
-				ncb.setRespDesc("²éÑ¯Ê§°Ü:"+e.toString());
+				ncb.setRespDesc("æŸ¥è¯¢å¤±è´¥:"+e.toString());
 			}
-		}else{//²éÑ¯ÅäÖÃÊ§°Ü
+		}else{//æŸ¥è¯¢é…ç½®å¤±è´¥
 			ncb.setRespCode("-1");
-			ncb.setRespDesc("²éÑ¯ÅäÖÃbishow.cfg_gn_serviceÊ§°Ü,"+this.error.toString());
+			ncb.setRespDesc("æŸ¥è¯¢é…ç½®bishow.cfg_gn_serviceå¤±è´¥,"+this.error.toString());
 		}
 		return ncb;
 	}
 	
 	/**
-	 * µ¼³ö½á¹ûµ½Excel
+	 * å¯¼å‡ºç»“æœåˆ°Excel
 	 * */
 	public synchronized InputStream expExcel(String sheetName, List<List<String>> GnDetailList){
 		WritableWorkbook wmm = null;
 		ByteArrayOutputStream os = null;
 		try {
-			//´´½¨¿ÉĞ´ÈëµÄExcel¹¤×÷±¡
+			//åˆ›å»ºå¯å†™å…¥çš„Excelå·¥ä½œè–„
 	        os = new ByteArrayOutputStream();
-            //wmm = Workbook.createWorkbook(new File(filePath));//¸ù¾İÎÄ¼şÃû´´½¨
+            //wmm = Workbook.createWorkbook(new File(filePath));//æ ¹æ®æ–‡ä»¶ååˆ›å»º
 	        wmm = Workbook.createWorkbook(os);
         } catch (IOException e) {
-            //log.debug("Éú³ÉĞÂµÄexcelÎÄ¼ş³öÏÖÒì³£");
+            //log.debug("ç”Ÿæˆæ–°çš„excelæ–‡ä»¶å‡ºç°å¼‚å¸¸");
             e.printStackTrace();
             return null;
         }
-        //´´½¨¹¤×÷±í
+        //åˆ›å»ºå·¥ä½œè¡¨
         if (sheetName == null || sheetName.equals(""))
             sheetName = "sheet";
         WritableSheet ws = wmm.createSheet(sheetName, 0);
         String titleStr = "";
-        //±êÌâ
-        String[] columns = {"ÊÖ»úºÅÂë", "ÖÕ¶ËĞÍºÅ", "ÖÕ¶ËÀàĞÍ", "APN", "ÍøÂçÀàĞÍ","¿ªÊ¼Ê±¼ä", "½áÊøÊ±¼ä", "ÉÏĞĞÁ÷Á¿(K)", "ÏÂĞĞÁ÷Á¿(K)", "·ÃÎÊµØÖ·","Ó¦ÓÃÃû³Æ"};
+        //æ ‡é¢˜
+        String[] columns = {"æ‰‹æœºå·ç ", "ç»ˆç«¯å‹å·", "ç»ˆç«¯ç±»å‹", "APN", "ç½‘ç»œç±»å‹","å¼€å§‹æ—¶é—´", "ç»“æŸæ—¶é—´", "ä¸Šè¡Œæµé‡(K)", "ä¸‹è¡Œæµé‡(K)", "è®¿é—®åœ°å€","åº”ç”¨åç§°"};
         try {
-            //±êÌâ¸ñÊ½
+            //æ ‡é¢˜æ ¼å¼
             WritableFont writableFont = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD, false,
                     UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
             WritableCellFormat writableCellFormat_bt = new WritableCellFormat(writableFont);
-            writableCellFormat_bt.setAlignment(jxl.format.Alignment.CENTRE);//¶ÔÆë
-            writableCellFormat_bt.setVerticalAlignment(VerticalAlignment.CENTRE);//¶ÔÆë
-            writableCellFormat_bt.setBackground(Colour.LIGHT_GREEN);//±³¾°É«
-            writableCellFormat_bt.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
-            writableCellFormat_bt.setWrap(true);//×Ô¶¯»»ĞĞ
-	        //ÆÕÍ¨ÎÄ±¾
+            writableCellFormat_bt.setAlignment(jxl.format.Alignment.CENTRE);//å¯¹é½
+            writableCellFormat_bt.setVerticalAlignment(VerticalAlignment.CENTRE);//å¯¹é½
+            writableCellFormat_bt.setBackground(Colour.LIGHT_GREEN);//èƒŒæ™¯è‰²
+            writableCellFormat_bt.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
+            writableCellFormat_bt.setWrap(true);//è‡ªåŠ¨æ¢è¡Œ
+	        //æ™®é€šæ–‡æœ¬
 	        WritableFont writableFont3 = new WritableFont(WritableFont.TIMES, 10, WritableFont.NO_BOLD, false,
 	                UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
 	        WritableCellFormat writableCellFormat_nr = new WritableCellFormat(writableFont3);
-	        writableCellFormat_nr.setAlignment(jxl.format.Alignment.LEFT);//×óÓÒ¶ÔÆë
-	        writableCellFormat_nr.setVerticalAlignment(VerticalAlignment.CENTRE);//ÉÏÏÂ¶ÔÆë
-	        writableCellFormat_nr.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
-            //Êı×Ö¸ñÊ½
+	        writableCellFormat_nr.setAlignment(jxl.format.Alignment.LEFT);//å·¦å³å¯¹é½
+	        writableCellFormat_nr.setVerticalAlignment(VerticalAlignment.CENTRE);//ä¸Šä¸‹å¯¹é½
+	        writableCellFormat_nr.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
+            //æ•°å­—æ ¼å¼
             WritableFont writableFont_num = new WritableFont(WritableFont.TIMES, 10, WritableFont.NO_BOLD, false,
                     UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
             WritableCellFormat writableCellFormat2 = null;
-            jxl.write.NumberFormat nf = new jxl.write.NumberFormat("#,##0");//Êı×Ö¸ñÊ½
+            jxl.write.NumberFormat nf = new jxl.write.NumberFormat("#,##0");//æ•°å­—æ ¼å¼
             writableCellFormat2 = new WritableCellFormat(writableFont_num, nf);
-            writableCellFormat2.setAlignment(jxl.format.Alignment.CENTRE);//¶ÔÆë
-            writableCellFormat2.setVerticalAlignment(VerticalAlignment.CENTRE);//¶ÔÆë
-            writableCellFormat2.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
+            writableCellFormat2.setAlignment(jxl.format.Alignment.CENTRE);//å¯¹é½
+            writableCellFormat2.setVerticalAlignment(VerticalAlignment.CENTRE);//å¯¹é½
+            writableCellFormat2.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
 	        
-        	//Ìí¼Ó±êÌâ
+        	//æ·»åŠ æ ‡é¢˜
         	for (int i = 0; i < columns.length; i++) {
             	titleStr = columns[i];
             	Label labels = new Label(i, 0, titleStr, writableCellFormat_bt);
             	ws.addCell(labels);
         	}
-	        //Ìí¼ÓÄÚÈİ
+	        //æ·»åŠ å†…å®¹
 	        jxl.write.Label labelcontent;
             jxl.write.Number numcontent;
-	        for (int i = 0; i < GnDetailList.size(); i++) {//µÚ2ĞĞ¿ªÊ¼²ÅÊÇÊı¾İ
+	        for (int i = 0; i < GnDetailList.size(); i++) {//ç¬¬2è¡Œå¼€å§‹æ‰æ˜¯æ•°æ®
 	        	//System.out.println("i:"+i+"GnDetailList.get("+i+")"+GnDetailList.get(i));
-	            for (int j = 0; j < 11; j++) {//ÁĞ
-	                // Label(ÁĞºÅ,ĞĞºÅ ,ÄÚÈİ )
+	            for (int j = 0; j < 11; j++) {//åˆ—
+	                // Label(åˆ—å·,è¡Œå· ,å†…å®¹ )
 	                String tempStr = GnDetailList.get(i).get(j).toString();
 	                if (tempStr != null && tempStr.equals(NULL_VALUE)) {
 	                    tempStr = " ";
 	                }
-	                if ( j==0 || j==7 || j==8){//ÊÖ»úºÅÂë,Á÷Á¿
+	                if ( j==0 || j==7 || j==8){//æ‰‹æœºå·ç ,æµé‡
 	                	numcontent = new jxl.write.Number(j, i+1, Long.valueOf(tempStr), writableCellFormat_nr);
 	                	ws.addCell(numcontent);
-	                }else{//ÆäËû
+	                }else{//å…¶ä»–
 	                	labelcontent = new jxl.write.Label(j, i+1, tempStr, writableCellFormat_nr);
 	            		ws.addCell(labelcontent);
 	            	}
 	            }
 	        }
-	        //ÉèÖÃĞĞ¸ß
+	        //è®¾ç½®è¡Œé«˜
         	//ws.setRowView(0, 550);
-            //ÉèÖÃÁĞ¿í
+            //è®¾ç½®åˆ—å®½
             for(int i=0;i<ws.getColumns();i++){
             	ws.setColumnView(i, 14);
             }
-	        //Çå¿ÕÄÚ´æ
+	        //æ¸…ç©ºå†…å­˜
             System.gc();
-	        //±£´æ
+	        //ä¿å­˜
             wmm.write();
             ws = null;
-            //¹Ø±Õ
+            //å…³é—­
             wmm.close();
             return new ByteArrayInputStream(os.toByteArray());
         } catch (RowsExceededException e) {
             e.printStackTrace();
             return null;
-            //log.debug("Êı¾İĞĞ´íÎó£º" + e.getMessage());
+            //log.debug("æ•°æ®è¡Œé”™è¯¯ï¼š" + e.getMessage());
         } catch (WriteException e1) {
-            //log.debug("Êı¾İĞ´Èë´íÎó£º" + e.getMessage());
+            //log.debug("æ•°æ®å†™å…¥é”™è¯¯ï¼š" + e.getMessage());
             e1.printStackTrace();
             return null;
         } catch (Exception e2) {
-            //log.debug("Êı¾İÌî³ä´íÎó£º" + e1.getMessage());
+            //log.debug("æ•°æ®å¡«å……é”™è¯¯ï¼š" + e1.getMessage());
             e2.printStackTrace();
             return null;
         }

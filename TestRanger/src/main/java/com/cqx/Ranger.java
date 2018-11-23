@@ -2,30 +2,30 @@ package com.cqx;
 
 public interface Ranger {
 	/**
-	 * »ñÈ¡ËùÓĞÓĞĞ§µÄ²ßÂÔ
+	 * è·å–æ‰€æœ‰æœ‰æ•ˆçš„ç­–ç•¥
 	 * 
 	 * @return
 	 */
 	public String getAllValidPolice();
 
 	/**
-	 * ´´½¨²ßÂÔ
+	 * åˆ›å»ºç­–ç•¥
 	 * 
 	 * @param policeUser
-	 *            ²ßÂÔ¶ÔÓ¦µÄÓÃ»§
+	 *            ç­–ç•¥å¯¹åº”çš„ç”¨æˆ·
 	 * @param dbName
-	 *            :Êı¾İ¿â£¬¶à¸öÊı¾İ¿âÓÃ¶ººÅ·Ö¸î£¨Ó¢ÎÄ·û£©
+	 *            :æ•°æ®åº“ï¼Œå¤šä¸ªæ•°æ®åº“ç”¨é€—å·åˆ†å‰²ï¼ˆè‹±æ–‡ç¬¦ï¼‰
 	 * @param tableName
-	 *            £º±í£¬¶à¸öÓÃ¶ººÅ·Ö¸î
+	 *            ï¼šè¡¨ï¼Œå¤šä¸ªç”¨é€—å·åˆ†å‰²
 	 * @param permissionsType
-	 *            ±í£¬Ëù¶ÔÓ¦µÄÈ¨ÏŞ£¬¶à¸öÓÃ¶ººÅ·Ö¸î,eg :drop, all, select, update, create, index,
+	 *            è¡¨ï¼Œæ‰€å¯¹åº”çš„æƒé™ï¼Œå¤šä¸ªç”¨é€—å·åˆ†å‰²,eg :drop, all, select, update, create, index,
 	 *            lock, alter
 	 * @return
 	 */
 	public boolean createPolice(CreatePoliceReq createRequest);
 
 	/**
-	 * Í¨¹ı²ßÂÔÃû³Æ»ñÈ¡²ßÂÔ
+	 * é€šè¿‡ç­–ç•¥åç§°è·å–ç­–ç•¥
 	 * 
 	 * @param policyName
 	 * @return
@@ -33,7 +33,7 @@ public interface Ranger {
 	public String getPolicyByName(String policyName);
 
 	/**
-	 * Í¨¹ıpoliceName É¾³ı²ßÂÔ
+	 * é€šè¿‡policeName åˆ é™¤ç­–ç•¥
 	 * 
 	 * @param policeName
 	 * @return
@@ -41,7 +41,7 @@ public interface Ranger {
 	public boolean deletePoliceByPoliceName(String policeName);
 
 	/**
-	 * Í¨¹ıpoliceId É¾³ı²ßÂÔ
+	 * é€šè¿‡policeId åˆ é™¤ç­–ç•¥
 	 * 
 	 * @param policeId
 	 * @return
@@ -49,7 +49,7 @@ public interface Ranger {
 	public boolean deletePoliceByPoliceId(String policeId);
 
 	/**
-	 * ĞŞ¸Ä²ßÂÔ
+	 * ä¿®æ”¹ç­–ç•¥
 	 * 
 	 * @param updatePoliceReq
 	 * @return

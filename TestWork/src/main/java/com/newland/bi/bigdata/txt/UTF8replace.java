@@ -25,10 +25,10 @@ public class UTF8replace {
 			}			
 			try{
 				File readFile = new File(file_name);
-//				reader = new BufferedReader(new InputStreamReader(
-//						new FileInputStream(readFile), "GBK"));	
 				reader = new BufferedReader(new InputStreamReader(
-						new FileInputStream(readFile), "UTF-8"));	
+						new FileInputStream(readFile), "GBK"));	
+//				reader = new BufferedReader(new InputStreamReader(
+//						new FileInputStream(readFile), "UTF-8"));	
 				lineNumberReader = new LineNumberReader(reader);
 				File writeFile = new File(file_name+".tmp");
 				out = new OutputStreamWriter(new FileOutputStream(writeFile), "UTF-8");

@@ -3,10 +3,10 @@ package com.cqx;
 import org.apache.hadoop.util.ProgramDriver;
 
 /**
- * ÃüÁî<br>
+ * å‘½ä»¤<br>
  * hadoop jar hadoop-mapreduce-examples-2.7.1.jar wordcount  /input /output<br>
- * hadoop-mapreduce-examples-2.7.1.jarµÄwordcount²»ĞèÒªĞ´È«Â·¾¶ºÍÀàĞÍµÄÊÔÑé<br>
- * Õâ¸öÊµ¼ÊÉÏÊÇÓĞÖ÷ÀàµÄMain-Class: org.apache.hadoop.examples.ExampleDriver
+ * hadoop-mapreduce-examples-2.7.1.jarçš„wordcountä¸éœ€è¦å†™å…¨è·¯å¾„å’Œç±»å‹çš„è¯•éªŒ<br>
+ * è¿™ä¸ªå®é™…ä¸Šæ˜¯æœ‰ä¸»ç±»çš„Main-Class: org.apache.hadoop.examples.ExampleDriver
  * */
 public class ExampleDriver {
 	public static void main(String[] args) {

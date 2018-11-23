@@ -7,117 +7,117 @@ import org.apache.log4j.Logger;
 import com.newland.bi.bigdata.datacollector.common.CollectorConstant;
 
 public class CollectorConfInfo {
-	//ÈÕÖ¾¼ÇÂ¼Æ÷
+	//æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(CollectorConfInfo.class);
-	//²É¼¯³ÌĞòÅäÖÃÎÄ¼şÊµÀı
+	//é‡‡é›†ç¨‹åºé…ç½®æ–‡ä»¶å®ä¾‹
 	private static Configuration conf;
-	//Ô´Êı¾İ·şÎñÆ÷
+	//æºæ•°æ®æœåŠ¡å™¨
 	public static String ftpServerIp ;
-	//Ô´Êı¾İ·şÎñÆ÷FTP·şÎñ¶Ë¿Ú
+	//æºæ•°æ®æœåŠ¡å™¨FTPæœåŠ¡ç«¯å£
 	public static int ftpServerPort ;
-	//Ô´Êı¾İ·şÎñÆ÷FTP·şÎñÓÃ»§Ãû
+	//æºæ•°æ®æœåŠ¡å™¨FTPæœåŠ¡ç”¨æˆ·å
 	public static String ftpServerUser ;
-	//Ô´Êı¾İ·şÎñÆ÷FTP·şÎñÃÜÂë
+	//æºæ•°æ®æœåŠ¡å™¨FTPæœåŠ¡å¯†ç 
 	public static String ftpServerPassword ;
-	//Ô´Êı¾İ·şÎñÆ÷µÄÊı¾İÂ·¾¶
+	//æºæ•°æ®æœåŠ¡å™¨çš„æ•°æ®è·¯å¾„
 	public static String sourceDataPath;
-	//Êı¾İÎÄ¼şºÍ¿ØÖÆÎÄ¼şÊÇ·ñ·Ö¿ª´æ·Å
+	//æ•°æ®æ–‡ä»¶å’Œæ§åˆ¶æ–‡ä»¶æ˜¯å¦åˆ†å¼€å­˜æ”¾
 	public static boolean ifSaveDifferentPath;
-	//Êı¾İ´æ·ÅµÄÁÙÊ±Â·¾¶(LinuxÏµÍ³Â·¾¶)
+	//æ•°æ®å­˜æ”¾çš„ä¸´æ—¶è·¯å¾„(Linuxç³»ç»Ÿè·¯å¾„)
 	public static String saveTmpPath ;
-	//Êı¾İ´æ·ÅµÄ±¾µØÂ·¾¶(LinuxÏµÍ³Â·¾¶)
+	//æ•°æ®å­˜æ”¾çš„æœ¬åœ°è·¯å¾„(Linuxç³»ç»Ÿè·¯å¾„)
 	public static String saveDataPath ;
-	//Êı¾İ´æ·ÅµÄ±¾µØÂ·¾¶(LinuxÏµÍ³Â·¾¶)
+	//æ•°æ®å­˜æ”¾çš„æœ¬åœ°è·¯å¾„(Linuxç³»ç»Ÿè·¯å¾„)
 	public static String saveCtlPath ;
-	//Êı¾İÔ´ÎÄ¼şµÄºó×ºÃû
+	//æ•°æ®æºæ–‡ä»¶çš„åç¼€å
 	public static String dataSourceFileSuffixName;
-	//Ã¿¸öÊı¾İÎÄ¼şÊÇ·ñº¬ÓĞ¶ÔÓ¦µÄ¿ØÖÆÎÄ¼ş
+	//æ¯ä¸ªæ•°æ®æ–‡ä»¶æ˜¯å¦å«æœ‰å¯¹åº”çš„æ§åˆ¶æ–‡ä»¶
 	public static boolean ifHasCtlSourceFile;
-	//¿ØÖÆÔ´ÎÄ¼şµÄºó×ºÃû
+	//æ§åˆ¶æºæ–‡ä»¶çš„åç¼€å
 	public static String ctlSourceFileSuffixName;
-	//ÊÇ·ñÏÂÔØ¿ØÖÆÎÄ¼ş
+	//æ˜¯å¦ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 	public static boolean ifDownloadCtlFile;
-	//ÊÇ·ñÏÈÏÂÔØ¿ØÖÆÎÄ¼ş
+	//æ˜¯å¦å…ˆä¸‹è½½æ§åˆ¶æ–‡ä»¶
 	public static boolean ifFirstDownloadCtlFile;
-	//FTPÏÂÔØÎÄ¼şµÄÖĞ¼äÎÄ¼şÃûºó×º
+	//FTPä¸‹è½½æ–‡ä»¶çš„ä¸­é—´æ–‡ä»¶ååç¼€
 	public static String ftpTmpFileNameSuffix;
-	//FTPÏÂÔØÊı¾İÎÄ¼şºó£¬ÊÇ·ñÉ¾³ıÔ´ÎÄ¼ş
+	//FTPä¸‹è½½æ•°æ®æ–‡ä»¶åï¼Œæ˜¯å¦åˆ é™¤æºæ–‡ä»¶
 	public static boolean ifNeedDeleteSourceDataFile;
-	//FTPÏÂÔØ¿ØÖÆÎÄ¼şºó£¬ÊÇ·ñÒÆ¶¯Ô´ÎÄ¼ş
+	//FTPä¸‹è½½æ§åˆ¶æ–‡ä»¶åï¼Œæ˜¯å¦ç§»åŠ¨æºæ–‡ä»¶
 	public static boolean ifNeedMvSourceDataFile;
-	//²É¼¯³ÌĞòÏÂÔØÍêÒÆ¶¯Ô´ÎÄ¼şµ½Ä¿µÄÄ¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œç§»åŠ¨æºæ–‡ä»¶åˆ°ç›®çš„ç›®å½•
 	public static String mvSourceDataFilePath;
-	//²É¼¯³ÌĞòÏÂÔØÍêÒ»¸öÎÄ¼şºó£¬¿ØÖÆÔ´ÎÄ¼şÊÇ·ñĞèÒªÉ¾³ı
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œä¸€ä¸ªæ–‡ä»¶åï¼Œæ§åˆ¶æºæ–‡ä»¶æ˜¯å¦éœ€è¦åˆ é™¤
 	public static boolean ifNeedDeleteSourceCtlFile;
-	//²É¼¯³ÌĞòÏÂÔØÍêÒ»¸öÎÄ¼şºó£¬¿ØÖÆÔ´ÎÄ¼şÊÇ·ñĞèÒªÒÆ¶¯Ä¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œä¸€ä¸ªæ–‡ä»¶åï¼Œæ§åˆ¶æºæ–‡ä»¶æ˜¯å¦éœ€è¦ç§»åŠ¨ç›®å½•
 	public static boolean ifNeedMvSourceCtlFile;
-	//²É¼¯³ÌĞòÏÂÔØÍê¿ØÖÆÎÄ¼şºóÒÆ¶¯Ô´ÎÄ¼şµ½Ä¿µÄÄ¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œæ§åˆ¶æ–‡ä»¶åç§»åŠ¨æºæ–‡ä»¶åˆ°ç›®çš„ç›®å½•
 	public static  String  mvSourceCtlFilePath;
-	//²É¼¯³ÌĞòÍË³ö¼ì²âÎÄ¼ş
+	//é‡‡é›†ç¨‹åºé€€å‡ºæ£€æµ‹æ–‡ä»¶
 //	public static String exitFileFullName;
-	//Ã¿¸öÄ¿Â¼ÏÂÔØµÄÏß³ÌÊı
+	//æ¯ä¸ªç›®å½•ä¸‹è½½çš„çº¿ç¨‹æ•°
 	public static String ftpThreadNumEveryDir;
-	//½ØÈ¡ÎÄ¼şÃûÊ±¼äµãµÄ·Ö¸ô·û
+	//æˆªå–æ–‡ä»¶åæ—¶é—´ç‚¹çš„åˆ†éš”ç¬¦
 	public static String splitFileNameForDateTime ;
-	//Ô´Êı¾İÎÄ¼şÃûÖĞµÄÈÕÆÚÓëĞ¡Ê±ÊÇ·ñÔÚÍ¬Ò»¸öÎ»ÖÃ
+	//æºæ•°æ®æ–‡ä»¶åä¸­çš„æ—¥æœŸä¸å°æ—¶æ˜¯å¦åœ¨åŒä¸€ä¸ªä½ç½®
 	public static boolean ifDateAndHourTheSameLocation;
-	//ÎÄ¼şÃûÈÕÆÚ×Ö·û´®ÔÚÎÄ¼şÃûÖĞµÄÎ»ÖÃ
+	//æ–‡ä»¶åæ—¥æœŸå­—ç¬¦ä¸²åœ¨æ–‡ä»¶åä¸­çš„ä½ç½®
 	public static int dateLocationAtFileName;
-	//½ØÈ¡ÎÄ¼şÃûÈÕÆÚ×Ö·û´®µÄ¿ªÊ¼Î»ÖÃ 
+	//æˆªå–æ–‡ä»¶åæ—¥æœŸå­—ç¬¦ä¸²çš„å¼€å§‹ä½ç½® 
 	public static int  dateSubStringBegin;
-	//½ØÈ¡ÎÄ¼şÃûÈÕÆÚ×Ö·û´®µÄ½áÊøÎ»ÖÃ
+	//æˆªå–æ–‡ä»¶åæ—¥æœŸå­—ç¬¦ä¸²çš„ç»“æŸä½ç½®
 	public static int  dateSubStringEnd;
-	//ÎÄ¼şÃûĞ¡Ê±·ÖÖÓÃë×Ö·û´®ÔÚÎÄ¼şÃûÖĞµÄÎ»ÖÃ
+	//æ–‡ä»¶åå°æ—¶åˆ†é’Ÿç§’å­—ç¬¦ä¸²åœ¨æ–‡ä»¶åä¸­çš„ä½ç½®
 	public static int  hourLocationAtFileName;
-	//½ØÈ¡ÎÄ¼şÃûĞ¡Ê±×Ö·û´®µÄ¿ªÊ¼Î»ÖÃ
+	//æˆªå–æ–‡ä»¶åå°æ—¶å­—ç¬¦ä¸²çš„å¼€å§‹ä½ç½®
 	public static int  hourSubStringBegin;
-	//½ØÈ¡ÎÄ¼şÃûĞ¡Ê±×Ö·û´®µÄ½áÊøÎ»ÖÃ
+	//æˆªå–æ–‡ä»¶åå°æ—¶å­—ç¬¦ä¸²çš„ç»“æŸä½ç½®
 	public static int  hourSubStringEnd;
-	//FTPÏÂÔØÎÄ¼ş»º³åÇø£¨µ¥Î»M£©
+	//FTPä¸‹è½½æ–‡ä»¶ç¼“å†²åŒºï¼ˆå•ä½Mï¼‰
 	public static int  downloadBuffersize;
-	//ÊÇ·ñ°´ÎÄ¼şÃûÊ±¼äÅÅĞò
+	//æ˜¯å¦æŒ‰æ–‡ä»¶åæ—¶é—´æ’åº
 	public static  boolean  ifSortByFileName;
-	//ÊÇ·ñ²É¼¯×îĞÂĞ¡Ê±µÄÎÄ¼ş
+	//æ˜¯å¦é‡‡é›†æœ€æ–°å°æ—¶çš„æ–‡ä»¶
 	public static   boolean  ifDownloadNewestFile;
-	//ÊÇ·ñ¹ıÂË³öÌØ¶¨Ê±¼äµãÎÄ¼şÃû
+	//æ˜¯å¦è¿‡æ»¤å‡ºç‰¹å®šæ—¶é—´ç‚¹æ–‡ä»¶å
 	public static  boolean  ifFilterSpecificTimeFileName;
-	//¹ıÂË³öÌØ¶¨Ê±¼äµãµÄÎÄ¼şÃûµÄ×Ö·û´®
+	//è¿‡æ»¤å‡ºç‰¹å®šæ—¶é—´ç‚¹çš„æ–‡ä»¶åçš„å­—ç¬¦ä¸²
 	public static  String  filterSpecificTimeFileName;
-	//ÊÇ·ñ¹ıÂË³öÌØ¶¨ÎÄ¼şÃû
+	//æ˜¯å¦è¿‡æ»¤å‡ºç‰¹å®šæ–‡ä»¶å
 	public static  boolean  ifFilterSpecificFileName;
-	//¹ıÂË³öÌØ¶¨ÎÄ¼şÃûµÄ×Ö·û´®
+	//è¿‡æ»¤å‡ºç‰¹å®šæ–‡ä»¶åçš„å­—ç¬¦ä¸²
 	public static  String  filterSpecificFileName;
-	//ÊÇ·ñÅÅ³ıÖ¸¶¨ÎÄ¼şÃûµÄÎÄ¼ş
+	//æ˜¯å¦æ’é™¤æŒ‡å®šæ–‡ä»¶åçš„æ–‡ä»¶
 	public static  boolean  ifExcludeSpecificFileName;
-	//ÅÅ³ıÖ¸¶¨ÎÄ¼şÃûµÄÎÄ¼ş
+	//æ’é™¤æŒ‡å®šæ–‡ä»¶åçš„æ–‡ä»¶
 	public static  String  excludeSpecificFileName;
-	//ÊÇ·ñ¹ıÂËÌØ¶¨Ğ¡Ê±ÎÄ¼şÃû×ÔÔö
+	//æ˜¯å¦è¿‡æ»¤ç‰¹å®šå°æ—¶æ–‡ä»¶åè‡ªå¢
 	public static  boolean  ifFilterSpecificHourIncrement;
-	//²É¼¯ÌØ¶¨Ê±¼äµãµÄÎÄ¼şºó£¬Ê±¼ä×ÔÔöµÄÊıÖµ£¨1¡¢-1£©
+	//é‡‡é›†ç‰¹å®šæ—¶é—´ç‚¹çš„æ–‡ä»¶åï¼Œæ—¶é—´è‡ªå¢çš„æ•°å€¼ï¼ˆ1ã€-1ï¼‰
 	public static  int  incrementHourValue;
-	//ÊÇ·ñ²ÉÓÃSFTPÁ¬½Ó
+	//æ˜¯å¦é‡‡ç”¨SFTPè¿æ¥
 	public static boolean ifConnectBySftp;
-	//ÊÇ·ñ½«Ô´Êı¾İ»®·Ö³É¼¸·İ½øĞĞ²É¼¯
+	//æ˜¯å¦å°†æºæ•°æ®åˆ’åˆ†æˆå‡ ä»½è¿›è¡Œé‡‡é›†
 	public static  boolean ifCollectByPartition;
-	//½«Ô´Êı¾İ»®·Ö³É¼¸·İ
+	//å°†æºæ•°æ®åˆ’åˆ†æˆå‡ ä»½
 	public static  int partitions;
-	//±¾²É¼¯³ÌĞò²É¼¯µÚ¼¸·İÊı¾İ
+	//æœ¬é‡‡é›†ç¨‹åºé‡‡é›†ç¬¬å‡ ä»½æ•°æ®
 	public static  int  collectPartion;
-	//¸ù¾İÄÇ¸öÎ»ÖÃ½øĞĞ»®·ÖÔ´Êı¾İ
+	//æ ¹æ®é‚£ä¸ªä½ç½®è¿›è¡Œåˆ’åˆ†æºæ•°æ®
 	public static  int locationToPartition;
 	/**
 	 * 
-	 * @description: ¶ÁÈ¡ÅäÖÃÎÄ¼şÖĞµÄÖµ
+	 * @description: è¯»å–é…ç½®æ–‡ä»¶ä¸­çš„å€¼
 	 * @author:xixg
 	 * @date:2014-02-19
 	 * @return void
 	 */
 	public static void getConfInfo(String collectorConfFilePath){
 		try {
-			//ÊµÀı»¯²É¼¯³ÌĞòÅäÖÃÎÄ¼şÊµÀı
+			//å®ä¾‹åŒ–é‡‡é›†ç¨‹åºé…ç½®æ–‡ä»¶å®ä¾‹
 			Path collectorFilePath = new Path(collectorConfFilePath);
 			conf = new Configuration();
-			//¼ÓÔØ²É¼¯³ÌĞò×Ô¼ºµÄÅäÖÃÎÄ¼ş
+			//åŠ è½½é‡‡é›†ç¨‹åºè‡ªå·±çš„é…ç½®æ–‡ä»¶
 			conf.addResource(collectorFilePath);
 			ftpServerIp = conf.get(CollectorConstant.FTP_SERVER_IP);
 			ftpServerPort = conf.getInt(CollectorConstant.FTP_SERVER_PORT, 21);
@@ -167,13 +167,13 @@ public class CollectorConfInfo {
 			collectPartion = conf.getInt(CollectorConstant.COLLECT_PARTION, 1);
 			locationToPartition = conf.getInt(CollectorConstant.LOCATION_TO_PARTITION, 1);
 		} catch (Exception e) {
-			logger.error("%%%%%»ñÈ¡²É¼¯³ÌĞòÅäÖÃÎÄ¼şÖĞµÄÅäÖÃĞÅÏ¢³ö´í£¡£¡£¡",e);
+			logger.error("%%%%%è·å–é‡‡é›†ç¨‹åºé…ç½®æ–‡ä»¶ä¸­çš„é…ç½®ä¿¡æ¯å‡ºé”™ï¼ï¼ï¼",e);
 		}
 	}
 	
 	/**
 	 * 
-	 * @description:»ñÈ¡ÅäÖÃÎÄ¼şÊµÀı
+	 * @description:è·å–é…ç½®æ–‡ä»¶å®ä¾‹
 	 * @author:xixg
 	 * @date:2013-11-26
 	 * @return Configuration

@@ -5,15 +5,15 @@ import org.apache.hadoop.io.WritableComparator;
 
 public class GroupingCompare extends WritableComparator{
 	/**
-	 * @description: ±¾ÀàµÄ¹¹ÔìÆ÷£¬±ØĞëµ÷ÓÃ¸¸ÀàµÄ¹¹ÔìÆ÷
+	 * @description: æœ¬ç±»çš„æ„é€ å™¨ï¼Œå¿…é¡»è°ƒç”¨çˆ¶ç±»çš„æ„é€ å™¨
 	 */
 	protected GroupingCompare() {
-		//×¢²ácomparator
+		//æ³¨å†Œcomparator
 		super(TempKey.class,true);
 	}
 	
 	/**
-	 * @description: ¶¨Òå·Ö×é²ßÂÔ£¬±È½ÏfirstKey£¬Í¨¹ıfirstKeyÀ´·Ö×é
+	 * @description: å®šä¹‰åˆ†ç»„ç­–ç•¥ï¼Œæ¯”è¾ƒfirstKeyï¼Œé€šè¿‡firstKeyæ¥åˆ†ç»„
 	 */
 	@SuppressWarnings("unchecked")
 	public int compare(WritableComparable a, WritableComparable b) {

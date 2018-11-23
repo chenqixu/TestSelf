@@ -16,32 +16,34 @@
     </plugins>
   </build>
   <modules>
-  	<module>ReadFile</module>
-  	<module>TestDataCollector</module>
-  	<module>TestShareClass</module>
-  	<module>TestSFTPTool</module>
-  	<module>TestHbaseTool</module>
-  	<module>TestHdfsTool</module>
-  	<module>TestAigTool</module>
-  	<module>TestKafka</module>
-  	<module>TestJStorm</module>
-  	<module>TestSpring</module>
-  	<module>TestDeploy</module>
-  	<module>TestExcelTool</module>
-  	<module>TestWork</module>
-  	<module>TestFrameForm</module>
-  	<module>TestJavaThinking</module>
-  	<module>TestQuestions</module>
-  	<module>TestMR</module>
-  	<module>TestSpringCXF</module>
-  	<module>TestWorkJDK8</module>
-  	<module>TestJMX</module>
-  	<module>TestSpark</module>
-  	<module>TestRanger</module>
-  	<module>TestOozie</module>
-  	<module>TestZookeeperTool</module>
-  	<module>TestMetrics</module>
-  	<module>TestJersey2X</module>
-  	<module>TestJersey1X</module>
+    <module>ReadFile</module>
+    <module>TestDataCollector</module>
+    <module>TestShareClass</module>
+    <module>TestSFTPTool</module>
+    <module>TestHbaseTool</module>
+    <module>TestHdfsTool</module>
+    <module>TestAigTool</module>
+    <module>TestKafka</module>
+    <module>TestJStorm</module>
+    <module>TestSpring</module>
+    <module>TestDeploy</module>
+    <module>TestExcelTool</module>
+    <module>TestWork</module>
+    <module>TestFrameForm</module>
+    <module>TestJavaThinking</module>
+    <module>TestQuestions</module>
+    <module>TestMR</module>
+    <module>TestSpringCXF</module>
+    <module>TestWorkJDK8</module>
+    <module>TestJMX</module>
+    <module>TestSpark</module>
+    <module>TestRanger</module>
+    <module>TestOozie</module>
+    <module>TestZookeeperTool</module>
+    <module>TestMetrics</module>
+    <module>TestJersey2X</module>
+    <module>TestJersey1X</module>
+    <module>TestNetty</module>
+    <module>TestWeb</module>
   </modules>
 </project>

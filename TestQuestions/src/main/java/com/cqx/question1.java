@@ -5,11 +5,11 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * <b>����1</b><br>
- * С����С�ţ�С����ƻ��5�룬����֦2�룬��ƻ��30�룬����֦5�룻С����ƻ��6�룬����֦3�룬��ƻ��25�룬����֦4�룻<br>
- * ����ƻ��xx����֦xx��С����ƻ����С�Ű���֦��С����С�Ű�����֦��С�ų�С������ƻ��<br>
- * <b>����</b>����һ����������������һ������������֮������гԵ�Ҫ�ȳԣ�<br>
- * ���ʣ�ƻ��xx����֦xx���٣�С�������꣬�� С�����ꡣ
+ * <b>问题1</b><br>
+ * 小明和小张，小明削苹果5秒，剥荔枝2秒，吃苹果30秒，吃荔枝5秒；小张削苹果6秒，剥荔枝3秒，吃苹果25秒，吃荔枝4秒；<br>
+ * 现有苹果xx，荔枝xx，小明削苹果，小张剥荔枝，小明吃小张剥的荔枝，小张吃小明削的苹果<br>
+ * <b>规则：</b>吃完一个才能削（剥）下一个，削（剥）之后如果有吃的要先吃；<br>
+ * 请问，苹果xx，荔枝xx多少，小明先削完，或 小张先完。
  * */
 public class question1 {
 	public static void main(String[] args) {

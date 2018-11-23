@@ -20,32 +20,32 @@ public class SFtpUtils {
 	private Channel channel = null;
 
 	/**
-	 * »ñµÃSFTPÁ¬½ÓÍ¨µÀ
-	 * @param ftpServerUser ÓÃ»§
-	 * @param ftpServerIp ·şÎñÆ÷IP
-	 * @param ftpServerPort ·şÎñÆ÷¶Ë¿Ú
-	 * @param ftpServerPassword ÃÜÂë
+	 * è·å¾—SFTPè¿æ¥é€šé“
+	 * @param ftpServerUser ç”¨æˆ·
+	 * @param ftpServerIp æœåŠ¡å™¨IP
+	 * @param ftpServerPort æœåŠ¡å™¨ç«¯å£
+	 * @param ftpServerPassword å¯†ç 
 	 */
 	public ChannelSftp getChannel(String ftpServerUser, String ftpServerIp,
 			int ftpServerPort, String ftpServerPassword) {
 		ChannelSftp channelSftp = null;
 		try {
-			// ´´½¨JSch¶ÔÏó
+			// åˆ›å»ºJSchå¯¹è±¡
 			JSch jsch = new JSch();
-			// ¸ù¾İÓÃ»§Ãû£¬Ö÷»úip£¬¶Ë¿Ú»ñÈ¡Ò»¸öSession¶ÔÏó
+			// æ ¹æ®ç”¨æˆ·åï¼Œä¸»æœºipï¼Œç«¯å£è·å–ä¸€ä¸ªSessionå¯¹è±¡
 			sshSession = jsch.getSession(ftpServerUser, ftpServerIp,
 					ftpServerPort);
-			// ÉèÖÃÃÜÂë
+			// è®¾ç½®å¯†ç 
 			sshSession.setPassword(ftpServerPassword);
 			Properties sshConfig = new Properties();
 			sshConfig.put("StrictHostKeyChecking", "no");
-			// ÎªSession¶ÔÏóÉèÖÃproperties
+			// ä¸ºSessionå¯¹è±¡è®¾ç½®properties
 			sshSession.setConfig(sshConfig);
-			// Í¨¹ıSession½¨Á¢Á´½Ó
+			// é€šè¿‡Sessionå»ºç«‹é“¾æ¥
 			sshSession.connect();
-			// ´ò¿ªSFTPÍ¨µÀ
+			// æ‰“å¼€SFTPé€šé“
 			channel = sshSession.openChannel("sftp");
-			// ½¨Á¢SFTPÍ¨µÀµÄÁ¬½Ó
+			// å»ºç«‹SFTPé€šé“çš„è¿æ¥
 			channel.connect();
 			channelSftp = (ChannelSftp) channel;
 			if(channel!=null&&channel.isConnected()){
@@ -54,62 +54,62 @@ public class SFtpUtils {
 				channelSftp = null;
 			}
 		} catch (Exception e) {
-			System.out.println("%%%%%Ê§°ÜÁ¬½ÓSFTP·şÎñÆ÷£º" + ftpServerIp + "£¬¶Ë¿ÚºÅ£º"
-					+ ftpServerPort + "£¬SFTPÓÃ»§Ãû£º" + ftpServerUser + "£¬SFTPÃÜÂë£º"
+			System.out.println("%%%%%å¤±è´¥è¿æ¥SFTPæœåŠ¡å™¨ï¼š" + ftpServerIp + "ï¼Œç«¯å£å·ï¼š"
+					+ ftpServerPort + "ï¼ŒSFTPç”¨æˆ·åï¼š" + ftpServerUser + "ï¼ŒSFTPå¯†ç ï¼š"
 					+ ftpServerPassword);
 		}
 		return channelSftp;
 	}
 	
 	/**
-	 * Í¨¹ıÅäÖÃÎÄ¼ş¹æÔò¹ıÂË³öĞèÒª²É¼¯µÄÎÄ¼şÁĞ±í£¬²¢ÏÂÔØµ½Ö¸¶¨Ä¿Â¼
+	 * é€šè¿‡é…ç½®æ–‡ä»¶è§„åˆ™è¿‡æ»¤å‡ºéœ€è¦é‡‡é›†çš„æ–‡ä»¶åˆ—è¡¨ï¼Œå¹¶ä¸‹è½½åˆ°æŒ‡å®šç›®å½•
 	 * */
 	public void dowload(ChannelSftp chSftp, String localFilePath, String remoteFilePath, String filenames){
 //		Pattern pat;
 //        Matcher mat;
 		try{
 			if(chSftp!=null && chSftp.isConnected()){
-	        	//¸Ä±äSFTPµÄ¹¤×÷Ä¿Â¼
+	        	//æ”¹å˜SFTPçš„å·¥ä½œç›®å½•
 				chSftp.cd(remoteFilePath);
-	        	//ÁĞ³öµ±Ç°Ä¿Â¼µÄËùÓĞÎÄ¼ş£¬´æ·ÅÔÚVectorÖĞ
+	        	//åˆ—å‡ºå½“å‰ç›®å½•çš„æ‰€æœ‰æ–‡ä»¶ï¼Œå­˜æ”¾åœ¨Vectorä¸­
 	        	Vector fileVector = chSftp.ls(remoteFilePath);
-	        	System.out.println("SFTPÁĞ³öµ±Ç°Ä¿Â¼("+remoteFilePath+")µÄËùÓĞÎÄ¼ş´óĞ¡:"+fileVector.size());
-	        	//µü´úVector
+	        	System.out.println("SFTPåˆ—å‡ºå½“å‰ç›®å½•("+remoteFilePath+")çš„æ‰€æœ‰æ–‡ä»¶å¤§å°:"+fileVector.size());
+	        	//è¿­ä»£Vector
 	        	Iterator it = fileVector.iterator(); 
-	        	//Ñ­»·È¡³öVectorÖĞµÄÎÄ¼şÃû
+	        	//å¾ªç¯å–å‡ºVectorä¸­çš„æ–‡ä»¶å
 	        	while(it.hasNext()){
 	                boolean matched = false;
-	        		//È¡³öÎÄ¼şÃû
+	        		//å–å‡ºæ–‡ä»¶å
 		            String fileName = ((LsEntry)it.next()).getFilename();
 		            if(fileName.equals(filenames)){
 		            	matched = true;
 		            }
-			        // Æ¥Åä¹æÔò£¬Ôò´ÓÔ¶³Ì·şÎñÆ÷ÏÂÔØÎÄ¼şµ½±¾µØ·şÎñÆ÷
+			        // åŒ¹é…è§„åˆ™ï¼Œåˆ™ä»è¿œç¨‹æœåŠ¡å™¨ä¸‹è½½æ–‡ä»¶åˆ°æœ¬åœ°æœåŠ¡å™¨
 			        if(matched){
 			        	SftpATTRS attr = chSftp.stat(fileName);
 //			            long fileSize = attr.getSize();
-			            // Í¬²½µÄ²É¼¯
+			            // åŒæ­¥çš„é‡‡é›†
 			            chSftp.get(fileName, localFilePath+fileName);
-//			            // Òì²½µÄ²É¼¯£¬´ø½ø¶ÈÌõ
+//			            // å¼‚æ­¥çš„é‡‡é›†ï¼Œå¸¦è¿›åº¦æ¡
 //			            SFtpFileProgressMonitor sfpm = new SFtpFileProgressMonitor(fileSize);
 //			        	chSftp.get(fileName, localFilePath+fileName, sfpm);
-//			        	// ÂÖÑ¯Ö±µ½²É¼¯Íê³É
+//			        	// è½®è¯¢ç›´åˆ°é‡‡é›†å®Œæˆ
 //			        	while(!sfpm.isEnd()){
 //			        		Thread.sleep(500);
 //			        	}
-                		System.out.println("²É¼¯Ô¶³Ì·şÎñÆ÷ÎÄ¼ş["+fileName+"]Íê³É.");
-			        	// ³É¹¦ÏÂÔØÎÄ¼ş£¬¾ÍÒÆ³ıÔ¶³Ì·şÎñÆ÷ÉÏµÄÎÄ¼ş
+                		System.out.println("é‡‡é›†è¿œç¨‹æœåŠ¡å™¨æ–‡ä»¶["+fileName+"]å®Œæˆ.");
+			        	// æˆåŠŸä¸‹è½½æ–‡ä»¶ï¼Œå°±ç§»é™¤è¿œç¨‹æœåŠ¡å™¨ä¸Šçš„æ–‡ä»¶
                 		break;
 			        }
 	        	}	        	
 			}
 		}catch(Exception e){
-			System.out.println("%%%%%SFTP²É¼¯Ô¶³Ì·şÎñÆ÷£º"+remoteFilePath+"µÄÎÄ¼şÊ±³ö´í£¡£¡");
+			System.out.println("%%%%%SFTPé‡‡é›†è¿œç¨‹æœåŠ¡å™¨ï¼š"+remoteFilePath+"çš„æ–‡ä»¶æ—¶å‡ºé”™ï¼ï¼");
 		}
 	}
 
 	/**
-	 * ¹Ø±ÕSFTPÍ¨µÀÁ¬½ÓºÍ»á»°Á¬½Ó
+	 * å…³é—­SFTPé€šé“è¿æ¥å’Œä¼šè¯è¿æ¥
 	 */
 	public void closeSftpConnection() {
 		try {
@@ -121,15 +121,15 @@ public class SFtpUtils {
 			}
 			System.out.println("SFTP close.");
 		} catch (Exception e) {
-			System.out.println("%%%%%¹Ø±ÕSFTPÁ¬½Ó³ö´í£¡£¡£¡");
+			System.out.println("%%%%%å…³é—­SFTPè¿æ¥å‡ºé”™ï¼ï¼ï¼");
 		}
 	}
 	
 	/**
-	 * Ê¹ÓÃ´øÓĞ½ø¶ÈÌõµÄ¼à¿Ø½øĞĞSFTPÉÏ´«
-	 * @param chSftp SFTPÍ¨µÀ
-	 * @param local_file ±¾µØÎÄ¼ş
-	 * @param remote_file Ô¶³ÌÎÄ¼ş
+	 * ä½¿ç”¨å¸¦æœ‰è¿›åº¦æ¡çš„ç›‘æ§è¿›è¡ŒSFTPä¸Šä¼ 
+	 * @param chSftp SFTPé€šé“
+	 * @param local_file æœ¬åœ°æ–‡ä»¶
+	 * @param remote_file è¿œç¨‹æ–‡ä»¶
 	 * */
 	public void upload(ChannelSftp chSftp, String local_file, String remote_file){
 		if(chSftp!=null && chSftp.isConnected()){
@@ -139,13 +139,13 @@ public class SFtpUtils {
 	        try {
 	        	SFtpFileProgressMonitor sfpm = new SFtpFileProgressMonitor(fileSize);
 				chSftp.put(local_file, remote_file, sfpm, ChannelSftp.OVERWRITE);
-	        	// ÂÖÑ¯Ö±µ½²É¼¯Íê³É
+	        	// è½®è¯¢ç›´åˆ°é‡‡é›†å®Œæˆ
 	        	while(!sfpm.isEnd()){
 	        		Thread.sleep(500);
 	        	}
 		        System.out.println("SFTP upload end . [local_file]"+local_file+"[remote_file]"+remote_file);
 			} catch (Exception e) {
-				System.out.println("%%%%%ChannelSftp.put ERROR(SFTPÉÏ´«ÎÄ¼şÊ§°Ü)£¡£¡£¡");
+				System.out.println("%%%%%ChannelSftp.put ERROR(SFTPä¸Šä¼ æ–‡ä»¶å¤±è´¥)ï¼ï¼ï¼");
 			}
 		}
 	}
@@ -154,18 +154,18 @@ public class SFtpUtils {
 //		InitConfFile.init("H:/Work/WorkSpace/luna/edc-bigdata-DSP-BOX-Encryption/src/main/resources/conf/filedcfg.xml");
 //		SFtpUtils s = new SFtpUtils();
 //		ChannelSftp chSftp = s.getChannel("hadoop", "10.1.8.1", 22, "hadoopA1!");
-//        String local_file = "d:/FJBASS-´úÂë¼ì²é±í(Exadata).xls"; // ±¾µØÎÄ¼şÃû
-//        String remote_file = "/home/hadoop/data/DSP-BOX-DATA/FJBASS-´úÂë¼ì²é±í(Exadata).tmp"; // Ä¿±êÎÄ¼şÃû
-//        // ÉÏ´«ÎÄ¼ş
+//        String local_file = "d:/FJBASS-ä»£ç æ£€æŸ¥è¡¨(Exadata).xls"; // æœ¬åœ°æ–‡ä»¶å
+//        String remote_file = "/home/hadoop/data/DSP-BOX-DATA/FJBASS-ä»£ç æ£€æŸ¥è¡¨(Exadata).tmp"; // ç›®æ ‡æ–‡ä»¶å
+//        // ä¸Šä¼ æ–‡ä»¶
 //        s.upload(chSftp, local_file, remote_file);
 //        try {
-//        	// ĞŞ¸ÄÃû³Æ
-//			chSftp.rename("/home/hadoop/data/DSP-BOX-DATA/FJBASS-´úÂë¼ì²é±í(Exadata).tmp"
-//					,"/home/hadoop/data/DSP-BOX-DATA/FJBASS-´úÂë¼ì²é±í(Exadata).xls");
+//        	// ä¿®æ”¹åç§°
+//			chSftp.rename("/home/hadoop/data/DSP-BOX-DATA/FJBASS-ä»£ç æ£€æŸ¥è¡¨(Exadata).tmp"
+//					,"/home/hadoop/data/DSP-BOX-DATA/FJBASS-ä»£ç æ£€æŸ¥è¡¨(Exadata).xls");
 //		} catch (SftpException e) {
 //			e.printStackTrace();
 //		}
-////        s.dowload(chSftp, "d:/Work/ETL/´óÊı¾İºĞ×Ó/DSP-BOX/data/", "/home/hadoop/data/DSP-BOX-DATA/");
+////        s.dowload(chSftp, "d:/Work/ETL/å¤§æ•°æ®ç›’å­/DSP-BOX/data/", "/home/hadoop/data/DSP-BOX-DATA/");
 //        s.closeSftpConnection();
 //	}
 }

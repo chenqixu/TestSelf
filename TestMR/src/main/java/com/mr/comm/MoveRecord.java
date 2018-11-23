@@ -23,7 +23,7 @@ public class MoveRecord {
 	private String seu_type;
 //	   is_exception 
 	private String is_exception;
-//	数据类型，用来标志是MC还是LTE
+//	鏁版嵁绫诲瀷锛岀敤鏉ユ爣蹇楁槸MC杩樻槸LTE
 	private String dataType;
 	
 	public String getDataType() {

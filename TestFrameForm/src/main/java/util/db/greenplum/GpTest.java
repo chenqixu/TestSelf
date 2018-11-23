@@ -16,7 +16,7 @@ public class GpTest {
 	private String url = "jdbc:postgresql://10.1.4.88:5432/bigdatagp";
 	
 	/**
-	 * Á¬½ÓÊı¾İ¿â
+	 * è¿æ¥æ•°æ®åº“
 	 * */
 	private boolean connectionDb(){
 		boolean flag = false;
@@ -34,7 +34,7 @@ public class GpTest {
 	}
 	
 	/**
-	 * ²éÑ¯Êı¾İ¿â
+	 * æŸ¥è¯¢æ•°æ®åº“
 	 * */
 	private List<String> qryDb(String sql){
 //		StringBuffer resultsb = new StringBuffer("");
@@ -62,7 +62,7 @@ public class GpTest {
 	}
 	
 	/**
-	 * ²éÑ¯½áÊøºóÖ´ĞĞ²Ù×÷
+	 * æŸ¥è¯¢ç»“æŸåæ‰§è¡Œæ“ä½œ
 	 */
 	private void closeDb(Statement st, Connection conn, ResultSet rs){
 		try {
@@ -95,15 +95,15 @@ public class GpTest {
 	}
 	
 	/**
-	 * ²éÑ¯Êı¾İ¿â
+	 * æŸ¥è¯¢æ•°æ®åº“
 	 * */
 	public void qry(String sql){
 		boolean is_coonection = connectionDb();
-		if(is_coonection){//Á¬½Ó³É¹¦
-			List<String> result = qryDb(sql);//²éÑ¯
+		if(is_coonection){//è¿æ¥æˆåŠŸ
+			List<String> result = qryDb(sql);//æŸ¥è¯¢
 			if(result!=null&&result.size()>0){
 			}
-			closeDb(st, db, rs);//¹Ø±ÕÁ¬½Ó
+			closeDb(st, db, rs);//å…³é—­è¿æ¥
 		}
 	}
 	

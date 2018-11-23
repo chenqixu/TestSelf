@@ -11,18 +11,18 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 public class InitCollectorFile {
-	// ÈÕÖ¾¼ÇÂ¼Æ÷
+	// æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(InitCollectorFile.class);
-	// ÎÄ¼ş²É¼¯µÄÏß³ÌÁĞ±í
+	// æ–‡ä»¶é‡‡é›†çš„çº¿ç¨‹åˆ—è¡¨
 	public static List<Thread> TestThreadList = null;
-	// ´æ·Å¶ÓÁĞµÄMap£¬²»Í¬µÄÄ¿Â¼¶ÔÓ¦²»Í¬µÄ¶ÓÁĞ
+	// å­˜æ”¾é˜Ÿåˆ—çš„Mapï¼Œä¸åŒçš„ç›®å½•å¯¹åº”ä¸åŒçš„é˜Ÿåˆ—
 	public static Map<String,Queue<String>> fileNameQueueMap;
-	// ÍË³öÎÄ¼ş
+	// é€€å‡ºæ–‡ä»¶
 	public static String exitFile = "";
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	public static void initDataCollector(String conf, String exit){
-		System.out.println("¼ÓÔØlog4jÅäÖÃÎÄ¼ş:"+conf);
-		// ¼ÓÔØlog4jÅäÖÃÎÄ¼ş
+		System.out.println("åŠ è½½log4jé…ç½®æ–‡ä»¶:"+conf);
+		// åŠ è½½log4jé…ç½®æ–‡ä»¶
 		PropertyConfigurator.configure(conf);
 		logger.info("initDataCollector");
 		fileNameQueueMap = new ConcurrentHashMap<String, Queue<String>>();
@@ -31,13 +31,13 @@ public class InitCollectorFile {
 	}
 	
 	/**
-	 * ¼ì²âÊÇ·ñĞèÒªÍË³ö
+	 * æ£€æµ‹æ˜¯å¦éœ€è¦é€€å‡º
 	 * */
 	public static boolean exit(){
 		boolean flag = false;
-		// ÊµÀı»¯ÍË³ö¼ì²âÎÄ¼ş
+		// å®ä¾‹åŒ–é€€å‡ºæ£€æµ‹æ–‡ä»¶
 		File f = new File(InitCollectorFile.exitFile);
-		// Èç¹ûÍË³öÎÄ¼ş´æÔÚ£¬ÔòÍË³ö
+		// å¦‚æœé€€å‡ºæ–‡ä»¶å­˜åœ¨ï¼Œåˆ™é€€å‡º
 		if (f.exists()) {
 			flag = true;
 		}

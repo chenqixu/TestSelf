@@ -22,7 +22,7 @@ public class SearchMapper extends TableMapper<ImmutableBytesWritable, Text> {
 
 	private Text word = new Text();
 
-	String[] strConditionStrings = new String[] { "", "", "" }/* { "ÐÂC87310", "10", "2" } */;
+	String[] strConditionStrings = new String[] { "", "", "" }/* { "æ–°C87310", "10", "2" } */;
 
 	/* 
 	 * private void init(Configuration conf) throws IOException, 
@@ -49,11 +49,11 @@ public class SearchMapper extends TableMapper<ImmutableBytesWritable, Text> {
 
 		/**/
 		for (int i = 0; i < 1; i++) {
-			// /ÔÚ´ËmapÀï½øÐÐfilterµÄ¹¦ÄÜ  
+			// /åœ¨æ­¤mapé‡Œè¿›è¡Œfilterçš„åŠŸèƒ½  
 			tempString = Text.decode(value.getValue(FAMILY_NAME,
 					QUALIFIER_NAME[i]));
-			if (tempString.equals(/* strConditionStrings[i] */"ÐÂC87310")) {
-				LOG.info("ÐÂC87310. conf: " + strConditionStrings[0]);
+			if (tempString.equals(/* strConditionStrings[i] */"æ–°C87310")) {
+				LOG.info("æ–°C87310. conf: " + strConditionStrings[0]);
 				if (tempString.equals(strConditionStrings[i])) {
 					string = string + tempString + " ";
 				} else {

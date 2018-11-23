@@ -8,12 +8,11 @@ import com.cqx.process.LogInfoFactory;
 import com.newland.bi.bigdata.bean.ExcelSheetList;
 
 public class LoopholeRectificationClient {
-	private LogInfoFactory logger = LogInfoFactory.getInstance();
+	private LogInfoFactory logger = LogInfoFactory.getInstance(LoopholeRectificationClient.class);
 	private List<ExcelSheetList> list = null;
 	private ExcelUtils eu = new ExcelUtils();
 	
-	public LoopholeRectificationClient(){	
-		logger.setNeedTime(false);
+	public LoopholeRectificationClient(){
 	}
 	
 	public void run(String path, String sheetName){

@@ -8,49 +8,49 @@ import java.util.Date;
 import java.util.List;
 
 public class NetLogClientBean {
-	private String RespCode = "-1";//0:³É¹¦;-1:Ê§°Ü
-	private String RespDesc = "Ê§°Ü:Ã»ÓĞ²éÑ¯";//codeÃèÊö
-	private String totalCount = "0";//×Ü¼ÇÂ¼Êı
-	private List DetailList = null;//ÏêÏ¸ÁĞ±í
-	private List GatherList = null;//»ã×ÜÁĞ±í
-	private List<List<String>> DealDetailList = null;//´¦Àí¹ıµÄÏêÏ¸ÁĞ±í
-	private List<String> DealGatherList = null;//´¦Àí¹ıµÄ»ã×ÜÁĞ±í
+	private String RespCode = "-1";//0:æˆåŠŸ;-1:å¤±è´¥
+	private String RespDesc = "å¤±è´¥:æ²¡æœ‰æŸ¥è¯¢";//codeæè¿°
+	private String totalCount = "0";//æ€»è®°å½•æ•°
+	private List DetailList = null;//è¯¦ç»†åˆ—è¡¨
+	private List GatherList = null;//æ±‡æ€»åˆ—è¡¨
+	private List<List<String>> DealDetailList = null;//å¤„ç†è¿‡çš„è¯¦ç»†åˆ—è¡¨
+	private List<String> DealGatherList = null;//å¤„ç†è¿‡çš„æ±‡æ€»åˆ—è¡¨
 	
 	public List getDetailList() {
 		return DetailList;
 	}
 	public void setDetailList(List detailList) {
 		DetailList = detailList;
-		//´¦Àí
+		//å¤„ç†
 		if(detailList!=null && detailList.size()>0){
 			DealDetailList = new ArrayList<List<String>>();
 			for(int jk=0;jk<detailList.size();jk++){
-				String ngdata = detailList.get(jk).toString();//ÏêÏ¸ÄÚÈİ
-				if(ngdata.endsWith(",")){//Èç¹ûÊÇÒÔ¶ººÅ½áÎ²,ËµÃ÷ Ó¦ÓÃÃû³ÆÃ»ÓĞÊı¾İ
-					ngdata += " ";//²¹¸ö¿Õ¸ñ
+				String ngdata = detailList.get(jk).toString();//è¯¦ç»†å†…å®¹
+				if(ngdata.endsWith(",")){//å¦‚æœæ˜¯ä»¥é€—å·ç»“å°¾,è¯´æ˜ åº”ç”¨åç§°æ²¡æœ‰æ•°æ®
+					ngdata += " ";//è¡¥ä¸ªç©ºæ ¼
 				}
 				//System.out.println("jk:"+jk+"ngdata:"+ngdata);
-				String ngdataArray[] = ngdata.split(",");//ÓÃ¶ººÅ·Ö¸î
+				String ngdataArray[] = ngdata.split(",");//ç”¨é€—å·åˆ†å‰²
 				List<String> list1 = new ArrayList<String>();
-				if(ngdataArray.length==11){//×Ü¹²11¸ö×Ö¶Î,Èç¹ûÃ»ÓĞ¾ÍÊÇ´íÎóÊı¾İ,²»ÄÜÕ¹ÏÖ
-					list1.add(ngdataArray[0]);//ÊÖ»úºÅÂë
-					list1.add(ngdataArray[1]);//ÖÕ¶ËĞÍºÅ
-					list1.add(ngdataArray[3]);//ÖÕ¶ËÀàĞÍ
+				if(ngdataArray.length==11){//æ€»å…±11ä¸ªå­—æ®µ,å¦‚æœæ²¡æœ‰å°±æ˜¯é”™è¯¯æ•°æ®,ä¸èƒ½å±•ç°
+					list1.add(ngdataArray[0]);//æ‰‹æœºå·ç 
+					list1.add(ngdataArray[1]);//ç»ˆç«¯å‹å·
+					list1.add(ngdataArray[3]);//ç»ˆç«¯ç±»å‹
 					list1.add(ngdataArray[2]);//APN
-					list1.add(ngdataArray[9]);//ÍøÂçÀàĞÍ
-					list1.add(ngdataArray[4]);//¿ªÊ¼Ê±¼ä
-					list1.add(ngdataArray[5]);//½áÊøÊ±¼ä
-					list1.add(ngdataArray[6]);//ÉÏĞĞÁ÷Á¿(K)
-					list1.add(ngdataArray[7]);//ÏÂĞĞÁ÷Á¿(K)
-					list1.add(ngdataArray[8]);//·ÃÎÊµØÖ·
-					list1.add(ngdataArray[10]);//Ó¦ÓÃÃû³Æ
+					list1.add(ngdataArray[9]);//ç½‘ç»œç±»å‹
+					list1.add(ngdataArray[4]);//å¼€å§‹æ—¶é—´
+					list1.add(ngdataArray[5]);//ç»“æŸæ—¶é—´
+					list1.add(ngdataArray[6]);//ä¸Šè¡Œæµé‡(K)
+					list1.add(ngdataArray[7]);//ä¸‹è¡Œæµé‡(K)
+					list1.add(ngdataArray[8]);//è®¿é—®åœ°å€
+					list1.add(ngdataArray[10]);//åº”ç”¨åç§°
 					//System.out.println("jk:"+jk+"list1:"+list1);
 					DealDetailList.add(list1);
 				}
-				//Ò³Ãæ:ÊÖ»úºÅÂë,ÖÕ¶ËĞÍºÅ,ÖÕ¶ËÀàĞÍ,APN,ÍøÂçÀàĞÍ,¿ªÊ¼Ê±¼ä,½áÊøÊ±¼ä,ÉÏĞĞÁ÷Á¿(K),ÏÂĞĞÁ÷Á¿(K),·ÃÎÊµØÖ·,Ó¦ÓÃÃû³Æ
-				//Êı¾İ·Ö¸î:ºÅÂë,ÖÕ¶ËĞÍºÅ,apn,ÖÕ¶ËÀàĞÍ,¿ªÊ¼Ê±¼ä,½áÊøÊ±¼ä,ÉÏĞĞÁ÷Á¿,ÏÂĞĞÁ÷Á¿,µØÖ·,2g/3g,Ó¦ÓÃÃû³Æ
+				//é¡µé¢:æ‰‹æœºå·ç ,ç»ˆç«¯å‹å·,ç»ˆç«¯ç±»å‹,APN,ç½‘ç»œç±»å‹,å¼€å§‹æ—¶é—´,ç»“æŸæ—¶é—´,ä¸Šè¡Œæµé‡(K),ä¸‹è¡Œæµé‡(K),è®¿é—®åœ°å€,åº”ç”¨åç§°
+				//æ•°æ®åˆ†å‰²:å·ç ,ç»ˆç«¯å‹å·,apn,ç»ˆç«¯ç±»å‹,å¼€å§‹æ—¶é—´,ç»“æŸæ—¶é—´,ä¸Šè¡Œæµé‡,ä¸‹è¡Œæµé‡,åœ°å€,2g/3g,åº”ç”¨åç§°
 				//hbase:<content>13616989826,A278t,CMNET,,2013-12-16 18:53:56.966,2013-12-16 18:53:57.325,111,139,,1,DNS</content>
-				//greenplum:<content>13509323824,MI2012052,CMWAP,Î´Öª,2013-10-20 16:19:00,2013-10-20 16:19:00,659,374,http://mmsc.monternet.com,2G,²ÊĞÅ·¢ËÍ</content>
+				//greenplum:<content>13509323824,MI2012052,CMWAP,æœªçŸ¥,2013-10-20 16:19:00,2013-10-20 16:19:00,659,374,http://mmsc.monternet.com,2G,å½©ä¿¡å‘é€</content>
 			}
 		}
 	}
@@ -59,21 +59,21 @@ public class NetLogClientBean {
 	}
 	public void setGatherList(List gatherList) {
 		GatherList = gatherList;
-		//´¦Àí
+		//å¤„ç†
 		if(gatherList!=null && gatherList.size()==2){
 			DealGatherList = new ArrayList<String>();
 			String[] cmnet = gatherList.get(0).toString().split(",");
 			String[] cmwap = gatherList.get(1).toString().split(",");			
 			BigDecimal cmnetbyte = new BigDecimal(cmnet[1]);
 			BigDecimal cmwapbyte = new BigDecimal(cmwap[1]);
-			DealGatherList.add(cmnetbyte.add(cmwapbyte).setScale(0, BigDecimal.ROUND_FLOOR).toString());//×ÜÁ÷Á¿(K)
-			DealGatherList.add(cmnetbyte.setScale(0, BigDecimal.ROUND_FLOOR).toString());//cmnetÁ÷Á¿(K)gpÓĞ3Î»Ğ¡Êı,ĞèÒªÈ¡Õû;hbase²»ÓÃ´¦Àí
-			DealGatherList.add(cmwapbyte.setScale(0, BigDecimal.ROUND_FLOOR).toString());//cmwapÁ÷Á¿(K)gpÓĞ3Î»Ğ¡Êı,ĞèÒªÈ¡Õû;hbase²»ÓÃ´¦Àí
+			DealGatherList.add(cmnetbyte.add(cmwapbyte).setScale(0, BigDecimal.ROUND_FLOOR).toString());//æ€»æµé‡(K)
+			DealGatherList.add(cmnetbyte.setScale(0, BigDecimal.ROUND_FLOOR).toString());//cmnetæµé‡(K)gpæœ‰3ä½å°æ•°,éœ€è¦å–æ•´;hbaseä¸ç”¨å¤„ç†
+			DealGatherList.add(cmwapbyte.setScale(0, BigDecimal.ROUND_FLOOR).toString());//cmwapæµé‡(K)gpæœ‰3ä½å°æ•°,éœ€è¦å–æ•´;hbaseä¸ç”¨å¤„ç†
 			BigDecimal cmnetdelaytime = new BigDecimal(cmnet[3]);
 			BigDecimal cmwapdelaytime = new BigDecimal(cmwap[3]);
-			DealGatherList.add(cmnetdelaytime.add(cmwapdelaytime).toString());//×ÜÊ±³¤(Ãë)3Î»Ğ¡Êı
-			DealGatherList.add(cmnetdelaytime.toString());//cmnetÊ±³¤(Ãë)3Î»Ğ¡Êı
-			DealGatherList.add(cmwapdelaytime.toString());//cmwapÊ±³¤(Ãë)3Î»Ğ¡Êı			
+			DealGatherList.add(cmnetdelaytime.add(cmwapdelaytime).toString());//æ€»æ—¶é•¿(ç§’)3ä½å°æ•°
+			DealGatherList.add(cmnetdelaytime.toString());//cmnetæ—¶é•¿(ç§’)3ä½å°æ•°
+			DealGatherList.add(cmwapdelaytime.toString());//cmwapæ—¶é•¿(ç§’)3ä½å°æ•°			
 		}
 	}
 	public String getRespCode() {
@@ -105,7 +105,7 @@ public class NetLogClientBean {
 	}
 	
 	/**
-	 * ¸ù¾İasciiÂëÅĞ¶ÏÊÇ·ñÊÇÊı×Ö,ÊÇÊı×Ö true,²»ÊÇÊı×Ö false
+	 * æ ¹æ®asciiç åˆ¤æ–­æ˜¯å¦æ˜¯æ•°å­—,æ˜¯æ•°å­— true,ä¸æ˜¯æ•°å­— false
 	 * */
 	public boolean isNumeric(String strs) {
 		String str = strs;
@@ -119,7 +119,7 @@ public class NetLogClientBean {
 	}
 	
     /**
-     * ½«ÈÕÆÚ×Ö·û´®°´Ö¸¶¨ÈÕÆÚ¸ñÊ½³ÉĞÂ×Ö·û´®
+     * å°†æ—¥æœŸå­—ç¬¦ä¸²æŒ‰æŒ‡å®šæ—¥æœŸæ ¼å¼æˆæ–°å­—ç¬¦ä¸²
      * */
     public String formatDateString(String date, String origFormat, String destFormat){
     	SimpleDateFormat sf1 = new SimpleDateFormat(origFormat);

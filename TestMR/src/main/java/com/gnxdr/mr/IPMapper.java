@@ -19,15 +19,15 @@ import com.gnxdr.utils.MRUtils;
 
 public class IPMapper extends Mapper<LongWritable, Text, Text, CombineEntity>{
 	
-	private Configuration conf;//ÅäÖÃ
-	private String[] columnNames = null;//ÊäÈëÎÄ¼şµÄÁĞÃû
-	private String mapIpField = "";//Êä³öÎÄ¼şµÄÁĞÃû
-	private Map<String, String> entities = null;//ÁĞÃû£¬ÄÚÈİ
-	private CombineEntity combineEntity = new CombineEntity();//´æ·Å¾ßÌåÖµµÄ¶ÔÏó
-	private Text flag = new Text();//map±êÊ¶
-	private Text joinKey = new Text();//¹ØÁª×Ö¶ÎµÄÖµ
-	private Text content = new Text();//Êä³öµÄÖµ
-	private Counter ipMapperErrorCounter;//´íÎó¼ÆÊıÆ÷,±¾µØ±äÁ¿
+	private Configuration conf;//é…ç½®
+	private String[] columnNames = null;//è¾“å…¥æ–‡ä»¶çš„åˆ—å
+	private String mapIpField = "";//è¾“å‡ºæ–‡ä»¶çš„åˆ—å
+	private Map<String, String> entities = null;//åˆ—åï¼Œå†…å®¹
+	private CombineEntity combineEntity = new CombineEntity();//å­˜æ”¾å…·ä½“å€¼çš„å¯¹è±¡
+	private Text flag = new Text();//mapæ ‡è¯†
+	private Text joinKey = new Text();//å…³è”å­—æ®µçš„å€¼
+	private Text content = new Text();//è¾“å‡ºçš„å€¼
+	private Counter ipMapperErrorCounter;//é”™è¯¯è®¡æ•°å™¨,æœ¬åœ°å˜é‡
 	
 	@SuppressWarnings("rawtypes")
 	private MultipleOutputs mos;
@@ -37,20 +37,20 @@ public class IPMapper extends Mapper<LongWritable, Text, Text, CombineEntity>{
 	protected void setup(org.apache.hadoop.mapreduce.Mapper.Context context)
 			throws IOException, InterruptedException {
 		
-		conf = context.getConfiguration();//»ñµÃÅäÖÃÎÄ¼şÄÚÈİ
-		//counterÖ»ÊÇÒ»¸ö¼ÆÊıÆ÷,contextÊÇÈ«¾Ö±äÁ¿(Ïß³Ì°²È«),¼ÆÊıÆ÷ĞèÒªÃ¶¾Ù´æ·Å
+		conf = context.getConfiguration();//è·å¾—é…ç½®æ–‡ä»¶å†…å®¹
+		//counteråªæ˜¯ä¸€ä¸ªè®¡æ•°å™¨,contextæ˜¯å…¨å±€å˜é‡(çº¿ç¨‹å®‰å…¨),è®¡æ•°å™¨éœ€è¦æšä¸¾å­˜æ”¾
 		ipMapperErrorCounter = context.getCounter(COUNTER_ENUM.ipMapperErrorCounterEnum);
 		//Creates and initializes multiple outputs support, it should be instantiated in the Mapper/Reducer setup method.
-		//¶àÎÄ¼şÊä³ö
+		//å¤šæ–‡ä»¶è¾“å‡º
 		mos = new MultipleOutputs(context);
-		//¶ÁÈ¡gpfs_config.xmlÅäÖÃÎÄ¼şÖĞµÄConstants.GN_XDR_IP_FIELDÄÚÈİ,ÓÃConstants.COMMA_SEPARATOR½øĞĞ·Ö¸î
+		//è¯»å–gpfs_config.xmlé…ç½®æ–‡ä»¶ä¸­çš„Constants.GN_XDR_IP_FIELDå†…å®¹,ç”¨Constants.COMMA_SEPARATORè¿›è¡Œåˆ†å‰²
 		columnNames = conf.get(Constants.GN_XDR_IP_FIELD).split(Constants.COMMA_SEPARATOR, -1);
-		//¶ÁÈ¡gpfs_config.xmlÅäÖÃÎÄ¼şÖĞµÄ ipÊä³ö×Ö¶Î,×ª³É´óĞ´
+		//è¯»å–gpfs_config.xmlé…ç½®æ–‡ä»¶ä¸­çš„ ipè¾“å‡ºå­—æ®µ,è½¬æˆå¤§å†™
 		mapIpField = conf.get(Constants.MAP_IP_TRANSPORT).toUpperCase();
-		//»ñµÃÈÎÎñid
+		//è·å¾—ä»»åŠ¡id
 		TaskID taskId = context.getTaskAttemptID().getTaskID();
 		int partition = taskId.getId();
-		//É¾³ıÖ¸¶¨Â·¾¶µÄÎÄ¼ş ´íÎó¼ÇÂ¼ÎÄ¼şÊä³öÂ·¾¶+ÈÎÎñÔËĞĞÊ±¼ä+/+ÅäÖÃµÄ(JOB_DATAN)+err_ip_+ÈÎÎñid
+		//åˆ é™¤æŒ‡å®šè·¯å¾„çš„æ–‡ä»¶ é”™è¯¯è®°å½•æ–‡ä»¶è¾“å‡ºè·¯å¾„+ä»»åŠ¡è¿è¡Œæ—¶é—´+/+é…ç½®çš„(JOB_DATAN)+err_ip_+ä»»åŠ¡id
 		MRUtils.delPath(FileSystem.get(conf), conf.get(Constants.ERROR_OUTPUT_PATH) + conf.get(Constants.TASK_HOUR) + Constants.SEPARATOR + conf.get(Constants.JOB_DATAN) + Constants.ERR_IP_FILE_FREFIX + partition);
 	}
 	
@@ -59,18 +59,18 @@ public class IPMapper extends Mapper<LongWritable, Text, Text, CombineEntity>{
 	protected void map(LongWritable key, Text value,
 			org.apache.hadoop.mapreduce.Mapper.Context context)
 			throws IOException, InterruptedException {
-		//value ÊäÈë
-		//½«¶ººÅ·Ö¸ô·ûµÄ×Ö·û´®²ğ·Ö½âÎö³Émap
+		//value è¾“å…¥
+		//å°†é€—å·åˆ†éš”ç¬¦çš„å­—ç¬¦ä¸²æ‹†åˆ†è§£ææˆmap
 		entities = MRUtils.transformLineToMap(columnNames, value.toString());
-		//IPÎÄ¼ş×Ö¶ÎÎ´Æ¥ÅäÉÏµÄ¼ÇÂ¼
+		//IPæ–‡ä»¶å­—æ®µæœªåŒ¹é…ä¸Šçš„è®°å½•
 		if(entities == null||entities.size() == 0){
 		//	mos.write(Constants.ERR_OUT_PIPE_NAME, NullWritable.get(), value, conf.get(Constants.FULL_ERROR_OUTPUT_PATH) + Constants.ERR_IP_FILE_FREFIX);
-			ipMapperErrorCounter.increment(1);//´íÎó¼ÆÊıÆ÷+1
+			ipMapperErrorCounter.increment(1);//é”™è¯¯è®¡æ•°å™¨+1
 			return;
 		}
 		
 		String telnum = entities.get("msisdn".toUpperCase());
-    	//Òì³£ºÅÂë¹ıÂË
+    	//å¼‚å¸¸å·ç è¿‡æ»¤
     	if(telnum.length() > 14){
     		//mos.write(Constants.ERR_OUT_PIPE_NAME, NullWritable.get(), value,conf.get(Constants.FULL_ERROR_OUTPUT_PATH) + Constants.ERR_IP_FILE_FREFIX);
     		return;
@@ -83,17 +83,17 @@ public class IPMapper extends Mapper<LongWritable, Text, Text, CombineEntity>{
     		entities.put("msisdn".toUpperCase(),telnum.substring(3));
     	}
 		
-		//map±êÊ¶
+		//mapæ ‡è¯†
     	flag.set(Constants.IP_FILE_FLAG);
-    	//È¡³ö¹ØÁª×Ö¶ÎµÄÖµ
+    	//å–å‡ºå…³è”å­—æ®µçš„å€¼
     	joinKey.set(entities.get(Constants.JOIN_KEY));
-    	//»ñµÃĞèÒªµÄ×Ö¶ÎµÄÖµ£¬ÓÃ°ë½Ç¶ººÅÆ´½ÓÔÚÒ»Æğ
+    	//è·å¾—éœ€è¦çš„å­—æ®µçš„å€¼ï¼Œç”¨åŠè§’é€—å·æ‹¼æ¥åœ¨ä¸€èµ·
     	content.set(MRUtils.getSubmitField(entities,mapIpField));
-    	//´æ·Å¾ßÌåÖµµÄ¶ÔÏó
+    	//å­˜æ”¾å…·ä½“å€¼çš„å¯¹è±¡
     	combineEntity.setFlag(flag);
     	combineEntity.setJoinKey(joinKey);
     	combineEntity.setContent(content);
-    	//Êä³ö£¬°´ip_id·Ö×é
+    	//è¾“å‡ºï¼ŒæŒ‰ip_idåˆ†ç»„
     	context.write(combineEntity.getJoinKey(), combineEntity);
     	//mos.write(Constants.HTTP_OUT_PIPE_NAME, joinKey, content, conf.get(Constants.FILE_OUTPUT_PATH) + conf.get(Constants.TASK_HOUR) + Constants.SEPARATOR + "IP");
 	}
@@ -102,7 +102,7 @@ public class IPMapper extends Mapper<LongWritable, Text, Text, CombineEntity>{
 	@SuppressWarnings("rawtypes")
 	protected void cleanup(org.apache.hadoop.mapreduce.Mapper.Context context)
 			throws IOException, InterruptedException {
-		//¹Ø±Õ¶àÎÄ¼şÊä³ö
+		//å…³é—­å¤šæ–‡ä»¶è¾“å‡º
 		mos.close();
 	}
 }

@@ -2,8 +2,8 @@ package bean;
 
 public class KeepNetLogOSSHttpBean {
 	private String ipsid;//http.ipsid
-	private String starttime;//上线时间
-	private String lasttime;//下线时间
+	private String starttime;//涓婄嚎鏃堕棿
+	private String lasttime;//涓嬬嚎鏃堕棿
 	private String url;//url
 	public String getIpsid() {
 		return ipsid;

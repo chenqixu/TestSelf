@@ -2,7 +2,7 @@ package com.cqx;
 
 public class AigTool {
 	/**
-	 * ¸üĞÂutap×´Ì¬£¬¹ÒÆğ£¬»Ö¸´
+	 * æ›´æ–°utapçŠ¶æ€ï¼ŒæŒ‚èµ·ï¼Œæ¢å¤
 	 * */
 	public void updateUtapState(){
 		

@@ -5,15 +5,15 @@ import com.cqx.kafka.KafkaProducer;
 import com.cqx.kafka.KafkaProperties;
 
 /**
- * kafka²âÊÔÓÃÀý
+ * kafkaæµ‹è¯•ç”¨ä¾‹
  * */
 public class KafkaConsumerProducerDemo {
 	public static void main(String[] args) {
-		// Éú²úÕß
+		// ç”Ÿäº§è€…
 		KafkaProducer producerThread = new KafkaProducer(KafkaProperties.topic);
 		producerThread.start();
 
-		// Ïû·ÑÕß
+		// æ¶ˆè´¹è€…
 		KafkaConsumer consumerThread = new KafkaConsumer(KafkaProperties.topic);
 		consumerThread.start();
 	}

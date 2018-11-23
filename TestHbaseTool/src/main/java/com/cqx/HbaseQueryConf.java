@@ -18,16 +18,16 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
- * ¸ù¾İÅäÖÃÎÄ¼şµÄÌõ¼ş½øĞĞ²éÑ¯
- * ÏÈ²éÑ¯Ë÷Òı±í
- * ÔÙ¸ù¾İË÷Òı±í½á¹û²éÑ¯ÊÂÊµ±í
+ * æ ¹æ®é…ç½®æ–‡ä»¶çš„æ¡ä»¶è¿›è¡ŒæŸ¥è¯¢
+ * å…ˆæŸ¥è¯¢ç´¢å¼•è¡¨
+ * å†æ ¹æ®ç´¢å¼•è¡¨ç»“æœæŸ¥è¯¢äº‹å®è¡¨
  * */
 public class HbaseQueryConf {
-	// ÅäÖÃÎÄ¼ş
+	// é…ç½®æ–‡ä»¶
 	private Configuration conf = null;
-	// ±íµÄÁ¬½Ó³Ø
+	// è¡¨çš„è¿æ¥æ± 
 	private HTablePool tablePool = null;
-	// Pool´óĞ¡
+	// Poolå¤§å°
 	private static final int POOL_SIZE = 5;
 	
 	public HbaseQueryConf(){
@@ -35,10 +35,10 @@ public class HbaseQueryConf {
 	}
 	
 	/**
-	 * ¼ÓÔØÅäÖÃÎÄ¼ş
+	 * åŠ è½½é…ç½®æ–‡ä»¶
 	 * */
 	public void initConf(String confpath){
-		// É¨Ãèconf pathÏÂµÄËùÓĞxmlÅäÖÃÎÄ¼ş
+		// æ‰«æconf pathä¸‹çš„æ‰€æœ‰xmlé…ç½®æ–‡ä»¶
 		File cp = new File(confpath);
 		if(cp.isDirectory()){
 			for(File resource : cp.listFiles()){
@@ -48,13 +48,13 @@ public class HbaseQueryConf {
 				}
 			}
 			System.out.println("[conf]"+conf);
-			// ´´½¨HbaseµÄÁ¬½Ó³Ø
+			// åˆ›å»ºHbaseçš„è¿æ¥æ± 
 			tablePool = new HTablePool(conf, POOL_SIZE);
 		}
 	}
 	
 	/**
-	 * ÊÍ·Å×ÊÔ´
+	 * é‡Šæ”¾èµ„æº
 	 * */
 	private void relase(ResultScanner rs, HTableInterface table, HTablePool tablePool){		
 		try {
@@ -78,7 +78,7 @@ public class HbaseQueryConf {
 	}
 	
 	/**
-	 * ²éÑ¯Ë÷Òı±í
+	 * æŸ¥è¯¢ç´¢å¼•è¡¨
 	 * */
 	public List<Get> queryIndex(){
 		List<Get> resultlist = new ArrayList<Get>();
@@ -94,11 +94,11 @@ public class HbaseQueryConf {
 			System.out.println("[startRowKey]"+startRowKey+" [endRowKey]"+endRowKey);
 			Scan scan = null;
 			scan = new Scan(Bytes.toBytes(startRowKey), Bytes.toBytes(endRowKey));
-			// ÉèÖÃÁĞ´Ø
+			// è®¾ç½®åˆ—ç°‡
 	    	scan.addFamily(Bytes.toBytes("info"));
-	    	// ÉèÖÃ±íÃû
+	    	// è®¾ç½®è¡¨å
 	    	hTable = tablePool.getTable(Bytes.toBytes(tableName));
-	    	// ²éÑ¯HbaseÊı¾İ¿â·µ»Ø½á¹û¼¯
+	    	// æŸ¥è¯¢Hbaseæ•°æ®åº“è¿”å›ç»“æœé›†
 	    	ResultScanner rs = hTable.getScanner(scan);
 	    	for(Result r:rs){
 				for (KeyValue keyValue : r.raw()) {
@@ -106,7 +106,7 @@ public class HbaseQueryConf {
 					System.out.println("[index]"+Bytes.toString(keyValue.getValue()));
 				}
 	    	}
-	    	// ¹Ø±Õ½á¹û¼¯ºÍ±í
+	    	// å…³é—­ç»“æœé›†å’Œè¡¨
 	    	relase(rs, hTable, null);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -115,7 +115,7 @@ public class HbaseQueryConf {
 	}
 	
 	/**
-	 * ¸ù¾İË÷Òı²éÑ¯½á¹û
+	 * æ ¹æ®ç´¢å¼•æŸ¥è¯¢ç»“æœ
 	 * */
 	public void queryFact(List<Get> querylist){
 		HTableInterface hTable = null;
@@ -123,15 +123,15 @@ public class HbaseQueryConf {
 			String tableName = conf.get("QFACTTABLE");
 			String family = conf.get("FAMILY");
 			String qualifier = conf.get("QUALIFIER");
-	    	// ÉèÖÃ±íÃû
+	    	// è®¾ç½®è¡¨å
 	    	hTable = tablePool.getTable(Bytes.toBytes(tableName));
 	    	String rowkey = "";
-	    	// ¸ù¾İrowkey²éÑ¯
+	    	// æ ¹æ®rowkeyæŸ¥è¯¢
 	    	Result[] r = hTable.get(querylist);
 	    	for(Result r1 : r){
 	    		System.out.println("[query result]"+new String(r1.getValue(family.getBytes(),qualifier.getBytes()),"utf-8"));
 	    	}
-	    	// ¹Ø±Õ½á¹û¼¯ºÍ±í
+	    	// å…³é—­ç»“æœé›†å’Œè¡¨
 	    	r = null;
 	    	relase(null, hTable, null);
 		}catch(Exception e){
@@ -142,15 +142,15 @@ public class HbaseQueryConf {
 	public static void main(String[] args) {
 		HbaseQueryConf hqc = new HbaseQueryConf();
 		String local_conf_path = "";
-		// ÅäÖÃÎÄ¼ş
+		// é…ç½®æ–‡ä»¶
 		if(args.length==1){
 			local_conf_path = args[0];
-			// ³õÊ¼»¯ÅäÖÃ
+			// åˆå§‹åŒ–é…ç½®
 			hqc.initConf(local_conf_path);
-			// ¸ù¾İË÷Òı¶ÔÊÂÊµ±í½øĞĞ²éÑ¯
+			// æ ¹æ®ç´¢å¼•å¯¹äº‹å®è¡¨è¿›è¡ŒæŸ¥è¯¢
 			hqc.queryFact(hqc.queryIndex());
 		}else{
-			System.out.println("Ã»ÓĞÅäÖÃÎÄ¼ş£¬ÍË³ö¡£");
+			System.out.println("æ²¡æœ‰é…ç½®æ–‡ä»¶ï¼Œé€€å‡ºã€‚");
 			System.exit(-1);
 		}		
 	}

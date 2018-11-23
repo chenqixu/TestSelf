@@ -8,4 +8,12 @@ public class OtherUtils {
 		String pid = name.split("@")[0]; 
 		return pid;
 	}
+	
+	public static void sleep(long millis){
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }

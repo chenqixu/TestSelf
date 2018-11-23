@@ -28,14 +28,14 @@ public class DBUtilFactory {
 	}
 	
 	/**
-	 * ³õÊ¼»¯
+	 * åˆå§‹åŒ–
 	 * */
 	private void init() {
 		db = new DBUtil("ywxx");
 	}
 	
 	/**
-	 * È¡³öÒ»¸öÁ¬½Ó£¬¼ÓÈëÁĞ±í£¬Èç¹ûÒÑ¾­´æÔÚ£¬Ôò²»ĞÂÔö
+	 * å–å‡ºä¸€ä¸ªè¿æ¥ï¼ŒåŠ å…¥åˆ—è¡¨ï¼Œå¦‚æœå·²ç»å­˜åœ¨ï¼Œåˆ™ä¸æ–°å¢
 	 * */
 	private synchronized Connection addConnListAndReturn() {
 		long begin = new Date().getTime();
@@ -74,7 +74,7 @@ public class DBUtilFactory {
 	}
 	
 	/**
-	 * »ñÈ¡Á¬½Ó
+	 * è·å–è¿æ¥
 	 * */
 	public static Connection getConnetion() {		
 		return getInstance().addConnListAndReturn();
@@ -95,7 +95,7 @@ public class DBUtilFactory {
 	}
 	
 	/**
-	 * ÊÍ·ÅÁ¬½Ó
+	 * é‡Šæ”¾è¿æ¥
 	 * */
 	public static void releaseConn(Connection conn) {
 		getInstance().releaseConnction(conn);
@@ -106,16 +106,16 @@ public class DBUtilFactory {
 	}
 	
 	/**
-	 * ²¢·¢²âÊÔ
+	 * å¹¶å‘æµ‹è¯•
 	 * */
 	public static void connListDeal() {
 		List<Thread> tlist = new ArrayList<Thread>();
-		// Æô¶¯
+		// å¯åŠ¨
 		for(int i=0;i<10;i++){
 			tlist.add(getInstance().new ConnThread());
 			tlist.get(i).start();
 		}
-		// µÈ´ı
+		// ç­‰å¾…
 		for(int i=0;i<10;i++){
 			try {
 				tlist.get(i).join();
@@ -128,15 +128,15 @@ public class DBUtilFactory {
 	
 	class ConnThread extends Thread {
 		public void run() {
-			// »ñÈ¡Á¬½Ó
+			// è·å–è¿æ¥
 			Connection conn = DBUtilFactory.getConnetion();
-			// ÒµÎñ´¦Àí
+			// ä¸šåŠ¡å¤„ç†
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			// ÊÍ·ÅÁ¬½Ó
+			// é‡Šæ”¾è¿æ¥
 			DBUtilFactory.releaseConn(conn);
 		}
 	}

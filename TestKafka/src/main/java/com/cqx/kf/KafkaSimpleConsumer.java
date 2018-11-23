@@ -29,18 +29,18 @@ public class KafkaSimpleConsumer {
 	
 	public static void main(String args[]) {
 		KafkaSimpleConsumer example = new KafkaSimpleConsumer();
-		// ×î´ó¶ÁÈ¡ÏûÏ¢ÊıÁ¿
+		// æœ€å¤§è¯»å–æ¶ˆæ¯æ•°é‡
 		long maxReads = Long.parseLong("3");
-		// Òª¶©ÔÄµÄtopic
+		// è¦è®¢é˜…çš„topic
 		String topic = "mytopic";
-		// Òª²éÕÒµÄ·ÖÇø
+		// è¦æŸ¥æ‰¾çš„åˆ†åŒº
 		int partition = Integer.parseInt("0");
-		// broker½ÚµãµÄip
+		// brokerèŠ‚ç‚¹çš„ip
 		List<String> seeds = new ArrayList<String>();
 		seeds.add("192.168.4.30");
 		seeds.add("192.168.4.31");
 		seeds.add("192.168.4.32");
-		// ¶Ë¿Ú
+		// ç«¯å£
 		int port = Integer.parseInt("9092");
 		try {
 			example.run(maxReads, topic, partition, seeds, port);
@@ -52,7 +52,7 @@ public class KafkaSimpleConsumer {
 	
 	public void run(long a_maxReads, String a_topic, int a_partition,
 			List<String> a_seedBrokers, int a_port) throws Exception {
-		// »ñÈ¡Ö¸¶¨Topic partitionµÄÔªÊı¾İ
+		// è·å–æŒ‡å®šTopic partitionçš„å…ƒæ•°æ®
 		PartitionMetadata metadata = findLeader(a_seedBrokers, a_port, a_topic, a_partition);
 		if (metadata == null) {
 			System.out.println("Can't find metadata for Topic and Partition. Exiting");
@@ -62,19 +62,19 @@ public class KafkaSimpleConsumer {
 			System.out.println("Can't find Leader for Topic and Partition. Exiting");
 			return;
 		}
-		// ÕÒµ½leader broker
+		// æ‰¾åˆ°leader broker
 		String leadBroker = metadata.leader().host();
 		String clientName = "Client_" + a_topic + "_" + a_partition;
-		// Á´½Óleader broker
+		// é“¾æ¥leader broker
 		SimpleConsumer consumer = new SimpleConsumer(leadBroker, a_port, 100000, 64 * 1024, clientName);
-		// »ñÈ¡topicµÄ×îĞÂÆ«ÒÆÁ¿
+		// è·å–topicçš„æœ€æ–°åç§»é‡
 		long readOffset = getLastOffset(consumer, a_topic, a_partition, kafka.api.OffsetRequest.EarliestTime(), clientName);
 		int numErrors = 0;
 		while (a_maxReads > 0) {
 			if (consumer == null) {
 				consumer = new SimpleConsumer(leadBroker, a_port, 100000, 64 * 1024, clientName);
 			}
-			// ±¾ÖÊÉÏ¾ÍÊÇ·¢ËÍFetchRequestÇëÇó
+			// æœ¬è´¨ä¸Šå°±æ˜¯å‘é€FetchRequestè¯·æ±‚
 			FetchRequest req = new FetchRequestBuilder().clientId(clientName).addFetch(a_topic,
 					a_partition, readOffset, 100000).build();
 			FetchResponse fetchResponse = consumer.fetch(req);
@@ -93,7 +93,7 @@ public class KafkaSimpleConsumer {
 				}
 				consumer.close();
 				consumer = null;
-				// ´¦ÀítopicµÄpartitionµÄleader·¢Éú±ä¸üµÄÇé¿ö
+				// å¤„ç†topicçš„partitionçš„leaderå‘ç”Ÿå˜æ›´çš„æƒ…å†µ
 				leadBroker = findNewLeader(leadBroker, a_topic, a_partition, a_port);
 				continue;
 			}
@@ -101,7 +101,7 @@ public class KafkaSimpleConsumer {
 			long numRead = 0;
 			for (MessageAndOffset messageAndOffset : fetchResponse.messageSet(a_topic, a_partition)) {
 				long currentOffset = messageAndOffset.offset();
-				if (currentOffset < readOffset) {// ¹ıÂË¾ÉµÄÊı¾İ
+				if (currentOffset < readOffset) {// è¿‡æ»¤æ—§çš„æ•°æ®
 					System.out.println("Found an old offset: " + currentOffset + " Expecting: " + readOffset);
 					continue;
 				}
@@ -109,7 +109,7 @@ public class KafkaSimpleConsumer {
 				ByteBuffer payload = messageAndOffset.message().payload();
 				byte[] bytes = new byte[payload.limit()];
 				payload.get(bytes);
-				// ´òÓ¡ÏûÏ¢
+				// æ‰“å°æ¶ˆæ¯
 				System.out.println(String.valueOf(messageAndOffset.offset()) + ": " + new String(bytes, "UTF-8"));
 				numRead++;
 				a_maxReads--;
@@ -150,7 +150,7 @@ public class KafkaSimpleConsumer {
      * @param a_port
      * @return String
      * @throws Exception
-     * ÕÒÒ»¸öleader broker£¬ÆäÊµ¾ÍÊÇ·¢ËÍTopicMetadataRequestÇëÇó
+     * æ‰¾ä¸€ä¸ªleader brokerï¼Œå…¶å®å°±æ˜¯å‘é€TopicMetadataRequestè¯·æ±‚
      */
 	private String findNewLeader(String a_oldLeader, String a_topic,
 			int a_partition, int a_port) throws Exception {

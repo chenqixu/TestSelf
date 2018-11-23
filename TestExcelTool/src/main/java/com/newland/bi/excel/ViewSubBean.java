@@ -4,11 +4,11 @@ import java.util.List;
 
 public class ViewSubBean {
 	public static final String EXCEL_SPLIT = "	";
-	private String filename = ""; //×Ö¶ÎÃû
-	private String type = ""; //ÀàĞÍ
-	private String length = ""; //³¤¶È
-	private String default_value = ""; //Ä¬ÈÏÖµ
-	private String desc = ""; //ËµÃ÷
+	private String filename = ""; //å­—æ®µå
+	private String type = ""; //ç±»å‹
+	private String length = ""; //é•¿åº¦
+	private String default_value = ""; //é»˜è®¤å€¼
+	private String desc = ""; //è¯´æ˜
 	public String toString(){
 		return "\""+this.filename+"\""+EXCEL_SPLIT+"\""+this.type+"\""+EXCEL_SPLIT
 				+"\""+this.length+"\""+EXCEL_SPLIT+"\""+this.default_value+"\""+EXCEL_SPLIT+"\""+this.desc+"\"";

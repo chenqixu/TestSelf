@@ -13,21 +13,21 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 public class Utils {
 	
 	/**
-	 * Ôö¼ÓÊäÈëÎÄ¼şµ½job
+	 * å¢åŠ è¾“å…¥æ–‡ä»¶åˆ°job
 	 * */
 	public static void addInputPath(Job job, FileSystem fs, String path,
 			String filter, Class mapper) {
-		// ÊäÈëÂ·¾¶
+		// è¾“å…¥è·¯å¾„
 		Path inputPath = new Path(path);
 		try {
 			if (fs.exists(inputPath)) {
-				// ÁĞ³öÄ¿Â¼ÏÂÎÄ¼şµÄÔªÊı¾İĞÅÏ¢
+				// åˆ—å‡ºç›®å½•ä¸‹æ–‡ä»¶çš„å…ƒæ•°æ®ä¿¡æ¯
 				FileStatus[] fileStatusArr = fs.listStatus(inputPath);
 				for (FileStatus fileStatus : fileStatusArr) {
 					if (fileStatus.getPath().getName().toString().contains(filter)) {
-						System.out.println(">>>>>>ÊäÈëÎÄ¼ş£º"
+						System.out.println(">>>>>>è¾“å…¥æ–‡ä»¶ï¼š"
 								+ fileStatus.getPath().toString());
-						// È¡ÎÄ¼ş×÷ÎªÊäÈë
+						// å–æ–‡ä»¶ä½œä¸ºè¾“å…¥
 						MultipleInputs.addInputPath(job, fileStatus.getPath(),
 								TextInputFormat.class, mapper);
 					}

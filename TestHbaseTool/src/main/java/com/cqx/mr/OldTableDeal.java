@@ -11,26 +11,26 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import com.cqx.HbaseInputBean;
 
 public class OldTableDeal {
-	// ÅäÖÃÎÄ¼ş
+	// é…ç½®æ–‡ä»¶
 	private Configuration conf = null;
-	// ·ÖÇø
+	// åˆ†åŒº
 	private static final int REGION_PARTITION_NUM = 200;
-	// ÓÃÓÚÈ¡Ä£
+	// ç”¨äºå–æ¨¡
 	private Random random = new Random();
-	// ·Ö¸ô·û
+	// åˆ†éš”ç¬¦
 	public final String split_str = ""+((char)((int)01));
 
-	// ³õÊ¼»¯¼°¼ÓÔØÅäÖÃÎÄ¼ş
+	// åˆå§‹åŒ–åŠåŠ è½½é…ç½®æ–‡ä»¶
 	public OldTableDeal(){
 		conf = HBaseConfiguration.create();		
 	}
 	
 	/**
-	 * ¼ÓÔØÅäÖÃÎÄ¼ş
+	 * åŠ è½½é…ç½®æ–‡ä»¶
 	 * */
 	public void initConf(HbaseInputBean hib){
 		String confpath = hib.getConfpath();
-		// É¨Ãèconf pathÏÂµÄËùÓĞxmlÅäÖÃÎÄ¼ş
+		// æ‰«æconf pathä¸‹çš„æ‰€æœ‰xmlé…ç½®æ–‡ä»¶
 		File cp = new File(confpath);
 		if(cp.isDirectory()){
 			for(File resource : cp.listFiles()){

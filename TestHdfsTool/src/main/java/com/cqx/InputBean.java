@@ -1,7 +1,7 @@
 package com.cqx;
 
 public class InputBean {
-	// ÊäÈë²ÎÊı
+	// è¾“å…¥å‚æ•°
 	private String confpath = null;
 	public String getConfpath() {
 		return confpath;

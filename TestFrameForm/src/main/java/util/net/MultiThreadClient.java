@@ -15,7 +15,7 @@ public class MultiThreadClient {
 	}
 
 	public void response() {
-		System.out.println("¿Í»§¶ËÆô¶¯...");
+		System.out.println("å®¢æˆ·ç«¯å¯åŠ¨...");
 		int numTasks = 2;
 		ExecutorService exec = Executors.newCachedThreadPool();
 		for (int i = 0; i < numTasks; i++) {
@@ -24,7 +24,7 @@ public class MultiThreadClient {
 
 	}
 
-	// ¶¨ÒåÒ»¸ö¼òµ¥µÄÈÎÎñ 
+	// å®šä¹‰ä¸€ä¸ªç®€å•çš„ä»»åŠ¡ 
 	private static Runnable createTask(final int taskID) { // ,String sIp,final int iPort 
 		return new Runnable() {
 			private Socket socket = null;
@@ -32,17 +32,17 @@ public class MultiThreadClient {
 			private int port = 8821;
 
 			public void run() {
-				System.out.println("¿Í»§¶Ë ÇëÊäÈë...");
+				System.out.println("å®¢æˆ·ç«¯ è¯·è¾“å…¥...");
 				System.out.println("Task " + taskID + ":start");
 				try {
 					socket = new Socket("localhost", port);
-					// ·¢ËÍ¹Ø±ÕÃüÁî 
+					// å‘é€å…³é—­å‘½ä»¤ 
 					OutputStream socketOut = socket.getOutputStream();
-					System.out.println("try ¿Í»§¶Ë ÇëÊäÈë...");
+					System.out.println("try å®¢æˆ·ç«¯ è¯·è¾“å…¥...");
 					socketOut.write("shutdown\r\n".getBytes());
 					socketOut.flush();
 
-					// ½ÓÊÕ·şÎñÆ÷µÄ·´À¡ 
+					// æ¥æ”¶æœåŠ¡å™¨çš„åé¦ˆ 
 					BufferedReader br = new BufferedReader(
 							new InputStreamReader(socket.getInputStream()));
 					String msg = null;

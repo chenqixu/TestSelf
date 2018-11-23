@@ -2,14 +2,14 @@ package bean;
 
 public class KeepNetLogOSSIpBean {
 	private String sid;//ip.sid
-	private String telnumber;//手机号码
-	private String ggsnip;//用户NAT后公网IP地址
-	private String userip;//用户私网IP地址
-	private String usrsport;//NAT后源端口
-	private String usrdip;//目的IP
-	private String usrdport;//目的端口
-	private String starttime;//上线时间
-	private String lasttime;//下线时间
+	private String telnumber;//鎵嬫満鍙风爜
+	private String ggsnip;//鐢ㄦ埛NAT鍚庡叕缃慖P鍦板潃
+	private String userip;//鐢ㄦ埛绉佺綉IP鍦板潃
+	private String usrsport;//NAT鍚庢簮绔彛
+	private String usrdip;//鐩殑IP
+	private String usrdport;//鐩殑绔彛
+	private String starttime;//涓婄嚎鏃堕棿
+	private String lasttime;//涓嬬嚎鏃堕棿
 	private String apn;//APN
 	private String rattype;//2g/3g
 	public String getApn() {

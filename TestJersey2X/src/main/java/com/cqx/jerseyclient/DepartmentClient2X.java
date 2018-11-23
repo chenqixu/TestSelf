@@ -12,21 +12,21 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 
 /**
- * Client¿Í»§¶Ë£¬2.x·½Ê½
+ * Clientå®¢æˆ·ç«¯ï¼Œ2.xæ–¹å¼
  * */
 public class DepartmentClient2X {
 	public static void main(String[] args) {
-		// ³õÊ¼»¯¿Í»§¶Ë£¬2.x·½Ê½
+		// åˆå§‹åŒ–å®¢æˆ·ç«¯ï¼Œ2.xæ–¹å¼
 		Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
 		WebTarget webTarget = client.target("http://localhost:8082/dept").path("save");		
 		
-		// ·µ»ØÀàĞÍ
+		// è¿”å›ç±»å‹
 //		Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_ATOM_XML);
 		Invocation.Builder invocationBuilder =  webTarget.request(MediaType.APPLICATION_JSON);
-		// ÇëÇóÖµºÍÇëÇóÀàĞÍ
+		// è¯·æ±‚å€¼å’Œè¯·æ±‚ç±»å‹
 		Response response = invocationBuilder.post(Entity.entity("name=newland", MediaType.APPLICATION_FORM_URLENCODED));
 		
-		// ´òÓ¡Êä³ö×´Ì¬ºÍ½á¹û
+		// æ‰“å°è¾“å‡ºçŠ¶æ€å’Œç»“æœ
 		System.out.println(response.getStatus());
 		System.out.println(response.readEntity(String.class));
 	}

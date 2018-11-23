@@ -13,13 +13,31 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cqx.process.LogInfoFactory;
+
 public class ChangeCode {
-	
+
+	private static LogInfoFactory logger = LogInfoFactory.getInstance(ChangeCode.class);
+	/**
+	 * 扫描路径
+	 */
 	private String scan_path = "";
+	/**
+	 * 扫描规则
+	 */
 	private String scan_rule = "";
+	/**
+	 * 读取文件的编码
+	 */
 	protected String read_code = "";
+	/**
+	 * 写入文件的编码
+	 */
 	protected String write_code = "";
-	private boolean isLoop = true; // 是否进入每个文件夹扫描(-r)
+	/**
+	 * 是否进入每个文件夹扫描(-r)
+	 */
+	private boolean isLoop = true;
 	
 	public boolean isLoop() {
 		return isLoop;
@@ -63,48 +81,29 @@ public class ChangeCode {
 	
 	/**
 	 * 扫描过滤出文件列表
-	 * */
-	public List<String> Scan(String scanpath){
-//		System.out.println("[scanpath]"+scanpath);
-		List<String> result = new Vector<String>();
-		File file = null;
-		Pattern pat;
-        Matcher mat;
-        boolean matched = false;
-		try{
-			if(scanpath.trim().length()>0 && scan_rule.trim().length()>0){
-				file = new File(scanpath);
-				if(file.isDirectory()){
-					File[] fl = file.listFiles();
-					for(int i=0;i<fl.length;i++){
-						if(fl[i].isFile()){
-							// 规则
-							pat = Pattern.compile(scan_rule);
-							// 名称
-					        mat = pat.matcher(fl[i].getName());
-					        // 名称是否匹配规则
-					        matched = mat.matches();
-					        if(matched){
-//					        	System.out.println("[matched]"+fl[i].getPath());
-					        	result.add(fl[i].getPath());
-					        }
-						}else if(fl[i].isDirectory() && isLoop){
-							result.addAll(Scan(fl[i].getPath()));
-						}
-					}
-				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		return result;
+	 * @return
+	 */
+	public List<String> scan() {
+		return scan(scan_path, scan_rule);
 	}
 	
 	/**
 	 * 扫描过滤出文件列表
-	 * */
-	public List<String> Scan(String scanpath, String _scan_rule){
-//		System.out.println("[scanpath]"+scanpath+"[_scan_rule]"+_scan_rule);
+	 * @param scanpath
+	 * @return
+	 */
+	public List<String> scan(String scanpath){
+		return scan(scanpath, scan_rule);
+	}
+	
+	/**
+	 * 扫描过滤出文件列表
+	 * @param scanpath
+	 * @param _scan_rule
+	 * @return
+	 */
+	public List<String> scan(String scanpath, String _scan_rule){
+		logger.debug("[scanpath]"+scanpath+"[_scan_rule]"+_scan_rule);
 		List<String> result = new Vector<String>();
 		File file = null;
 		Pattern pat;
@@ -124,47 +123,48 @@ public class ChangeCode {
 					        // 名称是否匹配规则
 					        matched = mat.matches();
 					        if(matched){
-//					        	System.out.println("[matched]"+fl[i].getPath());
+					        	logger.debug("[matched]"+fl[i].getPath());
 					        	result.add(fl[i].getPath());
 					        }
 						}else if(fl[i].isDirectory() && isLoop){
-							result.addAll(Scan(fl[i].getPath(), _scan_rule));
+							result.addAll(scan(fl[i].getPath(), _scan_rule));
 						}
 					}
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+		}
+		// 结果打印
+		for(String _str : result) {
+			logger.debug(_str);
 		}
 		return result;
 	}
-
-	public void Change(){
-		List<String> changelist = Scan(scan_path);
+	
+	public void change(String filepath, String read_code, String write_code) {
 		BufferedReader reader = null;
 		BufferedWriter writer = null;	
 		try{
 			//read and write
-			for(int i=0;i<changelist.size();i++){
-				File readFile = new File(changelist.get(i));
-				File writeFile = new File(changelist.get(i)+"bak");
-				reader = new BufferedReader(new InputStreamReader(
-						new FileInputStream(readFile), read_code));
-				writer = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(writeFile), write_code));
-				String _tmp = null;
-				while((_tmp=reader.readLine())!=null){
-					writer.write(_tmp);
-					writer.write("\r\n");
-				}
-				reader.close();
-				writer.flush();
-				writer.close();
-				if(readFile.exists()){
-					boolean delete = readFile.delete();
-					if(delete){
-						writeFile.renameTo(readFile);
-					}
+			File readFile = new File(filepath);
+			File writeFile = new File(filepath + "bak");
+			reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(readFile), read_code));
+			writer = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(writeFile), write_code));
+			String _tmp = null;
+			while((_tmp=reader.readLine())!=null){
+				writer.write(_tmp);
+				writer.write("\r\n");
+			}
+			reader.close();
+			writer.flush();
+			writer.close();
+			if(readFile.exists()){
+				boolean delete = readFile.delete();
+				if(delete){
+					writeFile.renameTo(readFile);
 				}
 			}
 		}catch(Exception e){
@@ -187,9 +187,21 @@ public class ChangeCode {
 		}
 	}
 	
+	public void change(String filepath){
+		change(filepath, read_code, write_code);
+	}
+
+	public void change(){
+		for(String _filepath : scan(scan_path)){
+			change(_filepath, read_code, write_code);
+		}
+	}
+	
 	/**
 	 * 获得子目录
-	 * */
+	 * @param parentPath
+	 * @return
+	 */
 	public List<String> getEachSubDirectory(String parentPath){
 		File file = null;
 		List<String> sublist = new Vector<String>();
@@ -214,13 +226,47 @@ public class ChangeCode {
 		return sublist;
 	}
 	
+	/**
+	 * 通过路径读取文件内容到List
+	 * @param path
+	 * @return
+	 */
+	protected List<String> read(String path) {
+		File file = null;
+		BufferedReader reader = null;
+		List<String> sublist = new Vector<String>();
+		try{
+			file = new File(path);
+			if(file.isFile()){
+				reader = new BufferedReader(new InputStreamReader(
+						new FileInputStream(file), read_code));
+				String _tmp = null;
+				while((_tmp=reader.readLine())!=null){
+					sublist.add(_tmp);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(reader!=null){
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return sublist;
+	}
+	
 	public static void main(String[] args) {
 		ChangeCode cc = new ChangeCode();
-		cc.setScan_path("H:/Work/WorkSpace/MyEclipse10/edc-bigdata-crawler/edc-bigdata-TXDMsearchCrawler");
+		cc.setScan_path("D:/Document/Workspaces/Git/TestSelf");
 		cc.setScan_rule(".*\\.java");
-		cc.setRead_code("UTF-8");
-		cc.setWrite_code("GBK");
-		cc.Change();
+		cc.setRead_code("GBK");
+		cc.setWrite_code("UTF-8");
+//		cc.change();
+		cc.scan();
 //		cc.getEachSubDirectory("d:/Work/CVS/BI/SSC/BIGDATA2.0/Develop/SourceCode/Code/edc-bigdata/edc-bigdata-crawler");
 //		cc.getEachSubDirectory("d:/Work/CVS/BI/SSC/BIGDATA2.0/Develop/SourceCode/Code/edc-bigdata/edc-bigdata-dataCollect");
 //		cc.getEachSubDirectory("d:/Work/CVS/BI/SSC/BIGDATA2.0/Develop/SourceCode/Code/edc-bigdata/edc-bigdata-dataCombine");

@@ -9,17 +9,17 @@ import org.apache.log4j.Logger;
 import com.newland.bi.bigdata.datacollector.config.CollectorConfInfo;
 
 public class TimeOfFileComparator implements Comparator<String>{
-	//ÈÕÖ¾¼ÇÂ¼Æ÷
+	//æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(TimeOfFileComparator.class);
 	/**
 	 * 
-	 * @description:ÖØĞ´±È½ÏÆ÷,ÒÔÎÄ¼şÃûµÄÊ±¼äÅÅĞò£¬
-	 * ÎÄ¼şÃûÊµÀı£ºGnC64_http_dnssession_60_20131218_105700_20131218_105759.csv
+	 * @description:é‡å†™æ¯”è¾ƒå™¨,ä»¥æ–‡ä»¶åçš„æ—¶é—´æ’åºï¼Œ
+	 * æ–‡ä»¶åå®ä¾‹ï¼šGnC64_http_dnssession_60_20131218_105700_20131218_105759.csv
 	 * 						GnC64_http_netsession_60_20131218_105700_20131218_105759.ctl
-	 * 						È¡³öÊ±¼ä´® 20131218_105700 ×÷ÎªÅÅĞò
+	 * 						å–å‡ºæ—¶é—´ä¸² 20131218_105700 ä½œä¸ºæ’åº
 	 * @author:xixg
 	 * @date:2013-11-23
-	 * @param inFileNameMap mapÖĞ´æ·ÅµÄÎÄ¼şÃû
+	 * @param inFileNameMap mapä¸­å­˜æ”¾çš„æ–‡ä»¶å
 	 * @return 
 	 */
 	@Override
@@ -28,16 +28,16 @@ public class TimeOfFileComparator implements Comparator<String>{
 		StringBuffer sbA = new StringBuffer();
 		StringBuffer sbB = new StringBuffer();
 		try {
-			//¶ÔÔ´ÎÄ¼şÃûÒÔ"_"·Ö¸ô£¬È¡³öÊ±¼ä´®
+			//å¯¹æºæ–‡ä»¶åä»¥"_"åˆ†éš”ï¼Œå–å‡ºæ—¶é—´ä¸²
 			String[] fileNameArrayA = fileNameA.split(CollectorConfInfo.splitFileNameForDateTime);
-			//È¡ÎÄ¼şÃûÈÕÆÚ£¬Èç£º20131218
+			//å–æ–‡ä»¶åæ—¥æœŸï¼Œå¦‚ï¼š20131218
 			String fileNameDateA = fileNameArrayA[CollectorConfInfo.dateLocationAtFileName];
-			//½ØÈ¡ĞèÒªµÄÊ±¼ä×Ö·û´®
+			//æˆªå–éœ€è¦çš„æ—¶é—´å­—ç¬¦ä¸²
 			if(fileNameDateA != null && fileNameDateA.length()>= CollectorConfInfo.dateSubStringEnd)
 				fileNameDateA = fileNameDateA.substring(CollectorConfInfo.dateSubStringBegin, CollectorConfInfo.dateSubStringEnd);
-			//È¡ÎÄ¼şÃûĞ¡Ê±Óë·ÖÖÓ£¬Èç£º105600
+			//å–æ–‡ä»¶åå°æ—¶ä¸åˆ†é’Ÿï¼Œå¦‚ï¼š105600
 			String fileNameHourTimeA = fileNameArrayA[CollectorConfInfo.hourLocationAtFileName];
-			//½ØÈ¡ĞèÒªµÄĞ¡Ê±×Ö·û´®
+			//æˆªå–éœ€è¦çš„å°æ—¶å­—ç¬¦ä¸²
 			if(fileNameHourTimeA != null && fileNameHourTimeA.length()>= CollectorConfInfo.hourSubStringEnd)
 				fileNameHourTimeA = fileNameHourTimeA.substring(CollectorConfInfo.hourSubStringBegin, CollectorConfInfo.hourSubStringEnd);
 			sbA.append(fileNameDateA);
@@ -45,16 +45,16 @@ public class TimeOfFileComparator implements Comparator<String>{
 			sbA.append(fileNameHourTimeA);
 			String fileNameATime = sbA.toString();
 			
-			//¶ÔÔ´ÎÄ¼şÃûÒÔ"_"·Ö¸ô£¬È¡³öÊ±¼ä´®
+			//å¯¹æºæ–‡ä»¶åä»¥"_"åˆ†éš”ï¼Œå–å‡ºæ—¶é—´ä¸²
 			String[] fileNameArrayB = fileNameB.split(CollectorConfInfo.splitFileNameForDateTime);
-			//È¡ÎÄ¼şÃûÈÕÆÚ£¬Èç£º20131218
+			//å–æ–‡ä»¶åæ—¥æœŸï¼Œå¦‚ï¼š20131218
 			String fileNameDateB = fileNameArrayB[CollectorConfInfo.dateLocationAtFileName];
-			//½ØÈ¡ĞèÒªµÄÊ±¼ä×Ö·û´®
+			//æˆªå–éœ€è¦çš„æ—¶é—´å­—ç¬¦ä¸²
 			if(fileNameDateB != null && fileNameDateB.length()>= CollectorConfInfo.dateSubStringEnd)
 				fileNameDateB = fileNameDateB.substring(CollectorConfInfo.dateSubStringBegin, CollectorConfInfo.dateSubStringEnd);
-			//È¡ÎÄ¼şÃûĞ¡Ê±Óë·ÖÖÓ£¬Èç£º105600
+			//å–æ–‡ä»¶åå°æ—¶ä¸åˆ†é’Ÿï¼Œå¦‚ï¼š105600
 			String fileNameHourTimeB = fileNameArrayB[CollectorConfInfo.hourLocationAtFileName];
-			//½ØÈ¡ĞèÒªµÄĞ¡Ê±×Ö·û´®
+			//æˆªå–éœ€è¦çš„å°æ—¶å­—ç¬¦ä¸²
 			if(fileNameHourTimeB != null && fileNameHourTimeB.length()>= CollectorConfInfo.hourSubStringEnd)
 				fileNameHourTimeB = fileNameHourTimeB.substring(CollectorConfInfo.hourSubStringBegin, CollectorConfInfo.hourSubStringEnd);
 			sbB.append(fileNameDateB);
@@ -64,7 +64,7 @@ public class TimeOfFileComparator implements Comparator<String>{
 			
 			compareResult = fileNameATime.compareTo(fileNameBTime);
 		} catch (Exception e) {
-			logger.error("%%%%%ÎÄ¼şÃûÊ±¼äµã±È½ÏÆ÷³ö´í£¡£¡£¡",e);
+			logger.error("%%%%%æ–‡ä»¶åæ—¶é—´ç‚¹æ¯”è¾ƒå™¨å‡ºé”™ï¼ï¼ï¼",e);
 		}
 		return compareResult;
 	}

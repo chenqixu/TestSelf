@@ -11,47 +11,47 @@ import com.newland.bi.bigdata.datacollector.common.SftpCollectFileCommon;
 import com.newland.bi.bigdata.datacollector.config.CollectorConfInfo;
 /**
  * 
- * @description:ÎÄ¼ş²É¼¯Ö÷º¯ÊıÀà
+ * @description:æ–‡ä»¶é‡‡é›†ä¸»å‡½æ•°ç±»
  * @author:xixg
  * @date:2014-02-19
  */
 public class DataCollectorHwLteS1MME {
-	//ÈÕÖ¾¼ÇÂ¼Æ÷
+	//æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(DataCollectorHwLteS1MME.class);
 	
 	public static void main(String[] args) {
 		try {
-			//³õÊ¼»¯²Ù×÷
+			//åˆå§‹åŒ–æ“ä½œ
 			InitCollectorFile.initDataCollector();
 			while(true){
-				logger.info("#####²É¼¯³ÌĞò¼´½«¿ªÊ¼µÚ"+InitCollectorFile.currCycleNum+"´ÎÑ­»·É¨ÃèÔ´Êı¾İ¶à¸öÄ¿Â¼£º"+CollectorConfInfo.sourceDataPath);
-				//ÎÄ¼ş²É¼¯µÄÊ±ºò¼ì²âÊÇ·ñÒªÍË³ö
-				//ÊµÀı»¯ÍË³ö¼ì²âÎÄ¼ş
+				logger.info("#####é‡‡é›†ç¨‹åºå³å°†å¼€å§‹ç¬¬"+InitCollectorFile.currCycleNum+"æ¬¡å¾ªç¯æ‰«ææºæ•°æ®å¤šä¸ªç›®å½•ï¼š"+CollectorConfInfo.sourceDataPath);
+				//æ–‡ä»¶é‡‡é›†çš„æ—¶å€™æ£€æµ‹æ˜¯å¦è¦é€€å‡º
+				//å®ä¾‹åŒ–é€€å‡ºæ£€æµ‹æ–‡ä»¶
 				File f = new File(CollectorConstant.EXIT_FILE_FULL_NAME);
-				//¼ì²éÈ«¾Ö±äÁ¿³ÌĞòÍË³ö±êÊ¶ÊÇ·ñÎªÕæ£¬ÈçÎªÕæ£¬Ôò³ÌĞòÍË³ö
+				//æ£€æŸ¥å…¨å±€å˜é‡ç¨‹åºé€€å‡ºæ ‡è¯†æ˜¯å¦ä¸ºçœŸï¼Œå¦‚ä¸ºçœŸï¼Œåˆ™ç¨‹åºé€€å‡º
 				if(InitCollectorFile.ifNeedExitFlag 
-						//ÍË³öÎÄ¼ş´æÔÚ£¬ÔòÖ´ĞĞÍË³ö´¦Àí
+						//é€€å‡ºæ–‡ä»¶å­˜åœ¨ï¼Œåˆ™æ‰§è¡Œé€€å‡ºå¤„ç†
 						||f.exists()){
-					//ÍË³öÎÄ¼ş´æÔÚ,Ö´ĞĞÍË³öÊÂ¼ş
+					//é€€å‡ºæ–‡ä»¶å­˜åœ¨,æ‰§è¡Œé€€å‡ºäº‹ä»¶
 					CollectorFileCommon.exitHandle();
 					if(f.exists())
-						logger.info("#####²É¼¯³ÌĞò½øĞĞµÚ"+InitCollectorFile.currCycleNum+"´ÎÑ­»·É¨ÃèÄ¿Â¼Ê±£¬¼ì²âµ½ÍË³öÎÄ¼ş£º"+CollectorConstant.EXIT_FILE_FULL_NAME+" ´æÔÚ£¬²É¼¯³ÌĞòÍË³ö>>>>>>>>>>>>>>>>");
+						logger.info("#####é‡‡é›†ç¨‹åºè¿›è¡Œç¬¬"+InitCollectorFile.currCycleNum+"æ¬¡å¾ªç¯æ‰«æç›®å½•æ—¶ï¼Œæ£€æµ‹åˆ°é€€å‡ºæ–‡ä»¶ï¼š"+CollectorConstant.EXIT_FILE_FULL_NAME+" å­˜åœ¨ï¼Œé‡‡é›†ç¨‹åºé€€å‡º>>>>>>>>>>>>>>>>");
 					if(InitCollectorFile.ifNeedExitFlag)
-						logger.info("#####²É¼¯³ÌĞò½øĞĞµÚ"+InitCollectorFile.currCycleNum+"´ÎÑ­»·É¨ÃèÄ¿Â¼Ê±£¬È«¾Ö±äÁ¿ÍË³ö±êÖ¾ÎªÕæ£¬²É¼¯³ÌĞòÍË³ö>>>>>>>>>>>>>>>>");
+						logger.info("#####é‡‡é›†ç¨‹åºè¿›è¡Œç¬¬"+InitCollectorFile.currCycleNum+"æ¬¡å¾ªç¯æ‰«æç›®å½•æ—¶ï¼Œå…¨å±€å˜é‡é€€å‡ºæ ‡å¿—ä¸ºçœŸï¼Œé‡‡é›†ç¨‹åºé€€å‡º>>>>>>>>>>>>>>>>");
 					return;
 				}
-				//Èç¹ûÅäÖÃÎÄ¼şÅäÖÃÎªSFTP²É¼¯
+				//å¦‚æœé…ç½®æ–‡ä»¶é…ç½®ä¸ºSFTPé‡‡é›†
 				if(CollectorConfInfo.ifConnectBySftp){
 					SftpCollectFileCommon.sftpCollectDirsFileService();
 					
-				}else{//Ä¬ÈÏÎªFTP²É¼¯
+				}else{//é»˜è®¤ä¸ºFTPé‡‡é›†
 					CollectorFileCommon.CollectorDirsFtpFileService();
 				}
-				//²É¼¯³ÌĞòÉ¨ÃèÄ¿Â¼´ÎÊıÔö¼Ó1
+				//é‡‡é›†ç¨‹åºæ‰«æç›®å½•æ¬¡æ•°å¢åŠ 1
 				InitCollectorFile.currCycleNum++;
-				//Èç¹ûÈ«¾Ö±äÁ¿ÖĞ»¹ÓĞ²É¼¯Ïß³ÌÔÚ¹¤×÷£¬Ôò³ÌĞò½øÈëË¯Ãß¡£
+				//å¦‚æœå…¨å±€å˜é‡ä¸­è¿˜æœ‰é‡‡é›†çº¿ç¨‹åœ¨å·¥ä½œï¼Œåˆ™ç¨‹åºè¿›å…¥ç¡çœ ã€‚
 				while(InitCollectorFile.dataCollectorThreadList.size()>0){
-					//ÇåÀí²»»î¶¯µÄ½©ËÀÏß³Ì
+					//æ¸…ç†ä¸æ´»åŠ¨çš„åƒµæ­»çº¿ç¨‹
 					CollectorFileCommon.clearNoAliveThread(InitCollectorFile.dataCollectorThreadList);
 					Thread.sleep(1000);
 				}

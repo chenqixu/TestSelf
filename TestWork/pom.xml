@@ -26,6 +26,7 @@
 		<!-- <sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version> -->
 		<sparkother.version>2.10</sparkother.version>
 		<oozie.version>4.1.0-cdh5.7.2</oozie.version>
+		<jedis.version>2.9.0</jedis.version>
 	</properties>
 
 	<dependencies>
@@ -51,7 +52,18 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
+		</dependency>	
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>	
         <dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
@@ -667,6 +679,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.newland.bi.component</groupId>
+			<artifactId>nl-rtc-core-file</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.newland.bi</groupId>
+			<artifactId>nl-storm-common</artifactId>
+			<version>2.0</version>
+		</dependency>
 
 		<!-- XSLT 2.0 SAXON -->
 		<dependency>
@@ -760,10 +782,27 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
 			<version>1.1.9</version>
+		</dependency>
+		
+		<!-- memory -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- 字符编码解析 -->
+        <dependency>
+    		<groupId>com.googlecode.juniversalchardet</groupId>
+    		<artifactId>juniversalchardet</artifactId>
+    		<version>1.0.3</version>
 		</dependency>
 	</dependencies>
 	<build>

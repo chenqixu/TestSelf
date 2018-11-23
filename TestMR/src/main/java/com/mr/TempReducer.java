@@ -7,11 +7,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * ËÄ¸ö·ºĞÍÀàĞÍ·Ö±ğ´ú±í£º
- * KeyIn        ReducerµÄÊäÈëÊı¾İµÄKey£¬ÕâÀïÊÇÃ¿ĞĞÎÄ×ÖÖĞµÄ¡°Äê·İ¡±
- * ValueIn      ReducerµÄÊäÈëÊı¾İµÄValue£¬ÕâÀïÊÇÃ¿ĞĞÎÄ×ÖÖĞµÄ¡°ÆøÎÂ¡±
- * KeyOut       ReducerµÄÊä³öÊı¾İµÄKey£¬ÕâÀïÊÇ²»ÖØ¸´µÄ¡°Äê·İ¡±
- * ValueOut     ReducerµÄÊä³öÊı¾İµÄValue£¬ÕâÀïÊÇÕâÒ»ÄêÖĞµÄ¡°×î¸ßÆøÎÂ¡±
+ * å››ä¸ªæ³›å‹ç±»å‹åˆ†åˆ«ä»£è¡¨ï¼š
+ * KeyIn        Reducerçš„è¾“å…¥æ•°æ®çš„Keyï¼Œè¿™é‡Œæ˜¯æ¯è¡Œæ–‡å­—ä¸­çš„â€œå¹´ä»½â€
+ * ValueIn      Reducerçš„è¾“å…¥æ•°æ®çš„Valueï¼Œè¿™é‡Œæ˜¯æ¯è¡Œæ–‡å­—ä¸­çš„â€œæ°”æ¸©â€
+ * KeyOut       Reducerçš„è¾“å‡ºæ•°æ®çš„Keyï¼Œè¿™é‡Œæ˜¯ä¸é‡å¤çš„â€œå¹´ä»½â€
+ * ValueOut     Reducerçš„è¾“å‡ºæ•°æ®çš„Valueï¼Œè¿™é‡Œæ˜¯è¿™ä¸€å¹´ä¸­çš„â€œæœ€é«˜æ°”æ¸©â€
  */
 public class TempReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 	@Override
@@ -19,15 +19,15 @@ public class TempReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 			throws IOException, InterruptedException {
 		int maxValue = Integer.MIN_VALUE;
 		StringBuffer sb = new StringBuffer();
-		// È¡valuesµÄ×î´óÖµ
+		// å–valuesçš„æœ€å¤§å€¼
 		for (IntWritable value : values) {
 			maxValue = Math.max(maxValue, value.get());
 			sb.append(value).append(", ");
 		}
-		// ´òÓ¡Ñù±¾£º Before Reduce: 2000, 15, 23, 99, 12, 22,
+		// æ‰“å°æ ·æœ¬ï¼š Before Reduce: 2000, 15, 23, 99, 12, 22,
 		System.out.print("Before Reduce: " + key + ", " + sb.toString());
 		context.write(key, new IntWritable(maxValue));
-		// ´òÓ¡Ñù±¾£º After Reduce: 2000, 99
+		// æ‰“å°æ ·æœ¬ï¼š After Reduce: 2000, 99
 		System.out.println("======"+"After Reduce: " + key + ", " + maxValue);
 	}
 }

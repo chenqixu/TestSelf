@@ -2,43 +2,43 @@ package com.cqx.bean;
 
 public class RestParam {
 	/**
-	 * ÇëÇóurlÂ·¾¶
+	 * è¯·æ±‚urlè·¯å¾„
 	 */
 	private String reqUrl;
 	/**
-	 * ÇëÇóÀàĞÍ"POST"»ò"GET"
+	 * è¯·æ±‚ç±»å‹"POST"æˆ–"GET"
 	 */
 	private String reqMethod;
 	/**
-	 * ÇëÇóÄÚÈİ
+	 * è¯·æ±‚å†…å®¹
 	 */
 	private String reqContent;
 	/**
-	 * ÇëÇóÄ£Ê½"https"»ò"http"(Ä¬ÈÏhttp)
+	 * è¯·æ±‚æ¨¡å¼"https"æˆ–"http"(é»˜è®¤http)
 	 */
 	private String reqHttpsModel;
 	/**
-	 * ¸ÃÖµÎª¿ÕÊ±²»ÉèÖÃ£¬²»Îª¿ÕÊ±ÉèÖÃ
+	 * è¯¥å€¼ä¸ºç©ºæ—¶ä¸è®¾ç½®ï¼Œä¸ä¸ºç©ºæ—¶è®¾ç½®
 	 */
 	private String sessionId;
 	/**
-	 * ÊÇ·ñ¿ªÆô´úÀíÄ£Ê½£¨Ä¬ÈÏFALSE£©"TRUE":¿ªÆô;"FALSE":²»¿ªÆô;ÉèÎªTRUEÊ±ĞèÒªÅäÖÃÒÔÏÂ¼¸Ïî²ÎÊı
+	 * æ˜¯å¦å¼€å¯ä»£ç†æ¨¡å¼ï¼ˆé»˜è®¤FALSEï¼‰"TRUE":å¼€å¯;"FALSE":ä¸å¼€å¯;è®¾ä¸ºTRUEæ—¶éœ€è¦é…ç½®ä»¥ä¸‹å‡ é¡¹å‚æ•°
 	 */
 	private String ifProxy;
 	/**
-	 * ´úÀíµØÖ·
+	 * ä»£ç†åœ°å€
 	 */
 	private String proxyAddress;
 	/**
-	 * ´úÀí¶Ë¿Ú
+	 * ä»£ç†ç«¯å£
 	 */
 	private String proxyPort;
 	/**
-	 * ´úÀíÕËºÅ
+	 * ä»£ç†è´¦å·
 	 */
 	private String proxyUser;
 	/**
-	 * ´úÀíÃÜÂë
+	 * ä»£ç†å¯†ç 
 	 */
 	private String proxyPassWord;
 

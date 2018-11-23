@@ -7,7 +7,7 @@ import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
 /**
- * kafkaÉú²úÕßÏß³Ì
+ * kafkaç”Ÿäº§è€…çº¿ç¨‹
  * */
 public class KafkaProducer extends Thread {
 	private final Producer<Integer, String> producer;
@@ -15,7 +15,7 @@ public class KafkaProducer extends Thread {
 	private final Properties props = new Properties();
 
 	/**
-	 * ³õÊ¼»¯£¬´«Èë»°Ìâ(topic)
+	 * åˆå§‹åŒ–ï¼Œä¼ å…¥è¯é¢˜(topic)
 	 * */
 	public KafkaProducer(String topic) {
 		props.put("serializer.class", "kafka.serializer.StringEncoder");
@@ -29,10 +29,10 @@ public class KafkaProducer extends Thread {
 	public void run() {
 		int messageNo = 1;
 		while (true) {
-			// Éú²úÏûÏ¢
+			// ç”Ÿäº§æ¶ˆæ¯
 			String messageStr = new String("Message_" + messageNo);
 			System.out.println("Send:" + messageStr);
-			// Íù»°Ìâ(topic)ÖĞĞ´ÈëÏûÏ¢
+			// å¾€è¯é¢˜(topic)ä¸­å†™å…¥æ¶ˆæ¯
 			producer.send(new KeyedMessage<Integer, String>(topic, messageStr));
 			messageNo++;
 			try {

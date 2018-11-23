@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.Vector;
 
 public class KeepNetLogOSSResultBean {
-	private String telnumber = "";//手机号码
-	private String ggsnip = "";//用户NAT后公网IP地址
-	private String userip = "";//用户私网IP地址
-	private String usrsport = "";//NAT后源端口
-	private String usrdip = "";//目的IP
-	private String usrdport = "";//目的端口
+	private String telnumber = "";//鎵嬫満鍙风爜
+	private String ggsnip = "";//鐢ㄦ埛NAT鍚庡叕缃慖P鍦板潃
+	private String userip = "";//鐢ㄦ埛绉佺綉IP鍦板潃
+	private String usrsport = "";//NAT鍚庢簮绔彛
+	private String usrdip = "";//鐩殑IP
+	private String usrdport = "";//鐩殑绔彛
 	private String url = "";//url
-	private String querytime = "";//访问时间
-	private String starttime = "";//上线时间
-	private String lasttime = "";//下线时间
+	private String querytime = "";//璁块棶鏃堕棿
+	private String starttime = "";//涓婄嚎鏃堕棿
+	private String lasttime = "";//涓嬬嚎鏃堕棿
 	private String apn = "";//APN
 	private String rattype = "";//2g/3g
 	
@@ -21,15 +21,15 @@ public class KeepNetLogOSSResultBean {
 		KeepNetLogOSSResultBean bean = null;
 		bean = new KeepNetLogOSSResultBean();
 		bean.setTelnumber(ip.getTelnumber());
-		bean.setGgsnip(ip.getGgsnip());//用户NAT后公网IP地址
-		bean.setUserip(ip.getUserip());//用户私网IP地址
-		bean.setUsrsport(ip.getUsrsport());//NAT后源端口
-		bean.setUsrdip(ip.getUsrdip());//目的IP
-		bean.setUsrdport(ip.getUsrdport());//目的端口
+		bean.setGgsnip(ip.getGgsnip());//鐢ㄦ埛NAT鍚庡叕缃慖P鍦板潃
+		bean.setUserip(ip.getUserip());//鐢ㄦ埛绉佺綉IP鍦板潃
+		bean.setUsrsport(ip.getUsrsport());//NAT鍚庢簮绔彛
+		bean.setUsrdip(ip.getUsrdip());//鐩殑IP
+		bean.setUsrdport(ip.getUsrdport());//鐩殑绔彛
 		bean.setUrl(http.getUrl());//url
-		bean.setQuerytime(ip.getStarttime());//访问时间
-		bean.setStarttime(http.getStarttime());//上线时间
-		bean.setLasttime(http.getLasttime());//下线时间
+		bean.setQuerytime(ip.getStarttime());//璁块棶鏃堕棿
+		bean.setStarttime(http.getStarttime());//涓婄嚎鏃堕棿
+		bean.setLasttime(http.getLasttime());//涓嬬嚎鏃堕棿
 		bean.setApn(ip.getApn());//APN
 		bean.setRattype(ip.getRattype());//2g/3g
 		return bean.changeList();
@@ -39,15 +39,15 @@ public class KeepNetLogOSSResultBean {
 		KeepNetLogOSSResultBean bean = null;
 		bean = new KeepNetLogOSSResultBean();
 		bean.setTelnumber(ip.getTelnumber());
-		bean.setGgsnip(ip.getGgsnip());//用户NAT后公网IP地址
-		bean.setUserip(ip.getUserip());//用户私网IP地址
-		bean.setUsrsport(ip.getUsrsport());//NAT后源端口
-		bean.setUsrdip(ip.getUsrdip());//目的IP
-		bean.setUsrdport(ip.getUsrdport());//目的端口
+		bean.setGgsnip(ip.getGgsnip());//鐢ㄦ埛NAT鍚庡叕缃慖P鍦板潃
+		bean.setUserip(ip.getUserip());//鐢ㄦ埛绉佺綉IP鍦板潃
+		bean.setUsrsport(ip.getUsrsport());//NAT鍚庢簮绔彛
+		bean.setUsrdip(ip.getUsrdip());//鐩殑IP
+		bean.setUsrdport(ip.getUsrdport());//鐩殑绔彛
 		bean.setUrl("");//url
-		bean.setQuerytime(ip.getStarttime());//访问时间
-		bean.setStarttime(ip.getStarttime());//上线时间
-		bean.setLasttime(ip.getLasttime());//下线时间
+		bean.setQuerytime(ip.getStarttime());//璁块棶鏃堕棿
+		bean.setStarttime(ip.getStarttime());//涓婄嚎鏃堕棿
+		bean.setLasttime(ip.getLasttime());//涓嬬嚎鏃堕棿
 		bean.setApn(ip.getApn());//APN
 		bean.setRattype(ip.getRattype());//2g/3g
 		return bean.changeList();
@@ -55,16 +55,16 @@ public class KeepNetLogOSSResultBean {
 	
 	public List changeList(){
 		List<String> list = new Vector<String>();
-		list.add(telnumber);//手机号码
-		list.add(ggsnip);//用户NAT后公网IP地址
-		list.add(userip);//用户私网IP地址
-		list.add(usrsport);//NAT后源端口
-		list.add(usrdip);//目的IP
-		list.add(usrdport);//目的端口
+		list.add(telnumber);//鎵嬫満鍙风爜
+		list.add(ggsnip);//鐢ㄦ埛NAT鍚庡叕缃慖P鍦板潃
+		list.add(userip);//鐢ㄦ埛绉佺綉IP鍦板潃
+		list.add(usrsport);//NAT鍚庢簮绔彛
+		list.add(usrdip);//鐩殑IP
+		list.add(usrdport);//鐩殑绔彛
 		list.add(url);//url
-		list.add(querytime);//访问时间
-		list.add(starttime);//上线时间
-		list.add(lasttime);//下线时间
+		list.add(querytime);//璁块棶鏃堕棿
+		list.add(starttime);//涓婄嚎鏃堕棿
+		list.add(lasttime);//涓嬬嚎鏃堕棿
 		list.add(apn);//APN
 		list.add(rattype);//2g/3g
 		return list;
@@ -75,15 +75,15 @@ public class KeepNetLogOSSResultBean {
 		if(list!=null & list.size()>0){
 			bean = new KeepNetLogOSSResultBean();
 			bean.setTelnumber(list.get(0).toString());
-			bean.setGgsnip(list.get(1).toString());//用户NAT后公网IP地址
-			bean.setUserip(list.get(2).toString());//用户私网IP地址
-			bean.setUsrsport(list.get(3).toString());//NAT后源端口
-			bean.setUsrdip(list.get(4).toString());//目的IP
-			bean.setUsrdport(list.get(5).toString());//目的端口
+			bean.setGgsnip(list.get(1).toString());//鐢ㄦ埛NAT鍚庡叕缃慖P鍦板潃
+			bean.setUserip(list.get(2).toString());//鐢ㄦ埛绉佺綉IP鍦板潃
+			bean.setUsrsport(list.get(3).toString());//NAT鍚庢簮绔彛
+			bean.setUsrdip(list.get(4).toString());//鐩殑IP
+			bean.setUsrdport(list.get(5).toString());//鐩殑绔彛
 			bean.setUrl(list.get(6).toString());//url
-			bean.setQuerytime(list.get(7).toString());//访问时间
-			bean.setStarttime(list.get(8).toString());//上线时间
-			bean.setLasttime(list.get(9).toString());//下线时间
+			bean.setQuerytime(list.get(7).toString());//璁块棶鏃堕棿
+			bean.setStarttime(list.get(8).toString());//涓婄嚎鏃堕棿
+			bean.setLasttime(list.get(9).toString());//涓嬬嚎鏃堕棿
 			bean.setApn(list.get(10).toString());//APN
 			bean.setRattype(list.get(11).toString());//2g/3g
 		}

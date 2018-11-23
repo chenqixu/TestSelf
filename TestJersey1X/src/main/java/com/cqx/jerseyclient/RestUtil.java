@@ -31,11 +31,11 @@ public class RestUtil {
 	private static LogUtil log = LogUtil.getInstance();
 	
 	/**
-	 * ·¢Æğhttp/httpsÇëÇó²¢»ñÈ¡½á¹û
+	 * å‘èµ·http/httpsè¯·æ±‚å¹¶è·å–ç»“æœ
 	 */
 	public static JSONObject httpRequest(RestParam restParam) {
 		JSONObject jsonObject = null;
-		// ´´½¨´úÀí·şÎñÆ÷
+		// åˆ›å»ºä»£ç†æœåŠ¡å™¨
 		InetSocketAddress addr = null;
 		Proxy proxy = null;
 		boolean ifProxyModel = restParam.getIfProxy() != null
@@ -45,9 +45,9 @@ public class RestUtil {
 		if (ifProxyModel) {
 			addr = new InetSocketAddress(restParam.getProxyAddress(),
 					Integer.parseInt(restParam.getProxyPort()));
-			proxy = new Proxy(Proxy.Type.HTTP, addr); // http ´úÀí
+			proxy = new Proxy(Proxy.Type.HTTP, addr); // http ä»£ç†
 //			Authenticator.setDefault(new MyAuthenticator(restParam
-//					.getProxyUser(), restParam.getProxyPassWord()));// ÉèÖÃ´úÀíµÄÓÃ»§ºÍÃÜÂë
+//					.getProxyUser(), restParam.getProxyPassWord()));// è®¾ç½®ä»£ç†çš„ç”¨æˆ·å’Œå¯†ç 
 		}
 
 		try {
@@ -95,26 +95,26 @@ public class RestUtil {
 
 		} catch (ConnectException ce) {
 			log.error("API server connection timed out.");
-			log.error("¡¾restÁ¬½ÓÒì³£ĞÅÏ¢¡¿" + ce.getMessage());
+			log.error("ã€restè¿æ¥å¼‚å¸¸ä¿¡æ¯ã€‘" + ce.getMessage());
 		} catch (Exception e) {
 			log.error("API https or http request error:{}", e);
-			log.error("¡¾restÒì³£ĞÅÏ¢¡¿" + e.getMessage());
+			log.error("ã€restå¼‚å¸¸ä¿¡æ¯ã€‘" + e.getMessage());
 		}
 		return jsonObject;
 	}
 
 	/**
-	 * httpÇëÇó·½·¨
+	 * httpè¯·æ±‚æ–¹æ³•
 	 * 
 	 * @param httpUrlConn
-	 *            ÇëÇóÂ·¾¶
+	 *            è¯·æ±‚è·¯å¾„
 	 * @param requestMethod
-	 *            ÇëÇóÀàĞÍPOST|GET
+	 *            è¯·æ±‚ç±»å‹POST|GET
 	 * @param outputStr
-	 *            ÇëÇóÄÚÈİ
+	 *            è¯·æ±‚å†…å®¹
 	 * @param sessionId
-	 *            sessionId(·Ç±ØÌî)
-	 * @return JSONObjectÀàĞÍÊı¾İ
+	 *            sessionId(éå¿…å¡«)
+	 * @return JSONObjectç±»å‹æ•°æ®
 	 */
 	public static JSONObject ardoHttpURLConnection(
 			HttpURLConnection httpUrlConn, String requestMethod,
@@ -134,21 +134,21 @@ public class RestUtil {
 						+ sessionId);
 			}
 
-			// ÉèÖÃÇëÇó·½Ê½GET/POST
+			// è®¾ç½®è¯·æ±‚æ–¹å¼GET/POST
 			httpUrlConn.setRequestMethod(requestMethod);
 
 			if ("GET".equalsIgnoreCase(requestMethod))
 				httpUrlConn.connect();
 
-			// µ±ÓĞÊı¾İĞèÒªÌá½»Ê±
+			// å½“æœ‰æ•°æ®éœ€è¦æäº¤æ—¶
 			if (null != outputStr) {
 				OutputStream outputStream = httpUrlConn.getOutputStream();
-				// ×¢Òâ±àÂë¸ñÊ½£¬·ÀÖ¹ÖĞÎÄÂÒÂë
+				// æ³¨æ„ç¼–ç æ ¼å¼ï¼Œé˜²æ­¢ä¸­æ–‡ä¹±ç 
 				outputStream.write(outputStr.getBytes("UTF-8"));
 				outputStream.close();
 			}
 
-			// ½«·µ»ØµÄÊäÈëÁ÷×ª»»³É×Ö·û´®
+			// å°†è¿”å›çš„è¾“å…¥æµè½¬æ¢æˆå­—ç¬¦ä¸²
 			InputStream inputStream = httpUrlConn.getInputStream();
 			InputStreamReader inputStreamReader = new InputStreamReader(
 					inputStream, "utf-8");
@@ -161,33 +161,33 @@ public class RestUtil {
 			}
 			bufferedReader.close();
 			inputStreamReader.close();
-			// ÊÍ·Å×ÊÔ´
+			// é‡Šæ”¾èµ„æº
 			inputStream.close();
 			inputStream = null;
 			httpUrlConn.disconnect();
 			jsonObject = JSONObject.fromObject(buffer.toString());
 		} catch (ConnectException ce) {
 			log.error("API server connection timed out.");
-			log.error("¡¾rest httpÁ¬½ÓÒì³£ĞÅÏ¢¡¿" + ce.getMessage());
+			log.error("ã€rest httpè¿æ¥å¼‚å¸¸ä¿¡æ¯ã€‘" + ce.getMessage());
 		} catch (Exception e) {
 			log.error("API http request error:{}", e);
-			log.error("¡¾rest httpÒì³£ĞÅÏ¢¡¿" + e.getMessage());
+			log.error("ã€rest httpå¼‚å¸¸ä¿¡æ¯ã€‘" + e.getMessage());
 		}
 		return jsonObject;
 	}
 
 	/**
-	 * httpsÇëÇó·½·¨
+	 * httpsè¯·æ±‚æ–¹æ³•
 	 * 
 	 * @param httpUrlConn
-	 *            ÇëÇóÂ·¾¶
+	 *            è¯·æ±‚è·¯å¾„
 	 * @param requestMethod
-	 *            ÇëÇóÀàĞÍPOST|GET
+	 *            è¯·æ±‚ç±»å‹POST|GET
 	 * @param outputStr
-	 *            ÇëÇóÄÚÈİ
+	 *            è¯·æ±‚å†…å®¹
 	 * @param sessionId
-	 *            sessionId(·Ç±ØÌî)
-	 * @return JSONObjectÀàĞÍÊı¾İ
+	 *            sessionId(éå¿…å¡«)
+	 * @return JSONObjectç±»å‹æ•°æ®
 	 */
 	public static JSONObject ardoHttpsURLConnection(
 			HttpsURLConnection httpUrlConn, String requestMethod,
@@ -208,22 +208,22 @@ public class RestUtil {
 						+ sessionId);
 			}
 
-			// ÉèÖÃÇëÇó·½Ê½GET/POST
+			// è®¾ç½®è¯·æ±‚æ–¹å¼GET/POST
 			httpUrlConn.setRequestMethod(requestMethod);
 			httpUrlConn.setRequestProperty("Content-Type", "application/json");
 
 			if ("GET".equalsIgnoreCase(requestMethod))
 				httpUrlConn.connect();
 
-			// µ±ÓĞÊı¾İĞèÒªÌá½»Ê±
+			// å½“æœ‰æ•°æ®éœ€è¦æäº¤æ—¶
 			if (null != outputStr) {
 				OutputStream outputStream = httpUrlConn.getOutputStream();
-				// ×¢Òâ±àÂë¸ñÊ½£¬·ÀÖ¹ÖĞÎÄÂÒÂë
+				// æ³¨æ„ç¼–ç æ ¼å¼ï¼Œé˜²æ­¢ä¸­æ–‡ä¹±ç 
 				outputStream.write(outputStr.getBytes("UTF-8"));
 				outputStream.close();
 			}
 
-			// ½«·µ»ØµÄÊäÈëÁ÷×ª»»³É×Ö·û´®
+			// å°†è¿”å›çš„è¾“å…¥æµè½¬æ¢æˆå­—ç¬¦ä¸²
 			InputStream inputStream = httpUrlConn.getInputStream();
 			InputStreamReader inputStreamReader = new InputStreamReader(
 					inputStream, "utf-8");
@@ -236,23 +236,23 @@ public class RestUtil {
 			}
 			bufferedReader.close();
 			inputStreamReader.close();
-			// ÊÍ·Å×ÊÔ´
+			// é‡Šæ”¾èµ„æº
 			inputStream.close();
 			inputStream = null;
 			httpUrlConn.disconnect();
 			jsonObject = JSONObject.fromObject(buffer.toString());
 		} catch (ConnectException ce) {
 			log.error("API server connection timed out.");
-			log.error("¡¾rest httpsÁ¬½ÓÒì³£ĞÅÏ¢¡¿" + ce.getMessage());
+			log.error("ã€rest httpsè¿æ¥å¼‚å¸¸ä¿¡æ¯ã€‘" + ce.getMessage());
 		} catch (Exception e) {
 			log.error("API https request error:{}", e);
-			log.error("¡¾rest httpsÒì³£ĞÅÏ¢¡¿" + e.getMessage());
+			log.error("ã€rest httpså¼‚å¸¸ä¿¡æ¯ã€‘" + e.getMessage());
 		}
 		return jsonObject;
 	}
 
 	/**
-	 * ´úÀíÄ£Ê½ËùĞèµÄÈÏÖ¤
+	 * ä»£ç†æ¨¡å¼æ‰€éœ€çš„è®¤è¯
 	 * 
 	 * @author ardo
 	 *

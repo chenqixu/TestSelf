@@ -105,7 +105,7 @@ public class SumConfigFile extends ChangeCode {
 	}
 	
 	public void process(String path){
-		List<String> xmlpathlist = Scan(path, "pom.xml");
+		List<String> xmlpathlist = scan(path, "pom.xml");
 		// 剔除相同工程重复pom.xml
 		Map<String, String> xmlfilelist = new HashMap<String, String>();
 		for(String xmlpath : xmlpathlist){

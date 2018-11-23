@@ -1,7 +1,7 @@
 package com.cqx.kf;
 
 /**
- *½ÓÊÕÏûÏ¢¶ÓÁĞ
+ *æ¥æ”¶æ¶ˆæ¯é˜Ÿåˆ—
  */
 import java.util.HashMap;
 import java.util.List;
@@ -34,18 +34,18 @@ public class GetDataFromKafka implements Runnable {
 
 		Properties properties = new Properties();
 		properties.put("bootstrap.servers", "10.1.4.185:9092,10.1.4.186:9092");
-		// zookeeper ÅäÖÃ
-		properties.put("zookeeper.connect", "10.1.4.186:2182/udap/kafka");// ÉùÃ÷zk
-		// Ïû·ÑÕßËùÔÚ×é
-		properties.put("group.id", "udap");// ±ØĞëÒªÊ¹ÓÃ±ğµÄ×éÃû³Æ£¬ //
-												// Èç¹ûÉú²úÕßºÍÏû·ÑÕß¶¼ÔÚÍ¬Ò»×é£¬Ôò²»ÄÜ·ÃÎÊÍ¬Ò»×éÄÚµÄtopicÊı¾İ
-		// zkÁ¬½Ó³¬Ê±
+		// zookeeper é…ç½®
+		properties.put("zookeeper.connect", "10.1.4.186:2182/udap/kafka");// å£°æ˜zk
+		// æ¶ˆè´¹è€…æ‰€åœ¨ç»„
+		properties.put("group.id", "udap");// å¿…é¡»è¦ä½¿ç”¨åˆ«çš„ç»„åç§°ï¼Œ //
+												// å¦‚æœç”Ÿäº§è€…å’Œæ¶ˆè´¹è€…éƒ½åœ¨åŒä¸€ç»„ï¼Œåˆ™ä¸èƒ½è®¿é—®åŒä¸€ç»„å†…çš„topicæ•°æ®
+		// zkè¿æ¥è¶…æ—¶
 		properties.put("zookeeper.session.timeout.ms", "10000");
 		properties.put("zookeeper.sync.time.ms", "2000");
 		properties.put("auto.commit.interval.ms", "2000");
 		properties.put("compression.type", "none");
 		properties.put("auto.offset.reset", "smallest");//largest/smallest
-//		// ĞòÁĞ»¯Àà 
+//		// åºåˆ—åŒ–ç±» 
 //		properties.put("serializer.class", "kafka.serializer.StringEncoder");
 		properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		properties.put("value.deserializer", "com.newland.bd.utils.jms.kafka.serializer.ObjectDeserializer4ProtoBuf");
@@ -53,15 +53,15 @@ public class GetDataFromKafka implements Runnable {
 				.createJavaConsumerConnector(new ConsumerConfig(properties));
 
 		Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-		topicCountMap.put(topic, new Integer(1)); // Ò»´Î´ÓÖ÷ÌâÖĞ»ñÈ¡Ò»¸öÊı¾İ
+		topicCountMap.put(topic, new Integer(1)); // ä¸€æ¬¡ä»ä¸»é¢˜ä¸­è·å–ä¸€ä¸ªæ•°æ®
 		Map<String, List<KafkaStream<byte[], byte[]>>> messageStreams = consumer
 				.createMessageStreams(topicCountMap);
-		KafkaStream<byte[], byte[]> stream = messageStreams.get(topic).get(0);// »ñÈ¡Ã¿´Î½ÓÊÕµ½µÄÕâ¸öÊı¾İ
+		KafkaStream<byte[], byte[]> stream = messageStreams.get(topic).get(0);// è·å–æ¯æ¬¡æ¥æ”¶åˆ°çš„è¿™ä¸ªæ•°æ®
 		ConsumerIterator<byte[], byte[]> iterator = stream.iterator();
 		while (iterator.hasNext()) {
 			String message = new String(iterator.next().message());
 			// hostName+";"+ip+";"+commandName+";"+res+";"+System.currentTimeMillis();
-			// ÕâÀïÖ¸µÄ×¢Òâ£¬Èç¹ûÃ»ÓĞÏÂÃæÕâ¸öÓï¾äµÄÖ´ĞĞºÜÓĞ¿ÉÄÜ»Ø´ÓÍ·À´¶ÁÏûÏ¢µÄ
+			// è¿™é‡ŒæŒ‡çš„æ³¨æ„ï¼Œå¦‚æœæ²¡æœ‰ä¸‹é¢è¿™ä¸ªè¯­å¥çš„æ‰§è¡Œå¾ˆæœ‰å¯èƒ½å›ä»å¤´æ¥è¯»æ¶ˆæ¯çš„
 			consumer.commitOffsets();
 			System.out.println(message);
 		}

@@ -21,13 +21,13 @@ public class NgClientTest {
 		String home_area_code = "591";
 		String reqsource = "";
 		
-		String seldata = "2";//Ä¬ÈÏ²éÑ¯hbase
+		String seldata = "2";//é»˜è®¤æŸ¥è¯¢hbase
 		if(home_area_code.equals("591")){
 			seldata = "1";
 		}else{
 			seldata = "2";
 		}
-		client.setSeldata(seldata);//ÉèÖÃ²éÑ¯Êı¾İ¿â
+		client.setSeldata(seldata);//è®¾ç½®æŸ¥è¯¢æ•°æ®åº“
 		
 		requestBean.setTelnumber(Long.parseLong(telnumber));
 		requestBean.setStarttime_s(starttime_s);
@@ -36,13 +36,13 @@ public class NgClientTest {
 		requestBean.setServicename(servicename);
 		requestBean.setReqSource(reqsource);		
 		
-		//²éÑ¯
-		ncb = client.queryHbaseData(requestBean,"","");//ÆğÊ¼,·ÖÒ³Îª¿ÕÎªÈ«²¿²éÑ¯
+		//æŸ¥è¯¢
+		ncb = client.queryHbaseData(requestBean,"","");//èµ·å§‹,åˆ†é¡µä¸ºç©ºä¸ºå…¨éƒ¨æŸ¥è¯¢
 		List<List<String>> responseList = ncb.getDealDetailList();
 		FileOutputStream fops = null;
 		InputStream os = null;
 		try{
-			fops = new FileOutputStream("D:/home/a.xls");//Ê¹ÓÃÊä³öÁ÷
+			fops = new FileOutputStream("D:/home/a.xls");//ä½¿ç”¨è¾“å‡ºæµ
 			os = client.expExcel("aa", responseList);
 			byte[] b = new byte[100];
 	        int len;
@@ -70,7 +70,7 @@ public class NgClientTest {
 		}
 		
 		/*String a = "13600884160,G700-T00,CMNET,,2013-12-30 21:00:31.683,2013-12-30 21:00:33.183,483,1274,223.82.247.72,1,";
-		String b = "13600884160,G700-T00,CMNET,Î´Öª,2013-12-30 21:00:00,2013-12-30 21:00:00,483,1274,223.82.247.72,3G,a";
+		String b = "13600884160,G700-T00,CMNET,æœªçŸ¥,2013-12-30 21:00:00,2013-12-30 21:00:00,483,1274,223.82.247.72,3G,a";
 		if(a.endsWith(",")){
 			System.out.println("1");
 		}

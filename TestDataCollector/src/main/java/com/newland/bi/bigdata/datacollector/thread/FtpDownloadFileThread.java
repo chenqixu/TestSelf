@@ -16,29 +16,29 @@ import com.newland.bi.bigdata.datacollector.config.CollectorConfInfo;
 
 /**
  * 
- * @description:FTPÏÂÔØÎÄ¼şÏß³Ì
+ * @description:FTPä¸‹è½½æ–‡ä»¶çº¿ç¨‹
  * @author:xixg
  * @date:2014-02-19
  */
 public class FtpDownloadFileThread extends Thread{
-	//ÈÕÖ¾¼ÇÂ¼Æ÷
+	//æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(FtpDownloadFileThread.class);
-	//Ïß³Ì°²È«¶ÓÁĞ£¬´æ·Åµ±Ç°ÒªÏÂÔØµÄËùÓĞÎÄ¼şÃû
+	//çº¿ç¨‹å®‰å…¨é˜Ÿåˆ—ï¼Œå­˜æ”¾å½“å‰è¦ä¸‹è½½çš„æ‰€æœ‰æ–‡ä»¶å
 	private Queue<String> fileNameQueue;
 	private String sourceDataPathString;
-	//FTP¿Í»§¶ËÁ¬½Ó¶ÔÏó
+	//FTPå®¢æˆ·ç«¯è¿æ¥å¯¹è±¡
 	private FTPClient ftpClient;
-	//¶ÓÁĞÖĞµÄÎÄ¼şÃû
+	//é˜Ÿåˆ—ä¸­çš„æ–‡ä»¶å
 	private String fileName ;
-	//Êı¾İÎÄ¼şÃû
+	//æ•°æ®æ–‡ä»¶å
 	private String dataFileName;
-	//¿ØÖÆÎÄ¼şÃû
+	//æ§åˆ¶æ–‡ä»¶å
 	private String ctlFileName;
-	//¿ØÖÆÎÄ¼şÏÂÔØÊÇ·ñ³É¹¦±êÖ¾
+	//æ§åˆ¶æ–‡ä»¶ä¸‹è½½æ˜¯å¦æˆåŠŸæ ‡å¿—
 	private boolean ctlDownFlag;
-	//Êı¾İÎÄ¼şÏÂÔØÊÇ·ñ³É¹¦±êÖ¾
+	//æ•°æ®æ–‡ä»¶ä¸‹è½½æ˜¯å¦æˆåŠŸæ ‡å¿—
 	private boolean dataDownFlag;
-	//Ïß³ÌÃû
+	//çº¿ç¨‹å
 	private String threadName;
 	private String mvSourceCtlFilePath;
 	private String mvSourceDataFilePath;
@@ -52,13 +52,13 @@ public class FtpDownloadFileThread extends Thread{
 	}
 	/**
 	 * 
-	 * @description:ÏÂÔØÏß³Ì¾ßÌåÔËĞĞµÄ·½·¨
+	 * @description:ä¸‹è½½çº¿ç¨‹å…·ä½“è¿è¡Œçš„æ–¹æ³•
 	 * @author:xixg
 	 * @date:2014-02-19
 	 */
 	@Override
 	public void run() {
-		//»ñÈ¡µ±Ç°Ïß³ÌÃû³Æ
+		//è·å–å½“å‰çº¿ç¨‹åç§°
 		threadName = Thread.currentThread().getName();
 		boolean flag = true;
 		try {
@@ -70,23 +70,23 @@ public class FtpDownloadFileThread extends Thread{
 						break;
 					}
 				}
-				//Èç¹ûÓĞ¿ØÖÆÎÄ¼ş
+				//å¦‚æœæœ‰æ§åˆ¶æ–‡ä»¶
 				if(CollectorConfInfo.ifHasCtlSourceFile){
 					ctlFileName = fileName;
-					//ÊÇ·ñÏÂÔØ¿ØÖÆÎÄ¼ş
+					//æ˜¯å¦ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 					if(CollectorConfInfo.ifDownloadCtlFile){
-						//Èç¹ûĞèÒªÏÈÏÂÔØ¿ØÖÆÎÄ¼ş
+						//å¦‚æœéœ€è¦å…ˆä¸‹è½½æ§åˆ¶æ–‡ä»¶
 						if(CollectorConfInfo.ifFirstDownloadCtlFile){
-							//ÏÂÔØ¿ØÖÆÎÄ¼ş
+							//ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 							ctlDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, ctlFileName, threadName,CollectorConfInfo.saveTmpPath);
-							//Êı¾İÎÄ¼şÈ«Ãû£¬°Ñ¿ØÖÆÎÄ¼şµÄºó×ºÃûÌæ»»ÎªÊı¾İÎÄ¼şµÄºó×ºÃû
+							//æ•°æ®æ–‡ä»¶å…¨åï¼ŒæŠŠæ§åˆ¶æ–‡ä»¶çš„åç¼€åæ›¿æ¢ä¸ºæ•°æ®æ–‡ä»¶çš„åç¼€å
 							dataFileName = ctlFileName.replace(CollectorConfInfo.ctlSourceFileSuffixName, CollectorConfInfo.dataSourceFileSuffixName);
-							//ÏÂÔØÊı¾İÎÄ¼ş
+							//ä¸‹è½½æ•°æ®æ–‡ä»¶
 							dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName, CollectorConfInfo.saveTmpPath);
 							
-							//ÏÂÔØ³É¹¦ºóÒÆ¶¯»òÕßÉ¾³ıÔ´¿ØÖÆÎÄ¼şºÍÊı¾İÎÄ¼ş
+							//ä¸‹è½½æˆåŠŸåç§»åŠ¨æˆ–è€…åˆ é™¤æºæ§åˆ¶æ–‡ä»¶å’Œæ•°æ®æ–‡ä»¶
 							if(ctlDownFlag && dataDownFlag){
-								//ÊÇ·ñ·Ö¿ª´æ·ÅÊı¾İÎÄ¼şºÍĞ£ÑéÎÄ¼ş
+								//æ˜¯å¦åˆ†å¼€å­˜æ”¾æ•°æ®æ–‡ä»¶å’Œæ ¡éªŒæ–‡ä»¶
 								if(CollectorConfInfo.ifSaveDifferentPath){
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveCtlPath, ctlFileName);
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
@@ -94,21 +94,21 @@ public class FtpDownloadFileThread extends Thread{
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, ctlFileName);
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 								}
-//								//ÒÆ¶¯»òÕßÉ¾³ıÔ´Êı¾İÎÄ¼ş
+//								//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ•°æ®æ–‡ä»¶
 //								CollectorFileCommon.mvOrDeleteFtpSourceCtlFile(ftpClient,sourceDataPathString, ctlFileName,mvSourceCtlFilePath, threadName);
 //								CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 							}
-						}else{//ÏÈÏÂÔØÊı¾İÎÄ¼ş
+						}else{//å…ˆä¸‹è½½æ•°æ®æ–‡ä»¶
 							dataFileName = fileName;
-							//ÏÂÔØÊı¾İÎÄ¼ş
+							//ä¸‹è½½æ•°æ®æ–‡ä»¶
 							dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName, CollectorConfInfo.saveTmpPath);
-							//¿ØÖÆÎÄ¼şÈ«Ãû£¬°ÑÊı¾İÎÄ¼şµÄºó×ºÃûÌæ»»Îª¿ØÖÆÎÄ¼şµÄºó×ºÃû
+							//æ§åˆ¶æ–‡ä»¶å…¨åï¼ŒæŠŠæ•°æ®æ–‡ä»¶çš„åç¼€åæ›¿æ¢ä¸ºæ§åˆ¶æ–‡ä»¶çš„åç¼€å
 							ctlFileName = dataFileName.replace(CollectorConfInfo.dataSourceFileSuffixName, CollectorConfInfo.ctlSourceFileSuffixName);
-							//ÏÂÔØ¿ØÖÆÎÄ¼ş
+							//ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 							ctlDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, ctlFileName, threadName,CollectorConfInfo.saveTmpPath);
-							//ÏÂÔØ³É¹¦ºóÒÆ¶¯»òÕßÉ¾³ıÔ´¿ØÖÆÎÄ¼şºÍÊı¾İÎÄ¼ş
+							//ä¸‹è½½æˆåŠŸåç§»åŠ¨æˆ–è€…åˆ é™¤æºæ§åˆ¶æ–‡ä»¶å’Œæ•°æ®æ–‡ä»¶
 							if(ctlDownFlag && dataDownFlag ){
-								//ÊÇ·ñ·Ö¿ª´æ·ÅÊı¾İÎÄ¼şºÍĞ£ÑéÎÄ¼ş
+								//æ˜¯å¦åˆ†å¼€å­˜æ”¾æ•°æ®æ–‡ä»¶å’Œæ ¡éªŒæ–‡ä»¶
 								if(CollectorConfInfo.ifSaveDifferentPath){
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveCtlPath, ctlFileName);
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
@@ -116,67 +116,67 @@ public class FtpDownloadFileThread extends Thread{
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, ctlFileName);
 									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 								}
-//								//ÒÆ¶¯»òÕßÉ¾³ıÔ´Êı¾İÎÄ¼ş
+//								//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ•°æ®æ–‡ä»¶
 //								CollectorFileCommon.mvOrDeleteFtpSourceCtlFile(ftpClient,sourceDataPathString, ctlFileName,mvSourceCtlFilePath, threadName);
 //								CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 							}
 						}
-					}else{//²»ÏÂÔØ¿ØÖÆÎÄ¼ş¡¢Ö±½ÓÉ¾³ı¿ØÖÆÎÄ¼ş»òÕßÒÆ¶¯¿ØÖÆÎÄ¼ş
-//						//ÒÆ¶¯»òÕßÉ¾³ıÔ´¿ØÖÆÎÄ¼ş
+					}else{//ä¸ä¸‹è½½æ§åˆ¶æ–‡ä»¶ã€ç›´æ¥åˆ é™¤æ§åˆ¶æ–‡ä»¶æˆ–è€…ç§»åŠ¨æ§åˆ¶æ–‡ä»¶
+//						//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ§åˆ¶æ–‡ä»¶
 //						CollectorFileCommon.mvOrDeleteFtpSourceCtlFile(ftpClient,sourceDataPathString, ctlFileName,mvSourceCtlFilePath, threadName);
-						//Êı¾İÎÄ¼şÈ«Ãû£¬°Ñ¿ØÖÆÎÄ¼şµÄºó×ºÃûÌæ»»ÎªÊı¾İÎÄ¼şµÄºó×ºÃû
+						//æ•°æ®æ–‡ä»¶å…¨åï¼ŒæŠŠæ§åˆ¶æ–‡ä»¶çš„åç¼€åæ›¿æ¢ä¸ºæ•°æ®æ–‡ä»¶çš„åç¼€å
 						dataFileName = ctlFileName.replace(CollectorConfInfo.ctlSourceFileSuffixName, CollectorConfInfo.dataSourceFileSuffixName);
-						//ÏÂÔØÊı¾İÎÄ¼ş
+						//ä¸‹è½½æ•°æ®æ–‡ä»¶
 						dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName, CollectorConfInfo.saveTmpPath);
 						if(dataDownFlag){
 							CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 //							CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 						}
 					}
-				}else{//Ã»ÓĞ¿ØÖÆÎÄ¼ş£¬ÔòÖ»ÓĞÊı¾İÎÄ¼ş
+				}else{//æ²¡æœ‰æ§åˆ¶æ–‡ä»¶ï¼Œåˆ™åªæœ‰æ•°æ®æ–‡ä»¶
 					dataFileName = fileName;
-					//ÏÂÔØÊı¾İÎÄ¼ş
+					//ä¸‹è½½æ•°æ®æ–‡ä»¶
 					dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName,CollectorConfInfo.saveTmpPath);
-					//ÒÆ¶¯»òÕßÉ¾³ıÔ´Êı¾İÎÄ¼ş
+					//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ•°æ®æ–‡ä»¶
 					if(dataDownFlag){
 						CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 //						CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 					}
 				}
 				
-				//ÊµÀı»¯ÍË³ö¼ì²âÎÄ¼ş
+				//å®ä¾‹åŒ–é€€å‡ºæ£€æµ‹æ–‡ä»¶
 				File f = new File(CollectorConstant.EXIT_FILE_FULL_NAME);
-				//¼ì²éÈ«¾Ö±äÁ¿³ÌĞòÍË³ö±êÊ¶ÊÇ·ñÎªÕæ£¬ÈçÎªÕæ£¬Ôò³ÌĞòÍË³ö
+				//æ£€æŸ¥å…¨å±€å˜é‡ç¨‹åºé€€å‡ºæ ‡è¯†æ˜¯å¦ä¸ºçœŸï¼Œå¦‚ä¸ºçœŸï¼Œåˆ™ç¨‹åºé€€å‡º
 				if(InitCollectorFile.ifNeedExitFlag 
-						//ÍË³öÎÄ¼ş´æÔÚ£¬ÔòÖ´ĞĞÍË³ö´¦Àí
+						//é€€å‡ºæ–‡ä»¶å­˜åœ¨ï¼Œåˆ™æ‰§è¡Œé€€å‡ºå¤„ç†
 						||f.exists()){
 					if(f.exists())
-						logger.info("#####²É¼¯³ÌĞòÖĞÏß³Ì" + threadName + "ÏÂÔØÎÄ¼şºó£¬¼ì²âµ½ÍË³öÎÄ¼ş£º"+CollectorConstant.EXIT_FILE_FULL_NAME+" ´æÔÚ£¬Ïß³Ì½áÊøÍË³ö>>>>>>>>>>>>>>>>");
+						logger.info("#####é‡‡é›†ç¨‹åºä¸­çº¿ç¨‹" + threadName + "ä¸‹è½½æ–‡ä»¶åï¼Œæ£€æµ‹åˆ°é€€å‡ºæ–‡ä»¶ï¼š"+CollectorConstant.EXIT_FILE_FULL_NAME+" å­˜åœ¨ï¼Œçº¿ç¨‹ç»“æŸé€€å‡º>>>>>>>>>>>>>>>>");
 					if(InitCollectorFile.ifNeedExitFlag)
-						logger.info("#####²É¼¯³ÌĞòÖĞÏß³Ì" + threadName + "ÏÂÔØÎÄ¼şºó£¬È«¾Ö±äÁ¿ÍË³ö±êÖ¾ÎªÕæ£¬Ïß³Ì½áÊøÍË³ö>>>>>>>>>>>>>>>>");
+						logger.info("#####é‡‡é›†ç¨‹åºä¸­çº¿ç¨‹" + threadName + "ä¸‹è½½æ–‡ä»¶åï¼Œå…¨å±€å˜é‡é€€å‡ºæ ‡å¿—ä¸ºçœŸï¼Œçº¿ç¨‹ç»“æŸé€€å‡º>>>>>>>>>>>>>>>>");
 					InitCollectorFile.isExit = true;
 					return;
 				}
 			}			
 			
 //			while((fileName = fileNameQueue.poll()) != null){
-//				//Èç¹ûÓĞ¿ØÖÆÎÄ¼ş
+//				//å¦‚æœæœ‰æ§åˆ¶æ–‡ä»¶
 //				if(CollectorConfInfo.ifHasCtlSourceFile){
 //					ctlFileName = fileName;
-//					//ÊÇ·ñÏÂÔØ¿ØÖÆÎÄ¼ş
+//					//æ˜¯å¦ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 //					if(CollectorConfInfo.ifDownloadCtlFile){
-//						//Èç¹ûĞèÒªÏÈÏÂÔØ¿ØÖÆÎÄ¼ş
+//						//å¦‚æœéœ€è¦å…ˆä¸‹è½½æ§åˆ¶æ–‡ä»¶
 //						if(CollectorConfInfo.ifFirstDownloadCtlFile){
-//							//ÏÂÔØ¿ØÖÆÎÄ¼ş
+//							//ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 //							ctlDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, ctlFileName, threadName,CollectorConfInfo.saveTmpPath);
-//							//Êı¾İÎÄ¼şÈ«Ãû£¬°Ñ¿ØÖÆÎÄ¼şµÄºó×ºÃûÌæ»»ÎªÊı¾İÎÄ¼şµÄºó×ºÃû
+//							//æ•°æ®æ–‡ä»¶å…¨åï¼ŒæŠŠæ§åˆ¶æ–‡ä»¶çš„åç¼€åæ›¿æ¢ä¸ºæ•°æ®æ–‡ä»¶çš„åç¼€å
 //							dataFileName = ctlFileName.replace(CollectorConfInfo.ctlSourceFileSuffixName, CollectorConfInfo.dataSourceFileSuffixName);
-//							//ÏÂÔØÊı¾İÎÄ¼ş
+//							//ä¸‹è½½æ•°æ®æ–‡ä»¶
 //							dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName, CollectorConfInfo.saveTmpPath);
 //							
-//							//ÏÂÔØ³É¹¦ºóÒÆ¶¯»òÕßÉ¾³ıÔ´¿ØÖÆÎÄ¼şºÍÊı¾İÎÄ¼ş
+//							//ä¸‹è½½æˆåŠŸåç§»åŠ¨æˆ–è€…åˆ é™¤æºæ§åˆ¶æ–‡ä»¶å’Œæ•°æ®æ–‡ä»¶
 //							if(ctlDownFlag && dataDownFlag){
-//								//ÊÇ·ñ·Ö¿ª´æ·ÅÊı¾İÎÄ¼şºÍĞ£ÑéÎÄ¼ş
+//								//æ˜¯å¦åˆ†å¼€å­˜æ”¾æ•°æ®æ–‡ä»¶å’Œæ ¡éªŒæ–‡ä»¶
 //								if(CollectorConfInfo.ifSaveDifferentPath){
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveCtlPath, ctlFileName);
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
@@ -184,21 +184,21 @@ public class FtpDownloadFileThread extends Thread{
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, ctlFileName);
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 //								}
-////								//ÒÆ¶¯»òÕßÉ¾³ıÔ´Êı¾İÎÄ¼ş
+////								//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ•°æ®æ–‡ä»¶
 ////								CollectorFileCommon.mvOrDeleteFtpSourceCtlFile(ftpClient,sourceDataPathString, ctlFileName,mvSourceCtlFilePath, threadName);
 ////								CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 //							}
-//						}else{//ÏÈÏÂÔØÊı¾İÎÄ¼ş
+//						}else{//å…ˆä¸‹è½½æ•°æ®æ–‡ä»¶
 //							dataFileName = fileName;
-//							//ÏÂÔØÊı¾İÎÄ¼ş
+//							//ä¸‹è½½æ•°æ®æ–‡ä»¶
 //							dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName, CollectorConfInfo.saveTmpPath);
-//							//¿ØÖÆÎÄ¼şÈ«Ãû£¬°ÑÊı¾İÎÄ¼şµÄºó×ºÃûÌæ»»Îª¿ØÖÆÎÄ¼şµÄºó×ºÃû
+//							//æ§åˆ¶æ–‡ä»¶å…¨åï¼ŒæŠŠæ•°æ®æ–‡ä»¶çš„åç¼€åæ›¿æ¢ä¸ºæ§åˆ¶æ–‡ä»¶çš„åç¼€å
 //							ctlFileName = dataFileName.replace(CollectorConfInfo.dataSourceFileSuffixName, CollectorConfInfo.ctlSourceFileSuffixName);
-//							//ÏÂÔØ¿ØÖÆÎÄ¼ş
+//							//ä¸‹è½½æ§åˆ¶æ–‡ä»¶
 //							ctlDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, ctlFileName, threadName,CollectorConfInfo.saveTmpPath);
-//							//ÏÂÔØ³É¹¦ºóÒÆ¶¯»òÕßÉ¾³ıÔ´¿ØÖÆÎÄ¼şºÍÊı¾İÎÄ¼ş
+//							//ä¸‹è½½æˆåŠŸåç§»åŠ¨æˆ–è€…åˆ é™¤æºæ§åˆ¶æ–‡ä»¶å’Œæ•°æ®æ–‡ä»¶
 //							if(ctlDownFlag && dataDownFlag ){
-//								//ÊÇ·ñ·Ö¿ª´æ·ÅÊı¾İÎÄ¼şºÍĞ£ÑéÎÄ¼ş
+//								//æ˜¯å¦åˆ†å¼€å­˜æ”¾æ•°æ®æ–‡ä»¶å’Œæ ¡éªŒæ–‡ä»¶
 //								if(CollectorConfInfo.ifSaveDifferentPath){
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveCtlPath, ctlFileName);
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
@@ -206,44 +206,44 @@ public class FtpDownloadFileThread extends Thread{
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, ctlFileName);
 //									CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 //								}
-////								//ÒÆ¶¯»òÕßÉ¾³ıÔ´Êı¾İÎÄ¼ş
+////								//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ•°æ®æ–‡ä»¶
 ////								CollectorFileCommon.mvOrDeleteFtpSourceCtlFile(ftpClient,sourceDataPathString, ctlFileName,mvSourceCtlFilePath, threadName);
 ////								CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 //							}
 //						}
-//					}else{//²»ÏÂÔØ¿ØÖÆÎÄ¼ş¡¢Ö±½ÓÉ¾³ı¿ØÖÆÎÄ¼ş»òÕßÒÆ¶¯¿ØÖÆÎÄ¼ş
-////						//ÒÆ¶¯»òÕßÉ¾³ıÔ´¿ØÖÆÎÄ¼ş
+//					}else{//ä¸ä¸‹è½½æ§åˆ¶æ–‡ä»¶ã€ç›´æ¥åˆ é™¤æ§åˆ¶æ–‡ä»¶æˆ–è€…ç§»åŠ¨æ§åˆ¶æ–‡ä»¶
+////						//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ§åˆ¶æ–‡ä»¶
 ////						CollectorFileCommon.mvOrDeleteFtpSourceCtlFile(ftpClient,sourceDataPathString, ctlFileName,mvSourceCtlFilePath, threadName);
-//						//Êı¾İÎÄ¼şÈ«Ãû£¬°Ñ¿ØÖÆÎÄ¼şµÄºó×ºÃûÌæ»»ÎªÊı¾İÎÄ¼şµÄºó×ºÃû
+//						//æ•°æ®æ–‡ä»¶å…¨åï¼ŒæŠŠæ§åˆ¶æ–‡ä»¶çš„åç¼€åæ›¿æ¢ä¸ºæ•°æ®æ–‡ä»¶çš„åç¼€å
 //						dataFileName = ctlFileName.replace(CollectorConfInfo.ctlSourceFileSuffixName, CollectorConfInfo.dataSourceFileSuffixName);
-//						//ÏÂÔØÊı¾İÎÄ¼ş
+//						//ä¸‹è½½æ•°æ®æ–‡ä»¶
 //						dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName, CollectorConfInfo.saveTmpPath);
 //						if(dataDownFlag){
 //							CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 ////							CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 //						}
 //					}
-//				}else{//Ã»ÓĞ¿ØÖÆÎÄ¼ş£¬ÔòÖ»ÓĞÊı¾İÎÄ¼ş
+//				}else{//æ²¡æœ‰æ§åˆ¶æ–‡ä»¶ï¼Œåˆ™åªæœ‰æ•°æ®æ–‡ä»¶
 //					dataFileName = fileName;
-//					//ÏÂÔØÊı¾İÎÄ¼ş
+//					//ä¸‹è½½æ•°æ®æ–‡ä»¶
 //					dataDownFlag = CollectorFileCommon.ftpDownloadOneFile(ftpClient, dataFileName, threadName,CollectorConfInfo.saveTmpPath);
-//					//ÒÆ¶¯»òÕßÉ¾³ıÔ´Êı¾İÎÄ¼ş
+//					//ç§»åŠ¨æˆ–è€…åˆ é™¤æºæ•°æ®æ–‡ä»¶
 //					if(dataDownFlag){
 //						CollectorFileCommon.mvFile(CollectorConfInfo.saveTmpPath, CollectorConfInfo.saveDataPath, dataFileName);
 ////						CollectorFileCommon.mvOrDeleteFtpSourceDataFile(ftpClient,sourceDataPathString, dataFileName,mvSourceDataFilePath, threadName);
 //					}
 //				}
 //				
-//				//ÊµÀı»¯ÍË³ö¼ì²âÎÄ¼ş
+//				//å®ä¾‹åŒ–é€€å‡ºæ£€æµ‹æ–‡ä»¶
 //				File f = new File(CollectorConstant.EXIT_FILE_FULL_NAME);
-//				//¼ì²éÈ«¾Ö±äÁ¿³ÌĞòÍË³ö±êÊ¶ÊÇ·ñÎªÕæ£¬ÈçÎªÕæ£¬Ôò³ÌĞòÍË³ö
+//				//æ£€æŸ¥å…¨å±€å˜é‡ç¨‹åºé€€å‡ºæ ‡è¯†æ˜¯å¦ä¸ºçœŸï¼Œå¦‚ä¸ºçœŸï¼Œåˆ™ç¨‹åºé€€å‡º
 //				if(InitCollectorFile.ifNeedExitFlag 
-//						//ÍË³öÎÄ¼ş´æÔÚ£¬ÔòÖ´ĞĞÍË³ö´¦Àí
+//						//é€€å‡ºæ–‡ä»¶å­˜åœ¨ï¼Œåˆ™æ‰§è¡Œé€€å‡ºå¤„ç†
 //						||f.exists()){
 //					if(f.exists())
-//						logger.info("#####²É¼¯³ÌĞòÖĞÏß³Ì" + threadName + "ÏÂÔØÎÄ¼şºó£¬¼ì²âµ½ÍË³öÎÄ¼ş£º"+CollectorConstant.EXIT_FILE_FULL_NAME+" ´æÔÚ£¬Ïß³Ì½áÊøÍË³ö>>>>>>>>>>>>>>>>");
+//						logger.info("#####é‡‡é›†ç¨‹åºä¸­çº¿ç¨‹" + threadName + "ä¸‹è½½æ–‡ä»¶åï¼Œæ£€æµ‹åˆ°é€€å‡ºæ–‡ä»¶ï¼š"+CollectorConstant.EXIT_FILE_FULL_NAME+" å­˜åœ¨ï¼Œçº¿ç¨‹ç»“æŸé€€å‡º>>>>>>>>>>>>>>>>");
 //					if(InitCollectorFile.ifNeedExitFlag)
-//						logger.info("#####²É¼¯³ÌĞòÖĞÏß³Ì" + threadName + "ÏÂÔØÎÄ¼şºó£¬È«¾Ö±äÁ¿ÍË³ö±êÖ¾ÎªÕæ£¬Ïß³Ì½áÊøÍË³ö>>>>>>>>>>>>>>>>");
+//						logger.info("#####é‡‡é›†ç¨‹åºä¸­çº¿ç¨‹" + threadName + "ä¸‹è½½æ–‡ä»¶åï¼Œå…¨å±€å˜é‡é€€å‡ºæ ‡å¿—ä¸ºçœŸï¼Œçº¿ç¨‹ç»“æŸé€€å‡º>>>>>>>>>>>>>>>>");
 //					InitCollectorFile.isExit = true;
 //					return;
 //				}
@@ -273,7 +273,7 @@ public class FtpDownloadFileThread extends Thread{
 				ftpClient = CollectorFileCommon.getFtpConnect();
 			}
 		} catch (Exception e) {
-			logger.error("%%%%%Ïß³Ì£º" + threadName + "ÏÂÔØÎÄ¼ş³ö´í£¡£¡£¡", e);
+			logger.error("%%%%%çº¿ç¨‹ï¼š" + threadName + "ä¸‹è½½æ–‡ä»¶å‡ºé”™ï¼ï¼ï¼", e);
 
 		} finally {
 			CollectorFileCommon.closeFtpConnect(ftpClient);

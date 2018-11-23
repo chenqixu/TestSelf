@@ -152,6 +152,26 @@ public class TimeTest {
 	public static String getNowGMTDate(String timezone, String type){
 		return format.format(Calendar.getInstance(TimeZone.getTimeZone("GMT"+type+timezone)).getTime());
 	}
+	
+	public static String getNow() {
+		Date now = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		return sdf.format(now);
+	}
+	
+	public static String supplementZero(String date) {
+		StringBuffer sb = null;
+		if(date!=null && date.trim().length()>0 && !date.contains(":")) {
+			sb = new StringBuffer(date);
+			int datalen = date.length();
+			if(datalen<14) {
+				for(int i=datalen;i<14;i++) {
+					sb.append("0");
+				}
+			}
+		}
+		return sb!=null?sb.toString():null;
+	}
 
 	public static void main(String[] args) throws Exception {
 //		// String time2 = "180_hw_1452129156865.CHK";
@@ -243,13 +263,22 @@ public class TimeTest {
 //			System.out.println("整点");
 //		}
 		
-		// 获取UTC时间
-		String UTCTimeStr = getUTCTimeStr();
-		System.out.println(UTCTimeStr);
-		// UTC时间转换为本地时区时间
-		System.out.println(getLocalTimeFromUTC(UTCTimeStr));
+//		// 获取UTC时间
+//		String UTCTimeStr = getUTCTimeStr();
+//		System.out.println(UTCTimeStr);
+//		// UTC时间转换为本地时区时间
+//		System.out.println(getLocalTimeFromUTC(UTCTimeStr));
+//		
+////		System.out.println(getNowGMTDate("8", "+"));
+//		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 		
-//		System.out.println(getNowGMTDate("8", "+"));
-		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
+		System.out.println(getNow());
+		System.out.println(supplementZero(""));
+		System.out.println(supplementZero(null));
+		System.out.println(supplementZero("20181114 01:01"));
+		System.out.println(supplementZero("20181114"));
+		System.out.println(supplementZero("2018111401"));
+		System.out.println(supplementZero("201811140101"));
+		System.out.println(supplementZero("20181114010101"));
 	}
 }

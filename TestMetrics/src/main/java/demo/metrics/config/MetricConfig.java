@@ -15,7 +15,7 @@ public class MetricConfig {
     }
 
     /**
-     * Reporter Êı¾İµÄÕ¹ÏÖÎ»ÖÃ
+     * Reporter æ•°æ®çš„å±•ç°ä½ç½®
      *
      * @param metrics
      * @return
@@ -43,7 +43,7 @@ public class MetricConfig {
     }
 
     /**
-     * ×Ô¶¨Òåµ¥Î»
+     * è‡ªå®šä¹‰å•ä½
      *
      * @param metrics
      * @return
@@ -54,7 +54,7 @@ public class MetricConfig {
     }
 
     /**
-     * TPS ¼ÆËãÆ÷
+     * TPS è®¡ç®—å™¨
      *
      * @param metrics
      * @return
@@ -65,7 +65,7 @@ public class MetricConfig {
     }
 
     /**
-     * Ö±·½Í¼
+     * ç›´æ–¹å›¾
      *
      * @param metrics
      * @return
@@ -76,7 +76,7 @@ public class MetricConfig {
     }
 
     /**
-     * ¼ÆÊıÆ÷
+     * è®¡æ•°å™¨
      *
      * @param metrics
      * @return
@@ -87,7 +87,7 @@ public class MetricConfig {
     }
 
     /**
-     * ¼ÆÊ±Æ÷
+     * è®¡æ—¶å™¨
      *
      * @param metrics
      * @return

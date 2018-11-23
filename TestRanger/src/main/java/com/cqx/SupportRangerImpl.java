@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.ranger.plugin.model.RangerPolicy;
 
 public class SupportRangerImpl {
-	private static String service = PropertyUtil.getProperty("service");// hive 的服务名
+	private static String service = PropertyUtil.getProperty("service");// hive 鐨勬湇鍔″悕
 	
 	public static RangerPolicy updateOfPolicy(String policeName, String dbName, String tableName, String operatePermissionsType,
             String policeUser, String colPermissionsType, String policeIsEnabled) {
@@ -86,7 +86,7 @@ public class SupportRangerImpl {
 	}
 	
 	/**
-     * 为创建策略而创建的策略对象
+     * 涓哄垱寤虹瓥鐣ヨ�屽垱寤虹殑绛栫暐瀵硅薄
      * 
      * @param PoliceName
      * @param policeUser
@@ -123,7 +123,7 @@ public class SupportRangerImpl {
             dbList.add(dbName);
         }
 
-//        dbList.add(newPoliceUser + "_autoCreateDb");// 默认为每个策略添加一个唯一的库，以区分创建了权限相同的策略
+//        dbList.add(newPoliceUser + "_autoCreateDb");// 榛樿涓烘瘡涓瓥鐣ユ坊鍔犱竴涓敮涓�鐨勫簱锛屼互鍖哄垎鍒涘缓浜嗘潈闄愮浉鍚岀殑绛栫暐
         dbRangerPolicyResource.setValues(dbList);
 
         tablerRangerPolicyResource.setValue(tableName);        

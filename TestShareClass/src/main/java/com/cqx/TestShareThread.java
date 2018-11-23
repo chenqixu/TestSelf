@@ -6,10 +6,10 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 public class TestShareThread extends Thread {
-	// ÈÕÖ¾¼ÇÂ¼Æ÷
+	// æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(TestShareThread.class);
 	
-	//Ïß³Ì°²È«¶ÓÁĞ£¬´æ·Åµ±Ç°ÒªÏÂÔØµÄËùÓĞÎÄ¼şÃû
+	//çº¿ç¨‹å®‰å…¨é˜Ÿåˆ—ï¼Œå­˜æ”¾å½“å‰è¦ä¸‹è½½çš„æ‰€æœ‰æ–‡ä»¶å
 	private Queue<String> fileNameQueue;
 	private String threadName;
 	private String fileName ;
@@ -19,19 +19,19 @@ public class TestShareThread extends Thread {
 	}
 	
 	public void run(){
-		//»ñÈ¡µ±Ç°Ïß³ÌÃû³Æ
+		//è·å–å½“å‰çº¿ç¨‹åç§°
 		threadName = Thread.currentThread().getName();
 		while((fileName = fileNameQueue.poll()) != null){
-			// ÅĞ¶ÏÊÇ·ñĞèÒªÍË³ö
+			// åˆ¤æ–­æ˜¯å¦éœ€è¦é€€å‡º
 			if(InitCollectorFile.exit()){
-				logger.info("[TestShareThread]¼ì²éµ½ÍË³öÎÄ¼ş,Ïß³ÌÍË³ö.");
+				logger.info("[TestShareThread]æ£€æŸ¥åˆ°é€€å‡ºæ–‡ä»¶,çº¿ç¨‹é€€å‡º.");
 				break;
 			}
 			logger.info(threadName+" [poll]"+fileName);
 			try {
-				// Ëæ»úĞİÃß1µ½9Ãë
+				// éšæœºä¼‘çœ 1åˆ°9ç§’
 				int sleep = randomSleep()*1000;
-				logger.info(threadName+" Ëæ»úĞİÃß"+sleep+"ºÀÃë");
+				logger.info(threadName+" éšæœºä¼‘çœ "+sleep+"è±ªç§’");
 				Thread.sleep(sleep);
 			} catch (InterruptedException e) {
 				logger.error(e.toString(), e);
@@ -40,7 +40,7 @@ public class TestShareThread extends Thread {
 	}
 	
 	/**
-	 * Ëæ»ú1¸öÊı×Ö
+	 * éšæœº1ä¸ªæ•°å­—
 	 * */
 	public int randomSleep() {
 		String s = "123456789";

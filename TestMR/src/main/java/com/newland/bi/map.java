@@ -9,50 +9,50 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 public class map extends Mapper<LongWritable, Text, Text, Text> {
-	// ÅäÖÃÐÅÏ¢ÊµÌåÀà
+	// é…ç½®ä¿¡æ¯å®žä½“ç±»
 	private static Configuration conf = null;
-	// ·Ö²¼Ê½ÎÄ¼þÏµÍ³
+	// åˆ†å¸ƒå¼æ–‡ä»¶ç³»ç»Ÿ
 	private FileSystem fs = null;
-	// ÖðÐÐ¶ÁÈëµÄÊý¾Ý
+	// é€è¡Œè¯»å…¥çš„æ•°æ®
 	private static String lineValue;
 
 	/**
-	 * ÔÚÈÎÎñ¿ªÊ¼Ê±µ÷ÓÃÒ»´Î
+	 * åœ¨ä»»åŠ¡å¼€å§‹æ—¶è°ƒç”¨ä¸€æ¬¡
 	 * */
 	protected void setup(Context context) throws IOException,
 			InterruptedException {
-		// Èç¹ûÅäÖÃÐÅÏ¢ÊµÌåÀàÎª¿Õ£¬Ôò»ñÈ¡¶ÔÏó
+		// å¦‚æžœé…ç½®ä¿¡æ¯å®žä½“ç±»ä¸ºç©ºï¼Œåˆ™èŽ·å–å¯¹è±¡
 		if (conf == null) conf = context.getConfiguration();
-		// »ñÈ¡ÎÄ¼þÏµÍ³ÊµÀý
+		// èŽ·å–æ–‡ä»¶ç³»ç»Ÿå®žä¾‹
 		fs = FileSystem.newInstance(conf);
 	}
 	
 	/**
-	 * ÔÚÈÎÎñ½áÊøÊ±µ÷ÓÃÒ»´Î
+	 * åœ¨ä»»åŠ¡ç»“æŸæ—¶è°ƒç”¨ä¸€æ¬¡
 	 * */
 	protected void cleanup(Context context) throws IOException,
 			InterruptedException {
-		// ¹Ø±Õ·Ö²¼Ê½ÎÄ¼þÏµÍ³ÊµÀý	
+		// å…³é—­åˆ†å¸ƒå¼æ–‡ä»¶ç³»ç»Ÿå®žä¾‹	
 		fs.close();
 	}
 	
 	/**
-	 * ¶ÔÊäÈëÎÄ¼þÖðÐÐ´¦Àí
+	 * å¯¹è¾“å…¥æ–‡ä»¶é€è¡Œå¤„ç†
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 * */
 	@Override
 	public void map(LongWritable key, Text value, Context context) {
-		// ÖðÐÐ¶ÁÈëÊý¾Ý
+		// é€è¡Œè¯»å…¥æ•°æ®
 		lineValue = value.toString();
-		// ·Ö¸îÊý¾Ý
+		// åˆ†å‰²æ•°æ®
 		String arr[] = lineValue.split(Contants.SPLIT_DICT, -1);
 		// id,name,code
 		String keystr = arr[0]+Contants.SPLIT_DICT+arr[1]+Contants.SPLIT_DICT+arr[2];// key
 		// cnt,user_time
 		String valuestr = arr[3]+Contants.SPLIT_DICT+arr[4];// value
 		if (keystr != null && keystr.trim().length()>0  && valuestr != null && valuestr.trim().length()>0) {
-			// ÒÔ×Ö¶Î½øÐÐ·Ö×é£¬ÔÚreduceÖÐ½øÐÐ»ã×Ü
+			// ä»¥å­—æ®µè¿›è¡Œåˆ†ç»„ï¼Œåœ¨reduceä¸­è¿›è¡Œæ±‡æ€»
 			try {
 				context.write(new Text(keystr), new Text(valuestr));
 			} catch (IOException e) {

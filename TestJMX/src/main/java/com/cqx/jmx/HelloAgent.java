@@ -8,16 +8,14 @@ import java.rmi.registry.Registry;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
-import javax.management.Notification;
-import javax.management.NotificationListener;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import com.cqx.jmx.util.JMXFactory;
 import com.sun.jdmk.comm.HtmlAdaptorServer;
 
 public class HelloAgent
@@ -42,7 +40,7 @@ public class HelloAgent
 	// HtmlAdaptorServer htmlAdaptorServer = new HtmlAdaptorServer();
 	// ObjectName adapterName = null;
 	// try {
-	// // ¶à¸öÊôĞÔÊ¹ÓÃ,·Ö¸ô
+	// // å¤šä¸ªå±æ€§ä½¿ç”¨,åˆ†éš”
 	// adapterName = new ObjectName("HelloAgent:name=htmladapter,port=9092");
 	// htmlAdaptorServer.setPort(9092);
 	// mbs.registerMBean(htmlAdaptorServer, adapterName);
@@ -55,25 +53,24 @@ public class HelloAgent
 	// System.out.println(" hello agent is running");
 	// HelloAgent agent = new HelloAgent();
 	// }
-	public static void main(String[] args) throws MalformedObjectNameException,
-			NotCompliantMBeanException, InstanceAlreadyExistsException,
-			MBeanRegistrationException, IOException {
-		// ÏÂÃæÕâÖÖ·½Ê½²»ÄÜÔÙJConsoleÖĞÊ¹ÓÃ
+	
+	public void agentStart() throws Exception {
+		// ä¸‹é¢è¿™ç§æ–¹å¼ä¸èƒ½å†JConsoleä¸­ä½¿ç”¨
 		// MBeanServer server = MBeanServerFactory.createMBeanServer();
-		// Ê×ÏÈ½¨Á¢Ò»¸öMBeanServer,MBeanServerÓÃÀ´¹ÜÀíÎÒÃÇµÄMBean,Í¨³£ÊÇÍ¨¹ıMBeanServerÀ´»ñÈ¡ÎÒÃÇMBeanµÄĞÅÏ¢£¬¼ä½Ó
-		// µ÷ÓÃMBeanµÄ·½·¨£¬È»ºóÉú²úÎÒÃÇµÄ×ÊÔ´µÄÒ»¸ö¶ÔÏó¡£
+		// é¦–å…ˆå»ºç«‹ä¸€ä¸ªMBeanServer,MBeanServerç”¨æ¥ç®¡ç†æˆ‘ä»¬çš„MBean,é€šå¸¸æ˜¯é€šè¿‡MBeanServeræ¥è·å–æˆ‘ä»¬MBeançš„ä¿¡æ¯ï¼Œé—´æ¥
+		// è°ƒç”¨MBeançš„æ–¹æ³•ï¼Œç„¶åç”Ÿäº§æˆ‘ä»¬çš„èµ„æºçš„ä¸€ä¸ªå¯¹è±¡ã€‚
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 
 		String domainName = "MyMBean";
 
-		// ÎªMBean£¨ÏÂÃæµÄnew Hello()£©´´½¨ObjectNameÊµÀı
+		// ä¸ºMBeanï¼ˆä¸‹é¢çš„new Hello()ï¼‰åˆ›å»ºObjectNameå®ä¾‹
 		ObjectName helloName = new ObjectName(domainName + ":name=HelloWorld");
-		// ½«new Hello()Õâ¸ö¶ÔÏó×¢²áµ½MBeanServerÉÏÈ¥
+		// å°†new Hello()è¿™ä¸ªå¯¹è±¡æ³¨å†Œåˆ°MBeanServerä¸Šå»
 		mbs.registerMBean(new HelloWorld(), helloName);
 
 		// Distributed Layer,
-		// Ìá¹©ÁËÒ»¸öHtmlAdaptor¡£Ö§³ÖHttp·ÃÎÊĞ­Òé£¬²¢ÇÒÓĞÒ»¸ö²»´íµÄHTML½çÃæ£¬ÕâÀïµÄHello¾ÍÊÇÓÃÕâ¸ö×÷ÎªÔ¶¶Ë¹ÜÀíµÄ½çÃæ
-		// ÊÂÊµÉÏHtmlAdaptorÊÇÒ»¸ö¼òµ¥µÄHttpServer£¬Ëü½«HttpÇëÇó×ª»»ÎªJMX AgentµÄÇëÇó
+		// æä¾›äº†ä¸€ä¸ªHtmlAdaptorã€‚æ”¯æŒHttpè®¿é—®åè®®ï¼Œå¹¶ä¸”æœ‰ä¸€ä¸ªä¸é”™çš„HTMLç•Œé¢ï¼Œè¿™é‡Œçš„Helloå°±æ˜¯ç”¨è¿™ä¸ªä½œä¸ºè¿œç«¯ç®¡ç†çš„ç•Œé¢
+		// äº‹å®ä¸ŠHtmlAdaptoræ˜¯ä¸€ä¸ªç®€å•çš„HttpServerï¼Œå®ƒå°†Httpè¯·æ±‚è½¬æ¢ä¸ºJMX Agentçš„è¯·æ±‚
 		ObjectName adapterName = new ObjectName(domainName
 				+ ":name=htmladapter,port=8082");
 		HtmlAdaptorServer adapter = new HtmlAdaptorServer();
@@ -89,5 +86,15 @@ public class HelloAgent
 		JMXConnectorServer jmxConnector = JMXConnectorServerFactory
 				.newJMXConnectorServer(url, null, mbs);
 		jmxConnector.start();
+	}
+	
+	public static void start() {
+		JMXFactory.startJMX("HelloWorld", new HelloWorld());
+	}
+	
+	public static void main(String[] args) throws MalformedObjectNameException,
+			NotCompliantMBeanException, InstanceAlreadyExistsException,
+			MBeanRegistrationException, IOException {
+		start();
 	}
 }

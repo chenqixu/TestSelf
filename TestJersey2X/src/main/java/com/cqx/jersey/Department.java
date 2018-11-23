@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * ²¿ÃÅbean
+ * éƒ¨é—¨bean
  * */
 @Setter
 @Getter

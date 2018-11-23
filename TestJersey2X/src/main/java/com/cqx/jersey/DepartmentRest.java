@@ -15,13 +15,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * ²¿ÃÅÇëÇó·şÎñ
+ * éƒ¨é—¨è¯·æ±‚æœåŠ¡
  * <pre>
- * ÁĞ±í(list)
- * Í¨¹ıid»ñÈ¡Ãû³Æ(get/{id})
- * ±£´æ(save)
- * Í¨¹ıid¸üĞÂÃû³Æ(update/{id})
- * Í¨¹ıidÉ¾³ı²¿ÃÅ(delete/{id})
+ * åˆ—è¡¨(list)
+ * é€šè¿‡idè·å–åç§°(get/{id})
+ * ä¿å­˜(save)
+ * é€šè¿‡idæ›´æ–°åç§°(update/{id})
+ * é€šè¿‡idåˆ é™¤éƒ¨é—¨(delete/{id})
  * </pre>
  * */
 @Path("dept")
@@ -66,6 +66,6 @@ public class DepartmentRest {
 	@Path("delete/{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public void delete(@PathParam("id") Long id) {
-	    System.out.println("É¾³ı²¿ÃÅ£º" + id);
+	    System.out.println("åˆ é™¤éƒ¨é—¨ï¼š" + id);
 	}
 }

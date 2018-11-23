@@ -3,19 +3,19 @@ package com.cqx;
 public class HbaseExport extends HBaseTool {
 	public static void main(String[] args) {
 		final HBaseTool ht = new HbaseExport();
-		// ½âÎö²ÎÊı
+		// è§£æå‚æ•°
 		HbaseInputBean hib = ht.parseArgs(args);
-		// ²éÑ¯²¢±£´æ
+		// æŸ¥è¯¢å¹¶ä¿å­˜
 		ht.save(hib);
 		/*
-		 * ÔÚjvmÖĞÔö¼ÓÒ»¸ö¹Ø±ÕµÄ¹³×Ó£¬µ±jvm¹Ø±ÕµÄÊ±ºò£¬»áÖ´ĞĞÏµÍ³ÖĞÒÑ¾­ÉèÖÃµÄËùÓĞÍ¨¹ı·½·¨addShutdownHookÌí¼ÓµÄ¹³×Ó£¬
-		 * µ±ÏµÍ³Ö´ĞĞÍêÕâĞ©¹³×Óºó£¬jvm²Å»á¹Ø±Õ¡£ËùÒÔÕâĞ©¹³×Ó¿ÉÒÔÔÚjvm¹Ø±ÕµÄÊ±ºò½øĞĞÄÚ´æÇåÀí¡¢¶ÔÏóÏú»ÙµÈ²Ù×÷
+		 * åœ¨jvmä¸­å¢åŠ ä¸€ä¸ªå…³é—­çš„é’©å­ï¼Œå½“jvmå…³é—­çš„æ—¶å€™ï¼Œä¼šæ‰§è¡Œç³»ç»Ÿä¸­å·²ç»è®¾ç½®çš„æ‰€æœ‰é€šè¿‡æ–¹æ³•addShutdownHookæ·»åŠ çš„é’©å­ï¼Œ
+		 * å½“ç³»ç»Ÿæ‰§è¡Œå®Œè¿™äº›é’©å­åï¼Œjvmæ‰ä¼šå…³é—­ã€‚æ‰€ä»¥è¿™äº›é’©å­å¯ä»¥åœ¨jvmå…³é—­çš„æ—¶å€™è¿›è¡Œå†…å­˜æ¸…ç†ã€å¯¹è±¡é”€æ¯ç­‰æ“ä½œ
 		 * */
 		Runtime.getRuntime().addShutdownHook(
 			new Thread("relase-shutdown-hook") {
 				@Override
 				public void run() {
-					// ÊÍ·ÅÁ¬½Ó³Ø×ÊÔ´
+					// é‡Šæ”¾è¿æ¥æ± èµ„æº
 					ht.relaseEnd();
 				}
 			}

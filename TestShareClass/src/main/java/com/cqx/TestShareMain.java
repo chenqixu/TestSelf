@@ -9,28 +9,28 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.log4j.Logger;
 
 public class TestShareMain {
-	// ÈÕÖ¾¼ÇÂ¼Æ÷
+	// æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(TestShareMain.class);
 	public static int currCycleNum = 1;
 	
 	public static void deal(String tag){
 		String sourceDataPathString = "TestShareMain";
-		//Ä³¸öÄ¿Â¼´æ·ÅÎÄ¼şÃûµÄ¶ÓÁĞ
+		//æŸä¸ªç›®å½•å­˜æ”¾æ–‡ä»¶åçš„é˜Ÿåˆ—
         Queue<String> fileNameQueue = null;
-        //Èç¹ûÈ«¾Ö±äÁ¿MapÖĞ´æÔÚ´ËÄ¿Â¼¶ÔÓ¦µÄÎÄ¼şÃû¶ÓÁĞ£¬ÔòÈ¡³ö±¾¶ÔÏó
+        //å¦‚æœå…¨å±€å˜é‡Mapä¸­å­˜åœ¨æ­¤ç›®å½•å¯¹åº”çš„æ–‡ä»¶åé˜Ÿåˆ—ï¼Œåˆ™å–å‡ºæœ¬å¯¹è±¡
         if(InitCollectorFile.fileNameQueueMap.containsKey(sourceDataPathString)){
-        	//È¡³ö±¾Ä¿Â¼µÄÎÄ¼şÃû¶ÓÁĞ
+        	//å–å‡ºæœ¬ç›®å½•çš„æ–‡ä»¶åé˜Ÿåˆ—
         	fileNameQueue = InitCollectorFile.fileNameQueueMap.get(sourceDataPathString);
-        }else{//Èç¹û²»´æÔÚ±¾Ä¿Â¼¶ÔÓ¦µÄÎÄ¼şÃû¶ÓÁĞ£¬Ôò´´½¨´Ë¶ÓÁĞ
+        }else{//å¦‚æœä¸å­˜åœ¨æœ¬ç›®å½•å¯¹åº”çš„æ–‡ä»¶åé˜Ÿåˆ—ï¼Œåˆ™åˆ›å»ºæ­¤é˜Ÿåˆ—
         	fileNameQueue = new ConcurrentLinkedQueue<String>();
-        	//°ÑĞÂ´´½¨µÄÎÄ¼şÃû¶ÓÁĞ·ÅÈëÈ«¾Ö±äÁ¿mapÖĞ
+        	//æŠŠæ–°åˆ›å»ºçš„æ–‡ä»¶åé˜Ÿåˆ—æ”¾å…¥å…¨å±€å˜é‡mapä¸­
         	InitCollectorFile.fileNameQueueMap.put(sourceDataPathString, fileNameQueue);
         }
-        // ¼Óµ½¶ÓÁĞ
+        // åŠ åˆ°é˜Ÿåˆ—
         for(int i=0;i<100;i++){
         	fileNameQueue.offer(tag+" "+i);    		
     	}
-        // Æô¶¯10¸öÏß³Ì
+        // å¯åŠ¨10ä¸ªçº¿ç¨‹
     	for(int i=0;i<10;i++){
     		Thread t = new TestShareThread(fileNameQueue);
     		InitCollectorFile.TestThreadList.add(t);
@@ -40,11 +40,11 @@ public class TestShareMain {
 
     public static void clearNoAliveThread(List<Thread> sourceThreadList){
     	try {
-			//ĞèÒªÉ¾³ıµÄÏß³ÌÁĞ±í
+			//éœ€è¦åˆ é™¤çš„çº¿ç¨‹åˆ—è¡¨
 			List<Thread> needDelThreadList = new ArrayList<Thread>();
-			//Ñ­»·È¡³öÏß³Ì
+			//å¾ªç¯å–å‡ºçº¿ç¨‹
 			for(Thread t:sourceThreadList){
-				//Èç¹ûÏß³ÌÊÇ·Ç»î¶¯µÄ£¬Ôò·ÅÈë´ıÉ¾³ıµÄListÖĞ
+				//å¦‚æœçº¿ç¨‹æ˜¯éæ´»åŠ¨çš„ï¼Œåˆ™æ”¾å…¥å¾…åˆ é™¤çš„Listä¸­
 				if(!t.isAlive()) needDelThreadList.add(t);
 			}
 			sourceThreadList.removeAll(needDelThreadList);
@@ -67,20 +67,20 @@ public class TestShareMain {
 			System.exit(1);
 		}
 		try{
-			// ³õÊ¼»¯
+			// åˆå§‹åŒ–
 			InitCollectorFile.initDataCollector(conf, exit);
 			while(true){
-				// ÅĞ¶ÏÊÇ·ñĞèÒªÍË³ö
+				// åˆ¤æ–­æ˜¯å¦éœ€è¦é€€å‡º
 				if(InitCollectorFile.exit()){
-					logger.info("[TestShareMain]¼ì²éµ½ÍË³öÎÄ¼ş,Ïß³ÌÍË³ö.");
+					logger.info("[TestShareMain]æ£€æŸ¥åˆ°é€€å‡ºæ–‡ä»¶,çº¿ç¨‹é€€å‡º.");
 					break;
 				}
-				logger.info("#####TestShareMain¿ªÊ¼½øĞĞµÚ"+currCycleNum+"´ÎÑ­»·");
-				// ÒµÎñ´¦Àí
+				logger.info("#####TestShareMainå¼€å§‹è¿›è¡Œç¬¬"+currCycleNum+"æ¬¡å¾ªç¯");
+				// ä¸šåŠ¡å¤„ç†
 				deal(tag);
-				// Ñ­»·ÅĞ¶ÏÏß³ÌÊÇ·ñ½áÊø
+				// å¾ªç¯åˆ¤æ–­çº¿ç¨‹æ˜¯å¦ç»“æŸ
 				while(InitCollectorFile.TestThreadList.size()>0){
-					//ÇåÀí²»»î¶¯µÄ½©ËÀÏß³Ì
+					//æ¸…ç†ä¸æ´»åŠ¨çš„åƒµæ­»çº¿ç¨‹
 					clearNoAliveThread(InitCollectorFile.TestThreadList);
 					Thread.sleep(1000);
 				}

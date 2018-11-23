@@ -13,7 +13,7 @@ public class HbaseInputBean {
 		this.starttime_e = _starttime_e;
 		this.filepath = _filepath;
 	}
-	// ÊäÈë²ÎÊı
+	// è¾“å…¥å‚æ•°
 	private String tableName = null;
 	private String msisdn = null;
 	private String starttime_s = null;

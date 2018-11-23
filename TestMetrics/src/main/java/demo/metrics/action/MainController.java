@@ -34,7 +34,7 @@ public class MainController {
     @ResponseBody
     public String helloWorld() {
         requestMeter.mark();
-        pendingJobs.inc();//增加计数
+        pendingJobs.inc();//澧炲姞璁℃暟
         responseSizes.update(new Random().nextInt(10));
         listManager.getList().add(1);
         final Timer.Context context = responses.time();

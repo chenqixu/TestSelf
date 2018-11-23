@@ -30,7 +30,7 @@ import bean.KeepNetLogOSSWlanBean;
 
 public class HiveTest {
 	
-	//²âÊÔ¿ª¹Ø trueÎª²âÊÔ
+	//æµ‹è¯•å¼€å…³ trueä¸ºæµ‹è¯•
 	private boolean test_flag = true;
 	
 	public void setTest_flag(boolean test_flag) {
@@ -41,7 +41,7 @@ public class HiveTest {
 	}
 		
     /**
-     * ½«ÈÕÆÚ×Ö·û´®°´Ö¸¶¨ÈÕÆÚ¸ñÊ½³ÉĞÂ×Ö·û´®
+     * å°†æ—¥æœŸå­—ç¬¦ä¸²æŒ‰æŒ‡å®šæ—¥æœŸæ ¼å¼æˆæ–°å­—ç¬¦ä¸²
      * */
 	private String formatDateString(String date, String origFormat, String destFormat) throws Exception {
     	SimpleDateFormat sf1 = new SimpleDateFormat(origFormat);
@@ -51,14 +51,14 @@ public class HiveTest {
 		} catch (ParseException e) {
 			System.out.println("KeepNetLogOSSClient formatDateString error:"+e.toString());
 			e.printStackTrace();
-			throw e;//Å×³öÒì³£
+			throw e;//æŠ›å‡ºå¼‚å¸¸
 		}
     	SimpleDateFormat sf2 = new SimpleDateFormat(destFormat);
     	return sf2.format(d);
     }
 	
 	/**
-	 * ÅĞ¶Ï´«ÈëµÄ¿ªÊ¼ºÍ½áÊøÊ±¼äÊÇ·ñÏà²î1¸öĞ¡Ê±,ÊÇÔòÊ¹ÓÃĞ¡Ê±·ÖÇø,²»ÊÇÔòÊ¹ÓÃÌì·ÖÇø
+	 * åˆ¤æ–­ä¼ å…¥çš„å¼€å§‹å’Œç»“æŸæ—¶é—´æ˜¯å¦ç›¸å·®1ä¸ªå°æ—¶,æ˜¯åˆ™ä½¿ç”¨å°æ—¶åˆ†åŒº,ä¸æ˜¯åˆ™ä½¿ç”¨å¤©åˆ†åŒº
 	 * */
 	private boolean defSdateAndEdate(String start_date, String end_date) throws Exception {
 		boolean hours = false;
@@ -66,31 +66,31 @@ public class HiveTest {
 		java.util.Date beginDate = format.parse(start_date);
 		java.util.Date endDate= format.parse(end_date);
 		//long day=(endDate.getTime()-beginDate.getTime())/(60*1000);
-		if(beginDate.getHours() == endDate.getHours()){//¶¼ÔÚÍ¬Ò»Ê±¶Î
+		if(beginDate.getHours() == endDate.getHours()){//éƒ½åœ¨åŒä¸€æ—¶æ®µ
 			hours = true;
 		}
 		return hours;
 	}
 	
 	/**
-	 * ²éÑ¯
+	 * æŸ¥è¯¢
 	 * */
 	public KeepNetLogOSSData qryKeepNetLog(KeepNetLogOSSBean requestBean) throws Exception {
-		KeepNetLogOSSData knlod = new KeepNetLogOSSData();//·µ»Ø½á¹û
-		int dbType = 0;//Êı¾İÀàĞÍ 1:hive 2:bishow
-		StringBuffer sbSQL = new StringBuffer("");//²éÑ¯sql
-		List<KeepNetLogOSSClientThread> listThread = new ArrayList<KeepNetLogOSSClientThread>();//ÓÃÓÚ´æ·ÅÏß³Ì
-		List wlan_resultList = null;//wlan½á¹û
-		List ip_resultList = null;//ip½á¹û
-		List http_resultList = null;//http½á¹û
-		List<List<String>> qryresultList = null;//´¦ÀíºóµÄ²éÑ¯½á¹û
+		KeepNetLogOSSData knlod = new KeepNetLogOSSData();//è¿”å›ç»“æœ
+		int dbType = 0;//æ•°æ®ç±»å‹ 1:hive 2:bishow
+		StringBuffer sbSQL = new StringBuffer("");//æŸ¥è¯¢sql
+		List<KeepNetLogOSSClientThread> listThread = new ArrayList<KeepNetLogOSSClientThread>();//ç”¨äºå­˜æ”¾çº¿ç¨‹
+		List wlan_resultList = null;//wlanç»“æœ
+		List ip_resultList = null;//ipç»“æœ
+		List http_resultList = null;//httpç»“æœ
+		List<List<String>> qryresultList = null;//å¤„ç†åçš„æŸ¥è¯¢ç»“æœ
 		try{
 			if(requestBean!=null){
-				if(requestBean.getRattype().equals("99")){//WLAN ÒÆ¶¯Íø¹Ü²éÑ¯µ¼ÈëµÄÊı¾İ oracle
+				if(requestBean.getRattype().equals("99")){//WLAN ç§»åŠ¨ç½‘ç®¡æŸ¥è¯¢å¯¼å…¥çš„æ•°æ® oracle
 					dbType = 2;
 					
 					//wlan
-	        		sbSQL.delete(0, sbSQL.length());//Çå¿Õsql
+	        		sbSQL.delete(0, sbSQL.length());//æ¸…ç©ºsql
 					sbSQL.append(" select");
 					sbSQL.append(" to_char(starttime_s,'yyyy-MM-dd HH24:mi:ss')");
 					sbSQL.append(" ,to_char(starttime_e,'yyyy-MM-dd HH24:mi:ss')");
@@ -106,9 +106,9 @@ public class HiveTest {
 					sbSQL.append(" from keepnetlogoss_wlan_log wlan ");
 					sbSQL.append(" where ");
 					sbSQL.append(appendWhereSql(requestBean, "wlan"));
-					sbSQL.append(" and rownum<10000 ");//×î¶àÖ»ÔÊĞí²é10000Ìõ
+					sbSQL.append(" and rownum<10000 ");//æœ€å¤šåªå…è®¸æŸ¥10000æ¡
 					sbSQL.append(" order by starttime_s ");
-					/*wlanÏß³Ì*/
+					/*wlançº¿ç¨‹*/
 					KeepNetLogOSSClientThread keepqueryThread1 = new KeepNetLogOSSClientThread(sbSQL.toString(), dbType, "wlan", requestBean.getTelnumber());
 					keepqueryThread1.setTest_flag(this.test_flag);
 					keepqueryThread1.start();
@@ -117,103 +117,103 @@ public class HiveTest {
 					dbType = 1;
 					
 					//ip
-	        		sbSQL.delete(0, sbSQL.length());//Çå¿Õsql
+	        		sbSQL.delete(0, sbSQL.length());//æ¸…ç©ºsql
 					sbSQL.append("select ");
-					sbSQL.append(" ip.sid ");//ÓÃÓÚºÍhttpµÄipsid¹ØÁª
-					sbSQL.append(" ,ip.telnumber ");//ÊÖ»úºÅÂë
-					sbSQL.append(" ,'' ");//ÓÃ»§NATºó¹«ÍøIPµØÖ·
-					sbSQL.append(" ,ip.userip ");//ÓÃ»§Ë½ÍøIPµØÖ·
-					sbSQL.append(" ,ip.usrsport ");//NATºóÔ´¶Ë¿Ú
-					sbSQL.append(" ,ip.usrdip ");//Ä¿µÄIP
-					sbSQL.append(" ,ip.usrdport ");//Ä¿µÄ¶Ë¿Ú
-					sbSQL.append(" ,ip.starttime ");//·ÃÎÊÊ±¼ä
-					sbSQL.append(" ,ip.lasttime ");//ÏÂÏßÊ±¼ä
+					sbSQL.append(" ip.sid ");//ç”¨äºå’Œhttpçš„ipsidå…³è”
+					sbSQL.append(" ,ip.telnumber ");//æ‰‹æœºå·ç 
+					sbSQL.append(" ,'' ");//ç”¨æˆ·NATåå…¬ç½‘IPåœ°å€
+					sbSQL.append(" ,ip.userip ");//ç”¨æˆ·ç§ç½‘IPåœ°å€
+					sbSQL.append(" ,ip.usrsport ");//NATåæºç«¯å£
+					sbSQL.append(" ,ip.usrdip ");//ç›®çš„IP
+					sbSQL.append(" ,ip.usrdport ");//ç›®çš„ç«¯å£
+					sbSQL.append(" ,ip.starttime ");//è®¿é—®æ—¶é—´
+					sbSQL.append(" ,ip.lasttime ");//ä¸‹çº¿æ—¶é—´
 					sbSQL.append(" ,ip.apn ");//APN
 					sbSQL.append(" ,case when ip.rattype=1 then '3G' when ip.rattype=2 then '2G' else '' end ");//2g/3g
 					sbSQL.append(" from ip_rc ip ");
 					sbSQL.append(" where ");
 					sbSQL.append(appendWhereSql(requestBean, "ip"));
 					sbSQL.append(" order by ip.starttime desc ");
-					//sbSQL.append(" limit 20000 ");//×î¶àÖ»ÔÊĞí²é10000Ìõ					
-					/*ipÏß³Ì*/
+					//sbSQL.append(" limit 20000 ");//æœ€å¤šåªå…è®¸æŸ¥10000æ¡					
+					/*ipçº¿ç¨‹*/
 					KeepNetLogOSSClientThread keepqueryThread1 = new KeepNetLogOSSClientThread(sbSQL.toString(), dbType, "ip", requestBean.getTelnumber());
 					keepqueryThread1.setTest_flag(this.test_flag);
 					keepqueryThread1.start();
 	                listThread.add(keepqueryThread1);
 	                
 	        		//http
-	        		sbSQL.delete(0, sbSQL.length());//Çå¿Õsql
+	        		sbSQL.delete(0, sbSQL.length());//æ¸…ç©ºsql
 	        		sbSQL.append("select ");
-	        		sbSQL.append(" http.ipsid ");//ÓÃÓÚºÍipµÄsid¹ØÁª
-	        		sbSQL.append(" ,http.url ");//·ÃÎÊURL
-	        		sbSQL.append(" ,http.starttime ");//ÉÏÏßÊ±¼ä
-	        		sbSQL.append(" ,http.lasttime ");//ÏÂÏßÊ±¼ä
+	        		sbSQL.append(" http.ipsid ");//ç”¨äºå’Œipçš„sidå…³è”
+	        		sbSQL.append(" ,http.url ");//è®¿é—®URL
+	        		sbSQL.append(" ,http.starttime ");//ä¸Šçº¿æ—¶é—´
+	        		sbSQL.append(" ,http.lasttime ");//ä¸‹çº¿æ—¶é—´
 	        		sbSQL.append(" from http_rc http ");
 	        		sbSQL.append(" where ");
 	        		sbSQL.append(appendWhereSql(requestBean, "http"));
 	        		sbSQL.append(" order by http.starttime desc ");
-	        		//sbSQL.append(" limit 30000 ");//×î¶àÖ»ÔÊĞí²é10000Ìõ	                
-	        		/*httpÏß³Ì*/
+	        		//sbSQL.append(" limit 30000 ");//æœ€å¤šåªå…è®¸æŸ¥10000æ¡	                
+	        		/*httpçº¿ç¨‹*/
 					KeepNetLogOSSClientThread keepqueryThread2 = new KeepNetLogOSSClientThread(sbSQL.toString(), dbType, "http", requestBean.getTelnumber());
 					keepqueryThread2.setTest_flag(this.test_flag);
 					keepqueryThread2.start();
 	                listThread.add(keepqueryThread2);
 				}
 				
-				/*ÅĞ¶Ï¶àÏß³ÌÊÇ·ñÖ´ĞĞÍê³É*/
+				/*åˆ¤æ–­å¤šçº¿ç¨‹æ˜¯å¦æ‰§è¡Œå®Œæˆ*/
 		        int isflag = listThread.size();
 		        if(isflag==1){//bishow wlan
 			        while(isflag>0){
-				        Thread.sleep(1);//1ÃëË¢ĞÂÒ»´Î¶àÏß³Ì
+				        Thread.sleep(1);//1ç§’åˆ·æ–°ä¸€æ¬¡å¤šçº¿ç¨‹
 				        for(int i=0;i<listThread.size();i++){
-				        	if(listThread.get(i).isFlag()){//Ïß³ÌÖ´ĞĞÍê³É
-				        		listThread.get(i).setFlag(false);//»ØÉè
-				        		//waln½á¹û
+				        	if(listThread.get(i).isFlag()){//çº¿ç¨‹æ‰§è¡Œå®Œæˆ
+				        		listThread.get(i).setFlag(false);//å›è®¾
+				        		//walnç»“æœ
 				        		wlan_resultList = listThread.get(i).getResultList();
-				        		isflag--;//¼ÆÊıÆ÷¼õ1,Ö±µ½Îª0,Ñ­»·Í£Ö¹
+				        		isflag--;//è®¡æ•°å™¨å‡1,ç›´åˆ°ä¸º0,å¾ªç¯åœæ­¢
 				        	}
 				        }
 			        }
-			        //¹ıÂË¹«Íøip °ÑList<Bean>±ä³ÉList<List<String>>			        
+			        //è¿‡æ»¤å…¬ç½‘ip æŠŠList<Bean>å˜æˆList<List<String>>			        
 			        qryresultList = RowMapper(wlan_resultList, requestBean);
-		        }else{//hive ĞèÒª´¦Àíip,http
+		        }else{//hive éœ€è¦å¤„ç†ip,http
 			        while(isflag>0){
-				        Thread.sleep(1);//1ÃëË¢ĞÂÒ»´Î¶àÏß³Ì
+				        Thread.sleep(1);//1ç§’åˆ·æ–°ä¸€æ¬¡å¤šçº¿ç¨‹
 				        for(int i=0;i<listThread.size();i++){
-				        	if(listThread.get(i).isFlag()){//Ïß³ÌÖ´ĞĞÍê³É
-				        		listThread.get(i).setFlag(false);//»ØÉè
+				        	if(listThread.get(i).isFlag()){//çº¿ç¨‹æ‰§è¡Œå®Œæˆ
+				        		listThread.get(i).setFlag(false);//å›è®¾
 				        		if(listThread.get(i).getTag_name().equals("ip")){
-				        			//ip½á¹û
+				        			//ipç»“æœ
 				        			ip_resultList = listThread.get(i).getResultList();
 				        		}else if(listThread.get(i).getTag_name().equals("http")){
-				        			//http½á¹û
+				        			//httpç»“æœ
 				        			http_resultList = listThread.get(i).getResultList();
 				        		}
-				        		isflag--;//¼ÆÊıÆ÷¼õ1,Ö±µ½Îª0,Ñ­»·Í£Ö¹
+				        		isflag--;//è®¡æ•°å™¨å‡1,ç›´åˆ°ä¸º0,å¾ªç¯åœæ­¢
 				        	}
 				        }
 			        }
-			        //²éÑ¯Íê³É,´¦Àíip±íºÍhttp±íµÄjoin,²¢¹ıÂËhttp.urlºÍip.¹«Íøip
+			        //æŸ¥è¯¢å®Œæˆ,å¤„ç†ipè¡¨å’Œhttpè¡¨çš„join,å¹¶è¿‡æ»¤http.urlå’Œip.å…¬ç½‘ip
 			        qryresultList = leftJoinIpHttp(ip_resultList, http_resultList, requestBean);
 		        }
-		        //²éÑ¯Ïß³Ì½áÊø,ÉèÖÃ½á¹û
+		        //æŸ¥è¯¢çº¿ç¨‹ç»“æŸ,è®¾ç½®ç»“æœ
 				knlod.setDetailList(qryresultList);
 				knlod.setRespCode("0");
-				knlod.setRespDesc("³É¹¦");
+				knlod.setRespDesc("æˆåŠŸ");
 				knlod.setTotalCount(String.valueOf(qryresultList.size()));
-				//µ¼³öExcel
+				//å¯¼å‡ºExcel
 				if(qryresultList!=null &&qryresultList.size()>0){
 					expExcel(dbType, requestBean.getFilename(), requestBean.getTelnumber(), qryresultList);
 				}
 			}else{
 				knlod.setRespCode("-1");
-				knlod.setRespDesc("²éÑ¯Ê§°Ü:Ã»ÓĞ´«Èë²ÎÊı");
+				knlod.setRespDesc("æŸ¥è¯¢å¤±è´¥:æ²¡æœ‰ä¼ å…¥å‚æ•°");
 			}
 		} catch (Exception e) {
 			System.out.println("KeepNetLogOSSClient qryKeepNetLog error:"+e.toString());
 			e.printStackTrace();
 			knlod.setRespCode("-1");
-			knlod.setRespDesc("²éÑ¯Ê§°Ü:"+e.toString());
+			knlod.setRespDesc("æŸ¥è¯¢å¤±è´¥:"+e.toString());
 		}
 		return knlod;
 	}
@@ -224,9 +224,9 @@ public class HiveTest {
 	public List leftJoinIpHttp(List deallist1, List deallist2) {
 		List list = null;
 		List<List<String>> newlist = new Vector<List<String>>();
-    	for(int i=0;i<deallist1.size();i++){//°´ipÑ­»·
+    	for(int i=0;i<deallist1.size();i++){//æŒ‰ipå¾ªç¯
     		list = null;
-    		for(int j=0;j<deallist2.size();j++){//Ñ­»·http,Èç¹ûsidºÍipsid¹ØÁªµÄÉÏ,¾ÍÉèÖÃurl,stime,etime
+    		for(int j=0;j<deallist2.size();j++){//å¾ªç¯http,å¦‚æœsidå’Œipsidå…³è”çš„ä¸Š,å°±è®¾ç½®url,stime,etime
     			if(((KeepNetLogOSSIpBean)deallist1.get(i)).getSid().equals(
     					((KeepNetLogOSSHttpBean)deallist2.get(j)).getIpsid())){
     				KeepNetLogOSSResultBean result = new KeepNetLogOSSResultBean();
@@ -234,8 +234,8 @@ public class HiveTest {
     				newlist.add(list);
     			}
     		}
-    		if(list!=null && list.size()>0){//Ìõ¼ş¹ØÁªµÄÉÏ,ÉÏÃæÒÑ¾­´¦ÀíÁË
-    		}else{//Ìõ¼ş¹ØÁª²»ÉÏ
+    		if(list!=null && list.size()>0){//æ¡ä»¶å…³è”çš„ä¸Š,ä¸Šé¢å·²ç»å¤„ç†äº†
+    		}else{//æ¡ä»¶å…³è”ä¸ä¸Š
     			KeepNetLogOSSResultBean result = new KeepNetLogOSSResultBean();
     			list = result.joinIp((KeepNetLogOSSIpBean)deallist1.get(i));
     			newlist.add(list);
@@ -245,31 +245,31 @@ public class HiveTest {
 	}
 		
 	/**
-	 * ¸ù¾İÇëÇóbean×é×°²éÑ¯Ìõ¼ş
+	 * æ ¹æ®è¯·æ±‚beanç»„è£…æŸ¥è¯¢æ¡ä»¶
 	 * */
 	public String appendWhereSql(KeepNetLogOSSBean requestBean, String mode) throws Exception {
 		StringBuffer sql = new StringBuffer("");
 		if(requestBean!=null){
-			if(requestBean.getRattype().equals("99")){//WLAN ÒÆ¶¯Íø¹Ü²éÑ¯µ¼ÈëµÄÊı¾İ oracle				
-				sql.append(" to_char("+mode+".starttime_s,'yyyy-MM-dd')='"+requestBean.getQuerytime_s()+"' ");//·ÃÎÊÊ±¼ä±ØÑ¡
-				//¿ªÊ¼Ê±¼ä ½áÊøÊ±¼ä
+			if(requestBean.getRattype().equals("99")){//WLAN ç§»åŠ¨ç½‘ç®¡æŸ¥è¯¢å¯¼å…¥çš„æ•°æ® oracle				
+				sql.append(" to_char("+mode+".starttime_s,'yyyy-MM-dd')='"+requestBean.getQuerytime_s()+"' ");//è®¿é—®æ—¶é—´å¿…é€‰
+				//å¼€å§‹æ—¶é—´ ç»“æŸæ—¶é—´
 				if(requestBean!=null&&requestBean.getStarttime_s()!=null){
 					sql.append(" and "+mode+".starttime_s between ");
 					sql.append(" to_date('"+requestBean.getStarttime_s()+"','yyyy-MM-dd HH24:mi:ss')");
 					sql.append(" and to_date('"+requestBean.getStarttime_e()+"','yyyy-MM-dd HH24:mi:ss')");
 				}
-				//ºÅÂë
+				//å·ç 
 				if(requestBean!=null&&requestBean.getTelnumber()!=null&&requestBean.getTelnumber().trim().length()>0){
 					sql.append(" and "+mode+".telnumber like '%"+requestBean.getTelnumber()+"%' ");
 				}
 			}else{//2G/3G HIVE
 				boolean hours = defSdateAndEdate(requestBean.getStarttime_s(), requestBean.getStarttime_e());
-				if(hours){//Ê¹ÓÃÊ±¶Î·ÖÇø pt_hour
-					sql.append(" ("+mode+".pt_hour = "+formatDateString(requestBean.getStarttime_s(),"yyyy-MM-dd HH:mm:ss","yyyyMMddHH")+") ");//·ÃÎÊÊ±¼ä±ØÑ¡
-				}else{//Ê¹ÓÃÌì·ÖÇø pt_date
-					sql.append(" ("+mode+".pt_date = "+formatDateString(requestBean.getQuerytime_s(),"yyyy-MM-dd","yyyyMMdd")+") ");//·ÃÎÊÊ±¼ä±ØÑ¡
+				if(hours){//ä½¿ç”¨æ—¶æ®µåˆ†åŒº pt_hour
+					sql.append(" ("+mode+".pt_hour = "+formatDateString(requestBean.getStarttime_s(),"yyyy-MM-dd HH:mm:ss","yyyyMMddHH")+") ");//è®¿é—®æ—¶é—´å¿…é€‰
+				}else{//ä½¿ç”¨å¤©åˆ†åŒº pt_date
+					sql.append(" ("+mode+".pt_date = "+formatDateString(requestBean.getQuerytime_s(),"yyyy-MM-dd","yyyyMMdd")+") ");//è®¿é—®æ—¶é—´å¿…é€‰
 				}
-				//ºÅÂë
+				//å·ç 
 				if(requestBean!=null&&requestBean.getTelnumber()!=null&&requestBean.getTelnumber().trim().length()>0){
 					sql.append(" and "+mode+".telnumber like '%"+requestBean.getTelnumber()+"%' ");
 				}
@@ -281,21 +281,21 @@ public class HiveTest {
 				//if(requestBean!=null&&requestBean.getRattype()!=null&&requestBean.getRattype().trim().length()>0){
 				//	sql.append(" and "+mode+".rattype = "+requestBean.getRattype()+" ");
 				//}
-				//¿ªÊ¼Ê±¼ä ½áÊøÊ±¼ä unix_timestamp('2014-01-09 00:54:51.657','yyyy-MM-dd HH:mm:ss') 
+				//å¼€å§‹æ—¶é—´ ç»“æŸæ—¶é—´ unix_timestamp('2014-01-09 00:54:51.657','yyyy-MM-dd HH:mm:ss') 
 				//if(requestBean!=null&&requestBean.getStarttime_s()!=null&&requestBean.getStarttime_s().trim().length()>0){
 				//	sql.append(" and unix_timestamp(substr(trim("+mode+".starttime),2,19),'yyyy-MM-dd HH:mm:ss') between ");
 				//	sql.append(" unix_timestamp('"+requestBean.getStarttime_s()+"','yyyy-MM-dd HH:mm:ss')");
 				//	sql.append(" and unix_timestamp('"+requestBean.getStarttime_e()+"','yyyy-MM-dd HH:mm:ss')");
 				//}
-				//natºóÔ´¶Ë¿Ú Ö»ÓĞipÓĞĞ§
+				//natåæºç«¯å£ åªæœ‰ipæœ‰æ•ˆ
 				if(requestBean!=null&&requestBean.getUsrsport()!=null&&mode.equals("ip")&&requestBean.getUsrsport().trim().length()>0){
 					sql.append(" and "+mode+".usrsport = "+requestBean.getUsrsport().trim()+" ");
 				}
-				//url Ö»ÓĞhttpÓĞĞ§
+				//url åªæœ‰httpæœ‰æ•ˆ
 				//if(requestBean!=null&&!Function.equalsNull(requestBean.getUrl())){
 				//	sql.append(" and "+mode+".url = "+requestBean.getUrl()+" ");
 				//}
-				//¹«ÍøipµØÖ· Ö»ÓĞipÓĞĞ§ ¶¼×ßÅäÖÃ
+				//å…¬ç½‘ipåœ°å€ åªæœ‰ipæœ‰æ•ˆ éƒ½èµ°é…ç½®
 				//if(requestBean!=null&&!Function.equalsNull(requestBean.getGgsnip())){
 				//	sql.append(" and "+mode+".ggsnip = "+requestBean.getGgsnip()+" ");
 				//}
@@ -306,8 +306,8 @@ public class HiveTest {
 	
 	/**
 	 * ip left join http
-	 * ²¢¹ıÂËhttp.urlºÍip.¹«Íøip
-	 * ÏÈÓÃsip¹ØÁª,´¦ÀíÓĞ¹ØÁªµÄÊı¾İ,È»ºó´¦ÀíÃ»¹ØÁªµÄÊı¾İ
+	 * å¹¶è¿‡æ»¤http.urlå’Œip.å…¬ç½‘ip
+	 * å…ˆç”¨sipå…³è”,å¤„ç†æœ‰å…³è”çš„æ•°æ®,ç„¶åå¤„ç†æ²¡å…³è”çš„æ•°æ®
 	 * 
 	 * */
 	public List leftJoinIpHttp(List deallist1, List deallist2, KeepNetLogOSSBean requestBean) {
@@ -317,34 +317,34 @@ public class HiveTest {
 		String url = "";
 		boolean is_ggsnip = false;
 		boolean is_url = false;
-		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//Ê±¼ä¸ñÊ½
-		//ÓĞ´«Ìõ¼ş ¹«Íøip
+		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//æ—¶é—´æ ¼å¼
+		//æœ‰ä¼ æ¡ä»¶ å…¬ç½‘ip
 		if(requestBean!=null && requestBean.getGgsnip()!=null&&requestBean.getGgsnip().trim().length()>0){
 			is_ggsnip = true;
 			ggsnip = requestBean.getGgsnip().trim();
 		}
-		//ÓĞ´«Ìõ¼ş url
+		//æœ‰ä¼ æ¡ä»¶ url
 		if(requestBean!=null && requestBean.getUrl()!=null&&requestBean.getUrl().trim().length()>0){
 			is_url = true;
 			url = requestBean.getUrl().trim();
 		}
-		//¼ÆÊıÆ÷ Í³¼ÆÖ´ĞĞĞ§ÂÊ
+		//è®¡æ•°å™¨ ç»Ÿè®¡æ‰§è¡Œæ•ˆç‡
 		int ijj = 0;
 		System.out.println("deallist1.size():"+deallist1.size());
 		System.out.println("deallist2.size():"+deallist2.size());
-		System.out.println("leftJoinIpHttpÖ´ĞĞ¿ªÊ¼Ê±¼ä:"+sim.format(new Date()));
-    	for(int i=deallist1.size()-1;i>=0;i--){//°´ipÑ­»·,httpµ¹ĞğÕâÀï¶îµ¹Ğğ
+		System.out.println("leftJoinIpHttpæ‰§è¡Œå¼€å§‹æ—¶é—´:"+sim.format(new Date()));
+    	for(int i=deallist1.size()-1;i>=0;i--){//æŒ‰ipå¾ªç¯,httpå€’å™è¿™é‡Œé¢å€’å™
     		list = null;
-    		//ĞèÒªµ¹Ğğ,ÒòÎªÆ¥ÅäµÄÒªÒÆ³ı
-    		for(int j=deallist2.size()-1;j>=0;j--){//Ñ­»·http,Èç¹ûsidºÍipsid¹ØÁªµÄÉÏ,¾ÍÉèÖÃurl,stime,etime
+    		//éœ€è¦å€’å™,å› ä¸ºåŒ¹é…çš„è¦ç§»é™¤
+    		for(int j=deallist2.size()-1;j>=0;j--){//å¾ªç¯http,å¦‚æœsidå’Œipsidå…³è”çš„ä¸Š,å°±è®¾ç½®url,stime,etime
     			ijj ++;
     			if(((KeepNetLogOSSIpBean)deallist1.get(i)).getSid().equals(
     					((KeepNetLogOSSHttpBean)deallist2.get(j)).getIpsid())){
-    				//Ô¼ÊøÓĞurlµÄÇé¿ö ²¢ÇÒÓĞhttp
+    				//çº¦æŸæœ‰urlçš„æƒ…å†µ å¹¶ä¸”æœ‰http
     				if(((KeepNetLogOSSHttpBean)deallist2.get(j)).getUrl().length()>0
     						&&((KeepNetLogOSSHttpBean)deallist2.get(j)).getUrl().indexOf("http")>=0){
 	    				KeepNetLogOSSResultBean result = new KeepNetLogOSSResultBean();
-	    				//¹«ÍøipÌõ¼ş & urlÌõ¼ş
+	    				//å…¬ç½‘ipæ¡ä»¶ & urlæ¡ä»¶
 	    				if(is_ggsnip && is_url){
 	    		    		int index_is_ggsnip = -1;
 	    		    		int index_is_url = -1;
@@ -354,36 +354,36 @@ public class HiveTest {
 	    						list = result.joinIpAndHttp((KeepNetLogOSSIpBean)deallist1.get(i), (KeepNetLogOSSHttpBean)deallist2.get(j));
 	    	    				newlist.add(list);
 	    					}
-	    				}else if(is_url){//Ö»ÓĞurlÌõ¼ş
+	    				}else if(is_url){//åªæœ‰urlæ¡ä»¶
 	    		    		int index_is_url = -1;
 	    		    		index_is_url = ((KeepNetLogOSSHttpBean)deallist2.get(j)).getUrl().indexOf(url);
 	    					if(index_is_url>=0){
 	    						list = result.joinIpAndHttp((KeepNetLogOSSIpBean)deallist1.get(i), (KeepNetLogOSSHttpBean)deallist2.get(j));
 	    	    				newlist.add(list);
 	    					}
-	    				}else if(is_ggsnip){//Ö»ÓĞ¹«ÍøipÌõ¼ş
+	    				}else if(is_ggsnip){//åªæœ‰å…¬ç½‘ipæ¡ä»¶
 	    		    		int index_is_ggsnip = -1;
 	    		    		index_is_ggsnip = ((KeepNetLogOSSIpBean)deallist1.get(i)).getGgsnip().indexOf(ggsnip);
 	    					if(index_is_ggsnip>=0){
 	    						list = result.joinIpAndHttp((KeepNetLogOSSIpBean)deallist1.get(i), (KeepNetLogOSSHttpBean)deallist2.get(j));
 	    	    				newlist.add(list);
 		    				}
-	    				}else{//¶¼ Ã»ÓĞ
+	    				}else{//éƒ½ æ²¡æœ‰
 	    					list = result.joinIpAndHttp((KeepNetLogOSSIpBean)deallist1.get(i), (KeepNetLogOSSHttpBean)deallist2.get(j));
 	        				newlist.add(list);
 	    				}
-	    				//´¦ÀíÍêÒª¼°Ê±ÒÆ³ı µ«ÕâÀï¾ÍÒªµ¹Ğğ
+	    				//å¤„ç†å®Œè¦åŠæ—¶ç§»é™¤ ä½†è¿™é‡Œå°±è¦å€’å™
 	    				deallist2.remove(j);
     				}
     			}
     		}
-    		if(list!=null && list.size()>0){//Ìõ¼ş¹ØÁªµÄÉÏ,ÉÏÃæÒÑ¾­´¦ÀíÁË
-    		}else{//Ìõ¼ş¹ØÁª²»ÉÏ
+    		if(list!=null && list.size()>0){//æ¡ä»¶å…³è”çš„ä¸Š,ä¸Šé¢å·²ç»å¤„ç†äº†
+    		}else{//æ¡ä»¶å…³è”ä¸ä¸Š
     			/*KeepNetLogOSSResultBean result = new KeepNetLogOSSResultBean();
-    			//Èç¹ûÓĞ´«urlÌõ¼ş ÒÔÏÂ¶¼²»ÓÃ´¦Àí
+    			//å¦‚æœæœ‰ä¼ urlæ¡ä»¶ ä»¥ä¸‹éƒ½ä¸ç”¨å¤„ç†
     			if(is_url){    				
-    			}else{//Ã»´«urlÌõ¼şµÄ´¦Àí
-	    			//ÓĞ´«Ìõ¼ş ¹«Íøip
+    			}else{//æ²¡ä¼ urlæ¡ä»¶çš„å¤„ç†
+	    			//æœ‰ä¼ æ¡ä»¶ å…¬ç½‘ip
 	    			if(is_ggsnip){
     		    		int index_is_ggsnip = -1;
     		    		index_is_ggsnip = ((KeepNetLogOSSIpBean)deallist1.get(i)).getGgsnip().indexOf(ggsnip);
@@ -391,7 +391,7 @@ public class HiveTest {
 	    					list = result.joinIp((KeepNetLogOSSIpBean)deallist1.get(i));
 	    	    			newlist.add(list);
 	    				}
-	    			}else{//Ã»´«Ìõ¼ş ¹«Íøip
+	    			}else{//æ²¡ä¼ æ¡ä»¶ å…¬ç½‘ip
 	    				list = result.joinIp((KeepNetLogOSSIpBean)deallist1.get(i));
 	        			newlist.add(list);
 	    			}
@@ -399,27 +399,27 @@ public class HiveTest {
     		}    			
     	}
     	System.out.println("ijj:"+ijj);
-		System.out.println("leftJoinIpHttpÖ´ĞĞ½áÊøÊ±¼ä:"+sim.format(new Date()));
+		System.out.println("leftJoinIpHttpæ‰§è¡Œç»“æŸæ—¶é—´:"+sim.format(new Date()));
 		return newlist;
 	}
 	
 	/**
-	 * ¶Ô½á¹ûÖĞµÄ¹«ÍøipµØÖ·¹ıÂË<wlan>
+	 * å¯¹ç»“æœä¸­çš„å…¬ç½‘ipåœ°å€è¿‡æ»¤<wlan>
 	 * */
 	public List RowMapper(List result, KeepNetLogOSSBean requestBean){
 		List list = new Vector();
-		//ÓĞ´«Ìõ¼ş
+		//æœ‰ä¼ æ¡ä»¶
 		if(requestBean!=null && requestBean.getGgsnip()!=null&&requestBean.getGgsnip().trim().length()>0){
 	    	for(int i=0;i<result.size();i++){
 	    		KeepNetLogOSSWlanBean bean = (KeepNetLogOSSWlanBean)result.get(i);
-	    		//¹ıÂËwlanµÄ¹«Íøip
+	    		//è¿‡æ»¤wlançš„å…¬ç½‘ip
 	    		int index = -1;
 	    		index = bean.getUser_gw_ip().indexOf(requestBean.getGgsnip().trim());
 	    		if(index>=0){
 	    			list.add(bean.changeList());
 	    		}
 	    	}
-		}else{//Ã»´«Ìõ¼ş
+		}else{//æ²¡ä¼ æ¡ä»¶
 			for(int i=0;i<result.size();i++){
 	    		KeepNetLogOSSWlanBean bean = (KeepNetLogOSSWlanBean)result.get(i);	    		
 	    		list.add(bean.changeList());
@@ -429,83 +429,83 @@ public class HiveTest {
 	}
     
 	/**
-	 * µ¼³ö½á¹ûµ½Excel
-	 * dbType 1:hive¿â  2:bishowĞÅÏ¢¿â
+	 * å¯¼å‡ºç»“æœåˆ°Excel
+	 * dbType 1:hiveåº“  2:bishowä¿¡æ¯åº“
 	 * */
 	public synchronized void expExcel(int dbType, String filePath, String sheetName, List<List<String>> GnDetailList) throws Exception {
 		System.out.println("KeepNetLogOSSClient expExcel filePath:"+filePath);
 		WritableWorkbook wmm = null;
 		//ByteArrayOutputStream os = null;
 		try {
-			//´´½¨¿ÉĞ´ÈëµÄExcel¹¤×÷±¡
+			//åˆ›å»ºå¯å†™å…¥çš„Excelå·¥ä½œè–„
 	        //os = new ByteArrayOutputStream();
-            wmm = Workbook.createWorkbook(new File(filePath));//¸ù¾İÎÄ¼şÃû´´½¨
+            wmm = Workbook.createWorkbook(new File(filePath));//æ ¹æ®æ–‡ä»¶ååˆ›å»º
 	        //wmm = Workbook.createWorkbook(os);
         } catch (IOException e) {
-			System.out.println("KeepNetLogOSSClient expExcel Éú³ÉĞÂµÄexcelÎÄ¼ş³öÏÖÒì³£:"+e.toString());
+			System.out.println("KeepNetLogOSSClient expExcel ç”Ÿæˆæ–°çš„excelæ–‡ä»¶å‡ºç°å¼‚å¸¸:"+e.toString());
             e.printStackTrace();
-			throw e;//Å×³öÒì³£
+			throw e;//æŠ›å‡ºå¼‚å¸¸
             //return null;
         }
-        //´´½¨¹¤×÷±í
+        //åˆ›å»ºå·¥ä½œè¡¨
         if (sheetName == null || sheetName.equals(""))
             sheetName = "sheet";
         WritableSheet ws = wmm.createSheet(sheetName, 0);
         String titleStr = "";
-        //±êÌâ
-        String[] columns = null;//{"ÊÖ»úºÅÂë", "ÓÃ»§NATºó¹«ÍøIPµØÖ·", "ÓÃ»§Ë½ÍøIPµØÖ·", "NATºóÔ´¶Ë¿Ú", "Ä¿µÄIP","Ä¿µÄ¶Ë¿Ú", "·ÃÎÊURL", "·ÃÎÊÊ±¼ä", "ÉÏÏßÊ±¼ä", "ÏÂÏßÊ±¼ä","APN","ÍøÂçÀàĞÍ"};
+        //æ ‡é¢˜
+        String[] columns = null;//{"æ‰‹æœºå·ç ", "ç”¨æˆ·NATåå…¬ç½‘IPåœ°å€", "ç”¨æˆ·ç§ç½‘IPåœ°å€", "NATåæºç«¯å£", "ç›®çš„IP","ç›®çš„ç«¯å£", "è®¿é—®URL", "è®¿é—®æ—¶é—´", "ä¸Šçº¿æ—¶é—´", "ä¸‹çº¿æ—¶é—´","APN","ç½‘ç»œç±»å‹"};
         if(dbType==1){
-        	columns = new String[]{"ÊÖ»úºÅÂë", "ÓÃ»§NATºó¹«ÍøIPµØÖ·", "ÓÃ»§Ë½ÍøIPµØÖ·", "NATºóÔ´¶Ë¿Ú", "Ä¿µÄIP", "Ä¿µÄ¶Ë¿Ú", "·ÃÎÊURL", "·ÃÎÊÊ±¼ä", "¿ªÊ¼Ê±¼ä", "½áÊøÊ±¼ä", "APN", "ÍøÂçÀàĞÍ"};        	
+        	columns = new String[]{"æ‰‹æœºå·ç ", "ç”¨æˆ·NATåå…¬ç½‘IPåœ°å€", "ç”¨æˆ·ç§ç½‘IPåœ°å€", "NATåæºç«¯å£", "ç›®çš„IP", "ç›®çš„ç«¯å£", "è®¿é—®URL", "è®¿é—®æ—¶é—´", "å¼€å§‹æ—¶é—´", "ç»“æŸæ—¶é—´", "APN", "ç½‘ç»œç±»å‹"};        	
         }else if(dbType==2){
-        	columns = new String[]{"ÉÏÍø¿ªÊ¼Ê±¼ä", "ÉÏÍø½áÊøÊ±¼ä", "ÓÃ»§Ãû", "ÓÃ»§macµØÖ·", "AC¹éÊôÊ¡", "ÓÃ»§¹éÊôÊ¡", "ACIP", "NASID", "Á÷Èë×Ö½Ú(µ¥Î»:m)", "Á÷³ö×Ö½Ú(µ¥Î»:m)", "ÓÃ»§¹«ÍøIPµØÖ·"};
+        	columns = new String[]{"ä¸Šç½‘å¼€å§‹æ—¶é—´", "ä¸Šç½‘ç»“æŸæ—¶é—´", "ç”¨æˆ·å", "ç”¨æˆ·macåœ°å€", "ACå½’å±çœ", "ç”¨æˆ·å½’å±çœ", "ACIP", "NASID", "æµå…¥å­—èŠ‚(å•ä½:m)", "æµå‡ºå­—èŠ‚(å•ä½:m)", "ç”¨æˆ·å…¬ç½‘IPåœ°å€"};
         }
         try {
-            //±êÌâ¸ñÊ½
+            //æ ‡é¢˜æ ¼å¼
             WritableFont writableFont_bt = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD, false,
                     UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
             WritableCellFormat writableCellFormat_bt = new WritableCellFormat(writableFont_bt);
-            writableCellFormat_bt.setAlignment(jxl.format.Alignment.CENTRE);//¶ÔÆë
-            writableCellFormat_bt.setVerticalAlignment(VerticalAlignment.CENTRE);//¶ÔÆë
-            writableCellFormat_bt.setBackground(Colour.LIGHT_GREEN);//±³¾°É«
-            writableCellFormat_bt.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
-            writableCellFormat_bt.setWrap(true);//×Ô¶¯»»ĞĞ
-	        //ÆÕÍ¨ÎÄ±¾
+            writableCellFormat_bt.setAlignment(jxl.format.Alignment.CENTRE);//å¯¹é½
+            writableCellFormat_bt.setVerticalAlignment(VerticalAlignment.CENTRE);//å¯¹é½
+            writableCellFormat_bt.setBackground(Colour.LIGHT_GREEN);//èƒŒæ™¯è‰²
+            writableCellFormat_bt.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
+            writableCellFormat_bt.setWrap(true);//è‡ªåŠ¨æ¢è¡Œ
+	        //æ™®é€šæ–‡æœ¬
 	        WritableFont writableFont_pt = new WritableFont(WritableFont.TIMES, 10, WritableFont.NO_BOLD, false,
 	                UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
 	        WritableCellFormat writableCellFormat_pt = new WritableCellFormat(writableFont_pt);
-	        writableCellFormat_pt.setAlignment(jxl.format.Alignment.CENTRE);//×óÓÒ¶ÔÆë
-	        writableCellFormat_pt.setVerticalAlignment(VerticalAlignment.CENTRE);//ÉÏÏÂ¶ÔÆë
-	        writableCellFormat_pt.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
-            //Êı×Ö¸ñÊ½(ÓĞĞ¡Êı)
+	        writableCellFormat_pt.setAlignment(jxl.format.Alignment.CENTRE);//å·¦å³å¯¹é½
+	        writableCellFormat_pt.setVerticalAlignment(VerticalAlignment.CENTRE);//ä¸Šä¸‹å¯¹é½
+	        writableCellFormat_pt.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
+            //æ•°å­—æ ¼å¼(æœ‰å°æ•°)
             WritableFont writableFont_num = new WritableFont(WritableFont.TIMES, 10, WritableFont.NO_BOLD, false,
                     UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
             WritableCellFormat writableCellFormat_nr = null;
-            jxl.write.NumberFormat nf = new jxl.write.NumberFormat("###0.0##");//Êı×Ö¸ñÊ½
+            jxl.write.NumberFormat nf = new jxl.write.NumberFormat("###0.0##");//æ•°å­—æ ¼å¼
             writableCellFormat_nr = new WritableCellFormat(writableFont_num, nf);
-            writableCellFormat_nr.setAlignment(jxl.format.Alignment.CENTRE);//¶ÔÆë
-            writableCellFormat_nr.setVerticalAlignment(VerticalAlignment.CENTRE);//¶ÔÆë
-            writableCellFormat_nr.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
-            //Êı×Ö¸ñÊ½(ÊÖ»úºÅÂë)
+            writableCellFormat_nr.setAlignment(jxl.format.Alignment.CENTRE);//å¯¹é½
+            writableCellFormat_nr.setVerticalAlignment(VerticalAlignment.CENTRE);//å¯¹é½
+            writableCellFormat_nr.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
+            //æ•°å­—æ ¼å¼(æ‰‹æœºå·ç )
             WritableFont writableFont_num1 = new WritableFont(WritableFont.TIMES, 10, WritableFont.NO_BOLD, false,
                     UnderlineStyle.NO_UNDERLINE, Colour.BLACK);
             WritableCellFormat writableCellFormat_nr1 = null;
-            jxl.write.NumberFormat nf1 = new jxl.write.NumberFormat("##0");//Êı×Ö¸ñÊ½
+            jxl.write.NumberFormat nf1 = new jxl.write.NumberFormat("##0");//æ•°å­—æ ¼å¼
             writableCellFormat_nr1 = new WritableCellFormat(writableFont_num1, nf1);
-            writableCellFormat_nr1.setAlignment(jxl.format.Alignment.CENTRE);//¶ÔÆë
-            writableCellFormat_nr1.setVerticalAlignment(VerticalAlignment.CENTRE);//¶ÔÆë
-            writableCellFormat_nr1.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//±ß¿ò
+            writableCellFormat_nr1.setAlignment(jxl.format.Alignment.CENTRE);//å¯¹é½
+            writableCellFormat_nr1.setVerticalAlignment(VerticalAlignment.CENTRE);//å¯¹é½
+            writableCellFormat_nr1.setBorder(Border.ALL, BorderLineStyle.THIN, Colour.BLACK);//è¾¹æ¡†
 	        
-        	//Ìí¼Ó±êÌâ
+        	//æ·»åŠ æ ‡é¢˜
         	for (int i = 0; i < columns.length; i++) {
             	titleStr = columns[i];
             	Label labels = new Label(i, 0, titleStr, writableCellFormat_bt);
             	ws.addCell(labels);
         	}
-	        //Ìí¼ÓÄÚÈİ
+	        //æ·»åŠ å†…å®¹
 	        jxl.write.Label labelcontent;
-	        for (int i = 0; i < GnDetailList.size(); i++) {//µÚ2ĞĞ¿ªÊ¼²ÅÊÇÊı¾İ
-	            for (int j = 0; j < columns.length; j++) {//ÁĞ
-	                // Label(ÁĞºÅ,ĞĞºÅ ,ÄÚÈİ)
+	        for (int i = 0; i < GnDetailList.size(); i++) {//ç¬¬2è¡Œå¼€å§‹æ‰æ˜¯æ•°æ®
+	            for (int j = 0; j < columns.length; j++) {//åˆ—
+	                // Label(åˆ—å·,è¡Œå· ,å†…å®¹)
 	            	String tempStr = "";
 	            	if(GnDetailList.get(i).get(j)!=null){
 	            		tempStr = GnDetailList.get(i).get(j).toString();
@@ -518,37 +518,37 @@ public class HiveTest {
 	            }
 	           
 	        }
-	        //ÉèÖÃĞĞ¸ß
+	        //è®¾ç½®è¡Œé«˜
         	//ws.setRowView(0, 550);
-            //ÉèÖÃÁĞ¿í
+            //è®¾ç½®åˆ—å®½
             for(int i=0;i<ws.getColumns();i++){
             	ws.setColumnView(i, 14);
             }
-	        //Çå¿ÕÄÚ´æ
+	        //æ¸…ç©ºå†…å­˜
             //System.gc();
-	        //±£´æ
+	        //ä¿å­˜
             wmm.write();
             ws = null;
-            //¹Ø±Õ
+            //å…³é—­
             wmm.close();
             //return new ByteArrayInputStream(os.toByteArray());
         } catch (RowsExceededException e) {
-			System.out.println("KeepNetLogOSSClient expExcel Êı¾İĞĞ´íÎó:"+e.toString());
+			System.out.println("KeepNetLogOSSClient expExcel æ•°æ®è¡Œé”™è¯¯:"+e.toString());
             e.printStackTrace();
-			throw e;//Å×³öÒì³£
+			throw e;//æŠ›å‡ºå¼‚å¸¸
             //return null;
         } catch (WriteException e1) {
-			System.out.println("KeepNetLogOSSClient expExcel Êı¾İĞ´Èë´íÎó:"+e1.toString());
+			System.out.println("KeepNetLogOSSClient expExcel æ•°æ®å†™å…¥é”™è¯¯:"+e1.toString());
             e1.printStackTrace();
-			throw e1;//Å×³öÒì³£
+			throw e1;//æŠ›å‡ºå¼‚å¸¸
             //return null;
         } catch (Exception e2) {
-			System.out.println("KeepNetLogOSSClient expExcel Êı¾İÌî³ä´íÎó:"+e2.toString());
+			System.out.println("KeepNetLogOSSClient expExcel æ•°æ®å¡«å……é”™è¯¯:"+e2.toString());
             e2.printStackTrace();
-			throw e2;//Å×³öÒì³£
+			throw e2;//æŠ›å‡ºå¼‚å¸¸
             //return null;
         } finally {
-        	//Çå¿ÕÄÚ´æ
+        	//æ¸…ç©ºå†…å­˜
             System.gc();
         	ws = null;
         	wmm =null;
@@ -560,10 +560,10 @@ public class HiveTest {
 		HiveTest test = new HiveTest();
 		KeepNetLogOSSBean requestBean = new KeepNetLogOSSBean();
 		KeepNetLogOSSData resultData = null;
-		String RespCode = "";//½á¹û´úÂë
-		String RespDesc = "";//½á¹ûÃèÊö
-		List<List<String>> responseList = null;//ÏêÏ¸½á¹û
-		String totalCount = "0";//×Ü¼ÇÂ¼Êı
+		String RespCode = "";//ç»“æœä»£ç 
+		String RespDesc = "";//ç»“æœæè¿°
+		List<List<String>> responseList = null;//è¯¦ç»†ç»“æœ
+		String totalCount = "0";//æ€»è®°å½•æ•°
 
 		String telnumber = "";
 		String starttime_s = "";
@@ -600,9 +600,9 @@ public class HiveTest {
 	    System.out.println("querytime_s:"+querytime_s);
 	    System.out.println("rattype:"+rattype);
 	    System.out.println("test_flag:"+test_flag);
-	    if(test_flag.equals("true")){//²âÊÔ
+	    if(test_flag.equals("true")){//æµ‹è¯•
 	    	test.setTest_flag(true);
-	    }else{//Éú²ú
+	    }else{//ç”Ÿäº§
 	    	test.setTest_flag(false);
 	    }
 		

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ExcelSheetList {
 	private String sheetName;// sheetName
-	private List<List<String>> sheetList; // sheet内容,多行组成一个list,每行单独一个list
+	private List<List<String>> sheetList; // sheet鍐呭,澶氳缁勬垚涓�涓猯ist,姣忚鍗曠嫭涓�涓猯ist
 	public String getSheetName() {
 		return sheetName;
 	}

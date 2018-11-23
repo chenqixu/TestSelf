@@ -11,7 +11,7 @@ import java.util.List;
 
 public class ProcessBuilderTest {
 
-	private LogInfoFactory log = LogInfoFactory.getInstance();
+	private LogInfoFactory log = LogInfoFactory.getInstance(ProcessBuilderTest.class);
 	private ProcessBuilder builder = null;
 	private List<String> list = null;
 	private Process process = null;
@@ -76,21 +76,21 @@ public class ProcessBuilderTest {
 			int resultcode = process.waitFor();
 			log.info("##resultcode##"+resultcode);
 		} catch (IOException e) {
-			log.err("IO异常", e);
+			log.error("IO异常", e);
 		} catch (InterruptedException e) {
-			log.err("中断异常", e);
+			log.error("中断异常", e);
 		} finally {
 //			if(stdInput!=null)
 				try {
 					stdInput.close();
 				} catch (IOException e) {
-					log.err("process.getInputStream流关闭IO异常", e);
+					log.error("process.getInputStream流关闭IO异常", e);
 				}
 			if(stdError!=null)
 				try {
 					stdError.close();
 				} catch (IOException e) {
-					log.err("process.getErrorStream流关闭IO异常", e);
+					log.error("process.getErrorStream流关闭IO异常", e);
 				}
 			release();
 		}

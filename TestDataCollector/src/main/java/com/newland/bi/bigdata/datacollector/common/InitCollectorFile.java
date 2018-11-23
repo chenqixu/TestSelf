@@ -14,60 +14,60 @@ import com.newland.bi.bigdata.datacollector.config.CollectorConfInfo;
 
 /**
  * 
- * @description:³õÊ¼»¯²Ù×÷Àà£¬ÀıÈç³õÊ¼»¯È«¾Ö±äÁ¿µÈ
+ * @description:åˆå§‹åŒ–æ“ä½œç±»ï¼Œä¾‹å¦‚åˆå§‹åŒ–å…¨å±€å˜é‡ç­‰
  * @author:xixg
  * @date:2014-02-19
  */
 public class InitCollectorFile {
-	//ÈÕÖ¾¼ÇÂ¼Æ÷
+	//æ—¥å¿—è®°å½•å™¨
 	private static Logger logger = Logger.getLogger(InitCollectorFile.class);
-	//´æ·ÅÎÄ¼şÃûµÄ¶ÓÁĞ£¬¶ÓÁĞÎªÏß³Ì°²È«µÄ
+	//å­˜æ”¾æ–‡ä»¶åçš„é˜Ÿåˆ—ï¼Œé˜Ÿåˆ—ä¸ºçº¿ç¨‹å®‰å…¨çš„
 //	public static Queue<String> fileNameQueue;
-	//´æ·Å¶ÓÁĞµÄMap£¬²»Í¬µÄÄ¿Â¼¶ÔÓ¦²»Í¬µÄ¶ÓÁĞ
+	//å­˜æ”¾é˜Ÿåˆ—çš„Mapï¼Œä¸åŒçš„ç›®å½•å¯¹åº”ä¸åŒçš„é˜Ÿåˆ—
 	public static Map<String,Queue<String>> fileNameQueueMap;
-	//²É¼¯³ÌĞòÉ¨ÃèÄ¿Â¼´ÎÊı
+	//é‡‡é›†ç¨‹åºæ‰«æç›®å½•æ¬¡æ•°
 	public static long currCycleNum = 1;
-	//²É¼¯³ÌĞòÊÇ·ñÒªÍË³ö±êÖ¾
+	//é‡‡é›†ç¨‹åºæ˜¯å¦è¦é€€å‡ºæ ‡å¿—
 	public static boolean ifNeedExitFlag;
-	//ÎÄ¼ş²É¼¯µÄÏß³ÌÁĞ±í
+	//æ–‡ä»¶é‡‡é›†çš„çº¿ç¨‹åˆ—è¡¨
 	public static List<Thread> dataCollectorThreadList;
-	//²É¼¯³ÌĞòÉ¨ÃèÄ¿Â¼Ê±ÓĞÎÄ¼ş´ÎÊı
+	//é‡‡é›†ç¨‹åºæ‰«æç›®å½•æ—¶æœ‰æ–‡ä»¶æ¬¡æ•°
 	public static long currScanDirHasFile = 0;
 	public static boolean isExit = false;
 	public static String currFilterSpecificFileName;
-	//Ô´Êı¾İ·şÎñÆ÷µÄÊı¾İÂ·¾¶
+	//æºæ•°æ®æœåŠ¡å™¨çš„æ•°æ®è·¯å¾„
 	public static String[] sourceDataPathAraay;
-	//Ã¿¸öÄ¿Â¼ÏÂÔØµÄÏß³ÌÊı
+	//æ¯ä¸ªç›®å½•ä¸‹è½½çš„çº¿ç¨‹æ•°
 	public static String[] ftpThreadNumEveryDirArray;
-	//²É¼¯³ÌĞòÏÂÔØÍê¿ØÖÆÎÄ¼şºóÒÆ¶¯Ô´ÎÄ¼şµ½Ä¿µÄÄ¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œæ§åˆ¶æ–‡ä»¶åç§»åŠ¨æºæ–‡ä»¶åˆ°ç›®çš„ç›®å½•
 	public static  String[]  mvSourceCtlFilePathArray;
-	//²É¼¯³ÌĞòÏÂÔØÍêÒÆ¶¯Ô´ÎÄ¼şµ½Ä¿µÄÄ¿Â¼
+	//é‡‡é›†ç¨‹åºä¸‹è½½å®Œç§»åŠ¨æºæ–‡ä»¶åˆ°ç›®çš„ç›®å½•
 	public static String[] mvSourceDataFilePathArray;
-	//Êı¾İÎÄ¼ş²É¼¯³ö´íÊ±´æ·ÅµÄÏß³Ì°²È«µÄConcurrentHashMap
+	//æ•°æ®æ–‡ä»¶é‡‡é›†å‡ºé”™æ—¶å­˜æ”¾çš„çº¿ç¨‹å®‰å…¨çš„ConcurrentHashMap
 	public static Map<String, Integer> errFileMap ;
-	//¼ÇÂ¼Çå¿Õ´æ·Å²É¼¯´íÎóµÄconcurrentHashMapµÄÊ±¼ä
+	//è®°å½•æ¸…ç©ºå­˜æ”¾é‡‡é›†é”™è¯¯çš„concurrentHashMapçš„æ—¶é—´
 	public static long clearTime = 0;
 	
 	/**
 	 * 
-	 * @description:³õÊ¼»¯·½·¨£¬ÀıÈç£º»ñÈ¡ÅäÖÃÎÄ¼şĞÅÏ¢£¬³õÊ¼»¯È«¾Ö±äÁ¿µÈ²Ù×÷
+	 * @description:åˆå§‹åŒ–æ–¹æ³•ï¼Œä¾‹å¦‚ï¼šè·å–é…ç½®æ–‡ä»¶ä¿¡æ¯ï¼Œåˆå§‹åŒ–å…¨å±€å˜é‡ç­‰æ“ä½œ
 	 * @author:xixg
 	 * @date:2014-01-18
 	 * @return void
 	 */
 	public static void initDataCollector(){
 		try {
-			//¼ÓÔØlog4jÅäÖÃÎÄ¼ş
+			//åŠ è½½log4jé…ç½®æ–‡ä»¶
 			PropertyConfigurator.configure(CollectorConstant.LOG4J_CONF_FILE_PATH);
-			//¶ÁÈ¡ÅäÖÃÎÄ¼ş£¨parameter_config.xml£©
+			//è¯»å–é…ç½®æ–‡ä»¶ï¼ˆparameter_config.xmlï¼‰
 			CollectorConfInfo.getConfInfo(CollectorConstant.COLLECTOR_FILE_CONF_PATH);
 //			fileNameQueue = new ConcurrentLinkedQueue<String>();
 			fileNameQueueMap = new ConcurrentHashMap<String, Queue<String>>();
 			dataCollectorThreadList = new ArrayList<Thread>();
 			errFileMap = new ConcurrentHashMap<String, Integer>();
-			//ÊµÀı»¯ÍË³ö¼ì²âÎÄ¼ş¶ÔÏó
-			File f = new File(CollectorConstant.EXIT_FILE_FULL_NAME);//²É¼¯³ÌĞòÍË³ö¼ì²âÎÄ¼ş
-			//³ÌĞòÆô¶¯ºó³õÊ¼»¯Ê±£¬Èç¹ûÍË³ö¼ì²âÎÄ¼ş´æÔÚ£¬ÔòÉ¾³ı
+			//å®ä¾‹åŒ–é€€å‡ºæ£€æµ‹æ–‡ä»¶å¯¹è±¡
+			File f = new File(CollectorConstant.EXIT_FILE_FULL_NAME);//é‡‡é›†ç¨‹åºé€€å‡ºæ£€æµ‹æ–‡ä»¶
+			//ç¨‹åºå¯åŠ¨ååˆå§‹åŒ–æ—¶ï¼Œå¦‚æœé€€å‡ºæ£€æµ‹æ–‡ä»¶å­˜åœ¨ï¼Œåˆ™åˆ é™¤
 			if(f.exists()) f.delete();
 			ifNeedExitFlag = false;
 			sourceDataPathAraay = CollectorConfInfo.sourceDataPath.split(CollectorConstant.COMMA_SPLIT_STRING);
@@ -75,7 +75,7 @@ public class InitCollectorFile {
 			mvSourceCtlFilePathArray = CollectorConfInfo.mvSourceCtlFilePath.split(CollectorConstant.COMMA_SPLIT_STRING);
 			mvSourceDataFilePathArray = CollectorConfInfo.mvSourceDataFilePath.split(CollectorConstant.COMMA_SPLIT_STRING);
 		} catch (Exception e) {
-			logger.error("%%%%%³õÊ¼»¯·½·¨³ö´í£¡£¡£¡",e);
+			logger.error("%%%%%åˆå§‹åŒ–æ–¹æ³•å‡ºé”™ï¼ï¼ï¼",e);
 		}
 	}
 	

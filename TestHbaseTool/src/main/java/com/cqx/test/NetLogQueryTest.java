@@ -8,8 +8,8 @@ public class NetLogQueryTest {
 	public static void main(String[] args) {
 		StringBuffer a = new StringBuffer();
 		a.append("13876955257,");
-		a.append("ÈıĞÇ,");
-		a.append("ÈıĞÇ SM-G9208,");
+		a.append("ä¸‰æ˜Ÿ,");
+		a.append("ä¸‰æ˜Ÿ SM-G9208,");
 		a.append("358182061697367,");
 		a.append("CMNET,");
 		a.append("4G,");
@@ -19,18 +19,18 @@ public class NetLogQueryTest {
 		a.append("117562,");
 		a.append("huiyi.ecloud.10086.cn/msweb/api/docpicdl,,,,");
 		a.append(",");
-		a.append("ÖĞ¹úÒÆ¶¯ÊÖ»úÓªÒµÌü,");
+		a.append("ä¸­å›½ç§»åŠ¨æ‰‹æœºè¥ä¸šå…,");
 		
-		//ÇĞ¸î·µ»ØµÄÕâÒ»ÁĞ£¬Á÷Á¿È¡Õû
+		//åˆ‡å‰²è¿”å›çš„è¿™ä¸€åˆ—ï¼Œæµé‡å–æ•´
 		List<String> entityList = CommonUtils.splitStringByComma(a.toString());
-		//14¸ö×Ö¶Î
+		//14ä¸ªå­—æ®µ
 		if(entityList.size() < 14){
 			System.out.println("less then 14");
 			System.exit(-1);
 		}
 		if(entityList.size() > 14){
 			System.out.println("more then 14");
-			//×öÒ»¸ö´¦Àí£¬°Ñindex.10ÒÔºó,index.length-3Ö®Ç°µÄ¶¼¹éµ½10
+			//åšä¸€ä¸ªå¤„ç†ï¼ŒæŠŠindex.10ä»¥å,index.length-3ä¹‹å‰çš„éƒ½å½’åˆ°10
 			entityList = CommonUtils.mvUrl(entityList);
 			System.out.println(entityList.size());
 			System.out.println(entityList);

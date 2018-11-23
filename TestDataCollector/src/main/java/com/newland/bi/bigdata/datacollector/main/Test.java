@@ -24,19 +24,19 @@ public class Test {
 //		}else{
 //			System.out.println("F");
 //		}
-//		//³õÊ¼»¯²Ù×÷
+//		//åˆå§‹åŒ–æ“ä½œ
 //		InitCollectorFile.initDataCollector();
 //		System.out.println(InitCollectorFile.currFilterSpecificFileName);
-//		//ÎÄ¼ş¹ıÂËÆ÷
+//		//æ–‡ä»¶è¿‡æ»¤å™¨
 //        DataColectorFTPFileFilter fileFilter = new DataColectorFTPFileFilter(InitCollectorFile.currFilterSpecificFileName);
-//		//´´½¨FTPÁ¬½Ó£¬½øĞĞFTPÉ¨ÃèÄ¿Â¼
+//		//åˆ›å»ºFTPè¿æ¥ï¼Œè¿›è¡ŒFTPæ‰«æç›®å½•
 //		FTPClient ftpClient = CollectorFileCommon.getFtpConnect();
-//		//ËùÓĞÊ±¼äµãµÄÎÄ¼şList
+//		//æ‰€æœ‰æ—¶é—´ç‚¹çš„æ–‡ä»¶List
 //		List<String> allHourFileList = null;
 //		int sourceDataPathAraayLength = InitCollectorFile.sourceDataPathAraay.length;
-//		//Ñ­»·ÏÂÔØFTP·şÎñÆ÷ÉÏµÄ¶à¸öÄ¿Â¼
+//		//å¾ªç¯ä¸‹è½½FTPæœåŠ¡å™¨ä¸Šçš„å¤šä¸ªç›®å½•
 //		for(int i=0;i<sourceDataPathAraayLength;i++){
-//			//ÁĞ³öÖ¸¶¨Ä¿Â¼ÏÂµÄËùÓĞÎÄ¼ş
+//			//åˆ—å‡ºæŒ‡å®šç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶
 //			allHourFileList = CollectorFileCommon.listFtpFiles(ftpClient,
 //					InitCollectorFile.sourceDataPathAraay[i],fileFilter);
 //			System.out.println(InitCollectorFile.sourceDataPathAraay[i]+" "+allHourFileList.size());

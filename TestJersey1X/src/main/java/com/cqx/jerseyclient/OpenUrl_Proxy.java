@@ -25,20 +25,20 @@ import org.apache.http.util.EntityUtils;
 
 /**
  * @ClassName: OpenUrl_Proxy
- * @Description:Í¨¹ı´úÀíÊµÏÖJava´úÂë·ÃÎÊÖ¸¶¨URL
- * @date: 2017Äê8ÔÂ24ÈÕ
- * @ĞŞ¸Ä±¸×¢:
+ * @Description:é€šè¿‡ä»£ç†å®ç°Javaä»£ç è®¿é—®æŒ‡å®šURL
+ * @date: 2017å¹´8æœˆ24æ—¥
+ * @ä¿®æ”¹å¤‡æ³¨:
  */
 public class OpenUrl_Proxy {
 	static String proxy_ip = "10.1.2.199";
 	static int proxy_port = 8123;
 
 	/**
-	 * @Description:HttpComponents--HttpClient·½Ê½·ÃÎÊÖ¸¶¨URL 
-	 *                                                  Í¨³£ÊÇÒòÎª·şÎñÆ÷µÄ°²È«ÉèÖÃ²»½ÓÊÜJava³ÌĞò×÷Îª¿Í»§¶Ë·ÃÎÊ
-	 *                                                  £¬½â¾ö·½°¸ÊÇÉèÖÃ¿Í»§¶ËµÄUser Agent
-	 * @date: 2017Äê8ÔÂ24ÈÕ ÏÂÎç7:45:14
-	 * @ĞŞ¸Ä±¸×¢:
+	 * @Description:HttpComponents--HttpClientæ–¹å¼è®¿é—®æŒ‡å®šURL 
+	 *                                                  é€šå¸¸æ˜¯å› ä¸ºæœåŠ¡å™¨çš„å®‰å…¨è®¾ç½®ä¸æ¥å—Javaç¨‹åºä½œä¸ºå®¢æˆ·ç«¯è®¿é—®
+	 *                                                  ï¼Œè§£å†³æ–¹æ¡ˆæ˜¯è®¾ç½®å®¢æˆ·ç«¯çš„User Agent
+	 * @date: 2017å¹´8æœˆ24æ—¥ ä¸‹åˆ7:45:14
+	 * @ä¿®æ”¹å¤‡æ³¨:
 	 */
 	@SuppressWarnings("deprecation")
 	public static void openUrl_httpComponents(String url) {
@@ -47,16 +47,16 @@ public class OpenUrl_Proxy {
 		try {
 			HttpResponse response = client.execute(get);
 			int httpStatusCode = response.getStatusLine().getStatusCode();
-			// ÓÉÓÚÒ»Ğ©ÉèÖÃÎÊÌâ£¬·ÃÎÊ°Ù¶ÈÊ×Ò³¿ÉÄÜ·µ»ØµÄhttpStatusCodeÊÇ403£¬²»ÊÇ200
-			// ÆäÔ­Òò¾ÍÊÇ¿ÉÄÜ°Ù¶È·şÎñÆ÷²»Ö§³ÖÍ¨¹ı´úÂëÀ´µ÷ÓÃurl
+			// ç”±äºä¸€äº›è®¾ç½®é—®é¢˜ï¼Œè®¿é—®ç™¾åº¦é¦–é¡µå¯èƒ½è¿”å›çš„httpStatusCodeæ˜¯403ï¼Œä¸æ˜¯200
+			// å…¶åŸå› å°±æ˜¯å¯èƒ½ç™¾åº¦æœåŠ¡å™¨ä¸æ”¯æŒé€šè¿‡ä»£ç æ¥è°ƒç”¨url
 			if (HttpStatus.SC_OK == httpStatusCode) {
-				System.out.println("´òÓ¡·şÎñÆ÷·µ»ØµÄ×´Ì¬: " + response.getStatusLine());
+				System.out.println("æ‰“å°æœåŠ¡å™¨è¿”å›çš„çŠ¶æ€: " + response.getStatusLine());
 				HttpEntity entity = response.getEntity();
 				if (entity != null) {
 					System.out
-							.println("´òÓ¡·µ»ØĞÅÏ¢:" + EntityUtils.toString(entity));// ´òÓ¡·µ»ØĞÅÏ¢
-					// entity.consumeContent();//ÊÍ·Å×ÊÔ´
-					EntityUtils.consume(entity);// ÊÍ·Å×ÊÔ´ this is the new consume
+							.println("æ‰“å°è¿”å›ä¿¡æ¯:" + EntityUtils.toString(entity));// æ‰“å°è¿”å›ä¿¡æ¯
+					// entity.consumeContent();//é‡Šæ”¾èµ„æº
+					EntityUtils.consume(entity);// é‡Šæ”¾èµ„æº this is the new consume
 												// method
 				}
 			} else {
@@ -71,9 +71,9 @@ public class OpenUrl_Proxy {
 	}
 
 	/**
-	 * @Description:Í¨¹ıÌí¼Ó´úÀí·½Ê½£¬ÊµÏÖ·ÃÎÊÖ¸¶¨URL
-	 * @date: 2017Äê8ÔÂ24ÈÕ ÏÂÎç8:21:26
-	 * @ĞŞ¸Ä±¸×¢:
+	 * @Description:é€šè¿‡æ·»åŠ ä»£ç†æ–¹å¼ï¼Œå®ç°è®¿é—®æŒ‡å®šURL
+	 * @date: 2017å¹´8æœˆ24æ—¥ ä¸‹åˆ8:21:26
+	 * @ä¿®æ”¹å¤‡æ³¨:
 	 */
 	public static void openUrl_setProxy_1(String urlStr) {
 		InetSocketAddress inetAddress = null;
@@ -118,11 +118,11 @@ public class OpenUrl_Proxy {
 	}
 
 	/**
-	 * @Description:Í¨¹ıÌí¼Ó´úÀí·½Ê½£¬ÊµÏÖ·ÃÎÊÖ¸¶¨URL 
-	 *                                 Í¨³£ÊÇÒòÎª·şÎñÆ÷µÄ°²È«ÉèÖÃ²»½ÓÊÜJava³ÌĞò×÷Îª¿Í»§¶Ë·ÃÎÊ£¬½â¾ö·½°¸ÊÇÉèÖÃ¿Í»§¶ËµÄUser
+	 * @Description:é€šè¿‡æ·»åŠ ä»£ç†æ–¹å¼ï¼Œå®ç°è®¿é—®æŒ‡å®šURL 
+	 *                                 é€šå¸¸æ˜¯å› ä¸ºæœåŠ¡å™¨çš„å®‰å…¨è®¾ç½®ä¸æ¥å—Javaç¨‹åºä½œä¸ºå®¢æˆ·ç«¯è®¿é—®ï¼Œè§£å†³æ–¹æ¡ˆæ˜¯è®¾ç½®å®¢æˆ·ç«¯çš„User
 	 *                                 Agent
-	 * @date: 2017Äê8ÔÂ24ÈÕ ÏÂÎç8:22:19
-	 * @ĞŞ¸Ä±¸×¢:
+	 * @date: 2017å¹´8æœˆ24æ—¥ ä¸‹åˆ8:22:19
+	 * @ä¿®æ”¹å¤‡æ³¨:
 	 */
 	public static void openUrl_setProxy_2(String urlStr) {
 		String host = proxy_ip;

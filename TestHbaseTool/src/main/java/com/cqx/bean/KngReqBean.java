@@ -1,12 +1,12 @@
 package com.cqx.bean;
 
 public class KngReqBean {
-	private String telnumber ;// ÊÖ»úºÅÂë
-	private String starttime_s;// Ê±¼ä¶Î£­¿ªÊ¼Ê±¼ä
-	private String starttime_e;// Ê±¼ä¶Î£­½áÊøÊ±¼ä
-	private String ggsip = "";// netºó¹«Íøip	
-	private String ggsport="";// netºó¹«Íø¶Ë¿Ú	
-	private String url="";// ·ÃÎÊrul
+	private String telnumber ;// æ‰‹æœºå·ç 
+	private String starttime_s;// æ—¶é—´æ®µï¼å¼€å§‹æ—¶é—´
+	private String starttime_e;// æ—¶é—´æ®µï¼ç»“æŸæ—¶é—´
+	private String ggsip = "";// netåå…¬ç½‘ip	
+	private String ggsport="";// netåå…¬ç½‘ç«¯å£	
+	private String url="";// è®¿é—®rul
 	public String getGgsip() {
 		return ggsip;
 	}

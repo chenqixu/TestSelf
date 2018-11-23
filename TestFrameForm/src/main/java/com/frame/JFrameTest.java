@@ -19,7 +19,7 @@ public class JFrameTest extends JFrame {
 		MyComboBox jComboBox1 = new MyComboBox();
 		for (int i = 0; i < 10; i++) {
 			MyCheckBox cValue = new MyCheckBox();
-            cValue.value = "²âÊÔ_" + i;
+            cValue.value = "æµ‹è¯•_" + i;
             if (i % 3 == 0) {
                 cValue.bolValue = true;
             }
@@ -28,7 +28,7 @@ public class JFrameTest extends JFrame {
         jComboBox1.setRenderer(new CheckListCellRenderer());
         jComboBox1.setFont(new Font("Dialog", Font.PLAIN, 12));
 		
-		//ÕûÌåÈİÆ÷
+		//æ•´ä½“å®¹å™¨
 		Container c = this.getContentPane();
 		c.setLayout(new BorderLayout());
 		c.add(jComboBox1, BorderLayout.NORTH);
@@ -36,13 +36,13 @@ public class JFrameTest extends JFrame {
 		this.setTitle("JFrameTest");
 		this.setBounds(200,100,500,500);
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//¹Ø±ÕÍË³öjvm
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//å…³é—­é€€å‡ºjvm
 		this.setVisible(true);
 	}
 
 	/**
-	 * °ÑString×ª»»³ÉString[][]
-	 * ÆäÖĞ×Ö·û´®ÓÃ^·ÖĞĞ ÓÃ@·ÖÁĞ
+	 * æŠŠStringè½¬æ¢æˆString[][]
+	 * å…¶ä¸­å­—ç¬¦ä¸²ç”¨^åˆ†è¡Œ ç”¨@åˆ†åˆ—
 	 * */
 	public String[][] changeTwoArray(String arg0){
 		String[][] result = null;
@@ -57,8 +57,8 @@ public class JFrameTest extends JFrame {
 		return result;
 	}
 	/**
-	 * °ÑString×ª»»³ÉString[]
-	 * ÆäÖĞ×Ö·û´®ÓÃ^·Ö¸î
+	 * æŠŠStringè½¬æ¢æˆString[]
+	 * å…¶ä¸­å­—ç¬¦ä¸²ç”¨^åˆ†å‰²
 	 * */
 	public String[] changeOneArray(String arg0){
 		String[] result = null;
@@ -68,9 +68,9 @@ public class JFrameTest extends JFrame {
 		return result;
 	}
 	/**
-	 * °ÑString×ª»»³ÉArrayList<String[][]>
-	 * ÆäÖĞ×Ö·û´®ÓÃ/^·Ö¸î
-	 * ÀïÃæÊÇ¸ö2Î¬Êı×é ×Ö·û´®ÓÃ^·ÖĞĞ ÓÃ@·ÖÁĞ
+	 * æŠŠStringè½¬æ¢æˆArrayList<String[][]>
+	 * å…¶ä¸­å­—ç¬¦ä¸²ç”¨/^åˆ†å‰²
+	 * é‡Œé¢æ˜¯ä¸ª2ç»´æ•°ç»„ å­—ç¬¦ä¸²ç”¨^åˆ†è¡Œ ç”¨@åˆ†åˆ—
 	 * */
 	public ArrayList<String[][]> changeOtherOneArray(String arg0){
 		ArrayList<String[][]> result = null;

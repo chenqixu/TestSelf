@@ -33,7 +33,7 @@ public class MRUtils {
 
 	
 	/**
-	 * É¾³ıÖ¸¶¨Â·¾¶
+	 * åˆ é™¤æŒ‡å®šè·¯å¾„
 	 * @param fs
 	 * @param path
 	 * @throws IOException 
@@ -44,18 +44,18 @@ public class MRUtils {
 		Path p = new Path(path);
 		if (fs.exists(p)) {
 			fs.delete(p, true);
-			System.out.println("=====delPath É¾³ı£º" + p.toString() + "=====");
+			System.out.println("=====delPath åˆ é™¤ï¼š" + p.toString() + "=====");
 		} else {
-			System.out.println("=====delPath ÎÄ¼ş²»´æÔÚ£º" + p.toString() + "=====");
+			System.out.println("=====delPath æ–‡ä»¶ä¸å­˜åœ¨ï¼š" + p.toString() + "=====");
 		}
 
 	}
 
 	/**
-	 * ¸ù¾İÕıÔò±í´ïÊ½£¬É¾³ıÆ¥ÅäµÄÎÄ¼şÂ·¾¶
+	 * æ ¹æ®æ­£åˆ™è¡¨è¾¾å¼ï¼Œåˆ é™¤åŒ¹é…çš„æ–‡ä»¶è·¯å¾„
 	 * @param fs
-	 * @param path ÎÄ¼şËùÔÚµÄÄ¿Â¼
-	 * @param regex	ÕıÔò±í´ïÊ½
+	 * @param path æ–‡ä»¶æ‰€åœ¨çš„ç›®å½•
+	 * @param regex	æ­£åˆ™è¡¨è¾¾å¼
 	 * @throws IOException
 	 */
 	public static void delPathByRegex(FileSystem fs, String path, String regex)
@@ -69,20 +69,20 @@ public class MRUtils {
 				for (FileStatus file : files) {
 					String fileName = file.getPath().getName();
 					fs.delete(file.getPath(), false);
-					System.out.println("delPathByRegex É¾³ı£º" + fileName);
+					System.out.println("delPathByRegex åˆ é™¤ï¼š" + fileName);
 				}
 			} else {
 				System.out.println("delPathByRegex:"+path+Constants.SEPARATOR+regex+" no matched files~");
 			}
 		}else {
-			System.out.println("=====delPathByRegex Â·¾¶²»´æÔÚ£º" + inputDir.toString() + "=====");
+			System.out.println("=====delPathByRegex è·¯å¾„ä¸å­˜åœ¨ï¼š" + inputDir.toString() + "=====");
 		}
 	}
 
 	/**
-	 * ½«¶ººÅ·Ö¸ô·ûµÄ×Ö·û´®²ğ·Ö½âÎö³Émap
-	 * @param columnNames	ÁĞÃû
-	 * @param line	´ø'¶ººÅ·Ö¸ô·ûµÄ×Ö·û´®
+	 * å°†é€—å·åˆ†éš”ç¬¦çš„å­—ç¬¦ä¸²æ‹†åˆ†è§£ææˆmap
+	 * @param columnNames	åˆ—å
+	 * @param line	å¸¦'é€—å·åˆ†éš”ç¬¦çš„å­—ç¬¦ä¸²
 	 * @return
 	 */
 	public static Map<String, String> transformLineToMap(String[] columnNames,
@@ -103,9 +103,9 @@ public class MRUtils {
 	}
 
 	/**
-	 * »ñµÃĞèÒªµÄ×Ö¶Î
-	 * @param map	ËùÓĞ×Ö¶ÎÓë¶ÔÓ¦µÄÖµ
-	 * @param submitField	ĞèÒªÌáÈ¡µÄ×Ö¶ÎÃû
+	 * è·å¾—éœ€è¦çš„å­—æ®µ
+	 * @param map	æ‰€æœ‰å­—æ®µä¸å¯¹åº”çš„å€¼
+	 * @param submitField	éœ€è¦æå–çš„å­—æ®µå
 	 * @return
 	 */
 	public static String getSubmitField(Map<String, String> map,
@@ -121,7 +121,7 @@ public class MRUtils {
 	}
 
 	/**
-	 * ½«CombineEntity×ª»»³ÉRecord
+	 * å°†CombineEntityè½¬æ¢æˆRecord
 	 * @param entity
 	 * @return Record
 	 */
@@ -240,7 +240,7 @@ public class MRUtils {
 	private static Random random = new Random();
 
 	/**
-	 * ¸ù¾İÊÖ»úºÅÈ¡Ä£
+	 * æ ¹æ®æ‰‹æœºå·å–æ¨¡
 	 * @param telnumber
 	 * @return
 	 */
@@ -291,7 +291,7 @@ public class MRUtils {
 	}
 
 	/**
-	 * ¼ì²é¼ÇÂ¼ÊÇ·ñ·ûºÏÈë¿âhbaseµÄÌõ¼ş£¨keyÊÇ·ñÍêÕû£©
+	 * æ£€æŸ¥è®°å½•æ˜¯å¦ç¬¦åˆå…¥åº“hbaseçš„æ¡ä»¶ï¼ˆkeyæ˜¯å¦å®Œæ•´ï¼‰
 	 * @param record
 	 * @return
 	 */
@@ -319,7 +319,7 @@ public class MRUtils {
 	public static String numberTemp;
 
 	/**
-	 * ±£Áô4Î» Ğ¡Êı
+	 * ä¿ç•™4ä½ å°æ•°
 	 * @param doublenum
 	 * @return
 	 */
@@ -335,7 +335,7 @@ public class MRUtils {
 	}
 
 	/**
-	 * ½«¹ØÁªÉÏµÄ¼ÇÂ¼ºÏ²¢³ÉÒ»¸öbean
+	 * å°†å…³è”ä¸Šçš„è®°å½•åˆå¹¶æˆä¸€ä¸ªbean
 	 * @param leftRecord
 	 * @param rightRecord
 	 * @param isRelated
@@ -379,7 +379,7 @@ public class MRUtils {
 			unitOne.setApp_class_top(rightRecord.getApp_class_top());
 		}
 
-		// ipÖÁÉÙÓĞ¹ØÁªÉÏÒ»Ìõhttp¼ÇÂ¼£¬Á÷Á¿¾ùÌ¯µÄ´¦Àí
+		// ipè‡³å°‘æœ‰å…³è”ä¸Šä¸€æ¡httpè®°å½•ï¼Œæµé‡å‡æ‘Šçš„å¤„ç†
 		if (isRelated) {
 			if (!StringUtils.isBlank(rightRecord.getUp_data())
 					&& !StringUtils.isBlank(rightRecord.getUp_data().trim())) {
@@ -400,12 +400,12 @@ public class MRUtils {
 			}
 
 		}
-		leftRecord.setFlag(rightRecord.getFlag());// ±íÊ¾±¾ÌõIP¼ÇÂ¼ÊÇ±»ÄÄ¸öHTTPÒµÎñ¹ØÁªµÄ
+		leftRecord.setFlag(rightRecord.getFlag());// è¡¨ç¤ºæœ¬æ¡IPè®°å½•æ˜¯è¢«å“ªä¸ªHTTPä¸šåŠ¡å…³è”çš„
 		return unitOne;
 	}
 
 	/**
-	 * ÕıÔò±í´ïÊ½Æ¥ÅäÊäÈëÎÄ¼ş
+	 * æ­£åˆ™è¡¨è¾¾å¼åŒ¹é…è¾“å…¥æ–‡ä»¶
 	 * @param job
 	 * @param fs
 	 * @param path
@@ -441,7 +441,7 @@ public class MRUtils {
 	}
 
 	/**
-	 * ÕıÔò±í´ïÊ½¹ıÂËÆ÷Àà
+	 * æ­£åˆ™è¡¨è¾¾å¼è¿‡æ»¤å™¨ç±»
 	 */
 	private static class RegexIxcludePathFilter implements PathFilter {
 		private final String regex;
@@ -456,14 +456,14 @@ public class MRUtils {
 	}
 
 	/**
-	 * É¸Ñ¡ÊäÈëÎÄ¼ş(´Ë·½·¨ÔİÊ±ÎŞÓÃ)
+	 * ç­›é€‰è¾“å…¥æ–‡ä»¶(æ­¤æ–¹æ³•æš‚æ—¶æ— ç”¨)
 	 */
 	public static boolean validate(FileStatus status, String regex,
 			boolean require) {
 		if (status.isDir()) {
 			return false;
 		}
-		// ÎÄ¼şÕıÔòĞ£Ñé
+		// æ–‡ä»¶æ­£åˆ™æ ¡éªŒ
 		if (require) {
 			return status.getPath().getName().matches(regex);
 		}

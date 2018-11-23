@@ -11,14 +11,14 @@ import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 
 /**
- * kafkaÏû·ÑÕßÏß³Ì
+ * kafkaæ¶ˆè´¹è€…çº¿ç¨‹
  * */
 public class KafkaConsumer extends Thread {
 	private final ConsumerConnector consumer;
 	private final String topic;
 
 	/**
-	 * ³õÊ¼»¯£¬´«Èë»°Ìâ(topic)
+	 * åˆå§‹åŒ–ï¼Œä¼ å…¥è¯é¢˜(topic)
 	 * */
 	public KafkaConsumer(String topic) {
 		consumer = kafka.consumer.Consumer
@@ -27,7 +27,7 @@ public class KafkaConsumer extends Thread {
 	}
 
 	/**
-	 * ´´½¨Ïû·ÑÕßÊôĞÔ
+	 * åˆ›å»ºæ¶ˆè´¹è€…å±æ€§
 	 * */
 	private static ConsumerConfig createConsumerConfig() {
 		Properties props = new Properties();
@@ -45,19 +45,19 @@ public class KafkaConsumer extends Thread {
 		topicCountMap.put(topic, new Integer(1));
 		/**
 		 * createMessageStreams
-		 * Õâ¸ö·½·¨¿ÉÒÔµÃµ½Ò»¸öÁ÷µÄÁĞ±í£¬Ã¿¸öÁ÷¶¼ÊÇMessageAndMetadataµÄµü´ú£¬
-		 * Í¨¹ıMessageAndMetadata¿ÉÒÔÄÃµ½ÏûÏ¢ºÍÆäËûµÄÔªÊı¾İ£¨Ä¿Ç°Ö®ºótopic£©
+		 * è¿™ä¸ªæ–¹æ³•å¯ä»¥å¾—åˆ°ä¸€ä¸ªæµçš„åˆ—è¡¨ï¼Œæ¯ä¸ªæµéƒ½æ˜¯MessageAndMetadataçš„è¿­ä»£ï¼Œ
+		 * é€šè¿‡MessageAndMetadataå¯ä»¥æ‹¿åˆ°æ¶ˆæ¯å’Œå…¶ä»–çš„å…ƒæ•°æ®ï¼ˆç›®å‰ä¹‹åtopicï¼‰
 		 * Input: a map of <topic, #streams>
 		 * Output: a map of <topic, list of message streams>
 		 */
 		Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer
 				.createMessageStreams(topicCountMap);
-		// »ñµÃ»°Ìâ(topic)µÄÏûÏ¢Á÷
+		// è·å¾—è¯é¢˜(topic)çš„æ¶ˆæ¯æµ
 		KafkaStream<byte[], byte[]> stream = consumerMap.get(topic).get(0);
 		ConsumerIterator<byte[], byte[]> it = stream.iterator();
-		// ½øĞĞÏû·Ñ
+		// è¿›è¡Œæ¶ˆè´¹
 		while (it.hasNext()) {
-			System.out.println("receive£º" + new String(it.next().message()));
+			System.out.println("receiveï¼š" + new String(it.next().message()));
 			try {
 				sleep(3000);
 			} catch (InterruptedException e) {

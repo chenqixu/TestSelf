@@ -1,10 +1,10 @@
 package com.newland.bi;
 
 public class Contants {
-	// Êä³öÎÄ¼şÃû
+	// è¾“å‡ºæ–‡ä»¶å
 	public static final String OUTPUTNAME = "OUTPUTNAME";
-	// Êä³öÎÄ¼şÂ·¾¶
+	// è¾“å‡ºæ–‡ä»¶è·¯å¾„
 	public static final String OUTPUTPATH = "OUTPUTPATH";
-	// ×Ö¶Î·Ö¸ô·û
+	// å­—æ®µåˆ†éš”ç¬¦
 	public static final String SPLIT_DICT = ",";
 }

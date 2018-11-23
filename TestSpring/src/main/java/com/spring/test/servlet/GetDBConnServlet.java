@@ -30,18 +30,18 @@ public class GetDBConnServlet extends SpringSupportServlet {
 	}
 	
 	/**
-	 * 业务
+	 * 涓氬姟
 	 * @param response x 
 	 * @param request x 
 	 * @throws IOException x 
 	 * */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		LOG.info("GetDBConnServlet doPost begin...");
-		// 并发测试
+		// 骞跺彂娴嬭瘯
 		DBUtilFactory.connListDeal();
-//		// 获取连接
+//		// 鑾峰彇杩炴帴
 //		Connection conn = DBUtilFactory.getConnetion();
-//		// 释放连接
+//		// 閲婃斁杩炴帴
 //		DBUtilFactory.releaseConn(conn);
 		LOG.info("GetDBConnServlet doPost end...");
 	}

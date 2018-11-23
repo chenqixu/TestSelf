@@ -18,7 +18,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
 /**
- * ÓÃÓÚ»ñÈ¡yarnÉÏµÄÈÕÖ¾
+ * ç”¨äºè·å–yarnä¸Šçš„æ—¥å¿—
  * */
 public class LogUtil {
 	protected org.apache.hadoop.yarn.client.cli.LogsCLI a;// pass
@@ -49,22 +49,22 @@ public class LogUtil {
 	 * <pre>
 	 * JobHistory
 	 * 
-	 * ´ÓJobHistory»ñÈ¡µÄjobÊÇËùÓĞÍê³ÉµÄjob£¬°üÀ¨ÀúÊ·job
-	 * JobHistoryÊÇÍ¨¹ıload hdfsÉÏµÄhistory file»ñÈ¡jobĞÅÏ¢
-	 * PartialJobÖĞÎŞ·¨»ñÈ¡counters¡¢configuration¡¢taskµÈÏêÏ¸ĞÅÏ¢
+	 * ä»JobHistoryè·å–çš„jobæ˜¯æ‰€æœ‰å®Œæˆçš„jobï¼ŒåŒ…æ‹¬å†å²job
+	 * JobHistoryæ˜¯é€šè¿‡load hdfsä¸Šçš„history fileè·å–jobä¿¡æ¯
+	 * PartialJobä¸­æ— æ³•è·å–countersã€configurationã€taskç­‰è¯¦ç»†ä¿¡æ¯
 	 * </pre>
 	 * */
 	public void JobHistory() {
 		JobHistory his = new JobHistory();
 		his.init(conf);
 		
-		Map<JobId, Job> jobs = his.getAllJobs();//»ñÈ¡µÄjobĞÅÏ¢ÊÇ²»ÍêÕûµÄ£¨PartialJob£©
+		Map<JobId, Job> jobs = his.getAllJobs();//è·å–çš„jobä¿¡æ¯æ˜¯ä¸å®Œæ•´çš„ï¼ˆPartialJobï¼‰
 		System.out.println(jobs);
 		
 		JobID oldJobId = JobID.forName("job_1533174517432_0066");
 		System.out.println(oldJobId.getId());
 		JobId jobId = TypeConverter.toYarn(oldJobId);	
-		Job fullJob = his.getJob(jobId);//»ñÈ¡µÄjobĞÅÏ¢ÊÇÍêÕûµÄ£¨CompletedJob£©
+		Job fullJob = his.getJob(jobId);//è·å–çš„jobä¿¡æ¯æ˜¯å®Œæ•´çš„ï¼ˆCompletedJobï¼‰
 		System.out.println(fullJob);
 	}
 	
@@ -72,15 +72,15 @@ public class LogUtil {
 	 * <pre>
 	 * JobClient
 	 * 
-	 * ´ÓJobClientÖĞ»ñÈ¡jobĞèÒªÁ¬½Óresourcemanager·şÎñºÍhistoryserver·şÎñ
-	 * ´ÓJobClient»ñÈ¡µÄjobÊÇÆäËùÊôµÄapplicationmaster»¹´æÔÚÓÚresourcemanagerµÄ»º´æÖĞµÄ
-	 * ´ÓJobClient»ñÈ¡µÄjob°üº¬ËùÓĞ×´Ì¬µÄjob
+	 * ä»JobClientä¸­è·å–jobéœ€è¦è¿æ¥resourcemanageræœåŠ¡å’ŒhistoryserveræœåŠ¡
+	 * ä»JobClientè·å–çš„jobæ˜¯å…¶æ‰€å±çš„applicationmasterè¿˜å­˜åœ¨äºresourcemanagerçš„ç¼“å­˜ä¸­çš„
+	 * ä»JobClientè·å–çš„jobåŒ…å«æ‰€æœ‰çŠ¶æ€çš„job
 	 * </pre>
 	 * */
 	public void JobClient() {
 		try {
 			JobClient jobClient = new JobClient(new JobConf(conf));
-			JobStatus[] jobs = jobClient.getAllJobs();//»ñÈ¡»º´æÖĞµÄjob£¬jobĞÅÏ¢ÊÇÍêÕûµÄ
+			JobStatus[] jobs = jobClient.getAllJobs();//è·å–ç¼“å­˜ä¸­çš„jobï¼Œjobä¿¡æ¯æ˜¯å®Œæ•´çš„
 			System.out.println(jobs);
 		} catch (IOException e) {
 			e.printStackTrace();

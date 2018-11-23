@@ -80,6 +80,8 @@ public class DBOracleTest {
 	@Override
 	protected void finalize() {
 		try {
+			// 释放
+			DataSourceUtils.release(conn, st, rs);
 			System.out.println("finalize...");
 			// 关闭连接池
 			DataSourceUtils.shutdownDataSource(DataSourceUtils.getConfSource());
@@ -98,13 +100,40 @@ public class DBOracleTest {
 		DataSourceUtils.initConfigure();		
 	}
 	
-	/**
-	 * 通过SQL进行查询
-	 * */
-	public void querySQL(String sql){
+	public Connection getConn() {
+		Connection conn = null;
 		try {
-			// 获得连接
 			conn = DataSourceUtils.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
+	/**
+	 * 执行并查询
+	 * */
+	public void executeAndquerySQL(String executesql, String querysql, Connection conn) {
+		try {
+			st = conn.createStatement();
+			// 执行查询语句
+			int result = st.executeUpdate(executesql);
+			// 打印执行结果
+			System.out.println(result);
+			// 执行查询语句
+			rs = st.executeQuery(querysql);
+			// 打印行数
+			System.out.println(rs.getRow());			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 释放连接
+			DataSourceUtils.release(null, st, rs);
+		}
+	}
+	
+	public void querySQL(String sql, Connection conn){
+		try {
 			st = conn.createStatement();
 			// 执行查询语句
 			rs = st.executeQuery(sql);
@@ -114,7 +143,50 @@ public class DBOracleTest {
 			e.printStackTrace();
 		} finally {
 			// 释放连接
-			DataSourceUtils.release(conn, st, rs);
+			DataSourceUtils.release(null, st, rs);
+		}
+	}
+	
+	/**
+	 * 通过SQL进行查询
+	 * */
+	public void querySQL(String sql){		
+		try {
+			querySQL(sql, getConn());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 释放连接
+			DataSourceUtils.release(null, st, rs);
+		}
+	}
+	
+	public void executeSQL(String sql, Connection conn){
+		try {
+			st = conn.createStatement();
+			// 执行查询语句
+			int result = st.executeUpdate(sql);
+			// 打印执行结果
+			System.out.println(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 释放连接
+			DataSourceUtils.release(null, st, null);
+		}
+	}
+	
+	/**
+	 * 执行SQL语句
+	 * */
+	public void executeSQL(String sql){
+		try {
+			executeSQL(sql, getConn());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// 释放连接
+			DataSourceUtils.release(null, st, null);
 		}
 	}
 	
@@ -452,15 +524,17 @@ public class DBOracleTest {
 	}
 	
 	public static void main(String[] args) {
+		String sql = "";
 //		String path = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\data.zip";
 //		String path1 = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456";
 //		String path2 = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456.zip";
 //		String xmlPath = "H:\\Work\\WorkSpace\\MyEclipse10\\self\\test\\src\\main\\resources\\data\\123456.xml";
 		String path = "D:\\tmp\\workflow.xml";
 		DBOracleTest dbot = new DBOracleTest(12);
+		Connection conn = dbot.getConn();
 //		dbot.query_wf_files("/home/edc_base/edc-app/xml/103663752343@2018080201000000/workflow.xml", "d:\\");
 //		dbot.query_wf_files("/home/edc_base/edc-app/xml/103663752343@2018080201000000/workflow.xml");
-		dbot.query_wf_files("/home/edc_base/edc-app/xml/102607117304@2018080101000000/workflow.xml");
+//		dbot.query_wf_files("/home/edc_base/edc-app/xml/102607117304@2018080101000000/workflow.xml");
 //		int code = dbot.insertBlob(path);
 //		System.out.println("[resultcode]"+code);
 //		dbot.done();
@@ -475,5 +549,11 @@ public class DBOracleTest {
 //		DBOracleTest dbot11 = new DBOracleTest(11);
 //		dbot11.querySQL("select * from sm_user");
 //		dbot11.finalize();
+		// 测试计划语句
+//		sql = "explain plan for select 1 from dual";
+//		dbot.executeSQL(sql, conn);
+//		sql = "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY)";
+//		dbot.querySQL(sql, conn);
+		dbot.executeAndquerySQL("explain plan for select 1 from dual", "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY)", conn);
 	}
 }

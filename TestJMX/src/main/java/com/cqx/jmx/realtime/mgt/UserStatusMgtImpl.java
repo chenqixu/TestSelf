@@ -9,7 +9,7 @@ import com.cqx.jmx.realtime.util.ThreadUtil;
 import com.cqx.jmx.util.JMXFactory;
 
 public class UserStatusMgtImpl {
-	//ÅäÖÃÎÄ¼ş
+	//é…ç½®æ–‡ä»¶
 	private Common common;
 	private ThreadUtilStatus tus;	
 
@@ -18,13 +18,13 @@ public class UserStatusMgtImpl {
 	}
 
 	/**
-	 * ÒµÎñ´¦Àí£¬²¢·¢²éÑ¯
+	 * ä¸šåŠ¡å¤„ç†ï¼Œå¹¶å‘æŸ¥è¯¢
 	 * */
 	public void queryUserbyStation(Map<String, String> paramsMap) {
 		ThreadUtil.init();
 		ThreadUtil tu = new ThreadUtil(paramsMap, common);
 		tus.add(tu);
-		//»ñÈ¡½á¹û
+		//è·å–ç»“æœ
 		tu.getResult();		
 	}
 	
@@ -33,7 +33,7 @@ public class UserStatusMgtImpl {
 		paramsMap.put("lac_ci", "1");
 		paramsMap.put("is_residentuser", "0");
 		final UserStatusMgtImpl usm = new UserStatusMgtImpl();
-		//Ã¿2Ãë½øĞĞÒ»´Î²éÑ¯
+		//æ¯2ç§’è¿›è¡Œä¸€æ¬¡æŸ¥è¯¢
 		new Thread(new Runnable() {
 			public void run() {
 				try {
@@ -46,7 +46,7 @@ public class UserStatusMgtImpl {
 				}
 			}
 		}).start();
-		//½øĞĞ¼à¿Ø
+		//è¿›è¡Œç›‘æ§
 		ThreadUtilStatus tus = new ThreadUtilStatus();
 		usm.setTus(tus);
 		JMXFactory.startJMX("ThreadUtilStatus", tus);

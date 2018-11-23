@@ -19,7 +19,7 @@ import com.cqx.process.LogInfoFactory;
 
 public class CollectTest1 {
 
-	private LogInfoFactory log = LogInfoFactory.getInstance();
+	private LogInfoFactory log = LogInfoFactory.getInstance(CollectTest1.class);
 	public static final String SPLIT_STR = ",";
 	
 	/**

@@ -58,12 +58,12 @@ public class GetStreamLastVersionList extends ChangeCode implements Runnable {
 	 * 输出CVS清单<br>
 	 * */
 	@Override
-	public void Change(){
+	public void change(){
 		String _scanpath = "";
 		boolean cvsfilterflag = false;
 		while((_scanpath=scanPathQueue.poll())!=null){
 			String projectname = new Path(_scanpath).getName();
-			List<String> javalist = Scan(_scanpath);
+			List<String> javalist = scan(_scanpath);
 			BufferedWriter writer = null;	
 			try{
 				File writeFile = new File(this.writepath+"/"+projectname+".list");
@@ -224,7 +224,7 @@ public class GetStreamLastVersionList extends ChangeCode implements Runnable {
 
 	@Override
 	public void run() {
-		Change();
+		change();
 	}
 	
 	public static void main(String[] args) {

@@ -13,53 +13,53 @@ import bean.KeepNetLogOSSIpBean;
 import bean.KeepNetLogOSSWlanBean;
 
 /**
- * hive²éÑ¯Ïß³Ì,¶Ôip±í,http±íÍ¬Ê±²éÑ¯,Ëõ¶Ì²éÑ¯Ê±¼ä
+ * hiveæŸ¥è¯¢çº¿ç¨‹,å¯¹ipè¡¨,httpè¡¨åŒæ—¶æŸ¥è¯¢,ç¼©çŸ­æŸ¥è¯¢æ—¶é—´
  * */
 public class KeepNetLogOSSClientThread extends Thread {
-	private boolean flag = false;//±êÖ¾
+	private boolean flag = false;//æ ‡å¿—
 	private int dbType = 1;//1:hive 2:bishow
-	private String sql = "";//²éÑ¯sql
-	private String tag_name = "";//±ê¼Ç
-	private String telnumber = "";//ºÅÂë
+	private String sql = "";//æŸ¥è¯¢sql
+	private String tag_name = "";//æ ‡è®°
+	private String telnumber = "";//å·ç 
 	
-	//hiveÊı¾İ¿âÁ¬½ÓĞÅÏ¢
+	//hiveæ•°æ®åº“è¿æ¥ä¿¡æ¯
 	private String driverName = "";
-	private String url = "";//10.46.219.33Éú²ú²âÊÔ¿â;10.46.219.32Éú²ú¿â;10.1.4.53¿ª·¢¿â
+	private String url = "";//10.46.219.33ç”Ÿäº§æµ‹è¯•åº“;10.46.219.32ç”Ÿäº§åº“;10.1.4.53å¼€å‘åº“
 	private String user = "";
 	private String password = "";
 	
-	//Êı¾İ¿â
+	//æ•°æ®åº“
 	private Connection conn = null;
 	private Statement stmt = null;
 	private PreparedStatement pst = null;
 	
-	private ResultSet rs = null;//²éÑ¯½á¹û¼¯
+	private ResultSet rs = null;//æŸ¥è¯¢ç»“æœé›†
 	
 	private List resultList = null;
 	private List<String> tmpList = null;
 	
-	//²âÊÔ¿ª¹Ø trueÎª²âÊÔ
+	//æµ‹è¯•å¼€å…³ trueä¸ºæµ‹è¯•
 	private boolean test_flag = true;
 	
 	/**
-	 * ÊÇ·ñÍê³É
+	 * æ˜¯å¦å®Œæˆ
 	 * */
 	public boolean isFlag() {
 		return flag;
 	}
 
 	/**
-	 * ÓÃÀ´ÅĞ¶ÏÍê³ÉºóµÄ»ØÉä
+	 * ç”¨æ¥åˆ¤æ–­å®Œæˆåçš„å›å°„
 	 * */
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
 	
 	/**
-	 * ¹¹Ôìº¯Êı
-	 * @param str ²éÑ¯sql
-	 * @param _dbType Êı¾İ¿âÀàĞÍ
-	 * @param _tag_name ·µ»Ø±êÇ©Ãû,ÓÃÓÚÅĞ¶Ïip,http,bishow,·½±ã´¦Àí½á¹û
+	 * æ„é€ å‡½æ•°
+	 * @param str æŸ¥è¯¢sql
+	 * @param _dbType æ•°æ®åº“ç±»å‹
+	 * @param _tag_name è¿”å›æ ‡ç­¾å,ç”¨äºåˆ¤æ–­ip,http,bishow,æ–¹ä¾¿å¤„ç†ç»“æœ
 	 * */
 	public KeepNetLogOSSClientThread(String str, int _dbType, String _tag_name, String _telnumber) {
 		this.sql = str;
@@ -70,15 +70,15 @@ public class KeepNetLogOSSClientThread extends Thread {
 	}
 	
 	/**
-	 * Ö÷Ïß³Ì
+	 * ä¸»çº¿ç¨‹
 	 * */
-	public synchronized void run() {//Ïß³Ì°²È«
+	public synchronized void run() {//çº¿ç¨‹å®‰å…¨
 		List list = null;
 		List result_list = new Vector();
 		try{
-			list = executeQuery(this.dbType, this.sql);//Ö´ĞĞ²éÑ¯
-			//×ª³Ébean,²¢´¦Àí¹«ÍøIP
-			//²éÑ¯´ËºÅÂëÅäÖÃµÄ¹«Íøip
+			list = executeQuery(this.dbType, this.sql);//æ‰§è¡ŒæŸ¥è¯¢
+			//è½¬æˆbean,å¹¶å¤„ç†å…¬ç½‘IP
+			//æŸ¥è¯¢æ­¤å·ç é…ç½®çš„å…¬ç½‘ip
 			String ggsnip = "";//queryGgsnIp(this.telnumber);
 			if(this.tag_name.equals("wlan")){
 				for(int i=0;i<list.size();i++){
@@ -94,32 +94,32 @@ public class KeepNetLogOSSClientThread extends Thread {
 					bean.setUp(setListBean((List)list.get(i), 8));
 					bean.setDown(setListBean((List)list.get(i), 9));
 					bean.setUser_gw_ip(setListBean((List)list.get(i), 10));	
-					//Èç¹û¹«ÍøipÎª¿Õ,ÉèÖÃ
+					//å¦‚æœå…¬ç½‘ipä¸ºç©º,è®¾ç½®
 					if(bean.getUser_gw_ip().trim().length()==0){
 						bean.setUser_gw_ip(ggsnip);
 					}				
-					//ÉèÖÃbean ĞèÒª¹ıÂË¹«ÍøipËùÒÔ²»×ªlist
+					//è®¾ç½®bean éœ€è¦è¿‡æ»¤å…¬ç½‘ipæ‰€ä»¥ä¸è½¬list
 					result_list.add(bean);
 				}
 			}else if(this.tag_name.equals("ip")){
 				for(int i=0;i<list.size();i++){
 					KeepNetLogOSSIpBean bean = new KeepNetLogOSSIpBean();
 					bean.setSid(setListBean((List)list.get(i), 0));//sid
-					bean.setTelnumber(setListBean((List)list.get(i), 1));//ÊÖ»úºÅÂë
-					bean.setGgsnip(setListBean((List)list.get(i), 2));//ÓÃ»§NATºó¹«ÍøIPµØÖ·
-					bean.setUserip(setListBean((List)list.get(i), 3));//ÓÃ»§Ë½ÍøIPµØÖ·
-					bean.setUsrsport(setListBean((List)list.get(i), 4));//NATºóÔ´¶Ë¿Ú
-					bean.setUsrdip(setListBean((List)list.get(i), 5));//Ä¿µÄIP
-					bean.setUsrdport(setListBean((List)list.get(i), 6));//Ä¿µÄ¶Ë¿Ú
-					bean.setStarttime(setListBean((List)list.get(i), 7));//·ÃÎÊÊ±¼ä
-					bean.setLasttime(setListBean((List)list.get(i), 8));//ÏÂÏßÊ±¼ä
+					bean.setTelnumber(setListBean((List)list.get(i), 1));//æ‰‹æœºå·ç 
+					bean.setGgsnip(setListBean((List)list.get(i), 2));//ç”¨æˆ·NATåå…¬ç½‘IPåœ°å€
+					bean.setUserip(setListBean((List)list.get(i), 3));//ç”¨æˆ·ç§ç½‘IPåœ°å€
+					bean.setUsrsport(setListBean((List)list.get(i), 4));//NATåæºç«¯å£
+					bean.setUsrdip(setListBean((List)list.get(i), 5));//ç›®çš„IP
+					bean.setUsrdport(setListBean((List)list.get(i), 6));//ç›®çš„ç«¯å£
+					bean.setStarttime(setListBean((List)list.get(i), 7));//è®¿é—®æ—¶é—´
+					bean.setLasttime(setListBean((List)list.get(i), 8));//ä¸‹çº¿æ—¶é—´
 					bean.setApn(setListBean((List)list.get(i), 9));//APN
 					bean.setRattype(setListBean((List)list.get(i), 10));//2g/3g
-					//Èç¹û¹«ÍøipÎª¿Õ,ÉèÖÃ
+					//å¦‚æœå…¬ç½‘ipä¸ºç©º,è®¾ç½®
 					if(bean.getGgsnip().trim().length()==0){
 						bean.setGgsnip(ggsnip);
 					}
-					//ÉèÖÃbean ĞèÒªjoin´¦ÀíËùÒÔ²»×ªlist
+					//è®¾ç½®bean éœ€è¦joinå¤„ç†æ‰€ä»¥ä¸è½¬list
 					result_list.add(bean);
 				}
 			}else if(this.tag_name.equals("http")){
@@ -127,34 +127,34 @@ public class KeepNetLogOSSClientThread extends Thread {
 					KeepNetLogOSSHttpBean bean = new KeepNetLogOSSHttpBean();
 					bean.setIpsid(setListBean((List)list.get(i), 0));//http.ipsid
 					bean.setUrl(setListBean((List)list.get(i), 1));//url
-					bean.setStarttime(setListBean((List)list.get(i), 2));//ÉÏÏßÊ±¼ä
-					bean.setLasttime(setListBean((List)list.get(i), 3));//ÏÂÏßÊ±¼ä
-					//ÉèÖÃbean ĞèÒªjoin´¦ÀíËùÒÔ²»×ªlist
+					bean.setStarttime(setListBean((List)list.get(i), 2));//ä¸Šçº¿æ—¶é—´
+					bean.setLasttime(setListBean((List)list.get(i), 3));//ä¸‹çº¿æ—¶é—´
+					//è®¾ç½®bean éœ€è¦joinå¤„ç†æ‰€ä»¥ä¸è½¬list
 					result_list.add(bean);
 				}
 			}
-            //±êÖ¾Íê³É
+            //æ ‡å¿—å®Œæˆ
 			this.flag = true;
-			//½á¹û
+			//ç»“æœ
 			this.resultList = result_list;
 		}catch(Exception e){
 			System.out.println("KeepNetLogOSSClientThread-error:"+e.toString());
 			e.printStackTrace();
 		}finally{
 			try {
-				closeDB();//¹Ø±ÕÊı¾İÁ¬½Ó
+				closeDB();//å…³é—­æ•°æ®è¿æ¥
 			} catch (Exception e2) {
-				System.out.println("KeepNetLogOSSClientThread run ¹Ø±ÕÊı¾İÁ¬½Ó×ÊÔ´³öÏÖÒì³£:"+e2.toString());
+				System.out.println("KeepNetLogOSSClientThread run å…³é—­æ•°æ®è¿æ¥èµ„æºå‡ºç°å¼‚å¸¸:"+e2.toString());
 				e2.printStackTrace();
 			}			
 		}
 	}
 	
 	/**
-	 * ²éÑ¯ÅäÖÃ-±¾»ú²âÊÔ
+	 * æŸ¥è¯¢é…ç½®-æœ¬æœºæµ‹è¯•
 	 * */
 	private void getConfTest(int dbType) {
-		if(test_flag){//²âÊÔÎªÕæ
+		if(test_flag){//æµ‹è¯•ä¸ºçœŸ
 			if(dbType==1){//hive
 				this.driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
 				this.url = "jdbc:hive://10.1.4.53:10000/default";
@@ -166,7 +166,7 @@ public class KeepNetLogOSSClientThread extends Thread {
 				this.user = "bishow";
 				this.password = "bishow";
 			}
-		}else{//·Ç²âÊÔÎª¼Ù
+		}else{//éæµ‹è¯•ä¸ºå‡
 			if(dbType==1){//hive
 				this.driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
 				this.url = "jdbc:hive://10.46.219.32:10000/default";
@@ -183,7 +183,7 @@ public class KeepNetLogOSSClientThread extends Thread {
 
 	
     /**
-     * È¥³ıÍ·Î²µÄÒıºÅ
+     * å»é™¤å¤´å°¾çš„å¼•å·
      * */
     private String formatHiveResult(String str) {
     	String result = str;
@@ -196,38 +196,38 @@ public class KeepNetLogOSSClientThread extends Thread {
     }
     
 	/**
-	 * Ö´ĞĞselectÓï¾ä
-	 * dbType 1:hive¿â  2:bishowĞÅÏ¢¿â
+	 * æ‰§è¡Œselectè¯­å¥
+	 * dbType 1:hiveåº“  2:bishowä¿¡æ¯åº“
 	 */
     private List executeQuery(int dbType, String sSQL) throws Exception {
-		Vector<List<String>> resultList = new Vector<List<String>>();//·µ»Ø¼ÇÂ¼¼¯
-		//ÏÈ¶Ï¿ªµ±Ç°ËùÓĞÁ¬½Ó,
+		Vector<List<String>> resultList = new Vector<List<String>>();//è¿”å›è®°å½•é›†
+		//å…ˆæ–­å¼€å½“å‰æ‰€æœ‰è¿æ¥,
 		closeDB();
-		//ÔÙÁ¬½ÓÊı¾İ¿â·ÀÖ¹Á¬½ÓÓï¾äÖ´ĞĞÌ«¾ÃÓĞÊ²Ã´Òì³£
-		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//Ê±¼ä¸ñÊ½
+		//å†è¿æ¥æ•°æ®åº“é˜²æ­¢è¿æ¥è¯­å¥æ‰§è¡Œå¤ªä¹…æœ‰ä»€ä¹ˆå¼‚å¸¸
+		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//æ—¶é—´æ ¼å¼
 		try{
-			//ÅäÖÃ²éÑ¯
-			getConfTest(dbType);//²âÊÔ
-			Class.forName(driverName);//¼ÓÔØÇı¶¯
-			conn = DriverManager.getConnection(url, user, password);//Á¬½ÓÊı¾İ¿â	
+			//é…ç½®æŸ¥è¯¢
+			getConfTest(dbType);//æµ‹è¯•
+			Class.forName(driverName);//åŠ è½½é©±åŠ¨
+			conn = DriverManager.getConnection(url, user, password);//è¿æ¥æ•°æ®åº“	
 			stmt = conn.createStatement();
-			System.out.println("KeepNetLogOSSClientThread executeQuery Óï¾äÖ´ĞĞ¿ªÊ¼Ê±¼ä:"+sim.format(new Date()));
-			System.out.println("KeepNetLogOSSClientThread executeQuery Ö´ĞĞÓï¾ä:" + sSQL.toString());
-			rs = stmt.executeQuery(sSQL.toString());//Ö´ĞĞÓï¾ä
-			System.out.println("KeepNetLogOSSClientThread executeQuery Óï¾äÖ´ĞĞ½áÊøÊ±¼ä:"+sim.format(new Date()));
+			System.out.println("KeepNetLogOSSClientThread executeQuery è¯­å¥æ‰§è¡Œå¼€å§‹æ—¶é—´:"+sim.format(new Date()));
+			System.out.println("KeepNetLogOSSClientThread executeQuery æ‰§è¡Œè¯­å¥:" + sSQL.toString());
+			rs = stmt.executeQuery(sSQL.toString());//æ‰§è¡Œè¯­å¥
+			System.out.println("KeepNetLogOSSClientThread executeQuery è¯­å¥æ‰§è¡Œç»“æŸæ—¶é—´:"+sim.format(new Date()));
 			
-			//»ñÈ¡×Ö¶Î¸öÊı
+			//è·å–å­—æ®µä¸ªæ•°
 			int colCnt = rs.getMetaData().getColumnCount();
 			
-			while (rs != null && rs.next()) {//½«²éÑ¯½á¹û´æ´¢µ½listÖĞ
+			while (rs != null && rs.next()) {//å°†æŸ¥è¯¢ç»“æœå­˜å‚¨åˆ°listä¸­
 				tmpList = new Vector<String>();
 				for (int i = 1; i <= colCnt; i++) {
 					String reslut_rs = "";
 					if(rs.getString(i)!=null){
 						reslut_rs = rs.getString(i);
 					}
-					if(dbType==1){//Hive×Ö·û´®´¦Àí
-						if(reslut_rs.endsWith("'")){//ÊÇÒÔÒıºÅ½áÊøµÄ×Ö·û´®
+					if(dbType==1){//Hiveå­—ç¬¦ä¸²å¤„ç†
+						if(reslut_rs.endsWith("'")){//æ˜¯ä»¥å¼•å·ç»“æŸçš„å­—ç¬¦ä¸²
 							tmpList.add(formatHiveResult(reslut_rs));
 						}else{
 							tmpList.add(reslut_rs);
@@ -239,25 +239,25 @@ public class KeepNetLogOSSClientThread extends Thread {
 				resultList.add(tmpList);
 			}
 		}catch(Exception ex){
-			System.out.println("KeepNetLogOSSClientThread executeQuery Ö´ĞĞÊı¾İ¿â¸üĞÂ²Ù×÷³öÏÖÒì³£:"+ex.toString());
+			System.out.println("KeepNetLogOSSClientThread executeQuery æ‰§è¡Œæ•°æ®åº“æ›´æ–°æ“ä½œå‡ºç°å¼‚å¸¸:"+ex.toString());
 			System.out.println(ex.toString());
-			throw ex;//Å×³öÒì³£
+			throw ex;//æŠ›å‡ºå¼‚å¸¸
 		}
 
 		return resultList;
 	}
 	
     /**
-     * Êı¾İ¿â²Ù×÷Íê³Éºó£¬¹Ø±ÕÏà¹ØµÄÁ¬½Ó×ÊÔ´
+     * æ•°æ®åº“æ“ä½œå®Œæˆåï¼Œå…³é—­ç›¸å…³çš„è¿æ¥èµ„æº
 	 */
     private void closeDB() throws Exception {
         try {
-        	//¹Ø±Õ½á¹û¼¯
+        	//å…³é—­ç»“æœé›†
             if (rs != null) {
                 rs.close();
                 rs = null;
             }
-            //¹Ø±ÕStatement
+            //å…³é—­Statement
             if (stmt != null) {
             	stmt.close();
             	stmt = null;
@@ -266,36 +266,36 @@ public class KeepNetLogOSSClientThread extends Thread {
 				pst.close();
 				pst = null;
 			}
-            //¹Ø±ÕÊı¾İÁ¬½Ó
+            //å…³é—­æ•°æ®è¿æ¥
             if (conn != null) {
                 if (!conn.isClosed())
                     conn.close();
                 conn = null;
             }
         }catch (Exception e) {
-			System.out.println("KeepNetLogOSSClientThread closeDB ¹Ø±ÕÊı¾İÁ¬½Ó×ÊÔ´³öÏÖÒì³£:"+e.toString());
+			System.out.println("KeepNetLogOSSClientThread closeDB å…³é—­æ•°æ®è¿æ¥èµ„æºå‡ºç°å¼‚å¸¸:"+e.toString());
         	System.out.println(e.toString());
         	e.printStackTrace();
-			throw e;//Å×³öÒì³£
+			throw e;//æŠ›å‡ºå¼‚å¸¸
         }
     }
 
     /**
-     * Í¨¹ıÉèÖÃµÄ±êÇ©ÃûÅĞ¶Ïip,http,bishow
+     * é€šè¿‡è®¾ç½®çš„æ ‡ç­¾ååˆ¤æ–­ip,http,bishow
      * */
 	public String getTag_name() {
 		return tag_name;
 	}
 
 	/**
-	 * ²éÑ¯½á¹û
+	 * æŸ¥è¯¢ç»“æœ
 	 * */
 	public List getResultList() {
 		return resultList;
 	}
 	
 	/**
-	 * ´ÓlistÉèÖÃ½á¹ûbean
+	 * ä»listè®¾ç½®ç»“æœbean
 	 * */
 	public String setListBean(List list, int size) {
 		String str = "";

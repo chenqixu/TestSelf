@@ -2,19 +2,19 @@ package bean;
 
 public class KeepNetLogOSSBean {
 
-	private String telnumber;//ÊÖ»úºÅÂë
-	private String ggsnip;//¹«ÍøIPµØÖ·
-	private String userip;//Ë½ÍøIPµØÖ·
-	private String usrsport;//NATºóÔ´¶Ë¿Ú
-	private String usrdip;//Ä¿µÄIP
-	private String usrdport;//Ä¿µÄ¶Ë¿Ú
-	private String url;//·ÃÎÊURL
-	private String querytime_s;//·ÃÎÊÊ±¼ä
-	private String starttime_s;//ÉÏÏßÊ±¼ä
-	private String starttime_e;//ÏÂÏßÊ±¼ä
+	private String telnumber;//æ‰‹æœºå·ç 
+	private String ggsnip;//å…¬ç½‘IPåœ°å€
+	private String userip;//ç§ç½‘IPåœ°å€
+	private String usrsport;//NATåæºç«¯å£
+	private String usrdip;//ç›®çš„IP
+	private String usrdport;//ç›®çš„ç«¯å£
+	private String url;//è®¿é—®URL
+	private String querytime_s;//è®¿é—®æ—¶é—´
+	private String starttime_s;//ä¸Šçº¿æ—¶é—´
+	private String starttime_e;//ä¸‹çº¿æ—¶é—´
 	private String apn;//apn
-	private String rattype;//ÉÏÍøÀàĞÍ 2g/3g/wlan
-	private String filename;//µ¼³öexcelÎÄ¼şÃû
+	private String rattype;//ä¸Šç½‘ç±»å‹ 2g/3g/wlan
+	private String filename;//å¯¼å‡ºexcelæ–‡ä»¶å
 	public String getFilename() {
 		return filename;
 	}

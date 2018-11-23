@@ -5,7 +5,7 @@ import java.net.URI;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 
 /**
- * Æô¶¯restful·şÎñ
+ * å¯åŠ¨restfulæœåŠ¡
  * */
 public class App {
 	public static void main(String[] args) {

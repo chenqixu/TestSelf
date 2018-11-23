@@ -1,19 +1,19 @@
 package bean;
 
 public class NgReqBean {
-	private Long telnumber ;// ÊÖ»úºÅÂë
+	private Long telnumber ;// æ‰‹æœºå·ç 
 
-	private String starttime_s;// Ê±¼ä¶Î£­¿ªÊ¼Ê±¼ä
+	private String starttime_s;// æ—¶é—´æ®µï¼å¼€å§‹æ—¶é—´
 
-	private String starttime_e;// Ê±¼ä¶Î£­½áÊøÊ±¼ä
+	private String starttime_e;// æ—¶é—´æ®µï¼ç»“æŸæ—¶é—´
 
-	private String apn = "";// Á÷Á¿ÀàĞÍ 
+	private String apn = "";// æµé‡ç±»å‹ 
 	
-	private String servicename="";//·şÎñ´úÂëÃû³Æ
+	private String servicename="";//æœåŠ¡ä»£ç åç§°
 	
-	private String reqSource="";// ÇëÇóÔ´  ÒµÎñ×é°´servicename½øĞĞÍ³¼Æ ¹Ì¶¨´«Öµ ¡°bus¡±  ÆäËü °´apnÍ³¼Æ ¿ÉÒÔ²»ÓÃ´«Öµ
+	private String reqSource="";// è¯·æ±‚æº  ä¸šåŠ¡ç»„æŒ‰servicenameè¿›è¡Œç»Ÿè®¡ å›ºå®šä¼ å€¼ â€œbusâ€  å…¶å®ƒ æŒ‰apnç»Ÿè®¡ å¯ä»¥ä¸ç”¨ä¼ å€¼
 	
-	private String charging_id="";// ¼Æ·Ñid
+	private String charging_id="";// è®¡è´¹id
 
 	public Long getTelnumber() {
 		return telnumber;

@@ -8,8 +8,34 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>TestJStorm</artifactId>
-	<build />
+	<properties>
+		<slf4j-version>1.7.10</slf4j-version>
+		<fastjson.version>1.2.31</fastjson.version>
+		<!-- netty.version>3.9.9.Final</netty.version  -->
+		<netty.version>5.0.0.Alpha2</netty.version>
+	</properties>
+	<build>
+		<resources>
+			<!-- 控制资源文件的拷贝 -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<targetPath>${project.build.directory}</targetPath>
+			</resource>
+		</resources>
+		<plugins>
+			<!-- 解决资源文件的编码问题 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
+		<!-- jstorm-core核心jar包，需要剔除slf4j和logback -->
 		<dependency>
             <groupId>com.alibaba.jstorm</groupId>
             <artifactId>jstorm-core</artifactId>
@@ -35,20 +61,58 @@
                 <exclusion>
                     <artifactId>log4j-over-slf4j</artifactId>
                     <groupId>org.slf4j</groupId>
+                </exclusion>                
+                <exclusion>
+                	<artifactId>logback-classic</artifactId>
+                	<groupId>ch.qos.logback</groupId>
+                </exclusion>
+                <exclusion>
+                	<artifactId>logback-core</artifactId>
+                	<groupId>ch.qos.logback</groupId>
                 </exclusion>
             </exclusions>
 		</dependency>
+		
+		<!-- 日志类 -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.10</version>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+            <version>${slf4j-version}</version>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- 本地jmx工具 -->
+        <dependency>
+			<groupId>com.cqx</groupId>
+            <artifactId>TestJMX</artifactId>
+			<version>1.0.0</version>
+        </dependency>
+        <!-- 
+        <dependency>
+			<groupId>com.cqx</groupId>
+            <artifactId>TestNetty</artifactId>
+			<version>1.0.0</version>
+        </dependency> -->
+        
+		<dependency>
+			<groupId>io.netty</groupId>
+            <!-- artifactId>netty</artifactId  -->
+			<artifactId>netty-all</artifactId>
+			<version>${netty.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
+        
+        <!-- storm封装的kafka操作包
         <dependency>
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-kafka</artifactId>
@@ -59,14 +123,16 @@
 					<groupId>*</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<!-- 
+		</dependency> -->
+		
+		<!-- storm-core核心jar包
 		<dependency>
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-core</artifactId>
 			<version>0.10.0</version>
 		</dependency>  -->
-		<!-- 
+		
+		<!-- 旧版本的jstorm客户端和log4j日志
 		<dependency>
 			<groupId>com.alibaba.jstorm</groupId>
 			<artifactId>jstorm-client</artifactId>

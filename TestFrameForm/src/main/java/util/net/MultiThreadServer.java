@@ -16,24 +16,24 @@ public class MultiThreadServer {
 
 	private ServerSocket serverSocket;
 
-	private ExecutorService executorService;// Ïß³Ì³Ø
+	private ExecutorService executorService;// çº¿ç¨‹æ± 
 
-	private final int POOL_SIZE = 10;// µ¥¸öCPUÏß³Ì³Ø´óĞ¡
+	private final int POOL_SIZE = 10;// å•ä¸ªCPUçº¿ç¨‹æ± å¤§å°
 
 	public MultiThreadServer() throws IOException {
 		serverSocket = new ServerSocket(port);
-		// RuntimeµÄavailableProcessor()·½·¨·µ»Øµ±Ç°ÏµÍ³µÄCPUÊıÄ¿.
+		// Runtimeçš„availableProcessor()æ–¹æ³•è¿”å›å½“å‰ç³»ç»Ÿçš„CPUæ•°ç›®.
 		executorService = Executors.newFixedThreadPool(Runtime.getRuntime()
 				.availableProcessors()
 				* POOL_SIZE);
-		System.out.println("·şÎñÆ÷Æô¶¯");
+		System.out.println("æœåŠ¡å™¨å¯åŠ¨");
 	}
 
 	public void service() {
 		while (true) {
 			Socket socket = null;
 			try {
-				// ½ÓÊÕ¿Í»§Á¬½Ó,Ö»Òª¿Í»§½øĞĞÁËÁ¬½Ó,¾Í»á´¥·¢accept();´Ó¶ø½¨Á¢Á¬½Ó
+				// æ¥æ”¶å®¢æˆ·è¿æ¥,åªè¦å®¢æˆ·è¿›è¡Œäº†è¿æ¥,å°±ä¼šè§¦å‘accept();ä»è€Œå»ºç«‹è¿æ¥
 				socket = serverSocket.accept();
 				executorService.execute(new Handler(socket));
 
@@ -57,7 +57,7 @@ class Handler implements Runnable {
 
 	public void run() {
 		try {			
-			//¶ÁÈ¡ÃüÁî
+			//è¯»å–å‘½ä»¤
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
 			String msg = null;
@@ -65,7 +65,7 @@ class Handler implements Runnable {
 			if((msg = br.readLine()) != null)
 				System.out.println(msg);
 			
-			//·¢ËÍÃüÁî
+			//å‘é€å‘½ä»¤
 			OutputStream socketOut = socket.getOutputStream();
 			socketOut.write("aa".getBytes());
 			socketOut.flush();

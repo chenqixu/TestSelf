@@ -3,7 +3,7 @@ package com.cqx.jersey;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
- * ×ÊÔ´Ó³Éä
+ * èµ„æºæ˜ å°„
  * */
 public class RestApplication extends ResourceConfig {
 	public RestApplication() {

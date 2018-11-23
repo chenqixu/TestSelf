@@ -9,30 +9,30 @@ import com.cqx.util.CommonUtils;
 
 public class KeepNetLogTest {
 
-	private static Random random = new Random();//ÓÃÓÚÈ¡Ä£
+	private static Random random = new Random();//ç”¨äºå–æ¨¡
 	
 	/**
-	 * rowkey region:ÊäÈë²éÑ¯Ìõ¼ş£¬È¡md5Ç°8Î»£¬Ã¿2Î»16½øÖÆ×ª10½øÖÆÏà¼Ó»ñµÃregion·ÖÇøºÅ
+	 * rowkey region:è¾“å…¥æŸ¥è¯¢æ¡ä»¶ï¼Œå–md5å‰8ä½ï¼Œæ¯2ä½16è¿›åˆ¶è½¬10è¿›åˆ¶ç›¸åŠ è·å¾—regionåˆ†åŒºå·
 	 * @author cqx
-	 * @param requestBean ²éÑ¯ÇëÇóbean
-	 * @param flag s±íÊ¾¿ªÊ¼Ê±¼ä, e±íÊ¾½áÊøÊ±¼ä
-	 * @return ·µ»Ørowkey,¸ù¾İ²éÑ¯Ìõ¼şÅĞ¶Ï,ÓĞ3ÖÖ
-	 * 1¡¢2G/3G£º¸ù¾İNATºóÓÃ»§¹«ÍøIPµØÖ·¡¢NATºóÔ´¶Ë¿Ú¡¢²éÑ¯Ê±¼ä£¬²éÑ¯³öÒÆ¶¯ÓÃ»§ºÅÂë£»
-	 * region·ÖÇø,ggsip,ggsport,requesttime(yyyymmddhhmiss),sid,msisdn
-	 * 2¡¢2G/3G£º¸ù¾İÓÃ»§·ÃÎÊURL¡¢NATºóÓÃ»§¹«ÍøIPµØÖ·¡¢²éÑ¯Ê±¼ä£¬²éÑ¯³öÒÆ¶¯ÓÃ»§ºÅÂë£»
-	 * region·ÖÇø,ggsip,url,requesttime(yyyymmddhhmiss),sid,msisdn
-	 * 3¡¢2G/3G£º¸ù¾İÓÃ»§·ÃÎÊURL¡¢²éÑ¯Ê±¼ä£¬²éÑ¯³öÒÆ¶¯ÓÃ»§ºÅÂë£»
-	 * region·ÖÇø,url,requesttime(yyyymmddhhmiss),sid,msisdn
+	 * @param requestBean æŸ¥è¯¢è¯·æ±‚bean
+	 * @param flag sè¡¨ç¤ºå¼€å§‹æ—¶é—´, eè¡¨ç¤ºç»“æŸæ—¶é—´
+	 * @return è¿”å›rowkey,æ ¹æ®æŸ¥è¯¢æ¡ä»¶åˆ¤æ–­,æœ‰3ç§
+	 * 1ã€2G/3Gï¼šæ ¹æ®NATåç”¨æˆ·å…¬ç½‘IPåœ°å€ã€NATåæºç«¯å£ã€æŸ¥è¯¢æ—¶é—´ï¼ŒæŸ¥è¯¢å‡ºç§»åŠ¨ç”¨æˆ·å·ç ï¼›
+	 * regionåˆ†åŒº,ggsip,ggsport,requesttime(yyyymmddhhmiss),sid,msisdn
+	 * 2ã€2G/3Gï¼šæ ¹æ®ç”¨æˆ·è®¿é—®URLã€NATåç”¨æˆ·å…¬ç½‘IPåœ°å€ã€æŸ¥è¯¢æ—¶é—´ï¼ŒæŸ¥è¯¢å‡ºç§»åŠ¨ç”¨æˆ·å·ç ï¼›
+	 * regionåˆ†åŒº,ggsip,url,requesttime(yyyymmddhhmiss),sid,msisdn
+	 * 3ã€2G/3Gï¼šæ ¹æ®ç”¨æˆ·è®¿é—®URLã€æŸ¥è¯¢æ—¶é—´ï¼ŒæŸ¥è¯¢å‡ºç§»åŠ¨ç”¨æˆ·å·ç ï¼›
+	 * regionåˆ†åŒº,url,requesttime(yyyymmddhhmiss),sid,msisdn
 	 * */
 	private String generateRowKey(KngReqBean requestBean, String flag) {
-		//3ÖÖ²éÑ¯Ìõ¼ş
-		//1¡¢2G/3G£º¸ù¾İNATºóÓÃ»§¹«ÍøIPµØÖ·¡¢NATºóÔ´¶Ë¿Ú¡¢²éÑ¯Ê±¼ä£¬²éÑ¯³öÒÆ¶¯ÓÃ»§ºÅÂë£»
-		//region·ÖÇø,ggsip,ggsport,requesttime(yyyymmddhhmiss),sid,msisdn
-		//2¡¢2G/3G£º¸ù¾İÓÃ»§·ÃÎÊURL¡¢NATºóÓÃ»§¹«ÍøIPµØÖ·¡¢²éÑ¯Ê±¼ä£¬²éÑ¯³öÒÆ¶¯ÓÃ»§ºÅÂë£»
-		//region·ÖÇø,ggsip,url,requesttime(yyyymmddhhmiss),sid,msisdn
-		//3¡¢2G/3G£º¸ù¾İÓÃ»§·ÃÎÊURL¡¢²éÑ¯Ê±¼ä£¬²éÑ¯³öÒÆ¶¯ÓÃ»§ºÅÂë£»
-		//region·ÖÇø,url,requesttime(yyyymmddhhmiss),sid,msisdn
-		//4¡¢¸ù¾İºÅÂëÊ±¼ä½øĞĞ²éÑ¯,±¸·İÌõ¼ş,Èç¹û¶Ô·½ÒªÇóÇåµ¥
+		//3ç§æŸ¥è¯¢æ¡ä»¶
+		//1ã€2G/3Gï¼šæ ¹æ®NATåç”¨æˆ·å…¬ç½‘IPåœ°å€ã€NATåæºç«¯å£ã€æŸ¥è¯¢æ—¶é—´ï¼ŒæŸ¥è¯¢å‡ºç§»åŠ¨ç”¨æˆ·å·ç ï¼›
+		//regionåˆ†åŒº,ggsip,ggsport,requesttime(yyyymmddhhmiss),sid,msisdn
+		//2ã€2G/3Gï¼šæ ¹æ®ç”¨æˆ·è®¿é—®URLã€NATåç”¨æˆ·å…¬ç½‘IPåœ°å€ã€æŸ¥è¯¢æ—¶é—´ï¼ŒæŸ¥è¯¢å‡ºç§»åŠ¨ç”¨æˆ·å·ç ï¼›
+		//regionåˆ†åŒº,ggsip,url,requesttime(yyyymmddhhmiss),sid,msisdn
+		//3ã€2G/3Gï¼šæ ¹æ®ç”¨æˆ·è®¿é—®URLã€æŸ¥è¯¢æ—¶é—´ï¼ŒæŸ¥è¯¢å‡ºç§»åŠ¨ç”¨æˆ·å·ç ï¼›
+		//regionåˆ†åŒº,url,requesttime(yyyymmddhhmiss),sid,msisdn
+		//4ã€æ ¹æ®å·ç æ—¶é—´è¿›è¡ŒæŸ¥è¯¢,å¤‡ä»½æ¡ä»¶,å¦‚æœå¯¹æ–¹è¦æ±‚æ¸…å•
 		String ggsip = requestBean.getGgsip();
 		String ggsport = requestBean.getGgsport();
 		String url = requestBean.getUrl();
@@ -50,24 +50,24 @@ public class KeepNetLogTest {
 		String rowkey_str = "";
 		String region_str = "";
 		String str = "";
-		//²éÑ¯Ìõ¼ş1
+		//æŸ¥è¯¢æ¡ä»¶1
 		if(!CommonUtils.isEmpty(ggsip) && !CommonUtils.isEmpty(ggsport)){
 			str = ggsip + ggsport;
 		}
-		//²éÑ¯Ìõ¼ş2
+		//æŸ¥è¯¢æ¡ä»¶2
 		else if(!CommonUtils.isEmpty(ggsip) && !CommonUtils.isEmpty(url)){
 			str = ggsip + url;
 		}
-		//²éÑ¯Ìõ¼ş3
+		//æŸ¥è¯¢æ¡ä»¶3
 		else if(!CommonUtils.isEmpty(url)){
 			str = url;
 		}
-		//²éÑ¯Ìõ¼ş4
+		//æŸ¥è¯¢æ¡ä»¶4
 		else if(!CommonUtils.isEmpty(telnumber)){
 			str = "1";
 		}
 		
-		//Èç¹ûÓĞ¶ÔÓ¦²éÑ¯Ìõ¼ş
+		//å¦‚æœæœ‰å¯¹åº”æŸ¥è¯¢æ¡ä»¶
 		if(!CommonUtils.isEmpty(str)){
 			String md5_str = DigestUtils.md5Hex(str);
 			int rowkey_region = Integer.parseInt(md5_str.substring(0, 2),16)
@@ -84,19 +84,19 @@ public class KeepNetLogTest {
 				region_str = String.valueOf(rowkey_region);
 			}			
 
-			//²éÑ¯Ìõ¼ş1
+			//æŸ¥è¯¢æ¡ä»¶1
 			if(!CommonUtils.isEmpty(ggsip) && !CommonUtils.isEmpty(ggsport)){
 				rowkey_str = region_str + "," + ggsip + "," + ggsport + "," + time;
 			}
-			//²éÑ¯Ìõ¼ş2
+			//æŸ¥è¯¢æ¡ä»¶2
 			else if(!CommonUtils.isEmpty(ggsip) && !CommonUtils.isEmpty(url)){
 				rowkey_str = region_str + "," + ggsip + "," + url + "," + time;
 			}
-			//²éÑ¯Ìõ¼ş3
+			//æŸ¥è¯¢æ¡ä»¶3
 			else if(!CommonUtils.isEmpty(url)){
 				rowkey_str = region_str + "," + url + "," + time;
 			}
-			//²éÑ¯Ìõ¼ş4
+			//æŸ¥è¯¢æ¡ä»¶4
 			else if(!CommonUtils.isEmpty(telnumber)){
 				rowkey_str = generateModKey(Long.valueOf(telnumber)) + "," + telnumber + "," + time;
 			}
@@ -107,7 +107,7 @@ public class KeepNetLogTest {
 	
 	/**
 	 * v1.0.3
-	 * @description: ¶ÔºÅÂëÈ¡Ä£
+	 * @description: å¯¹å·ç å–æ¨¡
 	 * @author: cqx
 	 * @date: 2014-03-31
 	 * @param telNumber
@@ -141,9 +141,9 @@ public class KeepNetLogTest {
 		requestBean.setTelnumber("13400505847");
 		requestBean.setStarttime_s("20160316104150");
 		requestBean.setStarttime_e("20160316110016");
-		// ÆğÊ¼KEY
+		// èµ·å§‹KEY
 		System.out.println(knlt.generateRowKey(requestBean, "s"));
-		// ½áÊøKEY
+		// ç»“æŸKEY
 		System.out.println(knlt.generateRowKey(requestBean, "e"));
 	}
 }

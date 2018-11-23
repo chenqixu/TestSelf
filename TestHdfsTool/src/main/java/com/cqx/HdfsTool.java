@@ -9,9 +9,9 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 public class HdfsTool {
-	// ÅäÖÃÎÄ¼ş
+	// é…ç½®æ–‡ä»¶
 	private Configuration conf = null;
-	// ·Ö²¼Ê½ÎÄ¼şÏµÍ³
+	// åˆ†å¸ƒå¼æ–‡ä»¶ç³»ç»Ÿ
 	private FileSystem fs = null;
 
 	public HdfsTool(){
@@ -19,11 +19,11 @@ public class HdfsTool {
 	}
 	
 	/**
-	 * ¼ÓÔØÅäÖÃÎÄ¼ş
+	 * åŠ è½½é…ç½®æ–‡ä»¶
 	 * */
 	public void initConf(InputBean bean){
 		String confpath = bean.getConfpath();
-		// É¨Ãèconf pathÏÂµÄËùÓĞxmlÅäÖÃÎÄ¼ş
+		// æ‰«æconf pathä¸‹çš„æ‰€æœ‰xmlé…ç½®æ–‡ä»¶
 		File cp = new File(confpath);
 		if(cp.isDirectory()){
 			for(File resource : cp.listFiles()){
@@ -42,7 +42,7 @@ public class HdfsTool {
 	}
 	
 	/**
-	 * hdfsÉÏ»ñµÃÎÄ¼ş´óĞ¡
+	 * hdfsä¸Šè·å¾—æ–‡ä»¶å¤§å°
 	 * */
 	public static long getFileSize(FileSystem fs, Path path){
 		try {
