@@ -1,4 +1,4 @@
-package com.cqx.jstorm.netty.bean;
+package com.cqx.netty.bean;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

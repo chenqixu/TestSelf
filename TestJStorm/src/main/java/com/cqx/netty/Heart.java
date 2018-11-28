@@ -3,8 +3,8 @@ package com.cqx.netty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cqx.jstorm.netty.bean.DiscardBean;
-import com.cqx.jstorm.netty.client.DiscardClient;
+import com.cqx.netty.bean.DiscardBean;
+import com.cqx.netty.client.DiscardClient;
 import com.cqx.jstorm.util.Utils;
 
 public class Heart {

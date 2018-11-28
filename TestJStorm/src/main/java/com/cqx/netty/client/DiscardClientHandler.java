@@ -1,4 +1,4 @@
-package com.cqx.jstorm.netty.client;
+package com.cqx.netty.client;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.BlockingQueue;
@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cqx.jstorm.netty.bean.DiscardBean;
+import com.cqx.netty.bean.DiscardBean;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;

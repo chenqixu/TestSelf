@@ -1,4 +1,4 @@
-import java.awt.BorderLayout;
+ï»¿import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -210,7 +210,7 @@ public class mainForm extends JFrame implements ActionListener{
 			//url = "http://10.46.219.60:8008/bi_bigdata_svc/services/NgService";
 			//url = "http://10.46.219.60:8080/bi_bigdata_svc/services/NgService";
 			//url = "http://10.1.0.168:5005/bi_svc/services/NgService";
-			this.ta2.setText("²éÑ¯ÖĞ...");//²éÑ¯ÖĞ
+			this.ta2.setText("æŸ¥è¯¢ä¸­...");//æŸ¥è¯¢ä¸­
 			url = this.url.getText();
 			
 			String targetName = this.targetName.getText();
@@ -230,14 +230,14 @@ public class mainForm extends JFrame implements ActionListener{
 			String heard = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\""+targetName+"\">";
 			strxml = cws.setSendXML(heard,clientid_str,password_str,telnumber_str,start_time_str,end_time_str,start_str,end_str,apn,service_name,reqsource);
 			System.out.println(strxml);
-			this.ta1.setText("");//Çå¿Õ
-			this.ta1.append("ÇëÇó±¨ÎÄ:");
+			this.ta1.setText("");//æ¸…ç©º
+			this.ta1.append("è¯·æ±‚æŠ¥æ–‡:");
         	this.ta1.append("\n");
 			this.ta1.append(strxml);
         	this.ta1.append("\n");
 			String resultxml = cws.doAction("POST", url, strxml.getBytes());
 			System.out.println(resultxml);
-			this.ta2.setText("");//Çå¿Õ
+			this.ta2.setText("");//æ¸…ç©º
 			if(resultxml.length()>0){
 				ResultXML rx = new ResultXML();
 				StringBuffer xml = new StringBuffer();
@@ -257,14 +257,14 @@ public class mainForm extends JFrame implements ActionListener{
 					rx.resetParent().node("Body").node("qryNetLogListResponse").node("message").node("BodyResp").node("RespData").setParentPointer();
 			        rx.setRowFlagInfo("NgRespBean");
 			        rx.First();
-		        	this.ta2.append("²éÑ¯½á¹ûÃèÊö:");
+		        	this.ta2.append("æŸ¥è¯¢ç»“æœæè¿°:");
 		        	this.ta2.append("\n");
 			        this.ta2.append(RespDesc);
 		        	this.ta2.append("\n");
-		        	this.ta2.append("²éÑ¯½á¹ûÄÚÈİ:");
+		        	this.ta2.append("æŸ¥è¯¢ç»“æœå†…å®¹:");
 		        	this.ta2.append("\n");
 			        if(rx.isEof()){
-			        	this.ta2.append("Ã»ÓĞ½á¹û");
+			        	this.ta2.append("æ²¡æœ‰ç»“æœ");
 			        	this.ta2.append("\n");
 			        }else{
 			        	int i_first = 0;
@@ -274,7 +274,7 @@ public class mainForm extends JFrame implements ActionListener{
 				        	this.ta2.append("\n");
 				        	
 				        	if(i_first==0){
-					        	//»ã×ÜĞÅÏ¢
+					        	//æ±‡æ€»ä¿¡æ¯
 					        	ResultXML rxxRow = rx.GetColumnsResultXML();
 					        	rxxRow.setbFlag(false);
 								rxxRow.setRowFlagInfo("GatherBean");
@@ -292,25 +292,25 @@ public class mainForm extends JFrame implements ActionListener{
 										cmnet_total_bytes = rxxRow.getColumnsValue("allbytes");
 										cmnet_total_times = rxxRow.getColumnsValue("allDelaytime");
 									}
-									rxxRow.Next();//ÏÂÒ»¸ö
+									rxxRow.Next();//ä¸‹ä¸€ä¸ª
 								}
-								this.ta2.append("cmnet×ÜÁ÷Á¿:");
+								this.ta2.append("cmnetæ€»æµé‡:");
 								this.ta2.append(String.valueOf(cmnet_total_bytes));
 					        	this.ta2.append("\n");
-								this.ta2.append("cmnet×ÜÊ±³¤:");
+								this.ta2.append("cmnetæ€»æ—¶é•¿:");
 								this.ta2.append(String.valueOf(cmnet_total_times));
 					        	this.ta2.append("\n");
-								this.ta2.append("cmwap×ÜÁ÷Á¿:");
+								this.ta2.append("cmwapæ€»æµé‡:");
 								this.ta2.append(String.valueOf(cmwap_total_bytes));
 					        	this.ta2.append("\n");
-								this.ta2.append("cmwap×ÜÊ±³¤:");
+								this.ta2.append("cmwapæ€»æ—¶é•¿:");
 								this.ta2.append(String.valueOf(cmwap_total_times));
 					        	this.ta2.append("\n");
 				        	}
-				        	rx.Next();//ÏÂÒ»¸ö
+				        	rx.Next();//ä¸‹ä¸€ä¸ª
 				        	i_first ++;
 				        }
-				        //Êä³ötotalCount
+				        //è¾“å‡ºtotalCount
 				        rx.resetParent().node("Body").node("qryNetLogListResponse").node("message").node("BodyResp").setParentPointer();
 			        	this.ta1.append("\n");
 				        this.ta1.append("totalCount:");
@@ -325,13 +325,13 @@ public class mainForm extends JFrame implements ActionListener{
 			        	this.ta1.append("\n");
 			        	this.ta1.append(rx.node("lastRowKey").getValue());*/
 			        }
-				}else{//Ê§°Ü
-		        	this.ta2.append("²éÑ¯½á¹ûÃèÊö:");
+				}else{//å¤±è´¥
+		        	this.ta2.append("æŸ¥è¯¢ç»“æœæè¿°:");
 		        	this.ta2.append("\n");
 			        this.ta2.append(RespDesc);
 				}
 			}else{
-	        	this.ta2.append("½Ó¿ÚÃ»ÓĞ·µ»ØÊı¾İ¡£");
+	        	this.ta2.append("æ¥å£æ²¡æœ‰è¿”å›æ•°æ®ã€‚");
 			}
 		}
 	}
@@ -343,7 +343,7 @@ public class mainForm extends JFrame implements ActionListener{
 		try {
 			System.out.println(new String(a.getBytes("GBK")));
 		} catch (UnsupportedEncodingException e) {
-			// TODO ×Ô¶¯Éú³É catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆ catch å—
 			e.printStackTrace();
 		}*/
 		//DecimalFormat formater = new DecimalFormat("#0.###");
@@ -351,7 +351,7 @@ public class mainForm extends JFrame implements ActionListener{
 		/*BigDecimal a = new BigDecimal(delayTimesCmwap/1000.0).setScale(0, BigDecimal.ROUND_HALF_UP);
 		System.out.println(a);
 		System.out.println(delayTimesCmwap/1000.0);
-		System.out.println("ËÄÉáÎåÈëÈ¡Õû:(0.5)=" + new BigDecimal("0.5").setScale(0, BigDecimal.ROUND_HALF_UP)); */		
+		System.out.println("å››èˆäº”å…¥å–æ•´:(0.5)=" + new BigDecimal("0.5").setScale(0, BigDecimal.ROUND_HALF_UP)); */		
 	}
 
 }

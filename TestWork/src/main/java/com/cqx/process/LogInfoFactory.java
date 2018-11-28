@@ -136,6 +136,7 @@ public class LogInfoFactory {
 	 * @param objs
 	 */
 	private void print(String level, String msg, Object ...objs) {
+		msg = msg + BLANK_SPACE;
 		String[] msgarr = msg.split(SPLIT_STR);
 		StringBuffer sb = new StringBuffer();
 		for(int i=0;i<msgarr.length;i++) {

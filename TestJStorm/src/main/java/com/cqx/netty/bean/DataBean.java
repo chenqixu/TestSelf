@@ -1,4 +1,4 @@
-package com.cqx.jstorm.netty.bean;
+package com.cqx.netty.bean;
 
 import com.alibaba.fastjson.JSON;
 
