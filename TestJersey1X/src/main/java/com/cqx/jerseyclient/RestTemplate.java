@@ -28,16 +28,16 @@ public class RestTemplate {
 			HttpResponse response = client.execute(get);
 			int httpStatusCode = response.getStatusLine().getStatusCode();
 			System.out.println("[httpStatusCode]"+httpStatusCode);
-			// ÓÉÓÚÒ»Ğ©ÉèÖÃÎÊÌâ£¬·ÃÎÊ°Ù¶ÈÊ×Ò³¿ÉÄÜ·µ»ØµÄhttpStatusCodeÊÇ403£¬²»ÊÇ200
-			// ÆäÔ­Òò¾ÍÊÇ¿ÉÄÜ°Ù¶È·şÎñÆ÷²»Ö§³ÖÍ¨¹ı´úÂëÀ´µ÷ÓÃurl
+			// ç”±äºä¸€äº›è®¾ç½®é—®é¢˜ï¼Œè®¿é—®ç™¾åº¦é¦–é¡µå¯èƒ½è¿”å›çš„httpStatusCodeæ˜¯403ï¼Œä¸æ˜¯200
+			// å…¶åŸå› å°±æ˜¯å¯èƒ½ç™¾åº¦æœåŠ¡å™¨ä¸æ”¯æŒé€šè¿‡ä»£ç æ¥è°ƒç”¨url
 			if (HttpStatus.SC_OK == httpStatusCode) {
-				System.out.println("´òÓ¡·şÎñÆ÷·µ»ØµÄ×´Ì¬: " + response.getStatusLine());
+				System.out.println("æ‰“å°æœåŠ¡å™¨è¿”å›çš„çŠ¶æ€: " + response.getStatusLine());
 				HttpEntity entity = response.getEntity();
 				if (entity != null) {
 					System.out
-							.println("´òÓ¡·µ»ØĞÅÏ¢:" + EntityUtils.toString(entity));// ´òÓ¡·µ»ØĞÅÏ¢
-					// entity.consumeContent();//ÊÍ·Å×ÊÔ´
-					EntityUtils.consume(entity);// ÊÍ·Å×ÊÔ´ this is the new consume
+							.println("æ‰“å°è¿”å›ä¿¡æ¯:" + EntityUtils.toString(entity));// æ‰“å°è¿”å›ä¿¡æ¯
+					// entity.consumeContent();//é‡Šæ”¾èµ„æº
+					EntityUtils.consume(entity);// é‡Šæ”¾èµ„æº this is the new consume
 												// method
 				}
 			} else {

@@ -30,18 +30,18 @@ public class FileTransferUtilTest {
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(2000);
                         log.info("testFtpUtil");
                         FileTransferUtil ftpUtil = new FileTransferUtil(ftpCfg);
                         log.info("get ftp conn：{}", ftpUtil);
                         ftpUtil.disconnect();
                         log.info("disconnect");
+                        Thread.sleep(5000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         }).start();
-        Thread.sleep(100000);
+        Thread.sleep(1000000);
     }
 }

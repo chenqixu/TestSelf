@@ -199,6 +199,7 @@ public class FtpClientFactory implements KeyedPooledObjectFactory<FtpCfg, NlFtpC
         @Override
         public Boolean call() throws Exception {
             client.connect();
+//            StaticThreadSleep.sleep(3 * 1000);
             // 防止外部已经取消了这个线程，但线程依然连接上了。导致连接对象泄漏。
             if (System.currentTimeMillis() - start - 1000 > this.timeoutMs) {
                 try {

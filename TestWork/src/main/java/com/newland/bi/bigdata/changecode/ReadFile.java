@@ -50,9 +50,13 @@ public class ReadFile {
 	public static void main(String[] args) throws Exception {
 //		ReadFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestSpring/src/main/java/com/spring/test/servlet/GetDBConnServlet.java");
 //		ReadFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestWork/src/main/java/com/newland/bi/bigdata/changecode/ReadFile.java");
-		ReadFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestFrameForm/src/main/java/mainForm.java");
+//		ReadFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestFrameForm/src/main/java/mainForm.java");
 
-//		ChangeCode cc = new ChangeCode();
+		String path = "D:/Document/Workspaces/Git/TestSelf/TestJersey1X/src/main/java/com/cqx/jerseyclient/RestTemplate.java";
+		ReadFile.getCharset(path);
+		ChangeCode cc = new ChangeCode();
+		cc.change(path, "GBK", "UTF-8");
+
 //		cc.setScan_path("D:/Document/Workspaces/Git/TestSelf");
 //		cc.setScan_rule(".*\\.java");
 //		cc.setRead_code("GBK");
