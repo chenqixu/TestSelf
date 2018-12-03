@@ -28,105 +28,105 @@ public class TempMain2 {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws IOException,
 			InterruptedException, ClassNotFoundException {
-		//Êä³öÂ·¾¶£¬±ØĞëÊÇ²»´æÔÚµÄ£¬¿ÕÎÄ¼ş¼ÓÒ²²»ĞĞ¡£
+		//è¾“å‡ºè·¯å¾„ï¼Œå¿…é¡»æ˜¯ä¸å­˜åœ¨çš„ï¼Œç©ºæ–‡ä»¶åŠ ä¹Ÿä¸è¡Œã€‚
 		String dstOut = "hdfs://streamslab.localdomain:8020/yznewlandbase/move/";
-		
-		//ÅäÖÃ¼ÓÔØ
+
+		//é…ç½®åŠ è½½
 		Configuration hadoopConfig = new Configuration();
 //		hadoopConfig.set("fs.hdfs.impl",
 //				org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
 		hadoopConfig.set("fs.file.impl",
 				org.apache.hadoop.fs.LocalFileSystem.class.getName());
-		//ÏÈ¼ÓÔØÅäÖÃ,FileSystemĞèÒª
+		//å…ˆåŠ è½½é…ç½®,FileSysteméœ€è¦
 		String path = "/home/hadoop/app/hadoop-2.0.0-cdh4.3.0/etc/hadoop/";
 		hadoopConfig.addResource(new Path(path + "core-site.xml"));
 		hadoopConfig.addResource(new Path(path + "hdfs-site.xml"));
 		hadoopConfig.addResource(new Path(path + "mapred-site.xml"));
 		String path1 = "/home/hadoop/jar/conf/";
 		hadoopConfig.addResource(new Path(path1 + "getMovementTrackData_config.xml"));
-		
-		//ÉèÖÃÊ±¼ä
+
+		//è®¾ç½®æ—¶é—´
 		hadoopConfig.set(GetMovementConstants.SOURCE_DATA_DATE, "20150622");
-		//ÉèÖÃÊä³öÎÄ¼şÃû
+		//è®¾ç½®è¾“å‡ºæ–‡ä»¶å
 		hadoopConfig.set(GetMovementConstants.OUTPUT_NAME, "moveout");
-		//ÅäÖÃÊä³öÂ·¾¶
+		//é…ç½®è¾“å‡ºè·¯å¾„
 		String fullOutputPathStr = hadoopConfig.get(GetMovementConstants.OUTPUT_PATH);
 		hadoopConfig.set(GetMovementConstants.FULL_OUTPUT_PATH, fullOutputPathStr);
-		
-		//hdfsÎÄ¼şÏµÍ³
+
+		//hdfsæ–‡ä»¶ç³»ç»Ÿ
 		FileSystem fs = null;
 		try {
 			fs = FileSystem.get(hadoopConfig);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//Èç¹ûÊä³öÂ·¾¶´æÔÚ£¬ÏÈÉ¾³ı
+		//å¦‚æœè¾“å‡ºè·¯å¾„å­˜åœ¨ï¼Œå…ˆåˆ é™¤
 		Path p = new Path(dstOut);
 		if (fs.exists(p)) {
 			fs.delete(p, true);
-			System.out.println("=====delPath É¾³ı£º" + p.toString() + "=====");
+			System.out.println("=====delPath åˆ é™¤ï¼š" + p.toString() + "=====");
 		}
-		
-		//ÈÎÎñ
+
+		//ä»»åŠ¡
 		Job job = new Job(hadoopConfig);
-		//Èç¹ûĞèÒª´ò³ÉjarÔËĞĞ£¬ĞèÒªÏÂÃæÕâ¾ä
+		//å¦‚æœéœ€è¦æ‰“æˆjarè¿è¡Œï¼Œéœ€è¦ä¸‹é¢è¿™å¥
 		job.setJarByClass(TempMain.class);
-		
-		//ÉèÖÃmapµÄÊä³ökeyÀàĞÍ
+
+		//è®¾ç½®mapçš„è¾“å‡ºkeyç±»å‹
 		job.setMapOutputKeyClass(TempKey.class);
-		//ÉèÖÃmapµÄÊä³övalueÀàĞÍ
+		//è®¾ç½®mapçš„è¾“å‡ºvalueç±»å‹
 		job.setMapOutputValueClass(Text.class);
-		
-		//ÉèÖÃreduceµÄÊä³ökeyÀàĞÍ
+
+		//è®¾ç½®reduceçš„è¾“å‡ºkeyç±»å‹
 		job.setOutputKeyClass(Text.class);
-		//ÉèÖÃreduceµÄÊä³övalueÀàĞÍ
+		//è®¾ç½®reduceçš„è¾“å‡ºvalueç±»å‹
 		job.setOutputValueClass(NullWritable.class);
 
 		/**
-		 * ÔÚmap½×¶Î£¬Ê¹ÓÃjob.setInputFormatClass(TextInputFormat)×öÎªÊäÈë¸ñÊ½¡£
-		 * ×¢ÒâÊä³öÓ¦¸Ã·ûºÏ×Ô¶¨ÒåMapÖĞ¶¨ÒåµÄÊä³ö<IntPair, IntWritable>¡£
-		 * ×îÖÕÊÇÉú³ÉÒ»¸öList<IntPair, IntWritable>¡£
-		 * ÔÚmap½×¶ÎµÄ×îºó£¬»áÏÈµ÷ÓÃjob.setPartitionerClass¶ÔÕâ¸öList½øĞĞ·ÖÇø£¬
-		 * Ã¿¸ö·ÖÇøÓ³Éäµ½Ò»¸öreducer¡£Ã¿¸ö·ÖÇøÄÚÓÖµ÷ÓÃjob.setSortComparatorClassÉèÖÃµÄkey±È½Ïº¯ÊıÀàÅÅĞò¡£
-		 * ¿ÉÒÔ¿´µ½£¬Õâ±¾Éí¾ÍÊÇÒ»¸ö¶ş´ÎÅÅĞò¡£Èç¹ûÃ»ÓĞÍ¨¹ıjob.setSortComparatorClassÉèÖÃkey±È½Ïº¯ÊıÀà£¬
-		 * ÔòÊ¹ÓÃkeyµÄÊµÏÖµÄcompareTo·½·¨¡£
-		 * 
-		 * ÔÚreduce½×¶Î£¬reducer½ÓÊÕµ½ËùÓĞÓ³Éäµ½Õâ¸öreducerµÄmapÊä³öºó£¬
-		 * Ò²ÊÇ»áµ÷ÓÃjob.setSortComparatorClassÉèÖÃµÄkey±È½Ïº¯ÊıÀà¶ÔËùÓĞÊı¾İ¶ÔÅÅĞò¡£
-		 * È»ºó¿ªÊ¼¹¹ÔìÒ»¸ökey¶ÔÓ¦µÄvalueµü´úÆ÷¡£
-		 * ÕâÊ±¾ÍÒªÓÃµ½·Ö×é£¬Ê¹ÓÃjobjob.setGroupingComparatorClassÉèÖÃµÄ·Ö×éº¯ÊıÀà¡£
-		 * Ö»ÒªÕâ¸ö±È½ÏÆ÷±È½ÏµÄÁ½¸ökeyÏàÍ¬£¬ËûÃÇ¾ÍÊôÓÚÍ¬Ò»¸ö×é£¬ËüÃÇµÄvalue·ÅÔÚÒ»¸övalueµü´úÆ÷£¬
-		 * ¶øÕâ¸öµü´úÆ÷µÄkeyÊ¹ÓÃÊôÓÚÍ¬Ò»¸ö×éµÄËùÓĞkeyµÄµÚÒ»¸ökey¡£
-		 * ×îºó¾ÍÊÇ½øÈëReducerµÄreduce·½·¨
+		 * åœ¨mapé˜¶æ®µï¼Œä½¿ç”¨job.setInputFormatClass(TextInputFormat)åšä¸ºè¾“å…¥æ ¼å¼ã€‚
+		 * æ³¨æ„è¾“å‡ºåº”è¯¥ç¬¦åˆè‡ªå®šä¹‰Mapä¸­å®šä¹‰çš„è¾“å‡º<IntPair, IntWritable>ã€‚
+		 * æœ€ç»ˆæ˜¯ç”Ÿæˆä¸€ä¸ªList<IntPair, IntWritable>ã€‚
+		 * åœ¨mapé˜¶æ®µçš„æœ€åï¼Œä¼šå…ˆè°ƒç”¨job.setPartitionerClasså¯¹è¿™ä¸ªListè¿›è¡Œåˆ†åŒºï¼Œ
+		 * æ¯ä¸ªåˆ†åŒºæ˜ å°„åˆ°ä¸€ä¸ªreducerã€‚æ¯ä¸ªåˆ†åŒºå†…åˆè°ƒç”¨job.setSortComparatorClassè®¾ç½®çš„keyæ¯”è¾ƒå‡½æ•°ç±»æ’åºã€‚
+		 * å¯ä»¥çœ‹åˆ°ï¼Œè¿™æœ¬èº«å°±æ˜¯ä¸€ä¸ªäºŒæ¬¡æ’åºã€‚å¦‚æœæ²¡æœ‰é€šè¿‡job.setSortComparatorClassè®¾ç½®keyæ¯”è¾ƒå‡½æ•°ç±»ï¼Œ
+		 * åˆ™ä½¿ç”¨keyçš„å®ç°çš„compareToæ–¹æ³•ã€‚
+		 *
+		 * åœ¨reduceé˜¶æ®µï¼Œreduceræ¥æ”¶åˆ°æ‰€æœ‰æ˜ å°„åˆ°è¿™ä¸ªreducerçš„mapè¾“å‡ºåï¼Œ
+		 * ä¹Ÿæ˜¯ä¼šè°ƒç”¨job.setSortComparatorClassè®¾ç½®çš„keyæ¯”è¾ƒå‡½æ•°ç±»å¯¹æ‰€æœ‰æ•°æ®å¯¹æ’åºã€‚
+		 * ç„¶åå¼€å§‹æ„é€ ä¸€ä¸ªkeyå¯¹åº”çš„valueè¿­ä»£å™¨ã€‚
+		 * è¿™æ—¶å°±è¦ç”¨åˆ°åˆ†ç»„ï¼Œä½¿ç”¨jobjob.setGroupingComparatorClassè®¾ç½®çš„åˆ†ç»„å‡½æ•°ç±»ã€‚
+		 * åªè¦è¿™ä¸ªæ¯”è¾ƒå™¨æ¯”è¾ƒçš„ä¸¤ä¸ªkeyç›¸åŒï¼Œä»–ä»¬å°±å±äºåŒä¸€ä¸ªç»„ï¼Œå®ƒä»¬çš„valueæ”¾åœ¨ä¸€ä¸ªvalueè¿­ä»£å™¨ï¼Œ
+		 * è€Œè¿™ä¸ªè¿­ä»£å™¨çš„keyä½¿ç”¨å±äºåŒä¸€ä¸ªç»„çš„æ‰€æœ‰keyçš„ç¬¬ä¸€ä¸ªkeyã€‚
+		 * æœ€åå°±æ˜¯è¿›å…¥Reducerçš„reduceæ–¹æ³•
 		 * */
-		//ÉèÖÃ·ÖÇø
+		//è®¾ç½®åˆ†åŒº
 		job.setPartitionerClass(TempKeyPartitioner.class);
-		//ÉèÖÃÅÅĞò
+		//è®¾ç½®æ’åº
 		job.setSortComparatorClass(SortCompare.class);
-		//ÉèÖÃ·Ö×é
+		//è®¾ç½®åˆ†ç»„
 		job.setGroupingComparatorClass(GroupingCompare.class);
-		
-		//ÉèÖÃReducer´¦ÀíÀà
+
+		//è®¾ç½®Reducerå¤„ç†ç±»
 		job.setReducerClass(GetMovementTrackDataReducer.class);
-		
-		//ÉèÖÃÊäÈëÂ·¾¶ºÍ¶ÔÓ¦µÄMapper´¦ÀíÀà
+
+		//è®¾ç½®è¾“å…¥è·¯å¾„å’Œå¯¹åº”çš„Mapperå¤„ç†ç±»
 		String inputPathMC_cdr = hadoopConfig.get(GetMovementConstants.INPUT_PAHT_MC_CDR);
 		GetMovementCommonUtils.addInputPath(job, fs, inputPathMC_cdr, MCcdrDataMapper.class);
 
 		String inputPathLTE_S1MME = hadoopConfig.get(GetMovementConstants.INPUT_PAHT_LTE_S1MME);
 		GetMovementCommonUtils.addInputPath(job, fs, inputPathLTE_S1MME, LTES1MMEMapper.class);
-		
+
 		System.out.println("OUTPUT_NAME:"+hadoopConfig.get(GetMovementConstants.OUTPUT_NAME));
-		//ÉèÖÃÊä³ö
+		//è®¾ç½®è¾“å‡º
 		MultipleOutputs.addNamedOutput(job, hadoopConfig.get(GetMovementConstants.OUTPUT_NAME),
 				TextOutputFormat.class, Text.class, NullWritable.class);
-		//ÉèÖÃÊä³öÂ·¾¶
+		//è®¾ç½®è¾“å‡ºè·¯å¾„
 		FileOutputFormat.setOutputPath(job, p);
 
-		//±ÜÃâreduceÊä³öÎª¿ÕÎÄ¼ş
+		//é¿å…reduceè¾“å‡ºä¸ºç©ºæ–‡ä»¶
 		LazyOutputFormat.setOutputFormatClass(job, TextOutputFormat.class);
-		
-		//Ö´ĞĞjob£¬Ö±µ½Íê³É
+
+		//æ‰§è¡Œjobï¼Œç›´åˆ°å®Œæˆ
 		job.waitForCompletion(true);
 		System.out.println("Finished");
 	}
