@@ -27,9 +27,9 @@ public class ChangeCode {
 	 */
 	private String scan_rule = "";
 	/**
-	 * 读取文件的编码
+	 * 读取文件的编码，默认GBK
 	 */
-	protected String read_code = "";
+	protected String read_code = "GBK";
 	/**
 	 * 写入文件的编码
 	 */
@@ -231,7 +231,7 @@ public class ChangeCode {
 	 * @param path
 	 * @return
 	 */
-	protected List<String> read(String path) {
+	public List<String> read(String path) {
 		File file = null;
 		BufferedReader reader = null;
 		List<String> sublist = new Vector<String>();
