@@ -77,13 +77,22 @@ public class StringUtils {
         return strlist;
     }
 
+    public static Map<String, String> listToMap(List<String> list) {
+        Map<String, String> map = new HashMap<>();
+        for (String tmp : list) {
+            map.put(tmp, tmp);
+        }
+        return map;
+    }
+
     /**
      * 从一个顺序的数字列表中剔除部分内容
+     * 算法1
      *
      * @param seqList
      * @param negativeList
      */
-    public static void negativeAssert(List<String> seqList, List<String> negativeList) {
+    public static void negativeAssert1(List<String> seqList, List<String> negativeList) {
         Iterator<String> it = seqList.iterator();
         int negativeLen = negativeList.size();
         int findLen = 0;
@@ -104,6 +113,26 @@ public class StringUtils {
     }
 
     /**
+     * 从一个顺序的数字列表中剔除部分内容
+     * 算法2
+     *
+     * @param seqList
+     * @param negativeList
+     */
+    public static void negativeAssert2(List<String> seqList, List<String> negativeList) {
+        int findCount = 0;
+        Map<String, String> map1 = listToMap(seqList);
+        findCount += seqList.size();
+        Map<String, String> map2 = listToMap(negativeList);
+        findCount += negativeList.size();
+        for (Map.Entry<String, String> entry : map2.entrySet()) {
+            map1.remove(entry.getKey());
+            findCount++;
+        }
+        System.out.println("findCount：" + findCount);
+    }
+
+    /**
      * 打印list
      *
      * @param list
@@ -116,6 +145,13 @@ public class StringUtils {
         }
     }
 
+    /**
+     * 分割List
+     *
+     * @param list
+     * @param split
+     * @return
+     */
     public static String splitList(List<String> list, String split) {
         if (list != null && isEmpty(split)) {
             StringBuffer sb = new StringBuffer();
@@ -124,12 +160,18 @@ public class StringUtils {
                 sb.append(split);
             }
             if (sb.length() > 0)
-                sb.deleteCharAt(sb.length()-split.length());
+                sb.deleteCharAt(sb.length() - split.length());
             return sb.toString();
         }
         return null;
     }
 
+    /**
+     * 是否为空
+     *
+     * @param str
+     * @return
+     */
     public static boolean isEmpty(String str) {
         return str != null && str.trim().length() > 0;
     }

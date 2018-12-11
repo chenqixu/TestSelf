@@ -36,7 +36,7 @@ public class HFileMapper extends
     			context.write(rowkey, kv);
  	        }
     	}catch(Exception e){
-        	System.out.println("Ð´ÎÄ¼þÊ§°Ü¡£¡£¡£line£º"+line);
+        	System.out.println("å†™æ–‡ä»¶å¤±è´¥ã€‚ã€‚ã€‚lineï¼š"+line);
     		e.printStackTrace();
     	}
     	

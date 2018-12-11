@@ -11,7 +11,6 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.apache.log4j.Logger;
 
 /**
  * 数据处理单元bolt<br>
@@ -39,6 +38,15 @@ public class HelloWorldBolt extends BaseRichBolt {
 		logger.info("##############prepare##：{}", this);
 		this.collector = outputCollector;
 		resultlist = new Vector<String>();
+		Runtime.getRuntime().addShutdownHook(
+				new Thread("relase-shutdown-hook" + this) {
+					@Override
+					public void run() {
+						// 释放连接池资源
+						System.out.println("release：" + this);
+					}
+				}
+		);
 	}
 
 	/*

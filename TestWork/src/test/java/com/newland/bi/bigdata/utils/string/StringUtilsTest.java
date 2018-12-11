@@ -38,15 +38,28 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void negativeAssert() {
+    public void negativeAssert1() {
         // 创建0到23
         List<String> seqList = StringUtils.generateSeqList(0, 23, 2);
         // 创建9,10,18,20
         List<String> negativeList = Arrays.asList(new String[]{"09", "10", "18", "20"});
-        // 剔除
-        StringUtils.negativeAssert(seqList, negativeList);
+        // 剔除，算法1
+        StringUtils.negativeAssert1(seqList, negativeList);
         // 打印结果
-        StringUtils.printList(seqList);
+//        StringUtils.printList(seqList);
+        System.out.println(StringUtils.splitList(seqList, "|"));
+    }
+
+    @Test
+    public void negativeAssert2() {
+        // 创建0到23
+        List<String> seqList = StringUtils.generateSeqList(0, 23, 2);
+        // 创建9,10,18,20
+        List<String> negativeList = Arrays.asList(new String[]{"09", "10", "18", "20"});
+        // 剔除，算法2
+        StringUtils.negativeAssert2(seqList, negativeList);
+        // 打印结果
+//        StringUtils.printList(seqList);
         System.out.println(StringUtils.splitList(seqList, "|"));
     }
 }

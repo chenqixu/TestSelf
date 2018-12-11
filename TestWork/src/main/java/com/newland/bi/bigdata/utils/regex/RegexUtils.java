@@ -97,6 +97,6 @@ public class RegexUtils {
         regexUtils.match("LTE_UU_*_20[0-9]{6}(09|10|18|20)[0-9]{4}*.txt.chk", "LTE_UU_012344819008_20181203101100.txt.chk", true);
         regexUtils.match("LTE_UU_*_20[0-9]{6}(?!09|10|18|20)[0-9]{4}*.txt.chk", "LTE_UU_012344819008_20181203101100.txt.chk", true);
         regexUtils.match("LTE_UU_.*_20[0-9]{6}(?!09|10|18|20)[0-9]{4}.*.txt.chk", "LTE_UU_012344819008_20181203101100.txt.chk");
-        regexUtils.match("LTE_UU_*_20[0-9]{6}(00|01|02|03|04|05|06|07|08|11|12|13|14|15|16|17|19|21|22|23)[0-9]{4}*.txt.chk", "LTE_UU_012344819008_20181203001100.txt.chk", true);
+        regexUtils.match("LTE_UU_*_20[0-9]{6}(00|01|02|03|04|05|06|07|08|11|12|13|14|15|16|17|19|21|22|23)[0-9]{4}*.txt.chk", "LTE_UU_013413819013_20181206085500.txt.chk", true);
     }
 }

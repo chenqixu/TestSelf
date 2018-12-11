@@ -8,6 +8,7 @@ import com.cqx.netty.bean.DiscardBean;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -23,7 +24,11 @@ public class DiscardClient {
 	}
 	
 	public void heart(final DiscardBean discardBean) throws Exception {
-		EventLoopGroup group = new NioEventLoopGroup();
+		/**
+		 * 如果使用空构造，这里就会启动cpu核数两倍的线程
+		 * Create a new instance that uses twice as many {@link EventLoop}s as there processors/cores available
+		 */
+		EventLoopGroup group = new NioEventLoopGroup(1);
 		try {
 			Bootstrap b = new Bootstrap();
 			b.group(group) // 注册线程池

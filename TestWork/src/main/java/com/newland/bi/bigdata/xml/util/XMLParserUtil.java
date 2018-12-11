@@ -28,6 +28,12 @@ public class XMLParserUtil {
         this.changeCode = new ChangeCode();
     }
 
+    /**
+     * 补充XML头部和尾部
+     *
+     * @param xmlValueList
+     * @return
+     */
     public String createXmlData(List<String> xmlValueList) {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -38,6 +44,13 @@ public class XMLParserUtil {
         return sb.toString();
     }
 
+    /**
+     * 按照NODE解析XML
+     *
+     * @param xmlData
+     * @param nodeName
+     * @return
+     */
     public Map<String, String> readNode(String xmlData, String nodeName) {
         Map<String, String> map = new HashMap<>();
         this.rx = new ResultXML();
@@ -57,6 +70,14 @@ public class XMLParserUtil {
         return map;
     }
 
+    /**
+     * 读取文件到List
+     *
+     * @param xmlPath
+     * @param readCode
+     * @param rule
+     * @return
+     */
     public List<String> readToLine(String xmlPath, String readCode, String rule) {
         List<String> resultlist = new ArrayList<>();
         changeCode.setRead_code(readCode);
@@ -68,6 +89,12 @@ public class XMLParserUtil {
         return resultlist;
     }
 
+    /**
+     * 更新map
+     *
+     * @param map
+     * @param keylist
+     */
     public void mapUpdate(Map<String, String> map, String[] keylist) {
         Map<String, String> resultmap = new HashMap<>();
         for (String key : keylist) {
@@ -100,6 +127,23 @@ public class XMLParserUtil {
         logger.info("c1.equals(c2)：{}", isqueals);
         if (!isqueals)
             c1.diff(c2);
+    }
+
+    /**
+     * 根据规则打印参数
+     *
+     * @param xmlPath
+     * @param readCode
+     * @param rule
+     * @param comparekey
+     */
+    public void printSomeValue(String xmlPath, String readCode, String rule, String[] comparekey) {
+        List<String> resultlist = readToLine(xmlPath, readCode, rule);
+        Map<String, String> map = readNode(createXmlData(resultlist), rule);
+        mapUpdate(map, comparekey);
+        Component c1 = new Component();
+        c1.setParamMap(map);
+        c1.print();
     }
 
 }

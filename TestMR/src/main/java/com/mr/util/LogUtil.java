@@ -21,7 +21,7 @@ import com.sun.jersey.api.client.WebResource;
  * 用于获取yarn上的日志
  * */
 public class LogUtil {
-	protected org.apache.hadoop.yarn.client.cli.LogsCLI a;// pass
+//	protected org.apache.hadoop.yarn.client.cli.LogsCLI a;// pass
 	protected org.apache.hadoop.mapreduce.v2.hs.JobHistoryServer jhs;// pass
 	protected String mapred_site_xmlpath = LogUtil.class.getClassLoader().getResource("conf/mapred-site.xml").getPath();
 	protected Configuration conf = new Configuration();

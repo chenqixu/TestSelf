@@ -43,14 +43,14 @@ public class MRSearchMain {
 //				org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
 		conf.set("fs.file.impl",
 				org.apache.hadoop.fs.LocalFileSystem.class.getName());
-		//ÏÈ¼ÓÔØÅäÖÃ,FileSystemĞèÒª
+		//å…ˆåŠ è½½é…ç½®,FileSysteméœ€è¦
 		conf.addResource(new Path(path + "core-site.xml"));
 		conf.addResource(new Path(path + "hdfs-site.xml"));
 		conf.addResource(new Path(path + "mapred-site.xml"));
 		/* 
-		 * ´«µİ²ÎÊı¸ømap 
+		 * ä¼ é€’å‚æ•°ç»™map 
 		 */
-		conf.set("search.license", "ĞÂC87310");
+		conf.set("search.license", "æ–°C87310");
 		conf.set("search.color", "10");
 		conf.set("search.direction", "2");
 
@@ -78,7 +78,7 @@ public class MRSearchMain {
 		default:
 			stopRow = Bytes.toBytes("2011010101000");
 		}
-		// ÉèÖÃ¿ªÊ¼ºÍ½áÊøkey  
+		// è®¾ç½®å¼€å§‹å’Œç»“æŸkey  
 		scan.setStartRow(startRow);
 		scan.setStopRow(stopRow);
 
@@ -88,7 +88,7 @@ public class MRSearchMain {
 		Path outPath = new Path("searchresult");
 		LOG.info("outPath:"+outPath.toString());			
 		
-		//hdfsÎÄ¼şÏµÍ³
+		//hdfsæ–‡ä»¶ç³»ç»Ÿ
 		FileSystem file = null;
 		try {
 			file = FileSystem.get(conf);
@@ -96,13 +96,13 @@ public class MRSearchMain {
 			e.printStackTrace();
 		}
 //		HDFS_File file = new HDFS_File();
-//		file.DelFile(conf, outPath.getName(), true); // ÈôÒÑ´æÔÚ£¬ÔòÏÈÉ¾³ı
+//		file.DelFile(conf, outPath.getName(), true); // è‹¥å·²å­˜åœ¨ï¼Œåˆ™å…ˆåˆ é™¤
 		//"hdfs://streamslab.localdomain:8020/
 		if (file.exists(outPath)) {
 			file.delete(outPath, true);
-			LOG.info("=====delPath É¾³ı£º" + outPath.toString() + "=====");
+			LOG.info("=====delPath åˆ é™¤ï¼š" + outPath.toString() + "=====");
 		}
-		FileOutputFormat.setOutputPath(job, outPath);// Êä³ö½á¹û  
+		FileOutputFormat.setOutputPath(job, outPath);// è¾“å‡ºç»“æœ  
 
 		startTime = System.currentTimeMillis();
 		job.waitForCompletion(true);

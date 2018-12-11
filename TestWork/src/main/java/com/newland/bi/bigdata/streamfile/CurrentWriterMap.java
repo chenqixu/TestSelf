@@ -1,4 +1,4 @@
-package com.newland.bi.bigdata.collect;
+package com.newland.bi.bigdata.streamfile;
 
 import java.util.HashMap;
 import java.util.Iterator;

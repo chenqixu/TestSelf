@@ -18,6 +18,7 @@ import kafka.api.PartitionOffsetRequestInfo;
 import kafka.common.ErrorMapping;
 import kafka.common.TopicAndPartition;
 import kafka.consumer.SimpleConsumer;
+import kafka.message.ByteBufferMessageSet;
 import kafka.message.MessageAndOffset;
 
 public class KafkaSimpleConsumer {
@@ -99,6 +100,8 @@ public class KafkaSimpleConsumer {
 			}
 			numErrors = 0;
 			long numRead = 0;
+			ByteBufferMessageSet byteBufferMessageSet = fetchResponse.messageSet(a_topic, a_partition);
+
 			for (MessageAndOffset messageAndOffset : fetchResponse.messageSet(a_topic, a_partition)) {
 				long currentOffset = messageAndOffset.offset();
 				if (currentOffset < readOffset) {// 过滤旧的数据

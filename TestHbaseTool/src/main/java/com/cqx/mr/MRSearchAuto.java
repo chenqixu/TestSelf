@@ -37,7 +37,7 @@ public class MRSearchAuto {
 
 		private Text word = new Text();
 		String[] strConditionStrings = new String[] { "", "", "" }/*
-																 * { "ÐÂC87310",
+																 * { "æ–°C87310",
 																 * "10", "2" }
 																 */;
 
@@ -66,11 +66,11 @@ public class MRSearchAuto {
 
 			/**/
 			for (int i = 0; i < 1; i++) {
-				// /ÔÚ´ËmapÀï½øÐÐfilterµÄ¹¦ÄÜ
+				// /åœ¨æ­¤mapé‡Œè¿›è¡Œfilterçš„åŠŸèƒ½
 				tempString = Text.decode(value.getValue(FAMILY_NAME,
 						QUALIFIER_NAME[i]));
-				if (tempString.equals(/* strConditionStrings[i] */"ÐÂC87310")) {
-					LOG.info("ÐÂC87310. conf: " + strConditionStrings[0]);
+				if (tempString.equals(/* strConditionStrings[i] */"æ–°C87310")) {
+					LOG.info("æ–°C87310. conf: " + strConditionStrings[0]);
 					if (tempString.equals(strConditionStrings[i])) {
 						string = string + tempString + " ";
 					} else {
@@ -98,9 +98,9 @@ public class MRSearchAuto {
 		conf.set("fs.default.name", "hdfs://node1");
 		conf.set("mapred.job.tracker", "node1:54311");
 		/*
-		 * ´«µÝ²ÎÊý¸ømap
+		 * ä¼ é€’å‚æ•°ç»™map
 		 */
-		conf.set("search.license", "ÐÂC87310");
+		conf.set("search.license", "æ–°C87310");
 		conf.set("search.color", "10");
 		conf.set("search.direction", "2");
 
@@ -128,7 +128,7 @@ public class MRSearchAuto {
 		default:
 			stopRow = Bytes.toBytes("2011010101000");
 		}
-		// ÉèÖÃ¿ªÊ¼ºÍ½áÊøkey
+		// è®¾ç½®å¼€å§‹å’Œç»“æŸkey
 		scan.setStartRow(startRow);
 		scan.setStopRow(stopRow);
 
@@ -137,8 +137,8 @@ public class MRSearchAuto {
 				job);
 		Path outPath = new Path("searchresult");
 		HDFS_File file = new HDFS_File();
-		file.DelFile(conf, outPath.getName(), true); // ÈôÒÑ´æÔÚ£¬ÔòÏÈÉ¾³ý
-		FileOutputFormat.setOutputPath(job, outPath);// Êä³ö½á¹û
+		file.DelFile(conf, outPath.getName(), true); // è‹¥å·²å­˜åœ¨ï¼Œåˆ™å…ˆåˆ é™¤
+		FileOutputFormat.setOutputPath(job, outPath);// è¾“å‡ºç»“æžœ
 
 		startTime = System.currentTimeMillis();
 		job.waitForCompletion(true);

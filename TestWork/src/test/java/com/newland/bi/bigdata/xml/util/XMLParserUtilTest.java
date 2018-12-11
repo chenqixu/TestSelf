@@ -36,4 +36,10 @@ public class XMLParserUtilTest {
         xmlpath2 = "D:/tmp/聚合平台/分布式采集上线/NL-BD-ETL-BASE-COLLECT-RC-HW_UU__28879596702c4568a1a2ebce6319b632/node-2014692784.xml";
         xmlParserUtil.compare(xmlpath1, xmlpath2, "UTF-8", "param", comparekey);
     }
+
+    @Test
+    public void print() {
+        String xmlpath = "D:/tmp/聚合平台/分布式采集上线/1543886775774/NL-BD-ETL-BASE-COLLECT-RC-HW_CELLMR_FBSCJ__8ad3c50778c84773a114b629385725e9/node-1838390194.xml";
+        xmlParserUtil.printSomeValue(xmlpath, "UTF-8", "param", comparekey);
+    }
 }

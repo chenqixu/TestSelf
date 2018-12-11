@@ -3,10 +3,7 @@ package com.cqx.netty.service;
 import com.cqx.netty.bean.TaskPool;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -25,7 +22,11 @@ public class DiscardServer {
     }
     
     public void start() throws Exception {
-    	EventLoopGroup group = new NioEventLoopGroup();
+        /**
+         * 如果使用空构造，这里就会启动cpu核数两倍的线程
+         * Create a new instance that uses twice as many {@link EventLoop}s as there processors/cores available
+         */
+    	EventLoopGroup group = new NioEventLoopGroup(1);
     	try {
     		ServerBootstrap sb = new ServerBootstrap();
     		sb.group(group) // 绑定线程池

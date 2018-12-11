@@ -58,7 +58,7 @@ public class KafkaApiTest {
 		};
 //		TopicCommand.deleteTopic(zku, tco);
 		TopicCommand.main(options);
-//		DeleteTopicCommand.main(options); // �ɰ汾
+//		DeleteTopicCommand.main(options); // 旧版本
 	}
 	public static void main(String[] args) {
 		KafkaApiTest kat = new KafkaApiTest();

@@ -14,10 +14,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.cqx.process.LogInfoFactory;
+import com.cqx.process.Logger;
 
 public class ChangeCode {
 
-	private static LogInfoFactory logger = LogInfoFactory.getInstance(ChangeCode.class);
+	private static Logger logger = LogInfoFactory.getInstance(ChangeCode.class);
 	/**
 	 * 扫描路径
 	 */

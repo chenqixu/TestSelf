@@ -26,23 +26,23 @@ import com.mr.HFileMapper;
 public class ToHbaseMain {
 	public static void main(String[] args) throws IOException,
 	InterruptedException, ClassNotFoundException {
-		//ÊäÈëÂ·¾¶
+		//è¾“å…¥è·¯å¾„
 		String dst = "hdfs://streamslab.localdomain:8020/";
-		//Êä³öÂ·¾¶£¬±ØĞëÊÇ²»´æÔÚµÄ£¬¿ÕÎÄ¼ş¼ÓÒ²²»ĞĞ¡£
+		//è¾“å‡ºè·¯å¾„ï¼Œå¿…é¡»æ˜¯ä¸å­˜åœ¨çš„ï¼Œç©ºæ–‡ä»¶åŠ ä¹Ÿä¸è¡Œã€‚
 		String dstOut = "hdfs://streamslab.localdomain:8020/";		
 		Configuration hadoopConfig = new Configuration();
-		//ÏÈ¼ÓÔØÅäÖÃ,FileSystemĞèÒª
+		//å…ˆåŠ è½½é…ç½®,FileSysteméœ€è¦
 		String path = "/home/hadoop/app/hadoop-2.0.0-cdh4.3.0/etc/hadoop/";
 		hadoopConfig.addResource(new Path(path + "core-site.xml"));
 		hadoopConfig.addResource(new Path(path + "hdfs-site.xml"));
 		hadoopConfig.addResource(new Path(path + "mapred-site.xml"));
-		//¼ÓÔØ³ÌĞò×ÔÉíµÄÅäÖÃ
+		//åŠ è½½ç¨‹åºè‡ªèº«çš„é…ç½®
 		String program_path = "/home/hadoop/jar/conf/tohbase.xml";
 		hadoopConfig.addResource(new Path(program_path));
-		//»ñµÃÊäÈëÎÄ¼şºÍÊä³öÂ·¾¶
+		//è·å¾—è¾“å…¥æ–‡ä»¶å’Œè¾“å‡ºè·¯å¾„
 		dst = dst + hadoopConfig.get("input", "test/input.txt");
 		dstOut = dstOut + hadoopConfig.get("dstout", "test/output");
-		//»ñµÃ±íÃû
+		//è·å¾—è¡¨å
 		String table_name = hadoopConfig.get("tablename", "gn_cdr_4");
 		System.out.println("=====input:"+dst+"=====");
 		System.out.println("=====dstOut:"+dstOut+"=====");
@@ -53,28 +53,28 @@ public class ToHbaseMain {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//Èç¹ûÊä³öÂ·¾¶´æÔÚ£¬ÏÈÉ¾³ı
+		//å¦‚æœè¾“å‡ºè·¯å¾„å­˜åœ¨ï¼Œå…ˆåˆ é™¤
 		Path p = new Path(dstOut);
 		if (fs.exists(p)) {
 			fs.delete(p, true);
-			System.out.println("=====delPath É¾³ı£º" + p.toString() + "=====");
+			System.out.println("=====delPath åˆ é™¤ï¼š" + p.toString() + "=====");
 		}
-		//ÈÎÎñ
+		//ä»»åŠ¡
 		Job job = new Job(hadoopConfig);
-		//Èç¹ûĞèÒª´ò³ÉjarÔËĞĞ£¬ĞèÒªÏÂÃæÕâ¾ä
+		//å¦‚æœéœ€è¦æ‰“æˆjarè¿è¡Œï¼Œéœ€è¦ä¸‹é¢è¿™å¥
 		job.setJarByClass(ToHbaseMain.class);
-        //ÉèÖÃmapÒÔ¼°reduceµÄÃû×Ö£¬reduceµÄÊ¹ÓÃ¹Ì¶¨µÄ¼´¿É
+        //è®¾ç½®mapä»¥åŠreduceçš„åå­—ï¼Œreduceçš„ä½¿ç”¨å›ºå®šçš„å³å¯
         job.setMapperClass(HFileMapper.class);
         job.setReducerClass(KeyValueSortReducer.class);
-        //Éè¶¨mapµÄÊä³öµÄkeyÒÔ¼°value£¬Õâ¸öÓÉreduce¾ö¶¨µÄ£¬ÒòÎªÊ¹ÓÃ×Ô´øµÄreduce£¬ËùÒÔÕâ¸öÊÇ¹Ì¶¨µÄ²»±ä
+        //è®¾å®šmapçš„è¾“å‡ºçš„keyä»¥åŠvalueï¼Œè¿™ä¸ªç”±reduceå†³å®šçš„ï¼Œå› ä¸ºä½¿ç”¨è‡ªå¸¦çš„reduceï¼Œæ‰€ä»¥è¿™ä¸ªæ˜¯å›ºå®šçš„ä¸å˜
         job.setMapOutputKeyClass(ImmutableBytesWritable.class);
         job.setMapOutputValueClass(KeyValue.class);
-        //ÉèÖÃpartition·½·¨£¬Õâ¸öÈç¹ûÊÇĞ´hfileÒ²Ö±½ÓÄ¬ÈÏÕâ¸ö¾Í¿ÉÒÔ
+        //è®¾ç½®partitionæ–¹æ³•ï¼Œè¿™ä¸ªå¦‚æœæ˜¯å†™hfileä¹Ÿç›´æ¥é»˜è®¤è¿™ä¸ªå°±å¯ä»¥
 //        job.setPartitionerClass(SimpleTotalOrderPartitioner.class);
-        //ÉèÖÃÊäÈëÂ·¾¶ÒÔ¼°Êä³öÂ·¾¶
+        //è®¾ç½®è¾“å…¥è·¯å¾„ä»¥åŠè¾“å‡ºè·¯å¾„
 		FileInputFormat.addInputPath(job, new Path(dst));
 		FileOutputFormat.setOutputPath(job, new Path(dstOut));
-		// ²»ĞèÒªÉèÖÃ,ÏµÍ³»á¸ù¾İÏà¹ØĞÅÏ¢µ÷ÓÃ HFileOutputFormat
+		// ä¸éœ€è¦è®¾ç½®,ç³»ç»Ÿä¼šæ ¹æ®ç›¸å…³ä¿¡æ¯è°ƒç”¨ HFileOutputFormat
 		job.setOutputFormatClass(HFileOutputFormat.class);
 		HTable table = new HTable(hadoopConfig, table_name);
 		HFileOutputFormat.configureIncrementalLoad(job, table);
@@ -97,27 +97,27 @@ public class ToHbaseMain {
         System.out.println("|||||||||||||||||||||||||hbase.hfileoutputformat.families.compression="+compressionConfigValue.toString());
         hadoopConfig.set("hbase.hfileoutputformat.families.compression", compressionConfigValue.toString());
         		
-		System.out.println("=====¿ªÊ¼Ö´ĞĞjob=====");
-		//Ö´ĞĞjob£¬Ö±µ½Íê³É
+		System.out.println("=====å¼€å§‹æ‰§è¡Œjob=====");
+		//æ‰§è¡Œjobï¼Œç›´åˆ°å®Œæˆ
 		if(job.waitForCompletion(true)){
-			System.out.println("=====Ö´ĞĞjob³É¹¦£¬¿ªÊ¼¼ÓÔØhbase=====");
+			System.out.println("=====æ‰§è¡ŒjobæˆåŠŸï¼Œå¼€å§‹åŠ è½½hbase=====");
         	try {
-        		//job³É¹¦Ö´ĞĞ£¬È»ºó°Ñ¸ÃhfileÔØÈëµ½hbaseÖĞ
+        		//jobæˆåŠŸæ‰§è¡Œï¼Œç„¶åæŠŠè¯¥hfileè½½å…¥åˆ°hbaseä¸­
         		LoadIncrementalHFiles loader;
 				loader = new LoadIncrementalHFiles(hadoopConfig);
 	        	loader.doBulkLoad(new Path(dstOut), table);
 			} catch (Exception e) {
-				System.out.println("=====¼ÓÔØhbaseÒì³££º"+e.toString()+"=====");
+				System.out.println("=====åŠ è½½hbaseå¼‚å¸¸ï¼š"+e.toString()+"=====");
 				e.printStackTrace();
 			}
-        	//¼ÓÔØÍê³ÉÉ¾³ıÊä³öÎÄ¼ş
+        	//åŠ è½½å®Œæˆåˆ é™¤è¾“å‡ºæ–‡ä»¶
         	boolean deleteout = fs.delete(new Path(dstOut),true);
-			System.out.println("=====¼ÓÔØÍê³ÉÉ¾³ıÊä³öÎÄ¼ş½á¹û£º"+deleteout+"=====");
+			System.out.println("=====åŠ è½½å®Œæˆåˆ é™¤è¾“å‡ºæ–‡ä»¶ç»“æœï¼š"+deleteout+"=====");
 		}else{
-			System.out.println("=====Ö´ĞĞjobÊ§°Ü£¬ÍË³ö¡£=====");
+			System.out.println("=====æ‰§è¡Œjobå¤±è´¥ï¼Œé€€å‡ºã€‚=====");
 			System.exit(1);
 		}
-		System.out.println("=====ÈÎÎñÍê³É£¬ÍË³ö¡£=====");
+		System.out.println("=====ä»»åŠ¡å®Œæˆï¼Œé€€å‡ºã€‚=====");
 		System.exit(0);
 	}
 }

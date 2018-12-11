@@ -111,7 +111,7 @@
 			<artifactId>fastjson</artifactId>
 			<version>${fastjson.version}</version>
 		</dependency>
-        
+
         <!-- storm封装的kafka操作包
         <dependency>
 			<groupId>org.apache.storm</groupId>

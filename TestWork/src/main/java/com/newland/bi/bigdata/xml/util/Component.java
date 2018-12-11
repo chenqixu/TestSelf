@@ -41,6 +41,15 @@ public class Component {
     }
 
     /**
+     * 打印参数
+     */
+    public void print() {
+        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+            logger.info("key：{}，value：{}", entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
      * 比较
      *
      * @param obj

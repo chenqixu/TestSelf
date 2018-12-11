@@ -59,7 +59,7 @@ public class HelloWorldTopology {
 		// shuffleGrouping（SequenceTopologyDef.SEQUENCE_SPOUT_NAME），
 		// 表示接收SequenceTopologyDef.SEQUENCE_SPOUT_NAME的数据，并且以shuffle方式，
 		// 即每个spout随机轮询发送tuple到下一级bolt中
-		BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 1)
+		BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 10)
 				.shuffleGrouping("randomHelloWorld");
 		Config conf = new Config();
 		// 允许debug
@@ -107,7 +107,7 @@ public class HelloWorldTopology {
 		else {
 			LocalCluster cluster = new LocalCluster();
 			cluster.submitTopology(Topology_name, conf, builder.createTopology());
-			Utils.sleep(10000);
+			Utils.sleep(5000);
 			cluster.shutdown();
 		}
 	}

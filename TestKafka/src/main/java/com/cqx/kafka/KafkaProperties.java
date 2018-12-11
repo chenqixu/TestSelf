@@ -1,7 +1,7 @@
 package com.cqx.kafka;
 
 /**
- * ÊôĞÔ
+ * å±æ€§
  * */
 public interface KafkaProperties {
 	final static String zkConnect = "192.168.230.128:2181";

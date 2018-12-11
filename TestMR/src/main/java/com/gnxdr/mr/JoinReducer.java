@@ -32,7 +32,7 @@ import com.gnxdr.constant.Constants.COUNTER_ENUM;
 import com.gnxdr.utils.MRUtils;
 
 /**
- * @version V1.0.1 cqx modify by 68712-1 Ôö¼Óweb_name½âÎö
+ * @version V1.0.1 cqx modify by 68712-1 å¢åŠ web_nameè§£æ
  * */
 public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 	private List<Record> leftRecordBeans = new ArrayList<Record>();
@@ -56,10 +56,10 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 
 	private int statisCount;
 
-	private Configuration conf = null;//ÅäÖÃ
-	private FSDataOutputStream stm = null;//Êä³öÁ÷
-	private BufferedWriter outputBW = null;//Êä³öÁ÷
-	private FileSystem fs = null;//gpfsÎÄ¼şÏµÍ³
+	private Configuration conf = null;//é…ç½®
+	private FSDataOutputStream stm = null;//è¾“å‡ºæµ
+	private BufferedWriter outputBW = null;//è¾“å‡ºæµ
+	private FileSystem fs = null;//gpfsæ–‡ä»¶ç³»ç»Ÿ
 	private List<Record> normalHttpRecordList = new ArrayList<Record>();
 	private Map<String, String> oracleMobileRecords = new HashMap<String, String>();
 
@@ -83,11 +83,11 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 	@Override
 	protected void setup(Context context) throws IOException,
 			InterruptedException {
-		//¶àÎÄ¼şÊä³ö
+		//å¤šæ–‡ä»¶è¾“å‡º
 		rmos = new MultipleOutputs<Text, Text>(context);
-		//»ñµÃÅäÖÃ
+		//è·å¾—é…ç½®
 		conf = context.getConfiguration();
-		//¼ÆÊıÆ÷
+		//è®¡æ•°å™¨
 		mapTransportErrorCounter = context
 				.getCounter(COUNTER_ENUM.mapTransportErrorCounterEnum);
 		mapIpTransportErrorCounter = context
@@ -106,33 +106,33 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 		counter2 = context.getCounter(COUNTER_ENUM.counter2Enum);
 		counter3 = context.getCounter(COUNTER_ENUM.counter3Enum);
 
-		//Í¨¹ıÅäÖÃ»ñµÃgpfsµÄÎÄ¼şÏµÍ³
+		//é€šè¿‡é…ç½®è·å¾—gpfsçš„æ–‡ä»¶ç³»ç»Ÿ
 		fs = FileSystem.get(conf);
-		//ÈÎÎñid
+		//ä»»åŠ¡id
 		int partition = context.getTaskAttemptID().getTaskID().getId();
-		// ÅĞ¶Ï¸Ã´ÎtaskÊÇ·ñÊÇµÚÒ»´Î£¬Èç¹û²»ÊÇµÚÒ»´Î£¬ÔòÏÈÉ¾³ıÔ­ÏÈµÄÎÄ¼şÔÙÖØĞÂ´´½¨Ò»¸ö¿ÕµÄ
+		// åˆ¤æ–­è¯¥æ¬¡taskæ˜¯å¦æ˜¯ç¬¬ä¸€æ¬¡ï¼Œå¦‚æœä¸æ˜¯ç¬¬ä¸€æ¬¡ï¼Œåˆ™å…ˆåˆ é™¤åŸå…ˆçš„æ–‡ä»¶å†é‡æ–°åˆ›å»ºä¸€ä¸ªç©ºçš„
 		Path path = new Path(conf.get(Constants.HBASE_OUTPUT_FILE)
 				+ conf.get(Constants.TASK_HOUR) + Constants.SEPARATOR
 				+ conf.get(Constants.JOB_DATAN).toLowerCase() + "/hbase_"
 				+ conf.get(Constants.JOB_DATAN) + "_" + partition);
-		// ÅĞ¶ÏÎÄ¼şÊÇ·ñ´æÔÚ£¬Èç¹û´æÔÚÔòÉ¾³ıÇå¿Õ£¬Èç¹û²»´æÔÚÔòĞÂ½¨
+		// åˆ¤æ–­æ–‡ä»¶æ˜¯å¦å­˜åœ¨ï¼Œå¦‚æœå­˜åœ¨åˆ™åˆ é™¤æ¸…ç©ºï¼Œå¦‚æœä¸å­˜åœ¨åˆ™æ–°å»º
 		if (!fs.exists(path)) {
 			stm = fs.create(path);
 		} else {
 			fs.delete(path, true);
 			stm = fs.create(path);
 		}
-		//utf-8Êä³öÁ÷ÎÄ¼ş
+		//utf-8è¾“å‡ºæµæ–‡ä»¶
 		outputBW = new BufferedWriter(new OutputStreamWriter(stm, "utf-8"));
 		
-		//Í¨¹ıÅäÖÃ»ñµÃoracleÅäÖÃ±íµÄhdfsÂ·¾¶(¹ØÁªoracle±íÔÚgpfsÖĞµÄÎ»ÖÃ)
-		//imeiºÍÊÖ»ú¹ØÏµÅäÖÃ
+		//é€šè¿‡é…ç½®è·å¾—oracleé…ç½®è¡¨çš„hdfsè·¯å¾„(å…³è”oracleè¡¨åœ¨gpfsä¸­çš„ä½ç½®)
+		//imeiå’Œæ‰‹æœºå…³ç³»é…ç½®
 		String uri = conf.get(Constants.ORACLE_TABLEFILE_IN_HDFS);
 		if (StringUtils.isNotBlank(uri)) {
 			FSDataInputStream in = null;
 			in = fs.open(new Path(uri));
 			if (in == null) {
-				System.out.println("ÖÕ¶ËÅäÖÃÎÄ¼ş²»´æÔÚ!");
+				System.out.println("ç»ˆç«¯é…ç½®æ–‡ä»¶ä¸å­˜åœ¨!");
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(in,
 					"utf-8"));
@@ -148,22 +148,22 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 			in.close();
 		}
 		
-		// »ñÈ¡Ó¦ÓÃÃû³ÆÅäÖÃÎÄ¼ş(appÅäÖÃĞÅÏ¢±íÔÚgpfsÖĞµÄÎ»ÖÃ)
-		//appÅäÖÃ
+		// è·å–åº”ç”¨åç§°é…ç½®æ–‡ä»¶(appé…ç½®ä¿¡æ¯è¡¨åœ¨gpfsä¸­çš„ä½ç½®)
+		//appé…ç½®
 		String appNameTable = conf.get(Constants.APP_NAME_TABLE);
 		if (StringUtils.isNotBlank(appNameTable)) {
-			// ´´½¨ÊäÈëÁ÷£¬¹ØÁªÅäÖÃÎÄ¼ş
+			// åˆ›å»ºè¾“å…¥æµï¼Œå…³è”é…ç½®æ–‡ä»¶
 			FSDataInputStream inAppname = null;
 			inAppname = fs.open(new Path(appNameTable));
 			if (inAppname == null) {
-				System.out.println("appÃû³ÆÅäÖÃÎÄ¼ş²»´æÔÚ!");
+				System.out.println("appåç§°é…ç½®æ–‡ä»¶ä¸å­˜åœ¨!");
 			}
 			BufferedReader brAppname = new BufferedReader(
 					new InputStreamReader(inAppname, "utf-8"));
-			// °´ĞĞ¶ÁÈ¡
+			// æŒ‰è¡Œè¯»å–
 			String lineServicename = brAppname.readLine();
 			while (null != lineServicename) {
-				// ¸ù¾İ","·Ö¸î£¬¸ù¾İÓ¦ÓÃ´óÀàApp_TypeºÍÓ¦ÓÃĞ¡ÀàApp_Sub_type£¬»ñµÃÓ¦ÓÃĞ¡ÀàµÄÃû³Æ£¨¼´ÌØÕ÷¿âÖĞµÄ¶ş¼¶·ÖÀà£¨Ó¦ÓÃ£©£©
+				// æ ¹æ®","åˆ†å‰²ï¼Œæ ¹æ®åº”ç”¨å¤§ç±»App_Typeå’Œåº”ç”¨å°ç±»App_Sub_typeï¼Œè·å¾—åº”ç”¨å°ç±»çš„åç§°ï¼ˆå³ç‰¹å¾åº“ä¸­çš„äºŒçº§åˆ†ç±»ï¼ˆåº”ç”¨ï¼‰ï¼‰
 				String[] servicenameFileArr = lineServicename.split(",", -1);
 				appNameRecords.put(servicenameFileArr[0], servicenameFileArr[1]);
 				lineServicename = brAppname.readLine();
@@ -172,7 +172,7 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 			inAppname.close();
 		}
 		
-		//webÅäÖÃ V1.0.1
+		//webé…ç½® V1.0.1
 		
 		
 		
@@ -181,13 +181,13 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 	@Override
 	protected void cleanup(Context context) throws IOException,
 			InterruptedException {
-		//¶àÎÄ¼şÊä³ö¹Ø±Õ
+		//å¤šæ–‡ä»¶è¾“å‡ºå…³é—­
 		rmos.close();
-		//Êä³öÁ÷¹Ø±Õ buffer writer
+		//è¾“å‡ºæµå…³é—­ buffer writer
 		outputBW.close();
-		//Êä³öÁ÷ data stream
+		//è¾“å‡ºæµ data stream
 		stm.close();
-		//gpfsÎÄ¼şÏµÍ³¹Ø±Õ
+		//gpfsæ–‡ä»¶ç³»ç»Ÿå…³é—­
 		fs.close();
 	}
 
@@ -198,43 +198,43 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 		// try {
 		// left ip
 		// right http
-		//×ó¼ÇÂ¼
+		//å·¦è®°å½•
 		leftRecordBeans.clear();
-		//ÓÒ¼ÇÂ¼
+		//å³è®°å½•
 		rightRecordBeans.clear();
 		for (CombineEntity value : values) {
-			//Èç¹ûÊÇIP¼ÇÂ¼£¬°Ñ¼ÇÂ¼×ª³ÉRecord²¢¼ÓÈë×ó¼ÇÂ¼
+			//å¦‚æœæ˜¯IPè®°å½•ï¼ŒæŠŠè®°å½•è½¬æˆRecordå¹¶åŠ å…¥å·¦è®°å½•
 			if (Constants.IP_FILE_FLAG.equals(value.getFlag().toString())) {
 				record = MRUtils.ValuesToRecordBean(value);
 				if (record == null) {
-					mapIpTransportErrorCounter.increment(1);// ±¾ÌõIP¼ÇÂ¼Òì³££¬Å×Æú²¢ÇÒ²»×ö¹ØÁª
+					mapIpTransportErrorCounter.increment(1);// æœ¬æ¡IPè®°å½•å¼‚å¸¸ï¼ŒæŠ›å¼ƒå¹¶ä¸”ä¸åšå…³è”
 					return;
 				}
 				leftRecordBeans.add(record);
 			}
-			//Èç¹û²»ÊÇIP¼ÇÂ¼£¬°Ñ¼ÇÂ¼×ª³ÉRecord²¢¼ÓÈëÓÒ¼ÇÂ¼
+			//å¦‚æœä¸æ˜¯IPè®°å½•ï¼ŒæŠŠè®°å½•è½¬æˆRecordå¹¶åŠ å…¥å³è®°å½•
 			else {
 				record = MRUtils.ValuesToRecordBean(value);
 				if (record == null) {
-					mapTransportErrorCounter.increment(1);// ±¾ÌõHTTP¼ÇÂ¼Òì³££¬Å×Æú
+					mapTransportErrorCounter.increment(1);// æœ¬æ¡HTTPè®°å½•å¼‚å¸¸ï¼ŒæŠ›å¼ƒ
 					continue;
 				}
 				rightRecordBeans.add(record);
 			}
 		}
 
-		//Ã»¿´¶®??
+		//æ²¡çœ‹æ‡‚??
 		if ("true".equals(conf.get(Constants.DEBUG))) {
 			if (leftRecordBeans.size() == 0) {
 				counter1.increment(1);
 			} else if (leftRecordBeans.size() == 1) {
 				counter2.increment(1);
 			} else {
-				counter3.increment(1);// ip_idÓĞÖØ¸´
+				counter3.increment(1);// ip_idæœ‰é‡å¤
 			}
 		}
 
-		//Ñ­»·IP¼ÇÂ¼
+		//å¾ªç¯IPè®°å½•
 		for (Record leftRecord : leftRecordBeans) {
 
 			upbytes = 0;
@@ -251,7 +251,7 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 			downpkgsDifference = 0;
 			statisCount = 0;
 			normalHttpRecordList.clear();
-			// ÖÁÉÙ¹ØÁªµ½Ò»Ìõhttp¼ÇÂ¼
+			// è‡³å°‘å…³è”åˆ°ä¸€æ¡httpè®°å½•
 			if (rightRecordBeans.size() > 0) {
 
 				String uperrseq;
@@ -323,12 +323,12 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 					leftRecord.setDl_ip_frag_packets(downfrag);
 
 				} catch (NumberFormatException nfe) {
-					numFormatErrorCounter.increment(1);// Èç¹ûÊÇipÊı¾İÒì³££¬Ö±½ÓÅ×
+					numFormatErrorCounter.increment(1);// å¦‚æœæ˜¯ipæ•°æ®å¼‚å¸¸ï¼Œç›´æ¥æŠ›
 					return;
 				}
 				for (Record normalHttpRecord : normalHttpRecordList) {
 					try {
-						// Èç¹û×Ü¾ùÌ¯Á÷Á¿Îª¸ºµÄ,ÔòËµÃ÷Êı¾İÒì³£,±£ÁôhttpÔ­À´µÄÁ÷Á¿Öµ.¾ùÌ¯Ö®ºóµÄÖµ£¬±£ÁôĞ¡Êıµãºó4Î»
+						// å¦‚æœæ€»å‡æ‘Šæµé‡ä¸ºè´Ÿçš„,åˆ™è¯´æ˜æ•°æ®å¼‚å¸¸,ä¿ç•™httpåŸæ¥çš„æµé‡å€¼.å‡æ‘Šä¹‹åçš„å€¼ï¼Œä¿ç•™å°æ•°ç‚¹å4ä½
 						if (upbytesDifference > 0) {
 							normalHttpRecord.setUp_data(MRUtils
 									.doubleFormat(Double
@@ -359,18 +359,18 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 						}
 
 					} catch (NumberFormatException nfe) {
-						numFormatErrorCounter.increment(1);// Èç¹ûÊÇhttp¼ÇÂ¼Òì³££¬ÔòÌø¹ıµ±Ç°È¡ÏÂÒ»Ìõ¹ØÁªµÄhttp¼ÇÂ¼
+						numFormatErrorCounter.increment(1);// å¦‚æœæ˜¯httpè®°å½•å¼‚å¸¸ï¼Œåˆ™è·³è¿‡å½“å‰å–ä¸‹ä¸€æ¡å…³è”çš„httpè®°å½•
 						continue;
 					}
 				}
-				if (normalHttpRecordList.size() > 0) {// ÓĞÖÁÉÙÒ»ÌõÕı³£µÄ¿ÉÒÔ¹ØÁªµÄhttpÊı¾İ
+				if (normalHttpRecordList.size() > 0) {// æœ‰è‡³å°‘ä¸€æ¡æ­£å¸¸çš„å¯ä»¥å…³è”çš„httpæ•°æ®
 					for (Record rightRecord : normalHttpRecordList) {
 						Record unitrecord = MRUtils.unitAsOne(leftRecord,
 								rightRecord, true);
 						translateTerminalType(unitrecord);
-						if (MRUtils.checkFitToHbase(leftRecord)) {// ¸ÃIP¼ÇÂ¼ÓĞkeyÖµ£¬Âú×ãÈëHbaseÌõ¼ş
+						if (MRUtils.checkFitToHbase(leftRecord)) {// è¯¥IPè®°å½•æœ‰keyå€¼ï¼Œæ»¡è¶³å…¥Hbaseæ¡ä»¶
 							if (recordToHbaseFile(context, unitrecord,appNameRecords)) {
-								// Èëhbasefile³É¹¦µÄÍ¬Ê±£¬Ò²Ğ´ÈëÇåµ¥ÎÄ¼ş
+								// å…¥hbasefileæˆåŠŸçš„åŒæ—¶ï¼Œä¹Ÿå†™å…¥æ¸…å•æ–‡ä»¶
 								setTime(unitrecord);
 								joinedCounter.increment(1);
 
@@ -384,8 +384,8 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 							}
 						}
 					}
-				} else {// ËùÓĞ±»¹ØÁªÉÏµÄhttpÊı¾İ¶¼ÓĞÒì³£,Ôò°´ÕÕµ¥ÌõipÈë¿â
-					if (MRUtils.checkFitToHbase(leftRecord)) {// ¸Ã¼ÇÂ¼ÓĞkeyÖµ£¬Âú×ãÈëHbaseÌõ¼ş
+				} else {// æ‰€æœ‰è¢«å…³è”ä¸Šçš„httpæ•°æ®éƒ½æœ‰å¼‚å¸¸,åˆ™æŒ‰ç…§å•æ¡ipå…¥åº“
+					if (MRUtils.checkFitToHbase(leftRecord)) {// è¯¥è®°å½•æœ‰keyå€¼ï¼Œæ»¡è¶³å…¥Hbaseæ¡ä»¶
 						translateTerminalType(leftRecord);
 						if (recordToHbaseFile(context, leftRecord,appNameRecords)) {
 							setTime(leftRecord);
@@ -402,8 +402,8 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 				}
 
 			} else {
-				// Î´¹ØÁªµ½ÈÎºÎhttp¼ÇÂ¼
-				if (MRUtils.checkFitToHbase(leftRecord)) {// ¸Ã¼ÇÂ¼ÓĞkeyÖµ£¬Âú×ãÈëHbaseÌõ¼ş
+				// æœªå…³è”åˆ°ä»»ä½•httpè®°å½•
+				if (MRUtils.checkFitToHbase(leftRecord)) {// è¯¥è®°å½•æœ‰keyå€¼ï¼Œæ»¡è¶³å…¥Hbaseæ¡ä»¶
 					translateTerminalType(leftRecord);
 					if (recordToHbaseFile(context, leftRecord,appNameRecords)) {
 						setTime(leftRecord);
@@ -533,7 +533,7 @@ public class JoinReducer extends Reducer<Text, CombineEntity, Text, Text> {
 		if (StringUtils.isBlank(imei)) {
 			return;
 		}
-		// ½ØÈ¡Ç°°ËÎ»ºÍÅäÖÃ±íµÄIMEI¹ØÁª
+		// æˆªå–å‰å…«ä½å’Œé…ç½®è¡¨çš„IMEIå…³è”
 		if (StringUtils.isBlank(imei) || imei.length() < 8) {
 			return;
 		}

@@ -1,6 +1,7 @@
 package com.newland.bi.bigdata.changecode;
 
 import com.cqx.process.LogInfoFactory;
+import com.cqx.process.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 
@@ -10,7 +11,7 @@ import java.io.InputStream;
 
 public class ReadFile {
 
-    private static LogInfoFactory logger = LogInfoFactory.getInstance(ReadFile.class);
+    private static Logger logger = LogInfoFactory.getInstance(ReadFile.class);
     private ChangeCode cc = null;
 
     public ReadFile() {
@@ -21,9 +22,10 @@ public class ReadFile {
      * 获取文件编码
      *
      * @param path
+     * @param defaultCode
      * @return
      */
-    public String getCharset(String path) {
+    public String getCharset(String path, String defaultCode) {
         InputStream is = null;
         UniversalDetector detector = new UniversalDetector(null);
         try {
@@ -47,13 +49,27 @@ public class ReadFile {
         }
         detector.dataEnd();
         String encode = detector.getDetectedCharset();
-        /** default UTF-8 */
+        /** default UNKNOW */
         if (StringUtils.isEmpty(encode)) {
-            encode = "UTF-8";
+            if (StringUtils.isEmpty(defaultCode)) {
+                encode = "UNKNOW";
+            } else {
+                encode = defaultCode;
+            }
         }
         detector.reset();
         logger.debug("path：{}，encode：{} ", path, encode);
         return encode;
+    }
+
+    /**
+     * 获取文件编码，默认GBK
+     *
+     * @param path
+     * @return
+     */
+    public String getCharset(String path) {
+        return getCharset(path, "GBK");
     }
 
     /**
@@ -70,12 +86,32 @@ public class ReadFile {
     }
 
     /**
+     * 强制修改文件编码，从sourceCode改成dstCode
+     *
+     * @param path
+     * @param sourceCode
+     * @param dstCode
+     */
+    public void changeFileCodeForce(String path, String sourceCode, String dstCode) {
+        cc.change(path, sourceCode, dstCode);
+    }
+
+    /**
      * 修改文件编码，从GBK改成UTF-8
      *
      * @param path
      */
     public void changeFileCodeFormGBKToUTF8(String path) {
         changeFileCode(path, "GBK", "UTF-8");
+    }
+
+    /**
+     * 强制修改文件编码，从GBK改成UTF-8
+     *
+     * @param path
+     */
+    public void changeFileCodeFormGBKToUTF8Force(String path) {
+        changeFileCodeForce(path, "GBK", "UTF-8");
     }
 
     /**
@@ -112,7 +148,9 @@ public class ReadFile {
 //        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestSpring/src/main/java/com/spring/printSystemProperties/servlet/GetDBConnServlet.java");
 //        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestWork/src/main/java/com/newland/bi/bigdata/changecode/ReadFile.java");
 //        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestFrameForm/src/main/java/mainForm.java");
+//        readFile.getCharset("D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\java\\com\\main\\MRSearchMain.java");
 //        readFile.getAllFileAndChangeCode("D:/Document/Workspaces/Git/TestSelf", ".*\\.java", "GBK", "UTF-8");
-        readFile.changeFileCodeFormGBKToUTF8("D:/Document/Workspaces/Git/TestSelf/TestMR/src/main/java/com/main/TempMain2.java");
+
+        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestHbaseTool\\src\\main\\java\\com\\cqx\\mr\\MRSearchAuto.java");
     }
 }

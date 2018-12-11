@@ -10,8 +10,9 @@
 	<artifactId>TestMR</artifactId>
 	<properties>
 		<hadoop.version>2.6.0</hadoop.version>
-		<hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version>
+		<hadoop.mr.version>2.6.0-mr1-cdh5.7.2</hadoop.mr.version>
 		<hbase.version>1.1.1</hbase.version>
+		<hive.version>1.2.0</hive.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -59,6 +60,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-mapreduce-client-core</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-mapreduce-client-hs</artifactId>
 			<version>${hadoop.version}</version>
 			<exclusions>
@@ -68,7 +80,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- 
+		<!--
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-mapreduce-client-common</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
@@ -76,6 +99,14 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency> -->
+
+		<!-- hive -->
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-exec</artifactId>
+			<version>${hive.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		
 		<!-- hbase -->
 		<dependency>
@@ -141,6 +172,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- orc -->
+		<dependency>
+			<groupId>org.apache.orc</groupId>
+			<artifactId>orc-core</artifactId>
+			<version>1.1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.orc</groupId>
+			<artifactId>orc-mapreduce</artifactId>
+			<version>1.1.0</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -149,6 +194,7 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 		</plugins>

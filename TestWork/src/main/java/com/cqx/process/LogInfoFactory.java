@@ -1,6 +1,7 @@
 package com.cqx.process;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class LogInfoFactory implements Logger {
     //	private static LogInfoFactory log = new LogInfoFactory();
@@ -103,9 +104,10 @@ public class LogInfoFactory implements Logger {
         return this.LEVELCODE;
     }
 
-    // TODO 循环判断类名
+    // TODO 循环判断类名，如果是线程，得打印线程名
     public static String getLineInfo() {
         StackTraceElement[] ste = new Throwable().getStackTrace();
+//        System.out.println("getLineInfo：" + Arrays.asList(ste));
         return ":" + ste[ste.length - 2].getLineNumber();
     }
 
