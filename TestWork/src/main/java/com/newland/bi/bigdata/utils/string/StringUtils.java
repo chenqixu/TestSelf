@@ -153,7 +153,7 @@ public class StringUtils {
      * @return
      */
     public static String splitList(List<String> list, String split) {
-        if (list != null && isEmpty(split)) {
+        if (list != null && isNotEmpty(split)) {
             StringBuffer sb = new StringBuffer();
             for (String tmp : list) {
                 sb.append(tmp);
@@ -167,12 +167,22 @@ public class StringUtils {
     }
 
     /**
+     * 是否不为空
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isNotEmpty(String str) {
+        return str != null && str.trim().length() > 0;
+    }
+
+    /**
      * 是否为空
      *
      * @param str
      * @return
      */
     public static boolean isEmpty(String str) {
-        return str != null && str.trim().length() > 0;
+        return !isNotEmpty(str);
     }
 }

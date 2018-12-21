@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <!-- 文件信息 -->
+    <!-- 1.1 输入O域文件信息 -->
+    <property>
+        <name>INPUT_PATH</name>
+        <!-- <value>hdfs://retnverfmb/user/bdoc/9/services/hdfs/9/edc_base/yz/data/ltemerge/ltemerge/201811292345/</value> -->
+        <!-- <value>/tmp/gjm_test/</value> -->
+        <value>D:\tmp\data\hbase\input\</value>
+        <description>mc_nc输入文件路径</description>
+    </property>
+    <property>
+        <name>IS_DEBUG</name>
+        <value>true</value>
+        <description>调试模式-不删除输入输出文件</description>
+    </property>
+    <!-- 3 输出文件信息 -->
+    <property>
+        <name>OUPUT_PATH</name>
+        <!-- <value>/user/edc_base/gjm_test/output</value> -->
+        <value>D:\tmp\data\hbase\output\</value>
+        <description>mc_nc输入文件路径</description>
+    </property>
+    <property>
+        <name>ERROR_PATH</name>
+        <!-- <value>/user/edc_base/gjm_test/error</value> -->
+        <value>D:\tmp\data\hbase\error\</value>
+        <description>mc_nc输入文件路径</description>
+    </property>
+    <property>
+        <name>ERROR_FILE_NAME</name>
+        <value>YZ_ERROR_FILE</value>
+        <description>mc_nc输入文件路径</description>
+    </property>
+    <!-- 其他信息 -->
+    <property>
+        <name>SOLR_COMMIT_LIMIT</name>
+        <value>10000</value>
+        <description>solr提交数量</description>
+    </property>
+    <property>
+        <name>mapreduce.job.bdoc.queuename</name>
+        <!-- <value>root.bdoc.renter_1.renter_9.dev_3</value> -->
+        <value>root</value>
+        <description>指定提交的队列名称</description>
+    </property>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>10.1.8.75,10.1.8.78,10.1.8.81</value>
+        <description>该配置同hbase-site.xml中的配置项相同，指向hbase的zookeeper的ip address
+        </description>
+    </property>
+    <property>
+        <name>HTABLE_NAME</name>
+        <!-- <value>zyh:qry_lte_zy</value> -->
+        <value>gjm_test</value>
+        <description>入的数据库表名</description>
+    </property>
+    <property>
+        <name>COLUMN_FAMILY</name>
+        <value>info</value>
+        <description>入的数据库column family</description>
+    </property>
+    <property>
+        <name>HTABLE_TYPE</name>
+        <value>1</value>
+        <description>hbase表类型0：日表；1：月表</description>
+    </property>
+    <property>
+        <name>TASK_TYPE</name>
+        <value>1</value>
+        <description>hbase表类型0：小时任务；1：天任务；2：月任务</description>
+    </property>
+    <property>
+        <name>TASK_NAME</name>
+        <value>yz_nl_hbase_solr</value>
+        <description>任务名称</description>
+    </property>
+
+
+    <!-- 时间设置 -->
+    <property>
+        <name>SOURCE_TIME_POSITIONS</name>
+        <value>0,1</value>
+        <description>源文件时间位置第一位为0：需要转换的时间</description>
+    </property>
+    <property>
+        <name>SOURCE_TIME_FORMAT</name>
+        <value>yyyyMMddHHmmss</value>
+        <description>源文件时间格式(-1为时间戳)</description>
+    </property>
+    <property>
+        <name>IS_TIME_FORMAT</name>
+        <value>0</value>
+        <description>时间格式是否需要转换：0:不需要转换；1：需要转换。（hbase rowkey时间格式是yyyyMMddHHmmss）</description>
+    </property>
+    <!-- 电话号码预处理设置 -->
+    <property>
+        <name>SOURCE_PHONE_POSITIONS</name>
+        <value>2</value>
+        <description>源文件电话号码位置第一位为0：需要预处理的电话号码</description>
+    </property>
+    <!-- rowkey设置 -->
+    <property>
+        <name>MOD_NUM</name>
+        <value>100</value>
+        <description>分区名称</description>
+    </property>
+    <property>
+        <name>MOD_POSITION</name>
+        <value>1</value>
+        <description>分区字段在mapvalue里面所属位置第一位为0</description>
+    </property>
+    <property>
+        <name>ROWKEY_POSITIONS</name>
+        <value>1,2,LTE</value>
+        <description>组合成rowkey在mapvalue里面的位置第一位为0,多个值已逗号分隔：如1,2,3为取mapvalue里面的第二，三，四位的值按顺序拼接起来，如中有非数字，则直接取这个值（不包含分区）,如果包含加号例如：B+1则在value第一位前面加上B</description>
+    </property>
+    <property>
+        <name>SOURCE_SPILT</name>
+        <value>|</value>
+        <description>源文件分隔符,源文件分隔符和hbase value的分隔符保持一致，</description>
+    </property>
+    <property>
+        <name>ROWKEY_SPILT</name>
+        <value>|</value>
+        <description>源文件分隔符（程序里面没有用到正则表达式，固不需要转译）</description>
+    </property>
+
+    <!-- value设置 -->
+    <property>
+        <name>QUALIFY_MAP_VALUE</name>
+        <value>lte:-1</value>
+        <description>列名和值得映射，-1为这列取value的所有值；列之间的分隔是封号，列对应的值是冒号，值之间的分隔是逗号</description>
+    </property>
+    <property>
+        <name>SOURCE_DATE_LENGTH</name>
+        <value>14</value>
+        <description>源数据长度，校验信息</description>
+    </property>
+</configuration>

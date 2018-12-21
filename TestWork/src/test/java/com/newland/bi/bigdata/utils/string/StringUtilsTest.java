@@ -38,6 +38,12 @@ public class StringUtilsTest {
     }
 
     @Test
+    public void replaceTest1() {
+        String rule = "abc";
+        rule.replace(null, "b");
+    }
+
+    @Test
     public void negativeAssert1() {
         // 创建0到23
         List<String> seqList = StringUtils.generateSeqList(0, 23, 2);

@@ -1,19 +1,66 @@
-package com.mr.util;
+package com.cqx.util;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.mapreduce.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-/**
- * hadoop配置工具类
- *
- * @author chenqixu
- */
-public class HadoopConfUtil {
+public class HdfsTool {
+
+    private static final Logger logger = LoggerFactory.getLogger(HdfsTool.class);
+
+    /**
+     * hdfs上获得文件大小
+     *
+     * @param fs
+     * @param path
+     * @return
+     */
+    public static long getFileSize(FileSystem fs, Path path) {
+        try {
+            if (fs.exists(path)) {
+                return fs.listStatus(path)[0].getLen();
+            }
+        } catch (FileNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            return 0L;
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            return 0L;
+        }
+        return 0L;
+    }
+
+    /**
+     * 文件或路径是否存在
+     *
+     * @param fs
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static boolean isExist(FileSystem fs, String path) throws IOException {
+        return fs.exists(new Path(path));
+    }
+
+    public static FSDataOutputStream createFile(FileSystem fs, String path) throws IOException {
+        return fs.create(new Path(path));
+    }
+
+    public static FSDataOutputStream appendFile(FileSystem fs, String path) throws IOException {
+        return fs.append(new Path(path));
+    }
+
+    public static void closeFileSystem(FileSystem fs) throws IOException {
+        if (fs != null)
+            fs.close();
+    }
 
     /**
      * 通过配置获取分布式文件对象
@@ -51,7 +98,7 @@ public class HadoopConfUtil {
             try {
                 job.addArchiveToClassPath(new Path(path));
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -79,38 +126,12 @@ public class HadoopConfUtil {
             path = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\resources\\conf75\\";
             hadoopConfig.set("mapreduce.framework.name", "local");
             hadoopConfig.set("fs.defaultFS", "file:///");
-            hadoopConfig.set("mapred.child.tmp", "D:\\tmp\\hadoop-UpdatusUser\\temp");
         } else {
             path = "/etc/hadoop/conf/";
         }
         hadoopConfig.addResource(new Path(path + "core-site.xml"));
         hadoopConfig.addResource(new Path(path + "hdfs-site.xml"));
         hadoopConfig.addResource(new Path(path + "mapred-site.xml"));
-        hadoopConfig.addResource(new Path(path + "hbase-site.xml"));
-        return hadoopConfig;
-    }
-
-    /**
-     * 获取配置文件
-     *
-     * @return
-     */
-    public static HBaseConfiguration getLocalHbaseConf() {
-        HBaseConfiguration hadoopConfig = new HBaseConfiguration();
-        String path;
-        if (isWindow()) {
-            path = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\resources\\conf75\\";
-            hadoopConfig.set("mapreduce.framework.name", "local");
-            hadoopConfig.set("fs.defaultFS", "file:///");
-            hadoopConfig.set("yarn.resourcemanager.hostname", "0.0.0.0");
-        } else {
-            path = "/etc/hadoop/conf/";
-        }
-        hadoopConfig.addResource(new Path(path + "core-site.xml"));
-        hadoopConfig.addResource(new Path(path + "hdfs-site.xml"));
-        hadoopConfig.addResource(new Path(path + "mapred-site.xml"));
-        hadoopConfig.addResource(new Path(path + "yarn-site.xml"));
-        hadoopConfig.addResource(new Path(path + "hbase-site.xml"));
         return hadoopConfig;
     }
 

@@ -13,6 +13,7 @@
 		<hadoop.mr.version>2.6.0-mr1-cdh5.7.2</hadoop.mr.version>
 		<hbase.version>1.1.1</hbase.version>
 		<hive.version>1.2.0</hive.version>
+		<solr.version>4.1.0</solr.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -29,6 +30,12 @@
 			<version>${hadoop.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpcore</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -148,6 +155,7 @@
 		</dependency>		
 
 		<!-- apache -->
+		<!--
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -159,6 +167,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		-->
 
 		<!-- log -->
 		<dependency>
@@ -185,6 +194,13 @@
 			<artifactId>orc-mapreduce</artifactId>
 			<version>1.1.0</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<!-- solr -->
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>${solr.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

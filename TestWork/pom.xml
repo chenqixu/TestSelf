@@ -27,9 +27,16 @@
 		<sparkother.version>2.10</sparkother.version>
 		<oozie.version>4.1.0-cdh5.7.2</oozie.version>
 		<jedis.version>2.9.0</jedis.version>
+		<solr.version>4.1.0</solr.version>
 	</properties>
 
 	<dependencies>
+		<!-- avro -->
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.8.0</version>
+		</dependency>
 		<!-- apache -->
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -201,6 +208,12 @@
 			<version>${hadoop.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.avro</groupId>
+					<artifactId>avro</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -263,6 +276,12 @@
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-exec</artifactId>
 			<version>${hive.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.avro</groupId>
+					<artifactId>avro</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hive</groupId>
@@ -804,6 +823,19 @@
     		<artifactId>juniversalchardet</artifactId>
     		<version>1.0.3</version>
 		</dependency>
+
+		<!-- solr -->
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>${solr.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -853,6 +885,7 @@
 				</configuration>
 			</plugin>
 			<!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -866,7 +899,9 @@
 					</archive>
 				</configuration>
 			</plugin>
+			-->
 			<!-- 拷贝依赖的jar包到lib目录 -->
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -885,6 +920,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<!-- 解决资源文件的编码问题 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -893,6 +929,24 @@
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
+			</plugin>
+			<!-- avro -->
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>1.8.0</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>schema</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

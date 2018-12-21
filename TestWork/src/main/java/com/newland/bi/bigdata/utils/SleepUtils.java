@@ -32,4 +32,9 @@ public class SleepUtils {
         } catch (InterruptedException e) {
         }
     }
+
+    class TimerTool {
+
+    }
+
 }

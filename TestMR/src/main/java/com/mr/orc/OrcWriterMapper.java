@@ -4,6 +4,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.mapred.OrcStruct;
 import org.slf4j.Logger;
@@ -22,6 +23,18 @@ public class OrcWriterMapper extends Mapper<LongWritable, Text, NullWritable, Or
     private TypeDescription schema = TypeDescription.fromString("struct<name:string,age:string>");
     private OrcStruct pair = (OrcStruct) OrcStruct.createValue(schema);
     private final NullWritable nada = NullWritable.get();
+
+    @Override
+    protected void setup(Context context) throws IOException, InterruptedException {
+        TaskAttemptID taskAttemptID = context.getTaskAttemptID();
+        logger.info("taskAttemptID：{}", taskAttemptID);
+        logger.info("taskAttemptID.getTaskID：{}", taskAttemptID.getTaskID());
+        logger.info("taskAttemptID.getId：{}", taskAttemptID.getId());
+        logger.info("taskAttemptID.getJobID：{}", taskAttemptID.getJobID());
+        logger.info("taskAttemptID.getJobID.getId：{}", taskAttemptID.getJobID().getId());
+        logger.info("taskAttemptID.getTaskID.getJobID：{}", taskAttemptID.getTaskID().getJobID());
+        logger.info("taskAttemptID.getTaskID.getId：{}", taskAttemptID.getTaskID().getId());
+    }
 
     @Override
     protected void map(LongWritable key, Text value, Context output)
