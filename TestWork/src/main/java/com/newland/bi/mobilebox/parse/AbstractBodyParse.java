@@ -10,7 +10,7 @@ import com.newland.bi.mobilebox.bean.BodyInfo;
 public abstract class AbstractBodyParse {
 
     //事件编码
-    protected static int code = 0;
+    public abstract int getCode();
 
     protected final String KEY_LEFT = "###";
 
