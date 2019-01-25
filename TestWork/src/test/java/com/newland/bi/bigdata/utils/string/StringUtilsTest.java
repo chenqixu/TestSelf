@@ -2,6 +2,7 @@ package com.newland.bi.bigdata.utils.string;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,8 +40,14 @@ public class StringUtilsTest {
 
     @Test
     public void replaceTest1() {
-        String rule = "abc";
-        rule.replace(null, "b");
+        String rule = "[{\"catgId\":217532,\"parentCatgId\":1,\"catgName\":\"动漫\",\"parentCatgId\":1122";
+        System.out.println("##before ##" + rule);
+        rule = rule.replace("\"parentCatgId\"", "\"fId\"");
+        System.out.println("##replace##" + rule);
+
+        String test1 = "a('b')";
+        String[] test1arr = test1.split("'\\)");
+        System.out.println(test1arr.length);
     }
 
     @Test
@@ -67,5 +74,32 @@ public class StringUtilsTest {
         // 打印结果
 //        StringUtils.printList(seqList);
         System.out.println(StringUtils.splitList(seqList, "|"));
+    }
+
+    @Test
+    public void switchTest() {
+        int cnt = 4;
+        switch (cnt) {
+            case 0:
+            case 3:
+                System.out.println("|" + cnt);
+                break;
+            case 1:
+                System.out.println(cnt);
+                break;
+            case 2:
+                System.out.println(cnt);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Test
+    public void listSizeTest() {
+        List<String> list = new ArrayList<>();
+        System.out.println(list.size());
+        list.add("abc");
+        System.out.println(list.get(0));
     }
 }

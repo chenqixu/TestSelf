@@ -836,6 +836,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<dependency>
+			<groupId>com.cqx</groupId>
+			<artifactId>TestNetty</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>

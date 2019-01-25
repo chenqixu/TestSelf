@@ -29,9 +29,8 @@ public class DiscardClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		System.out.println("client channelActive..");
 //		ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!",
-//				CharsetUtil.UTF_8)); // 蹇呴』鏈塮lush
+//				CharsetUtil.UTF_8));
 		ctx.writeAndFlush(discardBean.getMsg());
-		// 蹇呴』瀛樺湪flush
 		// ctx.write(Unpooled.copiedBuffer("Netty rocks!", CharsetUtil.UTF_8));
 		// ctx.flush();
 	}
@@ -46,9 +45,8 @@ public class DiscardClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 		String result = buf.toString(Charset.forName("utf-8"));
 		System.out.println("Client received:" + ByteBufUtil.hexDump(buf) + "; The value is:" + result);
 		this.queryResult.put(result);
-//		// 鎶涘純鏀跺埌鐨勬暟鎹�
 //		ReferenceCountUtil.release(msg);
-		//ctx.channel().close().sync();// client鍏抽棴channel杩炴帴
+		//ctx.channel().close().sync();
 	}
 
 	@Override

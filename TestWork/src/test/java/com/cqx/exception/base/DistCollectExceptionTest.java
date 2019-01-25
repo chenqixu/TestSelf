@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import com.cqx.annotation.AbsTestFactory;
 import com.cqx.annotation.MyTest.Test;
+import com.cqx.exception.DistCollectErrorCode;
+import com.cqx.exception.DistCollectException;
 import com.cqx.process.LogInfoFactory;
 
 public class DistCollectExceptionTest extends AbsTestFactory {	

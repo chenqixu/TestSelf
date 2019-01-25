@@ -5,6 +5,8 @@ package com.cqx.jstorm.base;
 //import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.cqx.jstorm.bolt.HelloWorldBolt;
 import com.cqx.jstorm.spout.HelloWorldSpout;
@@ -59,7 +61,7 @@ public class HelloWorldTopology {
 		// shuffleGrouping（SequenceTopologyDef.SEQUENCE_SPOUT_NAME），
 		// 表示接收SequenceTopologyDef.SEQUENCE_SPOUT_NAME的数据，并且以shuffle方式，
 		// 即每个spout随机轮询发送tuple到下一级bolt中
-		BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 10)
+		BoltDeclarer totalBolt =builder.setBolt("HelloWorldBolt", new HelloWorldBolt(), 1)
 				.shuffleGrouping("randomHelloWorld");
 		Config conf = new Config();
 		// 允许debug
@@ -68,6 +70,10 @@ public class HelloWorldTopology {
 		conf.setNumWorkers(1);
 		// 设置ack为1
 		conf.setNumAckers(1);
+		// 设置自定义配置
+		Map<String, String> mapconf = new HashMap<>();
+		mapconf.put("telnumber", "13500000000");
+		conf.putAll(mapconf);
 		
 		// 远程提交集群模式
 		if ( args != null && args.length == 6 ) {

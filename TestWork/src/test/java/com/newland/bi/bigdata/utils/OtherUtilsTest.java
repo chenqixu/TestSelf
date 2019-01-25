@@ -43,4 +43,17 @@ public class OtherUtilsTest {
             }
         });
     }
+
+    @Test
+    public void getRunTime() {
+        OtherUtils.addTimeTag(this);
+        SleepUtils.sleepSecond(2);
+        logger.info("OtherUtils.getTimeOut：{}", OtherUtils.getTimeOut(this));
+        int i = 0;
+        while (i < 10) {
+            logger.info("OtherUtils.getTimeOut：{}", OtherUtils.getTimeOut(this));
+            i++;
+            SleepUtils.sleepMilliSecond(500);
+        }
+    }
 }

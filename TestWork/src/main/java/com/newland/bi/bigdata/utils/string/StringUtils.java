@@ -185,4 +185,12 @@ public class StringUtils {
     public static boolean isEmpty(String str) {
         return !isNotEmpty(str);
     }
+
+    public static void println(Object obj) {
+        System.out.println(obj);
+    }
+
+    public static void println(Object obj, String tag) {
+        System.out.println(tag + obj);
+    }
 }

@@ -98,5 +98,11 @@ public class RegexUtils {
         regexUtils.match("LTE_UU_*_20[0-9]{6}(?!09|10|18|20)[0-9]{4}*.txt.chk", "LTE_UU_012344819008_20181203101100.txt.chk", true);
         regexUtils.match("LTE_UU_.*_20[0-9]{6}(?!09|10|18|20)[0-9]{4}.*.txt.chk", "LTE_UU_012344819008_20181203101100.txt.chk");
         regexUtils.match("LTE_UU_*_20[0-9]{6}(00|01|02|03|04|05|06|07|08|11|12|13|14|15|16|17|19|21|22|23)[0-9]{4}*.txt.chk", "LTE_UU_013413819013_20181206085500.txt.chk", true);
+
+        regexUtils.match("SMS.*[^\\$]$", "SMSCZ13XIM02011051201812280958426547");
+        regexUtils.match("SMS.*[^\\$]$", "SMSCZ13XIM02011051201812280958426547", false);
+
+        regexUtils.match("20[0-9]{10}_(xml|epg)", "201901071020_xml", true);
+        regexUtils.match("(xml|epg)_20[0-9]{15}.txt", "xml_20190111111140762.txt", true);
     }
 }

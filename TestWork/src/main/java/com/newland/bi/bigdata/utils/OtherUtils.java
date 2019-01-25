@@ -1,21 +1,95 @@
 package com.newland.bi.bigdata.utils;
 
 import java.lang.management.ManagementFactory;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class OtherUtils {
-	public static String getCurrentPid() {
-		String name = ManagementFactory.getRuntimeMXBean().getName();
-		String pid = name.split("@")[0]; 
-		return pid;
-	}
-	
-	public static void sleep(long millis){
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+    private static final long TIME_OUT = 5000;//一小时过期
+    private static Map<Object, TimeOut> timeMaps = new HashMap<>();
 
+    public static OtherUtils newbuilder() {
+        return new OtherUtils();
+    }
 
+    public static String getCurrentPid() {
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        String pid = name.split("@")[0];
+        return pid;
+    }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 增加监控
+     *
+     * @param obj
+     */
+    public static void addTimeTag(Object obj) {
+        timeMaps.put(obj, TimeOut.builder(obj));
+        System.out.println("add：" + obj);
+    }
+
+    /**
+     * 获取对象的运行时长
+     *
+     * @param obj
+     * @return
+     */
+    public static long getTimeOut(Object obj) {
+        return timeMaps.get(obj) == null ? 0l : timeMaps.get(obj).getTime();
+    }
+
+    static class TimeOut {
+        Object object;
+        long time = 0l;
+        Timer timer;
+
+        public TimeOut(final Object object) {
+            this.object = object;
+            time = System.currentTimeMillis();
+        }
+
+        public TimeOut(final Object object, boolean isTimer) {
+            this(object);
+            if (isTimer) {
+                timer = new Timer(true);
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (timeMaps) {
+                            if (timeMaps.get(object) != null) {
+                                timeMaps.remove(object);
+                                System.out.println("remove：" + object);
+                            }
+                        }
+                    }
+                }, TIME_OUT);
+            }
+        }
+
+        public static TimeOut builder(Object object) {
+            return new TimeOut(object);
+        }
+
+        /**
+         * 返回运行时长之后从Map中移除，避免内存泄露
+         *
+         * @return
+         */
+        public long getTime() {
+            synchronized (timeMaps) {
+                timeMaps.remove(object);
+            }
+            return System.currentTimeMillis() - time;
+        }
+    }
 }

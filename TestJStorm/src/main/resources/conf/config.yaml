@@ -1,0 +1,13 @@
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 3072
+  name: EmitTest
+
+spout:
+  name: EmitTestSpout
+  parall: 1
+
+bolt:
+  name: EmitTestBolt
+  parall: 2

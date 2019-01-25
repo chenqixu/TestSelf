@@ -1,4 +1,6 @@
-package com.cqx.exception.base;
+package com.cqx.exception;
+
+import com.cqx.exception.base.ErrorCode;
 
 /**
  * 分布式采集错误码

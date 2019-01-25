@@ -20,9 +20,9 @@ public class DBMysql {
 //			String dbUrl="jdbc:mysql://edc-verf-mn03/hive";
 //			String dbUsername="hive";
 //			String dbPassword="bch";
-			String dbUrl="jdbc:mysql://10.1.8.96:3306/caohui_test?useUnicode=true";
-			String dbUsername="homebroadband";
-			String dbPassword="123456";
+			String dbUrl="jdbc:mysql://10.1.8.78:3306/fj_udap_oozie?useUnicode=true";
+			String dbUsername="oozie";
+			String dbPassword="oozie";
 	        // 加载数据库驱动类
 			Class.forName(DriverClassName);
 			conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -38,7 +38,7 @@ public class DBMysql {
 		// 返回值
 		String value = "";
 		// 查询sql
-		String sql = "select * from home_user_info";
+		String sql = "select * from WF_JOBS";
 		// 预编译sql语句声明
 		PreparedStatement pstmt =  null;
 		// 结果集
@@ -52,8 +52,9 @@ public class DBMysql {
 				while(rs!=null && rs.next()){
 					//获得结果
 //					rs.next();
-					value = rs.getString("user_name");
-					System.out.println("[user_name]"+value);
+					value = rs.getString(1);
+					System.out.println("[1]"+value);
+					break;
 				}
 			}
 			// 数据库操作完成后，关闭相关的连接资源，这里不关闭连接

@@ -1,7 +1,8 @@
 package com.newland.bi.mobilebox.bean;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import com.alibaba.fastjson.JSON;
+
+import java.util.List;
 
 /**
  * 一级分类维表
@@ -9,45 +10,93 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author chenqixu
  */
 public class EpgTag {
+
+    private static final String SPLIT_STR = "$";
+
     private String catgId;//EPG的ID
     private String fId;//EPG的父ID
     private String catgName;//EPG的名称
-    private String dt;//时间分区
+    private String actionType;//动作
+    private String contentType;//类型
+    private List<EpgTag> subCatgs;//子EPG
+
+    public static EpgTag newbuilder() {
+        return new EpgTag();
+    }
+
+    public static EpgTag jsonToBean(String string) {
+        return JSON.parseObject(string, EpgTag.class);
+    }
+
+    public EpgTag build() {
+        return this;
+    }
+
+//    @Override
+//    public String toString() {
+//        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+//    }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        return catgId + SPLIT_STR + fId + SPLIT_STR + catgName + SPLIT_STR;
+    }
+
+    public String toJson() {
+        return JSON.toJSONString(this);
     }
 
     public String getCatgId() {
         return catgId;
     }
 
-    public void setCatgId(String catgId) {
+    public EpgTag setCatgId(String catgId) {
         this.catgId = catgId;
+        return this;
     }
 
     public String getfId() {
         return fId;
     }
 
-    public void setfId(String fId) {
+    public EpgTag setfId(String fId) {
         this.fId = fId;
+        return this;
     }
 
     public String getCatgName() {
         return catgName;
     }
 
-    public void setCatgName(String catgName) {
+    public EpgTag setCatgName(String catgName) {
         this.catgName = catgName;
+        return this;
     }
 
-    public String getDt() {
-        return dt;
+    public String getActionType() {
+        return actionType;
     }
 
-    public void setDt(String dt) {
-        this.dt = dt;
+    public EpgTag setActionType(String actionType) {
+        this.actionType = actionType;
+        return this;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public EpgTag setContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public List<EpgTag> getSubCatgs() {
+        return subCatgs;
+    }
+
+    public EpgTag setSubCatgs(List<EpgTag> subCatgs) {
+        this.subCatgs = subCatgs;
+        return this;
     }
 }

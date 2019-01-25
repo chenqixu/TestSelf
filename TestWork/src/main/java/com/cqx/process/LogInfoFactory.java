@@ -1,33 +1,15 @@
 package com.cqx.process;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 public class LogInfoFactory implements Logger {
-    //	private static LogInfoFactory log = new LogInfoFactory();
-    private static String LEVEL = PropertyUtil.getProperty("logger", "INFO");
-    private int LEVELCODE = 0;
     public final static String SPLIT_STR = "\\{\\}";
     public final static String BLANK_SPACE = " ";
-    private Class<?> cs = null;
+    //	private static LogInfoFactory log = new LogInfoFactory();
+    private static String LEVEL = PropertyUtil.getProperty("logger", "INFO");
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    public enum EnumLevel {
-        ERR("ERR"),
-        INFO("INFO"),
-        WARN("WARN"),
-        DEBUG("DEBUG");
-
-        private final String code;
-
-        private EnumLevel(String code) {
-            this.code = code;
-        }
-
-        public String getCode() {
-            return this.code;
-        }
-    }
+    private int LEVELCODE = 0;
+    private Class<?> cs = null;
 
     private LogInfoFactory() {
         setLevel();
@@ -38,6 +20,10 @@ public class LogInfoFactory implements Logger {
         this.cs = cs;
     }
 
+    public static synchronized LogInfoFactory getInstance(Class<?> cs) {
+        return new LogInfoFactory(cs);
+    }
+
 //	public static synchronized LogInfoFactory getInstance(){
 //		return log!=null?log:new LogInfoFactory();
 //	}
@@ -46,8 +32,11 @@ public class LogInfoFactory implements Logger {
 //		return new LogInfoFactory();
 //	}
 
-    public static synchronized LogInfoFactory getInstance(Class<?> cs) {
-        return new LogInfoFactory(cs);
+    // TODO 循环判断类名，如果是线程，得打印线程名
+    public static String getLineInfo() {
+        StackTraceElement[] ste = new Throwable().getStackTrace();
+//        System.out.println("getLineInfo：" + Arrays.asList(ste));
+        return ":" + ste[ste.length - 2].getLineNumber();
     }
 
     /**
@@ -104,13 +93,6 @@ public class LogInfoFactory implements Logger {
         return this.LEVELCODE;
     }
 
-    // TODO 循环判断类名，如果是线程，得打印线程名
-    public static String getLineInfo() {
-        StackTraceElement[] ste = new Throwable().getStackTrace();
-//        System.out.println("getLineInfo：" + Arrays.asList(ste));
-        return ":" + ste[ste.length - 2].getLineNumber();
-    }
-
     /**
      * 打印
      *
@@ -146,7 +128,7 @@ public class LogInfoFactory implements Logger {
         for (int i = 0; i < msgarr.length; i++) {
             sb.append(msgarr[i]);
             if (i < (msgarr.length - 1))
-                sb.append(objs[i]);
+                sb.append(objs == null ? "null" : objs[i]);
         }
         print(level, sb.toString());
     }
@@ -210,6 +192,23 @@ public class LogInfoFactory implements Logger {
             print(EnumLevel.DEBUG.getCode(), msg);
             if (throwable != null)
                 throwable.printStackTrace();
+        }
+    }
+
+    public enum EnumLevel {
+        ERR("ERR"),
+        INFO("INFO"),
+        WARN("WARN"),
+        DEBUG("DEBUG");
+
+        private final String code;
+
+        private EnumLevel(String code) {
+            this.code = code;
+        }
+
+        public String getCode() {
+            return this.code;
         }
     }
 }

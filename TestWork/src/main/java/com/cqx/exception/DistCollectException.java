@@ -1,4 +1,7 @@
-package com.cqx.exception.base;
+package com.cqx.exception;
+
+import com.cqx.exception.base.BaseException;
+import com.cqx.exception.base.ErrorCode;
 
 /**
  * 分布式采集组件异常
@@ -7,11 +10,11 @@ package com.cqx.exception.base;
  * @date 2018-10-29
  */
 public class DistCollectException extends BaseException {
-    public DistCollectException(ErrorCode errorCode, String message) {
+    public DistCollectException(com.cqx.exception.base.ErrorCode errorCode, String message) {
         super(errorCode, message);
     }
 
-    public DistCollectException(ErrorCode errorCode, Throwable throwable) {
+    public DistCollectException(com.cqx.exception.base.ErrorCode errorCode, Throwable throwable) {
         super(errorCode, throwable);
     }
 

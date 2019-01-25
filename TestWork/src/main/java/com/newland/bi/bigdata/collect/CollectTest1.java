@@ -24,7 +24,7 @@ public class CollectTest1 {
 	
 	/**
 	 * 去重
-	 * @param list
+	 * @param s
 	 * */
 	public static void duplicateRemoval(String s){
 		HashSet<String> hs = new HashSet<String>();
@@ -200,11 +200,11 @@ public class CollectTest1 {
 //			System.out.println(it.next());
 //		}		
 		
-//		String str = "数据导入,数据导入,数据导入,数据导入,数据导入,数据导出,数据导出,数据传送,数据传送,数据传送,数据传送,数据删除,数据删除,数据删除,调度,公共函数,预处理,采集,mr程序,mr程序,webservice服务,公共脚本,公共脚本";
-//		CollectTest1.duplicateRemoval(str);
+		String str = "数据导入,数据导入,数据导入,数据导入,数据导入,数据导出,数据导出,数据传送,数据传送,数据传送,数据传送,数据删除,数据删除,数据删除,调度,公共函数,预处理,采集,mr程序,mr程序,webservice服务,公共脚本,公共脚本";
+		CollectTest1.duplicateRemoval(str);
 		
-		CollectTest1 ct1 = new CollectTest1();
+//		CollectTest1 ct1 = new CollectTest1();
 //		printList(ct1.qryConn());
-		printList(ct1.qryConnDist());
+//		printList(ct1.qryConnDist());
 	}
 }
