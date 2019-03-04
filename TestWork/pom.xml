@@ -840,6 +840,7 @@
 		<dependency>
 			<groupId>com.cqx</groupId>
 			<artifactId>TestNetty</artifactId>
+            <version>1.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>

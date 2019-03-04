@@ -1,4 +1,6 @@
-package com.cqx.jersey;
+package com.cqx.jersey.service;
+
+import com.cqx.jersey.bean.Department;
 
 import java.util.ArrayList;
 import java.util.List;

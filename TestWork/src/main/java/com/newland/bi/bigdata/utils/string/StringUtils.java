@@ -193,4 +193,46 @@ public class StringUtils {
     public static void println(Object obj, String tag) {
         System.out.println(tag + obj);
     }
+
+    /**
+     * 给路径加上"/"
+     *
+     * @param path
+     * @return
+     */
+    public static String getEndsWithPath(String path) {
+        String _tmp = path;
+        if (!_tmp.endsWith("/")) {
+            _tmp = _tmp + "/";
+        }
+        return _tmp;
+    }
+
+    /**
+     * 给文件列表加上路径和后缀
+     *
+     * @param datalist
+     * @param path
+     * @param suffix
+     * @return
+     */
+    public static List<String> addPathAndSuffix(List<String> datalist, String path, String suffix) {
+        List<String> results = new ArrayList<>();
+        for (String str : datalist) {
+            results.add(StringUtils.getEndsWithPath(path) + str + suffix);
+        }
+        return results;
+    }
+
+    /**
+     * 给文件加上路径和后缀
+     *
+     * @param data
+     * @param path
+     * @param suffix
+     * @return
+     */
+    public static String addPathAndSuffix(String data, String path, String suffix) {
+        return StringUtils.getEndsWithPath(path) + data + suffix;
+    }
 }

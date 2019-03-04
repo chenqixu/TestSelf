@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author chenqixu
@@ -15,12 +16,10 @@ import java.util.Date;
  */
 public class FileTransferUtil {
 
-    private static Logger log = LoggerFactory.getLogger(FileTransferUtil.class);
-
     public static final int BUFFER_SIZE = 5 * 1024 * 1024; // 设置文件缓冲区为5M。加快下载速度
     public static final String FTP = "FTP";
     public static final String SFTP = "SFTP";
-
+    private static Logger log = LoggerFactory.getLogger(FileTransferUtil.class);
     private FtpCfg ftpCfg;
     private NlFtpClient client = null;
     private String borrower;
@@ -54,6 +53,19 @@ public class FileTransferUtil {
             FtpActivateClientMetrics.printStatus();
             throw new IOException("无法获取FTP连接.连接配置:" + ftpCfg, e);
         }
+    }
+
+    /**
+     * 根据路径，找出下面所有的文件
+     *
+     * @param remoteDir 远程目录
+     * @param recursion 是否递归子目录
+     * @param
+     * @return
+     * @throws Exception
+     */
+    public List<FTPFileInfo> getFilesInfo(String remoteDir, String sourceFileName, boolean recursion) throws Exception {
+        return client.getFilesInfo(remoteDir, sourceFileName, recursion);
     }
 
     /**
@@ -110,12 +122,20 @@ public class FileTransferUtil {
             return totalCount;
         }
 
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
+        }
+
         public void setTotalCount() {
             this.totalCount++;
         }
 
         public int getSuccessCount() {
             return successCount;
+        }
+
+        public void setSuccessCount(int successCount) {
+            this.successCount = successCount;
         }
 
         public void setSuccessCount() {
@@ -126,20 +146,12 @@ public class FileTransferUtil {
             return failCount;
         }
 
-        public void setFailCount() {
-            this.failCount++;
-        }
-
-        public void setTotalCount(int totalCount) {
-            this.totalCount = totalCount;
-        }
-
-        public void setSuccessCount(int successCount) {
-            this.successCount = successCount;
-        }
-
         public void setFailCount(int failCount) {
             this.failCount = failCount;
+        }
+
+        public void setFailCount() {
+            this.failCount++;
         }
 
     }
@@ -176,16 +188,16 @@ public class FileTransferUtil {
             return name;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         public long getSize() {
             return size;
         }
 
         public void setSize(long size) {
             this.size = size;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
 
         public String getPath() {

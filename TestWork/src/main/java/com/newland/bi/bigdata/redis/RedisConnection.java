@@ -15,10 +15,20 @@ public class RedisConnection implements java.sql.Connection {
     private RedisClient rc;
 
     public RedisConnection(String ip_ports) {
-        rc = RedisFactory.builder()
-                .setMode(RedisFactory.CLUSTER_MODE_TYPE)
-                .setIp_ports(ip_ports)
-                .build();
+        //判断能否使用,进行切割，无法切割就进入单机模式
+        if (ip_ports.split(",").length == 1) {
+            String[] arr = ip_ports.split(":");
+            rc = RedisFactory.builder()
+                    .setMode(RedisFactory.SINGLE_MODE_TYPE)
+                    .setIp(arr[0])
+                    .setPort(Integer.valueOf(arr[1]))
+                    .build();
+        } else {
+            rc = RedisFactory.builder()
+                    .setMode(RedisFactory.CLUSTER_MODE_TYPE)
+                    .setIp_ports(ip_ports)
+                    .build();
+        }
     }
 
     @Override

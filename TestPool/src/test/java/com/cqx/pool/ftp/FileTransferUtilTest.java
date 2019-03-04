@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class FileTransferUtilTest {
 
     private static Logger log = LoggerFactory.getLogger(FileTransferUtilTest.class);
@@ -17,7 +19,7 @@ public class FileTransferUtilTest {
     @Before
     public void setUp() throws Exception {
         ftpCfg = new FtpCfg();
-        ftpCfg.setHost("10.1.8.78");
+        ftpCfg.setHost("10.1.8.81");
         ftpCfg.setUser("edc_base");
         ftpCfg.setPassword("edc_base");
         ftpCfg.setPort(21);
@@ -25,23 +27,16 @@ public class FileTransferUtilTest {
 
     @Test
     public void testFtpUtil() throws Exception {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        log.info("testFtpUtil");
-                        FileTransferUtil ftpUtil = new FileTransferUtil(ftpCfg);
-                        log.info("get ftp conn：{}", ftpUtil);
-                        ftpUtil.disconnect();
-                        log.info("disconnect");
-                        Thread.sleep(5000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-        Thread.sleep(1000000);
+        try {
+            log.info("testFtpUtil");
+            FileTransferUtil ftpUtil = new FileTransferUtil(ftpCfg);
+            log.info("get ftp conn：{}", ftpUtil);
+            List<FileTransferUtil.FTPFileInfo> ftplist = ftpUtil.getFilesInfo("/fbscj/sourcebak/", "14*.txt.gz.ok", false);
+            log.info("ftplist.size：{}", ftplist.size());
+            ftpUtil.disconnect();
+            log.info("disconnect");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

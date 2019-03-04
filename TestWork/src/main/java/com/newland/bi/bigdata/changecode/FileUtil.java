@@ -3,6 +3,7 @@ package com.newland.bi.bigdata.changecode;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * 文件工具
@@ -40,6 +41,41 @@ public class FileUtil {
             e.printStackTrace();
         }
         return resultlist;
+    }
+
+    /**
+     * 通过路径读取文件内容到List
+     *
+     * @param path
+     * @param read_code
+     * @return
+     */
+    public List<String> read(String path, String read_code) {
+        File file = null;
+        BufferedReader reader = null;
+        List<String> sublist = new Vector<String>();
+        try {
+            file = new File(path);
+            if (file.isFile()) {
+                reader = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(file), read_code));
+                String _tmp = null;
+                while ((_tmp = reader.readLine()) != null) {
+                    sublist.add(_tmp);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sublist;
     }
 
     public void createFile(String filename, String write_code)

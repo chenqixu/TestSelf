@@ -14,8 +14,28 @@ import java.util.Date;
  */
 public class TimeHelper {
 
-    protected static final Logger log = LoggerFactory.getLogger(TimeHelper.class);
+    protected static final Logger logger = LoggerFactory.getLogger(TimeHelper.class);
     protected static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHH");
+
+    /**
+     * 补0
+     *
+     * @param date
+     * @return
+     */
+    public static String supplementZero(String date) {
+        StringBuffer sb = null;
+        if (date != null && date.trim().length() > 0 && !date.contains(":")) {
+            sb = new StringBuffer(date);
+            int datalen = date.length();
+            if (datalen < 14) {
+                for (int i = datalen; i < 14; i++) {
+                    sb.append("0");
+                }
+            }
+        }
+        return sb != null ? sb.toString() : null;
+    }
 
     /**
      * 时间比较
@@ -31,17 +51,21 @@ public class TimeHelper {
      * @return 文件周期
      */
     public static int timeComparison(String time1, String time2) {
-        try {
-            // SimpleDateFormat高并发情况下必须同步
+        if (time1 != null && time2 != null) {
+            // 先补0，再比较
+            String _time1 = supplementZero(time1);
+            String _time2 = supplementZero(time2);
+            // 高并发情况下必须同步simpleDateFormat，具体参考SimpleDateFormat类说明
             synchronized (simpleDateFormat) {
-                long l1 = simpleDateFormat.parse(time1).getTime();
-                long l2 = simpleDateFormat.parse(time2).getTime();
-                return (l1 - l2 > 0) ? 1 : (l1 - l2 < 0 ? -1 : 0);
+                try {
+                    long l1 = simpleDateFormat.parse(_time1).getTime();
+                    long l2 = simpleDateFormat.parse(_time2).getTime();
+                    return (l1 - l2 > 0) ? 1 : (l1 - l2 < 0 ? -1 : 0);
+                } catch (ParseException e) {
+                    logger.error("★★★ 时间比较异常，时间1 {}，时间2 {}", time1, time2);
+                    logger.error("★★★ 具体错误信息：" + e.getMessage(), e);
+                }
             }
-        } catch (ParseException e) {
-            log.error("★★★ 时间比较异常，时间1 {}，时间2 {}", time1, time2);
-            log.error("★★★ 具体错误信息：{}", e.getMessage(), e);
-            // e.printStackTrace();
         }
         return 2;
     }
@@ -59,7 +83,7 @@ public class TimeHelper {
         try {
             return (simpleDateFormat.parse(time2).getTime() - simpleDateFormat.parse(time1).getTime()) / 1000;
         } catch (ParseException e) {
-            log.error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         return 0;
     }

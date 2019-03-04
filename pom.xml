@@ -50,5 +50,6 @@
         <module>TestNetty</module>
         <module>TestWeb</module>
         <module>TestPool</module>
+        <module>TestCommon</module>
     </modules>
 </project>

@@ -30,7 +30,7 @@ public class CurrentWriterMap {
 	public synchronized void putWriter(AbstractHDFSWriter value) {
 		WriterBean wb = new WriterBean(value);
 		// 更新map对象
-		writer.put(wb.getPathAndFilename(), wb);
+		writer.put(wb.getPathAndFileName(), wb);
 		iterator = writer.entrySet().iterator();
 		// 落地对象最小周期为空，更新
 		if(minCycle==null)

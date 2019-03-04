@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * TODO
+ * StaticThreadSleep
  *
  * @author chenqixu
  * @date 2018/11/29 16:30

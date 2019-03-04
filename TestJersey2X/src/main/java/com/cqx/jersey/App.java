@@ -9,6 +9,6 @@ import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
  * */
 public class App {
 	public static void main(String[] args) {
-		JettyHttpContainerFactory.createServer(URI.create("http://localhost:8082/"), new RestApplication());
+		JettyHttpContainerFactory.createServer(URI.create("http://localhost:18061/"), new RestApplication());
 	}
 }

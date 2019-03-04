@@ -317,10 +317,17 @@ public class NlFtpClient {
         long start = System.currentTimeMillis();
 
         try {
-            files = client.dirDetails(remoteDir + sourceFileName);
+            files = client.dirDetails(remoteDir);// 获取目录下的所有文件和文件夹
             totleNum = files.length;
             log.info(this.ftpCfg.getHost() + remoteDir + "获取到所有文件数量:" + files.length);
         } catch (SSHFTPException e) {
+            /*
+             * com.enterprisedt.net.ftp.ssh.SSHFTPException: The SSH client has not yet
+             * connected to the server. The requested action cannot be performed until after
+             * a connection has been established.java.io.IOException: The channel is closed
+             * [Unnamed Channel]java.io.IOException: Unexpected server response
+             * nulljava.io.IOException: The thread was interrupted
+             */
             log.error(this.ftpCfg.getHost() + "服务器ftp连接时出现SSHFTPException异常,此时的ftp连接状态:" + this.isConnected(), e);
             throw e;
         } catch (Exception e) {
@@ -350,13 +357,21 @@ public class NlFtpClient {
                 }
             } else {
                 String name = ftpFile.getName();
-                if ((ftpFile.isFile() || ftpFile.isLink())) { // 不做过滤逻辑了，直接由ftp服务器进行过滤 && matchFile(name, sourceFileName)
+                if ((ftpFile.isFile() || ftpFile.isLink()) && matchFile(name, sourceFileName)) {
+                    // log.info("获取到文件，"+name + "文件大小:===" + ftpFile.size());
                     fileInfos.add(new FTPFileInfo(ftpFile, remoteDir, this.ftpCfg.getHost()));
+                } else {
+                    log.debug("{}过滤掉文件名:{}", sourceFileName, name);
+                    nameFilterNum++; // 文件名过滤
+                    continue;
                 }
             }
         }
-        log.info(this.ftpCfg.getHost() + remoteDir + "本次扫描到文件数量:{}. 符合条件的文件数量{}", totleNum, fileInfos.size());
+        log.info(this.ftpCfg.getHost() + remoteDir + "总扫描文件数量:{}. 文件名规则过滤掉的文件数量:{} ，满足扫描表达式文件数量:{}", totleNum, nameFilterNum, fileInfos.size());
+        if (nameFilterNum > 10000 && totleNum - nameFilterNum < 1000) {
+            log.warn(this.ftpCfg.getHost() + remoteDir + "目录下含有大量不在处理范围内的文件，可能影响扫描性能。");
 
+        }
         return fileInfos;
     }
 

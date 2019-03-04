@@ -1,4 +1,4 @@
-package com.cqx.jersey;
+package com.cqx.jersey.bean;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

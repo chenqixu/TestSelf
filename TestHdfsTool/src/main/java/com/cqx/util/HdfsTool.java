@@ -70,7 +70,7 @@ public class HdfsTool {
      * @throws IOException
      */
     public static FileSystem getFileSystem(Configuration hadoopConfig) throws IOException {
-        return FileSystem.get(hadoopConfig);
+        return FileSystem.newInstance(hadoopConfig);
     }
 
     /**
@@ -119,19 +119,28 @@ public class HdfsTool {
      *
      * @return
      */
-    public static Configuration getLocalConf() {
+    public static Configuration getLocalConf(String conf_path) {
         Configuration hadoopConfig = new Configuration();
         String path;
         if (isWindow()) {
             path = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\resources\\conf75\\";
-            hadoopConfig.set("mapreduce.framework.name", "local");
-            hadoopConfig.set("fs.defaultFS", "file:///");
         } else {
-            path = "/etc/hadoop/conf/";
+            if (conf_path != null)
+                path = conf_path;
+            else
+                path = "/etc/hadoop/conf/";
         }
         hadoopConfig.addResource(new Path(path + "core-site.xml"));
         hadoopConfig.addResource(new Path(path + "hdfs-site.xml"));
         hadoopConfig.addResource(new Path(path + "mapred-site.xml"));
+        hadoopConfig.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+        if (isWindow()) {
+            hadoopConfig.set("mapreduce.framework.name", "local");
+            hadoopConfig.set("fs.defaultFS", "file:///");
+            hadoopConfig.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+        } else {
+        }
+        logger.info("hadoopConfig：{}", hadoopConfig);
         return hadoopConfig;
     }
 
@@ -140,7 +149,7 @@ public class HdfsTool {
      *
      * @return
      */
-    private static boolean isWindow() {
+    public static boolean isWindow() {
         String systemType = System.getProperty("os.name");
         if (systemType.toUpperCase().startsWith("WINDOWS")) {
             return true;

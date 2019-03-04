@@ -48,6 +48,22 @@ public class OtherUtils {
         return timeMaps.get(obj) == null ? 0l : timeMaps.get(obj).getTime();
     }
 
+    /**
+     * @return 返回微秒
+     */
+    public static Long getMicTime() {
+        Long cutime = System.currentTimeMillis() * 1000; // 微秒
+        Long nanoTime = System.nanoTime(); // 纳秒
+        return cutime + (nanoTime - nanoTime / 1000000 * 1000000) / 1000;
+    }
+
+    /**
+     * @return 返回毫秒
+     */
+    public static Long getMillisTime() {
+        return System.currentTimeMillis();
+    }
+
     static class TimeOut {
         Object object;
         long time = 0l;

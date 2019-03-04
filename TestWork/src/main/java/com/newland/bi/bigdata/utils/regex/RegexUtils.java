@@ -104,5 +104,6 @@ public class RegexUtils {
 
         regexUtils.match("20[0-9]{10}_(xml|epg)", "201901071020_xml", true);
         regexUtils.match("(xml|epg)_20[0-9]{15}.txt", "xml_20190111111140762.txt", true);
+        regexUtils.match("G900[2-6][0-9]{16}_[0-9]{6}.tra", "G90062019021200059901_092637.tra", true);
     }
 }

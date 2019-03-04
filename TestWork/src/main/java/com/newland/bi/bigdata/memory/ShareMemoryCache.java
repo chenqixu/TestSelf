@@ -1,10 +1,19 @@
 package com.newland.bi.bigdata.memory;
 
+import com.newland.bi.bigdata.metric.MetricsUtil;
+import com.newland.bi.bigdata.utils.string.StringUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 共享内存缓存
@@ -19,12 +28,194 @@ public class ShareMemoryCache {
     private int mode;
     private FileLock fileLock;
 
-    public ShareMemoryCache() throws Exception {
+    private String datafilename;
+    private String idfilename;
 
+    private RandomAccessFile datafile;
+    private RandomAccessFile idfile;
+
+    private RafMap rafMap;
+    private MemoryTest memoryTest;
+    private MyRandomAccessFile mydatafile;
+
+    private ShareMemoryCache() {
     }
 
-    public void register() {
+    public static ShareMemoryCache newbuilder() {
+        return new ShareMemoryCache();
+    }
 
+    public static void main(String[] args) throws Exception {
+        MetricsUtil ms = MetricsUtil.builder();
+        ms.addTimeTag();
+        String datapath = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestWork\\src\\main\\resources\\data\\yyzs";
+        String datafilename = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestWork\\src\\main\\resources\\data\\yyzs\\memoryfile.txt";
+        List<String> idfiles = new ArrayList<String>();
+        idfiles = MemoryTest.builder().getIdfiles();
+//        idfiles.add("123");
+//        idfiles.add("456");
+        ShareMemoryCache shareMemoryCache = ShareMemoryCache
+                .newbuilder()
+                .setDatafilename(datafilename);
+        shareMemoryCache.init();
+//        shareMemoryCache.writeData(idfiles, 3);
+//        shareMemoryCache.writeData(datapath, "567", 3, 10);
+//        shareMemoryCache.writeData(datapath, "1234", 3, 10);
+//        shareMemoryCache.getDataFromFile(datapath, "567", 10);
+//        shareMemoryCache.getDataFromFile(datapath, "1234", 10);
+        for (String _tmp : idfiles) {
+            shareMemoryCache.getDataFromFile(datapath, _tmp, 10);
+        }
+        System.out.println("spend：" + ms.getTimeOut());
+        shareMemoryCache.closeAll();
+    }
+
+    public void init() throws FileNotFoundException {
+        rafMap = new RafMap();
+        memoryTest = MemoryTest.builder();
+        if (StringUtils.isNotEmpty(datafilename)) {
+            datafile = new RandomAccessFile(datafilename, MemoryCacheMode.READ_WRITE.getCode());
+            mydatafile = new MyRandomAccessFile(datafilename);
+        }
+        if (StringUtils.isNotEmpty(idfilename))
+            idfile = new RandomAccessFile(idfilename, MemoryCacheMode.READ_WRITE.getCode());
+    }
+
+    public String getData() throws IOException {
+        int start = idfile.readInt();
+        int end = idfile.readInt();
+        int length = idfile.readInt();
+        byte[] data = new byte[length];
+        datafile.read(data, start, end);
+        return new String(data);
+    }
+
+    public String getDataFromFile(String idfilename) throws IOException {
+        String result;
+        RandomAccessFile idfile = null;
+        try {
+            idfile = new RandomAccessFile(idfilename, MemoryCacheMode.READ_WRITE.getCode());
+            int start = idfile.readInt();
+            int end = idfile.readInt();
+            int length = idfile.readInt();
+            byte[] data = new byte[length];
+            datafile.seek(start);
+            datafile.read(data, 0, length);
+            result = new String(data);
+            System.out.println("start:" + start + ",end:" + end + ",length:" + length + ",result:" + result);
+        } finally {
+            if (idfile != null)
+                idfile.close();
+        }
+        return result;
+    }
+
+    public String getDataFromFile(String path, String derviceID, int dies) throws IOException {
+        String result;
+        int flag = getHashCodeDies(derviceID, dies);
+        String newfilename = StringUtils.getEndsWithPath(path) + flag + ".txt";
+        MyRandomAccessFile newraf = rafMap.get(newfilename, true);
+        result = newraf.getData();
+        int derviceindex = result.indexOf(derviceID);
+        int end = result.indexOf(";", derviceindex);
+        String find = result.substring(derviceindex + derviceID.length() + 1, end);
+        int off = Integer.valueOf(find.substring(0, find.indexOf(",")));
+        int len = Integer.valueOf(find.substring(find.indexOf(",") + 1));
+//        System.out.println("result:" + result + "，index:" + derviceindex + "，end:" + end + "，find:" + find + "，off:" + off + "，len:" + len);
+        result = mydatafile.read(off, len);
+//        System.out.println("result:" + result);
+        return result;
+    }
+
+    public void writeData(String path, String derviceID, int msglen, int dies) throws IOException {
+        String msg = memoryTest.random(msglen);
+//        String indexMsg = derviceID + "," + msg;
+        String indexMsg = derviceID;
+        int length = msg.length();
+        int flag = getHashCodeDies(derviceID, dies);
+        String newfilename = StringUtils.getEndsWithPath(path) + flag + ".txt";
+        MyRandomAccessFile newraf = rafMap.get(newfilename);
+        indexMsg = indexMsg + "," + mydatafile.getIndex() + "," + length + ";";
+        // 写数据文件
+        mydatafile.write(msg.getBytes(), 0, length);
+        // 写索引文件，格式：id,off,len;，如：567,0,3;
+        newraf.write(indexMsg.getBytes(), 0, indexMsg.length());
+    }
+
+    public void writeData(List<String> idfilenames, int msglen) throws IOException {
+        int start = 0;
+        int end = 0;
+
+        for (String idfilename : idfilenames) {
+            String msg = memoryTest.random(msglen);
+            int length = msg.length();
+            end = start + length;
+            System.out.println("start:" + start + ",end:" + end + ",length:" + length + ",msg:" + msg);
+            RandomAccessFile idfile = null;
+            try {
+                idfile = new RandomAccessFile(idfilename, MemoryCacheMode.READ_WRITE.getCode());
+                idfile.writeInt(start);
+                idfile.writeInt(end);
+                idfile.writeInt(length);
+            } finally {
+                if (idfile != null)
+                    idfile.close();
+            }
+            datafile.write(msg.getBytes(), 0, length);
+            start = end;
+        }
+    }
+
+    /**
+     * 产生随机文件名
+     *
+     * @param len
+     * @return
+     */
+    public List<String> createRandomFileName(String path, int len) {
+        List<String> files = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            files.add(StringUtils.getEndsWithPath(path) + memoryTest.random(32) + ".txt");
+        }
+        return files;
+    }
+
+    public void cleanfile(String filepath) {
+        File file = new File(filepath);
+        for (File _file : file.listFiles()) {
+            _file.deleteOnExit();
+        }
+    }
+
+    public void closeAll() {
+        if (datafile != null) {
+            try {
+                datafile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (idfile != null) {
+            try {
+                idfile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (rafMap != null) {
+            try {
+                rafMap.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (mydatafile != null) {
+            try {
+                mydatafile.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void createRandomAccessFile(String filename
@@ -86,7 +277,10 @@ public class ShareMemoryCache {
         }
         if (fileLock != null) {
             try {
-                fileLock.close();
+                if (fileLock.isValid()) {
+                    fileLock.close();
+                    System.out.println("fileLock.close");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -111,6 +305,20 @@ public class ShareMemoryCache {
         return true;
     }
 
+    public ShareMemoryCache setDatafilename(String datafilename) {
+        this.datafilename = datafilename;
+        return this;
+    }
+
+    public ShareMemoryCache setIdfilename(String idfilename) {
+        this.idfilename = idfilename;
+        return this;
+    }
+
+    public int getHashCodeDies(String derviceID, int dies) {
+        return Math.abs(derviceID.hashCode()) % dies;
+    }
+
     public enum MemoryCacheMode {
         READ_ONLY("r", FileChannel.MapMode.READ_ONLY),
         READ_WRITE("rw", FileChannel.MapMode.READ_WRITE);
@@ -129,6 +337,96 @@ public class ShareMemoryCache {
 
         public FileChannel.MapMode getMapMode() {
             return this.mapMode;
+        }
+    }
+
+    class MyRandomAccessFile {
+        int index = 0;
+        private RandomAccessFile randomAccessFile;
+        // 内容缓存，比较消耗内存
+        private String data;
+
+        public MyRandomAccessFile(String filename) throws FileNotFoundException {
+            randomAccessFile = new RandomAccessFile(filename, MemoryCacheMode.READ_WRITE.getCode());
+        }
+
+        public MyRandomAccessFile(String filename, boolean isGetData) throws IOException {
+            this(filename);
+            if (isGetData)
+                data = readAll();
+        }
+
+        public void write(byte[] b, int off, int len) throws IOException {
+            randomAccessFile.seek(index);
+            randomAccessFile.write(b, 0, len);
+            index += off + len;
+        }
+
+        public String read(int off, int len) throws IOException {
+            byte[] b = new byte[len];
+            randomAccessFile.seek(off);
+            randomAccessFile.read(b, 0, len);
+            return new String(b);
+        }
+
+        private String readAll() throws IOException {
+            int len = (int) randomAccessFile.length();
+            byte[] b = new byte[len];
+            randomAccessFile.seek(0);
+            randomAccessFile.read(b, 0, len);
+            return new String(b);
+        }
+
+        public void close() throws IOException {
+            if (randomAccessFile != null) {
+                // 关闭文件
+                randomAccessFile.close();
+            }
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getData() {
+            return data;
+        }
+    }
+
+    class RafMap {
+        // 索引文件引用缓存，不占资源
+        private Map<String, MyRandomAccessFile> idfileMap;
+
+        public RafMap() {
+            idfileMap = new HashMap<>();
+        }
+
+        public MyRandomAccessFile get(String key) throws FileNotFoundException {
+            MyRandomAccessFile myRandomAccessFile = idfileMap.get(key);
+            if (myRandomAccessFile == null) {
+                myRandomAccessFile = new MyRandomAccessFile(key);
+                put(key, myRandomAccessFile);
+            }
+            return myRandomAccessFile;
+        }
+
+        public MyRandomAccessFile get(String key, boolean isGetData) throws IOException {
+            MyRandomAccessFile myRandomAccessFile = idfileMap.get(key);
+            if (myRandomAccessFile == null) {
+                myRandomAccessFile = new MyRandomAccessFile(key, isGetData);
+                put(key, myRandomAccessFile);
+            }
+            return myRandomAccessFile;
+        }
+
+        public void put(String key, MyRandomAccessFile myRandomAccessFile) {
+            idfileMap.put(key, myRandomAccessFile);
+        }
+
+        public void close() throws IOException {
+            for (MyRandomAccessFile myRandomAccessFile : idfileMap.values()) {
+                myRandomAccessFile.close();
+            }
         }
     }
 }
