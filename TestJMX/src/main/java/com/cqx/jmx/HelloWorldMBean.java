@@ -6,4 +6,5 @@ public interface HelloWorldMBean {
 	void printGreeting();
 	boolean isPaused();
 	void pause(boolean paused);
+	String exec(String cmd);
 }

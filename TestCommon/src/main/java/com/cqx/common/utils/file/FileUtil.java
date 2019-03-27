@@ -84,10 +84,20 @@ public class FileUtil {
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile), write_code));
     }
 
-    public void write(String msg) {
+    public void write(String str) {
         try {
             if (writer != null) {
-                writer.write(msg);
+                writer.write(str);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void write(String s, int off, int len) {
+        try {
+            if (writer != null) {
+                writer.write(s, off, len);
             }
         } catch (Exception e) {
             e.printStackTrace();

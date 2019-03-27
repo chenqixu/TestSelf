@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>TestHdfsTool</artifactId>
 	<properties>
-		<hadoop.version>2.4.0</hadoop.version>
+		<hadoop.version>2.8.2</hadoop.version>
 		<hadoop.mr.version>2.4.0</hadoop.mr.version>
 		<hbase.version>0.98.1-cdh5.1.0</hbase.version>
 	</properties>
