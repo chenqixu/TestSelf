@@ -9,6 +9,7 @@ import com.cqx.exception.base.ErrorCode;
  */
 public enum TestSelfErrorCode implements ErrorCode {
     ZK_CLIENT_NULL("tse-001", "zookeeper客户端没有连接"),
+    ZK_NOT_EXIST_PATH("tse-002", "路径不存在"),
     ;
 
     private final String code;

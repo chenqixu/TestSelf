@@ -74,10 +74,9 @@ public class MyExecutor {
 
             @Override
             public void run() {
-                int mod = atomicInteger.incrementAndGet();
-                mod--;
+                int mod = heartUtil.getHeartMod();
                 int count = 0;
-                logger.info("{} run. start is：{}", this, count);
+                logger.info("{} run. start is：{}，heartMod：{}", this, count, mod);
                 TimeCostUtil timeCostUtil = new TimeCostUtil();
                 timeCostUtil.start();
                 while (queue.poll() != null) {
@@ -113,10 +112,9 @@ public class MyExecutor {
 
             @Override
             public Long call() throws Exception {
-                int mod = atomicInteger.incrementAndGet();
-                mod--;
+                int mod = heartUtil.getHeartMod();
                 int count = 0;
-                logger.info("{} run. start is：{}", this, count);
+                logger.info("{} run. start is：{}，heartMod：{}", this, count, mod);
                 TimeCostUtil timeCostUtil = new TimeCostUtil();
                 timeCostUtil.start();
                 while (queue.poll() != null) {

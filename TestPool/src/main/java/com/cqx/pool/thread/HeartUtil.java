@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 心跳工具
@@ -14,9 +15,21 @@ import java.util.Map;
 public class HeartUtil {
     private static Logger logger = LoggerFactory.getLogger(HeartUtil.class);
     private volatile Map<Integer, String> heartMap;
+    private AtomicInteger heartMod = new AtomicInteger();
 
     public HeartUtil() {
         this.heartMap = new HashMap<>();
+    }
+
+    /**
+     * 获取心跳的标志，从0开始
+     *
+     * @return
+     */
+    public int getHeartMod() {
+        int mod = heartMod.incrementAndGet();
+        mod--;
+        return mod;
     }
 
     /**

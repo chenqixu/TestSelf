@@ -6,8 +6,14 @@ import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
+import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.utils.CloseableUtils;
+import org.apache.zookeeper.CreateMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +22,10 @@ import java.util.List;
 public class ZookeeperTools {
 
     public static ZookeeperTools zookeeperTools = new ZookeeperTools();
+    private static Logger logger = LoggerFactory.getLogger(ZookeeperTools.class);
     private CuratorFramework client;
     private RetryPolicy retryPolicy;
+//    private List<PersistentEphemeralNode> persistentEphemeralNodeList = new ArrayList<>();
 
     private ZookeeperTools() {
     }
@@ -34,7 +42,7 @@ public class ZookeeperTools {
 
     public void init(String connectionInfo) {
         //策略：重试3次，间隔1秒
-        RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
+        retryPolicy = new ExponentialBackoffRetry(1000, 3);
         //创建客户端
         client = CuratorFrameworkFactory.builder()
                 .connectString(connectionInfo)
@@ -56,6 +64,11 @@ public class ZookeeperTools {
 
     public void close() throws TestSelfException {
         checkClient();
+//        if (persistentEphemeralNodeList != null && persistentEphemeralNodeList.size() > 0)
+//            for (PersistentEphemeralNode persistentEphemeralNode : persistentEphemeralNodeList)
+//                CloseableUtils.closeQuietly(persistentEphemeralNode);
+//        CloseableUtils.closeQuietly(client);
+//        or
         client.close();
     }
 
@@ -67,9 +80,9 @@ public class ZookeeperTools {
         checkClient();
         if (client.checkExists().forPath(path) == null) {
             if (data != null) {
-                if (client.create().forPath(path, data) != null) return true;
+                if (client.create().creatingParentsIfNeeded().forPath(path, data) != null) return true;
             } else {
-                if (client.create().forPath(path) != null) return true;
+                if (client.create().creatingParentsIfNeeded().forPath(path) != null) return true;
             }
         }
         return false;
@@ -77,6 +90,25 @@ public class ZookeeperTools {
 
     public boolean createNode(String path) throws Exception {
         return createNode(path, null);
+    }
+
+    public boolean createPersistentEphemeralNode(String path, byte[] data) throws Exception {
+        checkClient();
+//        PersistentEphemeralNode persistentEphemeralNode = new PersistentEphemeralNode(client,
+//                PersistentEphemeralNode.Mode.EPHEMERAL, path, data);
+//        persistentEphemeralNode.start();
+//        persistentEphemeralNode.waitForInitialCreate(3, TimeUnit.SECONDS);
+//        String actualPath = persistentEphemeralNode.getActualPath();
+////        logger.info("actualPath：{}，getNodeInfo：{}", actualPath, getNodeInfo(actualPath));
+//        persistentEphemeralNodeList.add(persistentEphemeralNode);
+//        return actualPath != null ? true : false;
+        if (client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path, data) != null)
+            return true;
+        return false;
+    }
+
+    public boolean createPersistentEphemeralNode(String path) throws Exception {
+        return createPersistentEphemeralNode(path, "".getBytes());
     }
 
     public List<String> listForPath(String path) throws Exception {
@@ -89,5 +121,18 @@ public class ZookeeperTools {
         if (client.checkExists().forPath(path) != null) {
             client.delete().forPath(path);
         }
+    }
+
+    public byte[] getNodeInfo(String path) throws Exception {
+        checkClient();
+        if (client.checkExists().forPath(path) != null) {
+            return client.getData().forPath(path);
+        }
+        throw new TestSelfException(TestSelfErrorCode.ZK_NOT_EXIST_PATH, path + "路径不存在！");
+    }
+
+    public boolean exists(String path) throws Exception {
+        checkClient();
+        return client.checkExists().forPath(path) != null ? true : false;
     }
 }

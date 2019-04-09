@@ -1,5 +1,6 @@
 package com.cqx.jmx;
 
+import com.cqx.jmx.util.IJMXClient;
 import com.cqx.jmx.util.JMXClientFactory;
 import com.cqx.jmx.util.LogInfoFactory;
 
@@ -47,7 +48,7 @@ public class HelloClient {
     }
 
     public void startClient(String beanname) {
-        JMXClientFactory.JMXClientUtil jmxClientUtil = JMXClientFactory.startJMXClient(beanname);
+        IJMXClient jmxClientUtil = JMXClientFactory.startJMXClient(beanname);
         boolean paused = jmxClientUtil.getAttributeByName("Paused");
         log.info(paused + "");
         jmxClientUtil.setAttributeByName("pause", "boolean", !paused);

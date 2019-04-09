@@ -75,7 +75,7 @@ public class JMXClientFactory {
         getJMXClientUtil(jmxClientFactoryBean).startJMXClient(jmxClientFactoryBean);
     }
 
-    public class JMXClientUtil {
+    private class JMXClientUtil implements IJMXClient {
         JMXServiceURL url;
         MBeanServerConnection server;
         ObjectName mbeanName;
