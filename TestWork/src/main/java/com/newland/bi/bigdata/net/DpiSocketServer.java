@@ -1,5 +1,9 @@
 package com.newland.bi.bigdata.net;
 
+import com.newland.bi.bigdata.net.impl.AcceptDealFile;
+import com.newland.bi.bigdata.net.impl.AcceptDealNetBean;
+import com.newland.bi.bigdata.net.impl.AcceptDealString;
+import com.newland.bi.bigdata.net.impl.IAcceptDeal;
 import com.newland.bi.bigdata.utils.SleepUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +50,16 @@ public class DpiSocketServer {
                 try {
                     // 接受客户端请求，阻塞状态
                     Socket client = serverSocket.accept();
-                    if (client != null)
-                        new AcceptDeal(client).start();
+                    if (client != null) {
+                        IAcceptDeal iAcceptDeal = new AcceptDealNetBean(client);
+                        iAcceptDeal.init();
+                        iAcceptDeal.start();
+                    }
                 } catch (SocketTimeoutException e) {
                     logger.info(e.getMessage());
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             if (serverSocket != null) {
@@ -77,8 +84,11 @@ public class DpiSocketServer {
             while (status) {
                 // 接受客户端请求，阻塞状态
                 Socket client = serverSocket.accept();
-                if (client != null)
-                    new AcceptDeal(client).start();
+                if (client != null) {
+                    IAcceptDeal iAcceptDeal = new AcceptDealFile(client);
+                    iAcceptDeal.init();
+                    iAcceptDeal.start();
+                }
             }
         } catch (SocketException e) {
             if (e.getMessage().equals("socket closed")) {
@@ -86,7 +96,7 @@ public class DpiSocketServer {
             } else {
                 logger.error(e.getMessage(), e);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             if (serverSocket != null) {
@@ -123,76 +133,4 @@ public class DpiSocketServer {
         }
     }
 
-    /**
-     * 客户端处理线程
-     *
-     * @author chenqixu
-     */
-    class AcceptDeal extends Thread {
-        static final String LANG = "utf-8";
-        private BufferedReader br = null;
-        private Socket client;
-        private PrintWriter pw = null;
-        private boolean status;
-
-        public AcceptDeal(Socket client) {
-            logger.info("{} accetp client：{}", this, client);
-            this.client = client;
-            try {
-                br = new BufferedReader(new InputStreamReader(client.getInputStream(),
-                        Charset.forName(LANG)));
-                pw = new PrintWriter(client.getOutputStream(), true);
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-            status = true;
-        }
-
-        @Override
-        public void run() {
-            String content;
-            try {
-                while (status) {
-                    while ((content = br.readLine()) != null) {
-                        logger.info("client：{}，read content：{}", client, content);
-                        if (content.equals("close")) {
-//                            br.close();
-//                            pw.close();
-//                            client.shutdownInput();
-//                            client.shutdownOutput();
-//                            client.close();
-                            status = false;
-                            break;
-                        } else {
-                            pw.println(content + "|replay");
-                        }
-                    }
-                    SleepUtils.sleepMilliSecond(500);
-                    logger.info("{} sleep 500，isClosed：{}，isConnected：{}，" +
-                                    "isBound：{}，isInputShutdown：{}，isOutputShutdown：{}",
-                            this, client.isClosed(), client.isConnected(),
-                            client.isBound(), client.isInputShutdown(), client.isOutputShutdown());
-                }
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            } finally {
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-                if (pw != null)
-                    pw.close();
-                if (client != null) {
-                    try {
-                        client.close();
-                    } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
-            }
-        }
-    }
 }

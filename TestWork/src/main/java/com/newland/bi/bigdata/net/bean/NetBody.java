@@ -21,4 +21,8 @@ public class NetBody implements Serializable {
     public void setValue(Object object) {
         this.object = object;
     }
+
+    public String toString() {
+        return object.toString();
+    }
 }

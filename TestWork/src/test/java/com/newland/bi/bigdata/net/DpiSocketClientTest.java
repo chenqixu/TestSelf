@@ -2,6 +2,7 @@ package com.newland.bi.bigdata.net;
 
 import com.newland.bi.bigdata.net.bean.NetBean;
 import com.newland.bi.bigdata.thread.ExecutorsFactory;
+import com.newland.bi.bigdata.thread.IExecutorsRun;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,20 +22,21 @@ public class DpiSocketClientTest {
 
     @Before
     public void setUp() throws Exception {
-//        executorsFactory = new ExecutorsFactory(parallel_num);
-//        for (int i = 0; i < parallel_num; i++) {
-//            DpiSocketClient dpiSocketClient = new DpiSocketClient(server_ip, server_port);
-//            dpiSocketClient.connect();
-//            dpiSocketClientMap.put(i, dpiSocketClient);
-//        }
-//        executorsFactory.setiExecutorsRun(new IExecutorsRun() {
-//            @Override
-//            public void run() throws Exception {
-////                connectAndSend(getRandomStr(10));
+        executorsFactory = new ExecutorsFactory(parallel_num);
+        for (int i = 0; i < parallel_num; i++) {
+            DpiSocketClient dpiSocketClient = new DpiSocketClient(server_ip, server_port);
+            dpiSocketClient.connect();
+            dpiSocketClientMap.put(i, dpiSocketClient);
+        }
+        executorsFactory.setiExecutorsRun(new IExecutorsRun() {
+            @Override
+            public void run() throws Exception {
+//                connectAndSend(getRandomStr(10));
 //                for (int i = 0; i < 100; i++)
 //                    connectAndSend(i % parallel_num, getRandomStr(10));
-//            }
-//        });
+                connectAndSendFile();
+            }
+        });
     }
 
     @Test
@@ -52,6 +54,10 @@ public class DpiSocketClientTest {
 
     private void connectAndSend(int mod, String data) {
         dpiSocketClientMap.get(mod).sendMsg(data);
+    }
+
+    private void connectAndSendFile() {
+        dpiSocketClientMap.get(0).sendMsg("d:\\tmp\\data\\dpi\\dpi_gndata\\Uar_103_01_rtsp_session_60_20190411_081400_20190411_081459.csv");
     }
 
     private void close() {

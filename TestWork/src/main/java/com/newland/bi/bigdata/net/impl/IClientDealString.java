@@ -12,10 +12,9 @@ import java.nio.charset.Charset;
  *
  * @author chenqixu
  */
-public class IClientDealString extends IClientDeal {
+public class IClientDealString extends IClientDeal<String> {
 
     private static final String LANG = "utf-8";
-    private static Logger logger = LoggerFactory.getLogger(IClientDealString.class);
     private BufferedReader br = null;
     private PrintWriter pw = null;
 
@@ -35,21 +34,24 @@ public class IClientDealString extends IClientDeal {
     }
 
     @Override
-    protected void write(Object value) {
-        pw.println((String) value);
+    protected void write(String value) {
+        pw.println(value);
     }
 
     @Override
-    protected void check(Object value) {
+    protected void check(String value) {
         throwNullException(br, "Reader is null ! please newReader first !");
         throwNullException(pw, "Writer is null ! please newWriter first !");
-        if (!(value instanceof String)) {
-            throw new UnsupportedOperationException("不支持的类型！");
-        }
     }
 
     @Override
-    public void close() {
+    public void closeClient() {
+        NetUtils.closeStream(br);
+        NetUtils.closeStream(pw);
+    }
+
+    @Override
+    public void closeServer() {
         NetUtils.closeStream(br);
         NetUtils.closeStream(pw);
     }

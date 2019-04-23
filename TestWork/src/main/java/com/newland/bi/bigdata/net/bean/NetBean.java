@@ -32,4 +32,8 @@ public class NetBean implements Serializable {
         this.netBody = netBody;
         return this;
     }
+
+    public String toString() {
+        return "head：" + head + "，netBody：" + netBody;
+    }
 }

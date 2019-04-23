@@ -12,7 +12,7 @@ import java.io.*;
  *
  * @author chenqixu
  */
-public class IClientDealNetBean extends IClientDeal {
+public class IClientDealNetBean extends IClientDeal<NetBean> {
 
     private static Logger logger = LoggerFactory.getLogger(IClientDealNetBean.class);
     private ObjectInputStream ois;
@@ -34,28 +34,31 @@ public class IClientDealNetBean extends IClientDeal {
     }
 
     @Override
-    protected void write(Object value) throws Exception {
+    protected void write(NetBean value) throws Exception {
         oos.writeObject(value);
     }
 
     @Override
-    protected void check(Object value) {
+    protected void check(NetBean value) {
         throwNullException(ois, "Reader is null ! please newReader first !");
         throwNullException(oos, "Writer is null ! please newWriter first !");
-        if (!(value instanceof NetBean)) {
-            throw new UnsupportedOperationException("不支持的类型！");
-        }
     }
 
     @Override
-    public void close() {
-        NetUtils.closeStream(ois);
-        NetUtils.closeStream(oos);
+    public void closeClient() {
         try {
             //发送结束标志
             oos.writeObject(NetUtils.buildClose());
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
+        NetUtils.closeStream(ois);
+        NetUtils.closeStream(oos);
+    }
+
+    @Override
+    public void closeServer() {
+        NetUtils.closeStream(ois);
+        NetUtils.closeStream(oos);
     }
 }
