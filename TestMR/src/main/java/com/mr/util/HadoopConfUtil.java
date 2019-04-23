@@ -62,9 +62,7 @@ public class HadoopConfUtil {
      * @param user_name
      */
     public static void setHadoopUser(String user_name) {
-        if (!isWindow()) {
-            System.setProperty("HADOOP_USER_NAME", user_name);
-        }
+        System.setProperty("HADOOP_USER_NAME", user_name);
     }
 
     /**
@@ -119,7 +117,7 @@ public class HadoopConfUtil {
      *
      * @return
      */
-    private static boolean isWindow() {
+    public static boolean isWindow() {
         String systemType = System.getProperty("os.name");
         if (systemType.toUpperCase().startsWith("WINDOWS")) {
             return true;

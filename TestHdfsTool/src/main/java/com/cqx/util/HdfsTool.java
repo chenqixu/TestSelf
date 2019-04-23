@@ -1,18 +1,19 @@
 package com.cqx.util;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.mapreduce.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class HdfsTool {
 
@@ -49,19 +50,34 @@ public class HdfsTool {
      * @return
      * @throws IOException
      */
-    public static boolean isExist(FileSystem fs, String path) throws IOException {
+    public static boolean isExist(FileSystem fs, String path) throws Exception {
         logger.info("isExist：{}", path);
-        return fs.exists(new Path(path));
+        if (fs instanceof LocalFileSystem) {
+            File file = new File(new URI(path));
+            return file.exists();
+        } else {
+            return fs.exists(new Path(path));
+        }
     }
 
-    public static FSDataOutputStream createFile(FileSystem fs, String path) throws IOException {
+    public static OutputStream createFile(FileSystem fs, String path) throws Exception {
+        if (isExist(fs, path))
+            return appendFile(fs, path);
         logger.info("createFile：{}", path);
-        return fs.create(new Path(path));
+        if (fs instanceof LocalFileSystem) {
+            return new FileOutputStream(new File(new URI(path)));
+        } else {
+            return fs.create(new Path(path));
+        }
     }
 
-    public static FSDataOutputStream appendFile(FileSystem fs, String path) throws IOException {
+    public static OutputStream appendFile(FileSystem fs, String path) throws IOException, URISyntaxException {
         logger.info("appendFile：{}", path);
-        return fs.append(new Path(path));
+        if (fs instanceof LocalFileSystem) {
+            return new FileOutputStream(new File(new URI(path)), true);
+        } else {
+            return fs.append(new Path(path));
+        }
     }
 
     public static void closeFileSystem(FileSystem fs) throws IOException {
@@ -237,15 +253,25 @@ public class HdfsTool {
         return false;
     }
 
-    public static FSDataInputStream openFile(FileSystem fs, String path) throws IOException {
-        if (fs != null && fs.exists(new Path(path))) {
-            logger.info("openFile：{}", path);
-            return fs.open(new Path(path));
+    public static InputStream openFile(FileSystem fs, String path) throws Exception {
+        if (fs != null) {
+            if (fs instanceof LocalFileSystem) {
+                File file = new File(new URI(path));
+                if (file.exists()) {
+                    logger.info("openFile：{}", path);
+                    return new FileInputStream(file);
+                }
+            } else {
+                if (fs.exists(new Path(path))) {
+                    logger.info("openFile：{}", path);
+                    return fs.open(new Path(path));
+                }
+            }
         }
         return null;
     }
 
-    public static void copyBytes(FileSystem fs, String inputFile, String outputFile) throws IOException {
+    public static void copyBytes(FileSystem fs, String inputFile, String outputFile) throws Exception {
         if (fs != null && fs.exists(new Path(inputFile))) {
             logger.info("copyBytes：{} to {}.", inputFile, outputFile);
             delete(fs, outputFile);
@@ -262,7 +288,8 @@ public class HdfsTool {
     public static boolean delete(FileSystem fs, String path) throws IOException {
         if (fs != null) {
             logger.info("delete：{}", path);
-            return fs.deleteOnExit(new Path(path));
+            return fs.delete(new Path(path), true);
+//            return fs.deleteOnExit(new Path(path));
         }
         return false;
     }

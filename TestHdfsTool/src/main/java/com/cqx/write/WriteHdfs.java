@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.concurrent.*;
 
 /**
@@ -70,7 +71,7 @@ public class WriteHdfs {
      */
     public void append(String file_path, int seq) {
         logger.info("append：{}", file_path);
-        FSDataOutputStream fsDataOutputStream = null;
+        OutputStream fsDataOutputStream = null;
         try {
             boolean isexist = HdfsTool.isExist(this.fs, file_path);
             logger.info("file：{}，isexist：{}", file_path, isexist);
@@ -78,7 +79,7 @@ public class WriteHdfs {
                 fsDataOutputStream = HdfsTool.appendFile(this.fs, file_path);
                 logger.info("appendFile：{}", file_path);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             logger.info("file：{}，重试：{}", file_path, seq - 1);
             if (seq > 0) {
@@ -111,7 +112,7 @@ public class WriteHdfs {
                 logger.info("appendNotCloseFile：{}", file_path);
                 SleepUtil.sleepSecond(30);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
@@ -155,8 +156,8 @@ public class WriteHdfs {
      *
      * @throws IOException
      */
-    public void exec() throws IOException {
-        FSDataOutputStream fsDataOutputStream = null;
+    public void exec() throws Exception {
+        OutputStream fsDataOutputStream = null;
         if (StringUtils.isEmpty(this.path))
             throw new NullPointerException("path is null.");
         //判断文件是否存在
@@ -221,11 +222,11 @@ public class WriteHdfs {
      */
     class WriteHdfsCallable implements Callable<Integer> {
 
-        private FSDataOutputStream fsDataOutputStream;
+        private OutputStream fsDataOutputStream;
         private int cnt;
         private int limitcnt = 1000;
 
-        public WriteHdfsCallable(FSDataOutputStream fsDataOutputStream) {
+        public WriteHdfsCallable(OutputStream fsDataOutputStream) {
             this.fsDataOutputStream = fsDataOutputStream;
         }
 

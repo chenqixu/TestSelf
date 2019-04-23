@@ -1,7 +1,7 @@
 package com.newland.bi.bigdata.net;
 
+import com.newland.bi.bigdata.net.bean.NetBean;
 import com.newland.bi.bigdata.thread.ExecutorsFactory;
-import com.newland.bi.bigdata.thread.IExecutorsRun;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,26 +15,26 @@ public class DpiSocketClientTest {
     private String server_ip = "127.0.0.1";
     private int server_port = DpiSocketServerTest.SERVER_PORT;
     private ExecutorsFactory executorsFactory;
-    private int parallel_num = 3;
+    private int parallel_num = 1;
     private Random random = new Random();
     private Map<Integer, DpiSocketClient> dpiSocketClientMap = new HashMap<>();
 
     @Before
     public void setUp() throws Exception {
-        executorsFactory = new ExecutorsFactory(parallel_num);
-        for (int i = 0; i < parallel_num; i++) {
-            DpiSocketClient dpiSocketClient = new DpiSocketClient(server_ip, server_port);
-            dpiSocketClient.connect();
-            dpiSocketClientMap.put(i, dpiSocketClient);
-        }
-        executorsFactory.setiExecutorsRun(new IExecutorsRun() {
-            @Override
-            public void run() throws Exception {
-//                connectAndSend(getRandomStr(10));
-                for (int i = 0; i < 100; i++)
-                    connectAndSend(i % parallel_num, getRandomStr(10));
-            }
-        });
+//        executorsFactory = new ExecutorsFactory(parallel_num);
+//        for (int i = 0; i < parallel_num; i++) {
+//            DpiSocketClient dpiSocketClient = new DpiSocketClient(server_ip, server_port);
+//            dpiSocketClient.connect();
+//            dpiSocketClientMap.put(i, dpiSocketClient);
+//        }
+//        executorsFactory.setiExecutorsRun(new IExecutorsRun() {
+//            @Override
+//            public void run() throws Exception {
+////                connectAndSend(getRandomStr(10));
+//                for (int i = 0; i < 100; i++)
+//                    connectAndSend(i % parallel_num, getRandomStr(10));
+//            }
+//        });
     }
 
     @Test
@@ -72,5 +72,13 @@ public class DpiSocketClientTest {
             result += dataStr[random.nextInt(52)];
         }
         return result;
+    }
+
+    @Test
+    public void StringValueOf() {
+        String data = "123";
+        String s = String.valueOf(NetUtils.buildString(data));
+        System.out.println(s);
+
     }
 }

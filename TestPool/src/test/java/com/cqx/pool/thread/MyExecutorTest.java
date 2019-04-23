@@ -11,6 +11,7 @@ public class MyExecutorTest {
     private MyExecutor myExecutor;
     private int bound = 1000;
     private int parallel_num = 3;
+    private volatile boolean flag = false;
 
     @Before
     public void setUp() {
@@ -32,5 +33,39 @@ public class MyExecutorTest {
         myExecutor.init(bound);
         myExecutor.startCallable();
         logger.info("cost：{}", myExecutor.endDeal());
+    }
+
+    private boolean isEnd() {
+        return flag;
+    }
+
+    private void setEnd() {
+        flag = true;
+    }
+
+    @Test
+    public void testLoop() throws Exception {
+        ICostUtil runICostUtil = myExecutor.buildTimeCostUtil();
+        runICostUtil.start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                setEnd();
+            }
+        }).start();
+        // 是否有退出文件
+        while (!isEnd()) {
+            Thread.sleep(1000);
+            if (runICostUtil.tag(1000)) {
+                logger.info("run……");
+            }
+            logger.info("null run……");
+        }
+        runICostUtil.end();
     }
 }

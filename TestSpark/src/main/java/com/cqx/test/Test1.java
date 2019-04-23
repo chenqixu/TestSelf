@@ -38,10 +38,26 @@ public class Test1 {
         	if(sc!=null)sc.close();
         }
 	}
+
+	public void local() {
+		JavaSparkContext sc = null;
+		SparkConf conf = new SparkConf().setMaster("local").setAppName(appname);
+		try {
+			sc = new JavaSparkContext(conf);
+			JavaRDD<String> lines =sc.textFile("d:\\tmp\\data\\dpi\\a.txt");
+			System.out.println("[lines.count]"+lines.count());
+			sc.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(sc!=null)sc.close();
+		}
+	}
 	
 	public static void main(String[] args) {
 		Test1 t = new Test1();
-		t.spark2();
+		t.local();
+//		t.spark2();
 		// bulid
 		// ftp
 		// ssh exec

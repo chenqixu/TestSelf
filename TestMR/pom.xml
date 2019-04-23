@@ -14,6 +14,7 @@
 		<hbase.version>1.1.1</hbase.version>
 		<hive.version>1.2.0</hive.version>
 		<solr.version>4.1.0</solr.version>
+		<JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -201,6 +202,23 @@
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
 			<version>${solr.version}</version>
+		</dependency>
+
+		<!-- oracle -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>12.1.0.2</version>
+			<!-- <artifactId>ojdbc6</artifactId> -->
+			<!-- <version>11.2.0.4.0</version> -->
+			<!-- <artifactId>ojdbc14</artifactId> -->
+			<!-- <version>10.2.0.5.0</version> -->
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>

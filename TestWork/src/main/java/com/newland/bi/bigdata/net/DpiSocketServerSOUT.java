@@ -1,9 +1,5 @@
 package com.newland.bi.bigdata.net;
 
-import com.newland.bi.bigdata.utils.SleepUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,21 +9,40 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 /**
- * socket服务端
+ * socket服务端 System.out.println 输出版本
  *
  * @author chenqixu
  */
-public class DpiSocketServer {
+public class DpiSocketServerSOUT {
 
-    private static Logger logger = LoggerFactory.getLogger(DpiSocketServer.class);
     private int port;
     private boolean status = false;
     private ServerSocket serverSocket;
 
-    public DpiSocketServer(int port) {
+    public DpiSocketServerSOUT(int port) {
         this.port = port;
+    }
+
+    public static void main(String[] args) {
+        if (args.length == 1)
+            new DpiSocketServerSOUT(Integer.valueOf(args[0])).start();
+        else
+            System.out.println("no enough args.");
+    }
+
+    /**
+     * 压抑异常的sleep
+     *
+     * @param timeout 几豪秒
+     */
+    public static void sleepMilliSecond(long timeout) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(timeout);
+        } catch (InterruptedException e) {
+        }
     }
 
     /**
@@ -41,28 +56,28 @@ public class DpiSocketServer {
             // 设置accept超时时间，否则退出调用stop的时候还需要发一次消息才会正常退出
             serverSocket.setSoTimeout(soTimeout);
             status = true;
-            logger.info("start server：{}", serverSocket);
+            System.out.println("start server：" + serverSocket);
             while (status) {
                 try {
                     // 接受客户端请求，阻塞状态
                     Socket client = serverSocket.accept();
                     if (client != null)
-                        new AcceptDeal(client).start();
+                        new DpiSocketServerSOUT.AcceptDeal(client).start();
                 } catch (SocketTimeoutException e) {
-                    logger.info(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            e.printStackTrace();
         } finally {
             if (serverSocket != null) {
                 try {
                     serverSocket.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
+                    e.printStackTrace();
                 }
             }
-            logger.info("serverSocket isClosed：{}", serverSocket.isClosed());
+            System.out.println("serverSocket isClosed：" + serverSocket.isClosed());
         }
     }
 
@@ -73,30 +88,30 @@ public class DpiSocketServer {
         try {
             serverSocket = new ServerSocket(port);
             status = true;
-            logger.info("start server：{}", serverSocket);
+            System.out.println("start server：" + serverSocket);
             while (status) {
                 // 接受客户端请求，阻塞状态
                 Socket client = serverSocket.accept();
                 if (client != null)
-                    new AcceptDeal(client).start();
+                    new DpiSocketServerSOUT.AcceptDeal(client).start();
             }
         } catch (SocketException e) {
             if (e.getMessage().equals("socket closed")) {
-                logger.info(e.getMessage());
+                System.out.println(e.getMessage());
             } else {
-                logger.error(e.getMessage(), e);
+                e.printStackTrace();
             }
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            e.printStackTrace();
         } finally {
             if (serverSocket != null) {
                 try {
                     serverSocket.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
+                    e.printStackTrace();
                 }
             }
-            logger.info("serverSocket isClosed：{}", serverSocket.isClosed());
+            System.out.println("serverSocket isClosed：" + serverSocket.isClosed());
         }
     }
 
@@ -104,7 +119,7 @@ public class DpiSocketServer {
      * 设置accept的超时时间来停止socket
      */
     public void stopByTimeout() {
-        logger.info("stop server：{}", serverSocket);
+        System.out.println("stop server：" + serverSocket);
         status = false;
     }
 
@@ -112,13 +127,13 @@ public class DpiSocketServer {
      * 使用close来关闭socket
      */
     public void stop() {
-        logger.info("stop server：{}", serverSocket);
+        System.out.println("stop server：" + serverSocket);
         status = false;
         if (serverSocket != null) {
             try {
                 serverSocket.close();
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                e.printStackTrace();
             }
         }
     }
@@ -136,14 +151,14 @@ public class DpiSocketServer {
         private boolean status;
 
         public AcceptDeal(Socket client) {
-            logger.info("{} accetp client：{}", this, client);
+            System.out.println(this + " accetp client：" + client);
             this.client = client;
             try {
                 br = new BufferedReader(new InputStreamReader(client.getInputStream(),
                         Charset.forName(LANG)));
                 pw = new PrintWriter(client.getOutputStream(), true);
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                e.printStackTrace();
             }
             status = true;
         }
@@ -154,33 +169,19 @@ public class DpiSocketServer {
             try {
                 while (status) {
                     while ((content = br.readLine()) != null) {
-                        logger.info("client：{}，read content：{}", client, content);
-                        if (content.equals("close")) {
-//                            br.close();
-//                            pw.close();
-//                            client.shutdownInput();
-//                            client.shutdownOutput();
-//                            client.close();
-                            status = false;
-                            break;
-                        } else {
-                            pw.println(content + "|replay");
-                        }
+                        System.out.println("client：" + client + "，read content：" + content);
+                        pw.println(content + "|replay");
                     }
-                    SleepUtils.sleepMilliSecond(500);
-                    logger.info("{} sleep 500，isClosed：{}，isConnected：{}，" +
-                                    "isBound：{}，isInputShutdown：{}，isOutputShutdown：{}",
-                            this, client.isClosed(), client.isConnected(),
-                            client.isBound(), client.isInputShutdown(), client.isOutputShutdown());
+                    sleepMilliSecond(50);
                 }
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                e.printStackTrace();
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
+                        e.printStackTrace();
                     }
                 }
                 if (pw != null)
@@ -189,7 +190,7 @@ public class DpiSocketServer {
                     try {
                         client.close();
                     } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
+                        e.printStackTrace();
                     }
                 }
             }

@@ -11,4 +11,5 @@ public class AppConst {
     public static final String APPENDNOTCLOSE_TYPE = "appendnotclose";
     public static final String WRITE_TYPE = "write";
     public static final String SLEEP_TYPE = "sleep";
+    public static final String COPY_FROM_LOCAL = "copyfromlocal";
 }

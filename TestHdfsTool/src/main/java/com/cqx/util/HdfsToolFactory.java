@@ -1,15 +1,15 @@
 package com.cqx.util;
 
+import com.cqx.common.utils.file.FileUtil;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.List;
 
 /**
  * HdfsToolFactory
@@ -20,17 +20,27 @@ public class HdfsToolFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(HdfsToolFactory.class);
     private FileSystem fs;
+    private FileSystem localFileSystem;
     private Configuration configuration;
     private long cachefilelen = 0l;
     private FSDataOutputStream fsDataOutputStream;
     private String writePath;
+    private com.cqx.common.utils.file.FileUtil fileUtil;
 
     private HdfsToolFactory() throws IOException {
-        init();
+        init("D:\\tmp\\etc\\hadoop\\conf\\");
+    }
+
+    private HdfsToolFactory(String conf) throws IOException {
+        init(conf);
     }
 
     public static HdfsToolFactory builder() throws IOException {
         return new HdfsToolFactory();
+    }
+
+    public static HdfsToolFactory builder(String conf) throws IOException {
+        return new HdfsToolFactory(conf);
     }
 
     /**
@@ -39,7 +49,7 @@ public class HdfsToolFactory {
      * @param path
      * @return
      */
-    public long getFileSize(String path) {
+    public long getFileSize(String path) throws Exception {
         check();
         logger.info("getFileSize：{}", path);
         try {
@@ -50,24 +60,35 @@ public class HdfsToolFactory {
         }
     }
 
-    private void init() throws IOException {
+    private void init(String conf_path) throws IOException {
         configuration = new Configuration();
-        String path = "D:\\tmp\\etc\\hadoop\\conf\\";
-        configuration.addResource(new Path(path + "core-site.xml"));
-        configuration.addResource(new Path(path + "hdfs-site.xml"));
-        configuration.addResource(new Path(path + "mapred-site.xml"));
+        if (!conf_path.endsWith("/")) conf_path = conf_path + "/";
+        configuration.addResource(new Path(conf_path + "core-site.xml"));
+        configuration.addResource(new Path(conf_path + "hdfs-site.xml"));
+        configuration.addResource(new Path(conf_path + "mapred-site.xml"));
         configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
         logger.info("hadoopConfig：{}", configuration);
         fs = FileSystem.newInstance(configuration);
         logger.info("FileSystem：{}", fs);
+        localFileSystem = FileSystem.newInstanceLocal(new Configuration());
+        logger.info("localFileSystem：{}", localFileSystem);
     }
 
     public void close() {
         if (fs != null) {
             try {
-                logger.info("closeFileSystem-begin：{}", fs);
+//                logger.info("closeFileSystem-begin：{}", fs);
                 fs.close();
                 logger.info("closeFileSystem-end：{}", fs);
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        if (localFileSystem != null) {
+            try {
+//                logger.info("closelocalFileSystem-begin：{}", localFileSystem);
+                localFileSystem.close();
+                logger.info("closelocalFileSystem-end：{}", localFileSystem);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             }
@@ -86,10 +107,14 @@ public class HdfsToolFactory {
      * @return
      * @throws IOException
      */
-    public boolean isExist(String path) throws IOException {
-        check();
+    public boolean isExist(String path) throws Exception {
+        return isExist(fs, path);
+    }
+
+    public boolean isExist(FileSystem fs, String path) throws Exception {
+        check(fs);
         logger.info("isExist：{}", path);
-        return fs.exists(new Path(path));
+        return HdfsTool.isExist(fs, path);
     }
 
     public boolean isFile(String path) throws IOException {
@@ -98,7 +123,7 @@ public class HdfsToolFactory {
         return fs.isFile(new Path(path));
     }
 
-    public FSDataOutputStream createFile(String path) throws IOException {
+    public FSDataOutputStream createFile(String path) throws Exception {
         check();
         logger.info("createFile：{}", path);
         if (!isExist(path)) {
@@ -108,7 +133,7 @@ public class HdfsToolFactory {
         }
     }
 
-    public FSDataOutputStream appendFile(String path) throws IOException {
+    public FSDataOutputStream appendFile(String path) throws Exception {
         check();
         logger.info("appendFile：{}", path);
         if (isExist(path)) {
@@ -125,7 +150,7 @@ public class HdfsToolFactory {
      * @return
      * @throws IOException
      */
-    public FileStatus getFileInfo(String path) throws IOException {
+    public FileStatus getFileInfo(String path) throws Exception {
         check();
         logger.info("getFileInfo：{}", path);
         if (isExist(path) && isFile(path)) {
@@ -144,7 +169,7 @@ public class HdfsToolFactory {
         }
     }
 
-    public boolean mkdir(String path) throws IOException {
+    public boolean mkdir(String path) throws Exception {
         check();
         if (!isExist(path)) {
             logger.info("mkdir：{}", path);
@@ -153,7 +178,7 @@ public class HdfsToolFactory {
         return false;
     }
 
-    public FSDataInputStream openFile(String path) throws IOException {
+    public FSDataInputStream openFile(String path) throws Exception {
         check();
         if (isExist(path)) {
             logger.info("openFile：{}", path);
@@ -162,11 +187,29 @@ public class HdfsToolFactory {
         return null;
     }
 
-    public void copyBytes(String inputFile, String outputFile) throws IOException {
+    public void copyBytes(String inputFile, String outputFile) throws Exception {
         copyBytesSkipBegin(inputFile, outputFile, 0);
     }
 
-    public void copyBytesSkipBegin(String inputFile, String outputFile, long count) throws IOException {
+    public void copyBytesFromLocal(String inputFile, String outputFile) throws Exception {
+        InputStream in = localFileSystem.open(new Path(inputFile));
+        OutputStream out = HdfsTool.createFile(fs, outputFile);
+        IOUtils.copyBytes(in, out, fs.getConf());
+        IOUtils.closeStream(in);
+        IOUtils.closeStream(out);
+        logger.info("copyBytesFromLocal closeStream.");
+    }
+
+    public void copyBytesFromLocalToLocal(String inputFile, String outputFile) throws Exception {
+        InputStream in = HdfsTool.openFile(localFileSystem, inputFile);
+        OutputStream out = HdfsTool.createFile(localFileSystem, outputFile);
+        IOUtils.copyBytes(in, out, localFileSystem.getConf());
+        IOUtils.closeStream(in);
+        IOUtils.closeStream(out);
+        logger.info("copyBytesFromLocalToLocal closeStream.");
+    }
+
+    public void copyBytesSkipBegin(String inputFile, String outputFile, long count) throws Exception {
         check();
         if (isExist(inputFile)) {
             logger.info("copyBytes：{} to {}.", inputFile, outputFile);
@@ -182,7 +225,7 @@ public class HdfsToolFactory {
         }
     }
 
-    public void copyBytesSkipEnd(String inputFile, String outputFile, long count) throws IOException {
+    public void copyBytesSkipEnd(String inputFile, String outputFile, long count) throws Exception {
         check();
         if (isExist(inputFile)) {
             logger.info("copyBytesSkipEnd：{} to {}，skipEnd：{}.", inputFile, outputFile, count);
@@ -196,14 +239,55 @@ public class HdfsToolFactory {
         }
     }
 
-    public boolean delete(String path) throws IOException {
+    public long countFileLine(String fileName) throws Exception {
         check();
-        logger.info("delete：{}", path);
-        return fs.delete(new Path(path), true);
-//        return fs.deleteOnExit(new Path(path));
+        long count = 0;
+        if (isExist(fileName)) {
+            InputStream in = null;
+            BufferedReader br = null;
+            try {
+                in = HdfsTool.openFile(fs, fileName);
+                br = new BufferedReader(new InputStreamReader(in));
+//                ExecutorsFactory executorsFactory = new ExecutorsFactory(10);
+//                final BufferedReader finalBr = br;
+//                executorsFactory.setiExecutorsRun(new IExecutorsRun() {
+//                    @Override
+//                    public long run() throws Exception {
+//                        int count = 0;
+//                        while (finalBr.readLine() != null) {
+//                            count++;
+//                        }
+//                        System.out.println(this + "，" + count);
+//                        return count;
+//                    }
+//                });
+//                count = executorsFactory.startCallable();
+                while (br.readLine() != null) {
+                    count++;
+                }
+            } finally {
+                IOUtils.closeStream(in);
+                IOUtils.closeStream(br);
+            }
+        }
+        return count;
     }
 
-    public boolean rename(String source, String dist) throws IOException {
+    public boolean delete(String path) throws Exception {
+        return delete(fs, path);
+    }
+
+    public boolean delete(FileSystem fs, String path) throws Exception {
+        check(fs);
+        if (isExist(fs, path)) {
+            logger.info("delete：{}", path);
+            return HdfsTool.delete(fs, path);
+//        return fs.deleteOnExit(new Path(path));
+        }
+        return false;
+    }
+
+    public boolean rename(String source, String dist) throws Exception {
         check();
         boolean flag = false;
         logger.info("rename：{} {}", source, dist);
@@ -216,6 +300,10 @@ public class HdfsToolFactory {
     }
 
     private void check() {
+        check(fs);
+    }
+
+    private void check(FileSystem fs) {
         if (fs == null)
             throw new NullPointerException("fs is null!");
     }
@@ -229,11 +317,11 @@ public class HdfsToolFactory {
         return value.length == checklen;
     }
 
-    private boolean checkHdfsFile() {
+    private boolean checkHdfsFile() throws Exception {
         return checkHdfsFile(0);
     }
 
-    private boolean checkHdfsFile(long filesize) {
+    private boolean checkHdfsFile(long filesize) throws Exception {
         long cachefilelen = this.cachefilelen + filesize;
         logger.info("cachefilelen：{}", cachefilelen);
         // get file last len
@@ -245,7 +333,7 @@ public class HdfsToolFactory {
         return flag;
     }
 
-    public void startWrite(FSDataOutputStream fsDataOutputStream, String writePath) {
+    public void startWrite(FSDataOutputStream fsDataOutputStream, String writePath) throws Exception {
         this.fsDataOutputStream = fsDataOutputStream;
         this.writePath = writePath;
         this.cachefilelen = getFileSize(writePath);
@@ -259,7 +347,7 @@ public class HdfsToolFactory {
         fsDataOutputStream.hsync();
     }
 
-    public void write(byte[] value, long checklen) throws IOException {
+    public void write(byte[] value, long checklen) throws Exception {
         check();
         checkWrite();
         boolean delete = true;
@@ -302,5 +390,55 @@ public class HdfsToolFactory {
                 logger.error(e.getMessage(), e);
             }
         }
+    }
+
+    /**
+     * 从本地拷贝文件到HDFS集群
+     *
+     * @param src 本地文件
+     * @param dst HDFS目标文件
+     * @throws IOException
+     */
+    public void copyFromLocalFile(String src, String dst) throws IOException {
+        check();
+        fs.copyFromLocalFile(new Path(src), new Path(dst));
+    }
+
+    /**
+     * 从本地拷贝文件到HDFS集群
+     *
+     * @param src
+     * @param dst
+     * @throws IOException
+     */
+    public void copyFromLocalFile(String[] src, String dst) throws Exception {
+        check();
+        delete(dst);
+        for (String path : src) {
+            copyBytesFromLocal(path, dst);
+        }
+    }
+
+    /**
+     * 从本地合并文件到本地
+     *
+     * @param src
+     * @param localDst
+     * @param hdfsDst
+     * @throws IOException
+     */
+    public void copyFromLocalFileToLocal(String[] src, String localDst, String hdfsDst) throws Exception {
+        check(localFileSystem);
+        delete(localFileSystem, localDst);
+        for (String path : src) {
+            copyBytesFromLocalToLocal(path, localDst);
+        }
+        delete(hdfsDst);
+        copyFromLocalFile(localDst, hdfsDst);
+    }
+
+    public void mergeFile(List<String> srcList, String dst) throws IOException {
+        FileUtil.del(dst);
+        FileUtil.mergeFile(srcList, dst);
     }
 }

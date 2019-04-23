@@ -151,12 +151,20 @@ public class MyExecutor {
         return timeCostUtil.getCost();
     }
 
+    public boolean timeCostTag(long limitTime) {
+        return timeCostUtil.tag(limitTime);
+    }
+
+    public ICostUtil buildTimeCostUtil() {
+        return new TimeCostUtil();
+    }
+
     /**
      * 时间花费计算
      *
      * @author chenqixu
      */
-    class TimeCostUtil {
+    class TimeCostUtil implements ICostUtil {
         long start;
         long end;
         long lastCheckTime = System.currentTimeMillis();

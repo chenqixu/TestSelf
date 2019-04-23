@@ -33,9 +33,9 @@ public class HdfsToolTest {
                     conf = HdfsTool.getRemoteConf();
                     fs = HdfsTool.getFileSystem(conf);
                     System.out.println(this + "###" + HdfsTool.getFileInfo(fs, path));
-                    FSDataOutputStream fsDataOutputStream = HdfsTool.appendFile(fs, path);
+                    OutputStream fsDataOutputStream = HdfsTool.appendFile(fs, path);
                     System.out.println(this + "###append###" + fsDataOutputStream);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     HdfsTool.recoverLease(conf, path);
                     try {
                         System.out.println(this + "###" + HdfsTool.getFileInfo(fs, path));

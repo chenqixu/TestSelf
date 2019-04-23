@@ -1,14 +1,12 @@
 package com.newland.bi.bigdata.net;
 
+import com.newland.bi.bigdata.net.bean.NetBean;
+import com.newland.bi.bigdata.net.impl.IClientDeal;
+import com.newland.bi.bigdata.net.impl.IClientDealNetBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.Charset;
 
 /**
  * socket客户端
@@ -17,17 +15,27 @@ import java.nio.charset.Charset;
  */
 public class DpiSocketClient {
 
-    private static final String LANG = "utf-8";
     private static Logger logger = LoggerFactory.getLogger(DpiSocketClient.class);
     private Socket client;
     private int server_port;
     private String server_ip;
-    private BufferedReader br = null;
-    private PrintWriter pw = null;
+    private IClientDeal<NetBean> iClientDeal;
 
     public DpiSocketClient(String server_ip, int server_port) {
         this.server_ip = server_ip;
         this.server_port = server_port;
+        iClientDeal = new IClientDealNetBean();
+    }
+
+    public static void main(String[] args) {
+        String ip = "127.0.0.1";
+        int port = 6795;
+        String content = "8613900000000|Dalvik/2.1.0 (Linux; U; Android 6.0.1; vivo X9Plus Build/MMB29M)|/mmsns/BrVA8rJQ5YiaE3jsNCbIlvWuxZqwy7iceOyo4hmLlZcPhIQdGr41EoEmXPVFTzzeIr8xSa3mlvGjM/150?tp=wxpc&token=WSEN6qDsKwV8A02w3onOGQYfxnkibdqSOkmHhZGNB4DFBVuxiac0cLTBOPNlRfmSzxb4E8u5TPZzWfCdpkAiaX3Ug&idx=1|shmmsns.qpic.cn|117.172.5.42|80|1|9|1198.0|5086.0|image/wxpc";
+        DpiSocketClient dpiSocketClient = new DpiSocketClient(ip, port);
+        dpiSocketClient.connect();
+        String recive = dpiSocketClient.sendMsg(content);
+        System.out.println("recive：" + recive);
+        dpiSocketClient.disconnect();
     }
 
     /**
@@ -36,11 +44,10 @@ public class DpiSocketClient {
     public void connect() {
         try {
             client = new Socket(server_ip, server_port);
-            br = new BufferedReader(new InputStreamReader(client.getInputStream(),
-                    Charset.forName(LANG)));
-            pw = new PrintWriter(client.getOutputStream(), true);
+            iClientDeal.newReader(client.getInputStream());
+            iClientDeal.newWriter(client.getOutputStream());
             logger.info("connect：{}", client);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             disconnect();
         }
@@ -51,8 +58,6 @@ public class DpiSocketClient {
      */
     private void check() {
         if (client == null) throw new NullPointerException("client is null ! please connect first !");
-        if (br == null) throw new NullPointerException("br is null ! please connect first !");
-        if (pw == null) throw new NullPointerException("pw is null ! please connect first !");
     }
 
     /**
@@ -63,11 +68,15 @@ public class DpiSocketClient {
     public String sendMsg(String data) {
         check();
         try {
-            pw.println(data);
-            String content = br.readLine();
+            //封包
+            NetBean netBean = NetUtils.buildString(data);
+            //发送获取
+            NetBean recive = iClientDeal.writeAndRead(netBean);
+            //拆包
+            Object content = NetUtils.getValue(recive);
             logger.info("client：{}，send：{}，receive：{}", client, data, content);
-            return content;
-        } catch (IOException e) {
+            return (String) content;
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
         return null;
@@ -77,22 +86,7 @@ public class DpiSocketClient {
      * 退出服务端
      */
     public void disconnect() {
-        logger.info("disconnect，br：{}，pw：{}，client：{}", br, pw, client);
-        if (br != null) {
-            try {
-                br.close();
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        if (pw != null)
-            pw.close();
-        if (client != null) {
-            try {
-                client.close();
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
+        logger.info("disconnect，client：{}", client);
+        iClientDeal.close();
     }
 }
