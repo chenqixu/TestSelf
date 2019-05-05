@@ -17,6 +17,14 @@ public class FileUtil {
     private BufferedWriter writer;
     private BufferedReader reader;
 
+    public static File[] listFiles(String filePath) {
+        File file = new File(filePath);
+        if (file.exists() && file.isDirectory()) {
+            return file.listFiles();
+        }
+        return null;
+    }
+
     public static void mergeFile(List<String> srcList, String dst) throws IOException {
         OutputStream out = new FileOutputStream(dst);
         for (String src : srcList) {

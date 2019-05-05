@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -440,5 +441,16 @@ public class HdfsToolFactory {
     public void mergeFile(List<String> srcList, String dst) throws IOException {
         FileUtil.del(dst);
         FileUtil.mergeFile(srcList, dst);
+    }
+
+    public void mergeFileByPath(String srcPath, String dst) throws IOException {
+        FileUtil.del(dst);
+        File[] files = FileUtil.listFiles(srcPath);
+        List<String> fileList = new ArrayList<>();
+        for (File file : files) {
+            logger.info("name：{}", file.getAbsolutePath());
+            fileList.add(file.getAbsolutePath());
+        }
+        FileUtil.mergeFile(fileList, dst);
     }
 }

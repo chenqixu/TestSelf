@@ -1,5 +1,6 @@
 package com.cqx.util;
 
+import com.cqx.common.utils.system.SleepUtil;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.Path;
 import org.junit.After;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.FutureTask;
 
 public class HdfsToolFactoryTest {
 
@@ -78,21 +81,39 @@ public class HdfsToolFactoryTest {
 
     @Test
     public void copyFromLocalFile() throws Exception {
-        String path = "file:///d:/tmp/data/dpi/dpi_gndata/";
-//        String src = path + "Uar_68_04_http_dnssession_60_20190409_152100_20190409_152159.csv";
-        String src = path;
-        String[] srcs = {
-                path + "Uar_103_01_rtsp_session_60_20190411_081400_20190411_081459.csv",
-                path + "Uar_103_04_rtsp_session_60_20190411_085600_20190411_085659.csv",
-                path + "Uar_103_07_rtsp_session_60_20190411_082700_20190411_082759.csv"
-        };
-        String hdfsDst = "/tmp/test/dpi/a.txt";
-        String localDst = "file:///d:/tmp/data/dpi/a.txt";
-        logger.info("start copy");
-//        hdfsToolFactory.copyFromLocalFile(src, hdfsDst);
-        hdfsToolFactory.copyFromLocalFile(srcs, hdfsDst);
-//        hdfsToolFactory.copyFromLocalFileToLocal(srcs, localDst, hdfsDst);
-        logger.info("end copy");
+//        String path = "file:///d:/tmp/data/dpi/dpi_gndata/";
+////        String src = path + "Uar_68_04_http_dnssession_60_20190409_152100_20190409_152159.csv";
+//        String src = path;
+//        String[] srcs = {
+//                path + "Uar_103_01_rtsp_session_60_20190411_081400_20190411_081459.csv",
+//                path + "Uar_103_04_rtsp_session_60_20190411_085600_20190411_085659.csv",
+//                path + "Uar_103_07_rtsp_session_60_20190411_082700_20190411_082759.csv"
+//        };
+//        String hdfsDst = "/tmp/test/dpi/a.txt";
+////        String localDst = "file:///d:/tmp/data/dpi/a.txt";
+//        String localDst = "file:///d:/tmp/data/tasklog/a.log";
+//        logger.info("start copy");
+//        hdfsToolFactory.copyFromLocalFile(localDst, hdfsDst);
+////        hdfsToolFactory.copyFromLocalFile(srcs, hdfsDst);
+////        hdfsToolFactory.copyFromLocalFileToLocal(srcs, localDst, hdfsDst);
+//        logger.info("end copy");
+
+//        Thread t = new ThreadTools(hdfsToolFactory);
+//        t.start();
+//        ThreadTools.delayTask(t, 50);
+//        t.join();
+
+        FutureTools futureTools = new FutureTools(hdfsToolFactory);
+        FutureTask futureTask = futureTools.submit();
+        ThreadTools.cancelTask(futureTask, 50);
+        try {
+            futureTask.get();
+        } catch (CancellationException e) {
+            logger.error("任务被取消了");
+        }
+        logger.info("主线程休眠开始");
+        SleepUtil.sleepMilliSecond(5000);
+        logger.info("主线程休眠完成");
     }
 
     @Test
@@ -106,6 +127,13 @@ public class HdfsToolFactoryTest {
         List<String> list = new ArrayList<>(Arrays.asList(srcs));
         String localDst = "d:/tmp/data/dpi/a.txt";
         hdfsToolFactory.mergeFile(list, localDst);
+    }
+
+    @Test
+    public void mergeFileByPath() throws Exception {
+        String srcPath = "d:/tmp/data/dpi/dpi_gndata/";
+        String dsc = "d:/tmp/data/dpi/a.txt";
+        hdfsToolFactory.mergeFileByPath(srcPath, dsc);
     }
 
     @After

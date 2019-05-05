@@ -149,10 +149,10 @@ public class ReadFile {
 //        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestWork/src/main/java/com/newland/bi/bigdata/changecode/ReadFile.java");
 //        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestFrameForm/src/main/java/mainForm.java");
 //        readFile.getCharset("D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\java\\com\\main\\MRSearchMain.java");
-//        readFile.getAllFileAndChangeCode("D:/Document/Workspaces/Git/TestSelf", ".*\\.java", "GBK", "UTF-8");
+        readFile.getAllFileAndChangeCode("D:\\Document\\Workspaces\\Git\\ProjectAcc\\ProjectAccSvc\\src\\main\\java", ".*\\.java", "GBK", "UTF-8");
 
-        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\HelloService.java");
-        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\PathRest.java");
-        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\PathRest.java");
+//        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\HelloService.java");
+//        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\PathRest.java");
+//        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\PathRest.java");
     }
 }
