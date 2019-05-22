@@ -188,7 +188,6 @@ public class SimpleFTP {
                 ip = tokenzier.nextToken() + "." + tokenzier.nextToken() + "."
                         + tokenzier.nextToken() + "." + tokenzier.nextToken();
                 port = Integer.parseInt(tokenzier.nextToken()) * 256 + Integer.parseInt(tokenzier.nextToken());
-                ;
             } catch (Exception e) {
                 throw new Exception("bad data link after list!");
             }

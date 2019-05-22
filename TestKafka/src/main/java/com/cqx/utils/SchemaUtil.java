@@ -1,0 +1,90 @@
+package com.cqx.utils;
+
+import org.apache.avro.Schema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * SchemaUtil
+ *
+ * @author chenqixu
+ */
+public class SchemaUtil {
+
+    private static Logger logger = LoggerFactory.getLogger(SchemaUtil.class);
+    private static Map<String, String> schemaMap = new HashMap<>();
+
+    static {
+        String paramValStr = "{\n" +
+                "\"namespace\": \"com.newland\",\n" +
+                "\"type\": \"record\",\n" +
+                "\"name\": \"lte_http\",\n" +
+                "\"fields\":[\n" +
+                "{\"name\": \"city_1\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"imsi\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"imei\", \"type\": [\"string\"] },\n" +
+                "{\"name\": \"msisdn\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"tac\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"eci\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"rat\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"procedure_start_time\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"app_class\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"host\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"uri\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"apply_classify\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"apply_name\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"web_classify\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"web_name\", \"type\": [\"string\"] },\n" +
+                "{\"name\": \"search_keyword\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"procedure_end_time\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"upbytes\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"downbytes\", \"type\": [\"string\"]}\n" +
+                "]\n" +
+                "}";
+        schemaMap.put("nmc_tb_lte_http", paramValStr);
+    }
+
+    private String urlStr;
+
+    public SchemaUtil() {
+    }
+
+    public SchemaUtil(String urlStr) {
+        this.urlStr = urlStr;
+    }
+
+    public static String getSchemaValueByTopic(String topic) {
+        return schemaMap.get(topic);
+    }
+
+    public static Schema getSchemaByTopic(String topic) {
+        return new Schema.Parser().parse(getSchemaValueByTopic(topic));
+    }
+
+    public String readUrlContent(String topic) {
+        StringBuffer contentBuffer = new StringBuffer();
+        try {
+            BufferedReader reader = null;
+            URL url = new URL(urlStr + topic);
+            logger.info("{} url：{}", topic, urlStr + topic);
+            URLConnection con = url.openConnection();
+            reader = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
+            String tmpStr;
+            while ((tmpStr = reader.readLine()) != null) {
+                contentBuffer.append(tmpStr);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        logger.info("{} schema：{}", topic, contentBuffer.toString());
+        return contentBuffer.toString();
+    }
+}

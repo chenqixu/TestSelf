@@ -273,7 +273,7 @@ public class StringUtil {
      * @param i
      * @return
      */
-    private static String toHexString(int i) {
+    public static String toHexString(int i) {
         String sTemp = Integer.toHexString(i).toUpperCase();
         return sTemp.length() >= 2 ? sTemp : "0".concat(String.valueOf(String.valueOf(sTemp)));
     }
@@ -309,7 +309,7 @@ public class StringUtil {
      * @param sHex
      * @return
      */
-    private static int hexStringToInt(String sHex) {
+    public static int hexStringToInt(String sHex) {
         try {
             int i = Integer.parseInt(sHex, 16);
             return i;

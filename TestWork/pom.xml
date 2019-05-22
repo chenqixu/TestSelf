@@ -8,11 +8,19 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>TestWork</artifactId>
+	<distributionManagement>
+		<repository>
+			<id>cloudera-releases</id>
+			<name>cloudera-releases</name>
+			<url>https://repository.cloudera.com/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
 	<properties>
 		<!-- <hadoop.version>2.0.0-cdh4.3.0</hadoop.version> <hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version> 
 			<hadoop.version>2.3.0-cdh5.1.5</hadoop.version> <hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version> 
 			<hadoop.version>2.4.0</hadoop.version> <hadoop.mr.version>2.4.0</hadoop.mr.version> 
-			<hadoop.version>2.6.0</hadoop.version> <hadoop.mr.version>2.6.0</hadoop.mr.version> -->
+			<hadoop.version>2.6.0</hadoop.version> <hadoop.mr.version>2.6.0</hadoop.mr.version>
+		<hadoop.version>3.0.0-cdh6.1.1</hadoop.version> -->
 		<hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
 		<hadoop.mr.version>2.6.0-cdh5.7.2</hadoop.mr.version>
 		<!-- <hbase.version>0.98.1-cdh5.1.5</hbase.version> <hbase.version>0.98.1-cdh5.1.0</hbase.version> 
@@ -31,6 +39,30 @@
 	</properties>
 
 	<dependencies>
+		<!-- log -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- avro -->
 		<dependency>
 			<groupId>org.apache.avro</groupId>
@@ -377,19 +409,8 @@
 		</dependency>
 
 		<!-- ambari-server -->
-		
-		<!-- log -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
+		<!-- dom -->
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
@@ -441,28 +462,6 @@
 			<groupId>com.github.cverges.expect4j</groupId>
 			<artifactId>expect4j</artifactId>
 			<version>1.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.7.5</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

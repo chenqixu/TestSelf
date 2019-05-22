@@ -30,6 +30,7 @@ public class DpiSocketClientSOUT {
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
             System.out.println("no enough args!");
+            System.exit(0);
         }
         String ip = "127.0.0.1";
         int[] ports = {6795, 6896, 6997, 7098, 7109, 7200, 7301, 7402, 7503, 7604};
@@ -45,7 +46,12 @@ public class DpiSocketClientSOUT {
         List<String> listContent = readFile(fileName, "UTF-8", 10);
         for (String content : listContent) {
             String _content = parserContent(content, allName, orderName, split, concat);
-            dpiSocketClient.sendMsg(_content);
+            String reviceMsg = dpiSocketClient.sendMsg(_content);
+            /**
+             * 去掉返回内容中重复的部分
+             * 目前返回内容的策略是在末尾拼接，所以
+             */
+            System.out.println("left Msg：" + reviceMsg.substring(_content.length()));
         }
         dpiSocketClient.disconnect();
 //        for (int port : ports) {

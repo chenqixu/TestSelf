@@ -170,7 +170,7 @@ public class DpiSocketServerSOUT {
                 while (status) {
                     while ((content = br.readLine()) != null) {
                         System.out.println("client：" + client + "，read content：" + content);
-                        pw.println(content + "|replay");
+                        pw.println(content + "|replay1|replay2|replay3|replay4|replay5|replay6|replay7|replay8");
                     }
                     sleepMilliSecond(50);
                 }
