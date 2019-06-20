@@ -66,9 +66,7 @@
 		<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>
-			<version>${java.version}</version>
-			<scope>system</scope>
-			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+			<version>1.7</version>
 		</dependency>
 	</dependencies>
 	<build>

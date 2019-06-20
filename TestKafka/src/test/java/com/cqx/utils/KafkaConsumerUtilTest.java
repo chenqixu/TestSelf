@@ -16,7 +16,7 @@ public class KafkaConsumerUtilTest {
     private final String path = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestKafka\\src\\test\\resources\\";
     private KafkaConsumerUtil<String, byte[]> kafkaConsumerUtil;
     private RecordConvertor recordConvertor;
-    private String topic = "nmc_tb_lte_http";
+    private String topic = "nmc_tb_lte_http_test";
     private String conf = path + "consumer.properties";
 
     @Before

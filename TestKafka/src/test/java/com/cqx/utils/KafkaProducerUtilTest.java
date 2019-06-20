@@ -34,31 +34,34 @@ public class KafkaProducerUtilTest {
 
     @Test
     public void send() {
-        String key = "13500000000";
-        Map<String, String> valueMap = new HashMap<>();
-        valueMap.put("city_1", "1");
-        valueMap.put("imsi", "1");
-        valueMap.put("imei", "1");
-        valueMap.put("msisdn", "13500000000");
-        valueMap.put("tac", "1");
-        valueMap.put("eci", "1");
-        valueMap.put("rat", "1");
-        valueMap.put("procedure_start_time", "1");
-        valueMap.put("app_class", "1");
-        valueMap.put("host", "1");
-        valueMap.put("uri", "1");
-        valueMap.put("apply_classify", "1");
-        valueMap.put("apply_name", "1");
-        valueMap.put("web_classify", "1");
-        valueMap.put("web_name", "1");
-        valueMap.put("search_keyword", "1");
-        valueMap.put("procedure_end_time", "1");
-        valueMap.put("upbytes", "1");
-        valueMap.put("downbytes", "1");
-        logger.info("valueMap：{}", valueMap);
-        byte[] value = genericRecordUtil.genericRecord(topic, valueMap);
-        kafkaProducerUtil.send(topic, key, value);
-        logger.info("send，topic：{}，key：{}，value：{}", topic, key, value);
+        for (int i = 0; i < 1; i++) {
+            String key = "13500000000";
+            Map<String, String> valueMap = new HashMap<>();
+            valueMap.put("city_1", "1");
+            valueMap.put("imsi", "1");
+            valueMap.put("imei", "1");
+            valueMap.put("msisdn", "13500000000");
+            valueMap.put("tac", "1");
+            valueMap.put("eci", "1");
+            valueMap.put("rat", "1");
+            valueMap.put("procedure_start_time", "1");
+            valueMap.put("app_class", "1");
+            valueMap.put("host", "1");
+            valueMap.put("uri", "1");
+            valueMap.put("apply_classify", "1");
+            valueMap.put("apply_name", "1");
+            valueMap.put("web_classify", "1");
+            valueMap.put("web_name", "1");
+            valueMap.put("search_keyword", "1");
+            valueMap.put("procedure_end_time", "1");
+            valueMap.put("upbytes", "1");
+            valueMap.put("downbytes", "1");
+//            logger.info("valueMap：{}", valueMap);
+            byte[] value = new byte[]{};//genericRecordUtil.genericRecord(topic, valueMap);
+            kafkaProducerUtil.send(topic, key, value);
+//            logger.info("send，topic：{}，key：{}，value：{}", topic, key, value);
+            logger.info("send {}", i);
+        }
     }
 
     @Test

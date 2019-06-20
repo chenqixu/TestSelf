@@ -1,824 +1,852 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>TestSelf</artifactId>
-		<groupId>com.cqx</groupId>
-		<version>1.0.0</version>
-		<relativePath>..</relativePath>
-	</parent>
-	<artifactId>TestWork</artifactId>
-	<distributionManagement>
-		<repository>
-			<id>cloudera-releases</id>
-			<name>cloudera-releases</name>
-			<url>https://repository.cloudera.com/content/repositories/releases/</url>
-		</repository>
-	</distributionManagement>
-	<properties>
-		<!-- <hadoop.version>2.0.0-cdh4.3.0</hadoop.version> <hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version> 
-			<hadoop.version>2.3.0-cdh5.1.5</hadoop.version> <hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version> 
-			<hadoop.version>2.4.0</hadoop.version> <hadoop.mr.version>2.4.0</hadoop.mr.version> 
-			<hadoop.version>2.6.0</hadoop.version> <hadoop.mr.version>2.6.0</hadoop.mr.version>
-		<hadoop.version>3.0.0-cdh6.1.1</hadoop.version> -->
-		<hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
-		<hadoop.mr.version>2.6.0-cdh5.7.2</hadoop.mr.version>
-		<!-- <hbase.version>0.98.1-cdh5.1.5</hbase.version> <hbase.version>0.98.1-cdh5.1.0</hbase.version> 
-			<hbase.version>1.1.1</hbase.version> -->
-		<hbase.version>1.2.0-cdh5.7.2</hbase.version>
-		<!-- <hive.version>0.12.0 0.12.0-cdh5.1.5</hive.version> <hive.version>0.10.0-cdh4.3.0</hive.version><hive.version>1.1.0-cdh5.7.2</hive.version> -->
-		<hive.version>1.1.0</hive.version>
-		<!-- parquet version -->
-		<parquet.version>1.5.0-cdh5.4.0</parquet.version>
-		<spark.version>1.6.0</spark.version>
-		<!-- <sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version> -->
-		<sparkother.version>2.10</sparkother.version>
-		<oozie.version>4.1.0-cdh5.7.2</oozie.version>
-		<jedis.version>2.9.0</jedis.version>
-		<solr.version>4.1.0</solr.version>
-	</properties>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>TestSelf</artifactId>
+        <groupId>com.cqx</groupId>
+        <version>1.0.0</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <artifactId>TestWork</artifactId>
+    <distributionManagement>
+        <repository>
+            <id>cloudera-releases</id>
+            <name>cloudera-releases</name>
+            <url>https://repository.cloudera.com/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
+    <properties>
+        <!-- <hadoop.version>2.0.0-cdh4.3.0</hadoop.version> <hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version>
+            <hadoop.version>2.3.0-cdh5.1.5</hadoop.version> <hadoop.mr.version>2.3.0-mr1-cdh5.1.5</hadoop.mr.version>
+            <hadoop.version>2.4.0</hadoop.version> <hadoop.mr.version>2.4.0</hadoop.mr.version>
+            <hadoop.version>2.6.0</hadoop.version> <hadoop.mr.version>2.6.0</hadoop.mr.version>
+        <hadoop.version>3.0.0-cdh6.1.1</hadoop.version> -->
+        <hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
+        <hadoop.mr.version>2.6.0-cdh5.7.2</hadoop.mr.version>
+        <!-- <hbase.version>0.98.1-cdh5.1.5</hbase.version> <hbase.version>0.98.1-cdh5.1.0</hbase.version>
+            <hbase.version>1.1.1</hbase.version> -->
+        <hbase.version>1.2.0-cdh5.7.2</hbase.version>
+        <!-- <hive.version>0.12.0 0.12.0-cdh5.1.5</hive.version> <hive.version>0.10.0-cdh4.3.0</hive.version><hive.version>1.1.0-cdh5.7.2</hive.version> -->
+        <hive.version>1.1.0</hive.version>
+        <!-- parquet version -->
+        <parquet.version>1.5.0-cdh5.4.0</parquet.version>
+        <spark.version>1.6.0</spark.version>
+        <!-- <sparkchd.version>1.5.0-cdh5.5.0</sparkchd.version> -->
+        <sparkother.version>2.10</sparkother.version>
+        <oozie.version>4.1.0-cdh5.7.2</oozie.version>
+        <jedis.version>2.9.0</jedis.version>
+        <solr.version>4.1.0</solr.version>
+        <logback.version>1.0.13</logback.version>
+        <slf4j.version>1.7.19</slf4j.version>
+    </properties>
 
-	<dependencies>
-		<!-- log -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependencies>
 
-		<!-- avro -->
-		<dependency>
-			<groupId>org.apache.avro</groupId>
-			<artifactId>avro</artifactId>
-			<version>1.8.0</version>
-		</dependency>
-		<!-- apache -->
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.9</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>	
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>	
+        <!-- 日志 -->
         <dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-lang3</artifactId>
-		    <version>3.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<version>3.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>1.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-jexl</artifactId>
-			<version>2.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-compress</artifactId>
-			<version>1.15</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.curator</groupId>
-			<artifactId>curator-framework</artifactId>
-			<version>2.7.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	
-		<!-- hadoop -->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-annotations</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-auth</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.avro</groupId>
-					<artifactId>avro</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-core</artifactId> 
-			<artifactId>hadoop-mapreduce-client-core</artifactId> <version>${hadoop.mr.version}</version> 
-			<scope>provided</scope> <optional>true</optional> </dependency> -->
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 日志 -->
+<!--        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency> -->
 
-		<!-- hbase -->
-		<!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase</artifactId> 
-			<version>0.94.6-cdh4.3.0</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-			</dependency> -->
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-server</artifactId>
-			<version>${hbase.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-client</artifactId>
-			<version>${hbase.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-common</artifactId>
-			<version>${hbase.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-protocol</artifactId>
-			<version>${hbase.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase-examples</artifactId>
-			<version>${hbase.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
+        <!-- avro -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <!-- apache -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.15</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+            <version>2.7.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- hive -->
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-jdbc</artifactId>
-			<version>${hive.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-exec</artifactId>
-			<version>${hive.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.avro</groupId>
-					<artifactId>avro</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-cli</artifactId>
-			<version>${hive.version}</version>
-		</dependency>
+        <!-- hadoop -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-annotations</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-auth</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-core</artifactId>
+            <artifactId>hadoop-mapreduce-client-core</artifactId> <version>${hadoop.mr.version}</version>
+            <scope>provided</scope> <optional>true</optional> </dependency> -->
 
-		<!-- parquet -->
-		<dependency>
-			<groupId>com.twitter</groupId>
-			<artifactId>parquet-hadoop-bundle</artifactId>
-			<version>${parquet.version}</version>
-		</dependency>
+        <!-- hbase -->
+        <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase</artifactId>
+            <version>0.94.6-cdh4.3.0</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+            </dependency> -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>${hbase.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>${hbase.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-common</artifactId>
+            <version>${hbase.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-protocol</artifactId>
+            <version>${hbase.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-examples</artifactId>
+            <version>${hbase.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
 
-		<!-- google -->
-		<!-- <dependency> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId> 
-			<version>11.0.2</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-			</dependency> <dependency> <groupId>com.google.protobuf</groupId> <artifactId>protobuf-java</artifactId> 
-			<version>2.4.0a</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions> 
-			</dependency> -->
+        <!-- hive -->
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+            <version>${hive.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${hive.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-cli</artifactId>
+            <version>${hive.version}</version>
+        </dependency>
 
-		<!-- spark -->
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_${sparkother.version}</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-hive_${sparkother.version}</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-launcher_${sparkother.version}</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-sql_${sparkother.version}</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
+        <!-- parquet -->
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>parquet-hadoop-bundle</artifactId>
+            <version>${parquet.version}</version>
+        </dependency>
 
-		<!-- impala -->
-		<dependency>
-			<groupId>com.cloudera.impala.jdbc</groupId>
-			<artifactId>ImpalaJDBC41</artifactId>
-			<version>2.5.30</version>
-		</dependency>
-		
-		<!-- oozie -->		
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<version>${oozie.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- google -->
+        <!-- <dependency> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId>
+            <version>11.0.2</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+            </dependency> <dependency> <groupId>com.google.protobuf</groupId> <artifactId>protobuf-java</artifactId>
+            <version>2.4.0a</version> <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+            </dependency> -->
 
-		<!-- lzo -->
-		<dependency>
-			<groupId>hadoop-lzo</groupId>
-			<artifactId>hadoop-lzo</artifactId>
-			<version>0.4.15</version>
-		</dependency>
+        <!-- spark -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${sparkother.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_${sparkother.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-launcher_${sparkother.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${sparkother.version}</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
 
-		<!-- snappy -->
-		<dependency>
-			<groupId>org.xerial.snappy</groupId>
-			<artifactId>snappy-java</artifactId>
-			<version>1.0.4.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- impala -->
+        <dependency>
+            <groupId>com.cloudera.impala.jdbc</groupId>
+            <artifactId>ImpalaJDBC41</artifactId>
+            <version>2.5.30</version>
+        </dependency>
 
-		<!-- ambari-server -->
+        <!-- oozie -->
+        <dependency>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-core</artifactId>
+            <version>${oozie.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- dom -->
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- lzo -->
+        <dependency>
+            <groupId>hadoop-lzo</groupId>
+            <artifactId>hadoop-lzo</artifactId>
+            <version>0.4.15</version>
+        </dependency>
 
-		<!-- excel.poi -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.10-FINAL</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>3.10-FINAL</version>
-		</dependency>
+        <!-- snappy -->
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.0.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- other -->
-		<dependency>
-			<groupId>org.w3c.css</groupId>
-			<artifactId>sac</artifactId>
-			<version>1.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
-			<version>0.1.42</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.github.cverges.expect4j</groupId>
-			<artifactId>expect4j</artifactId>
-			<version>1.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.htmlparser.jericho</groupId>
-			<artifactId>jericho-html</artifactId>
-			<version>3.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.servicemix.bundles</groupId>
-			<artifactId>org.apache.servicemix.bundles.oro</artifactId>
-			<version>2.0.8_6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.htmlunit</groupId>
-			<artifactId>htmlunit-core-js</artifactId>
-			<version>2.9</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.htmlunit</groupId>
-			<artifactId>htmlunit</artifactId>
-			<version>2.9</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.cssparser</groupId>
-			<artifactId>cssparser</artifactId>
-			<version>0.9.5</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- ambari-server -->
 
-		<!-- json -->
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<version>2.4</version>
-			<classifier>jdk15</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.ezmorph</groupId>
-			<artifactId>ezmorph</artifactId>
-			<version>1.0.6</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<!-- alibaba fastjson -->		
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.1.41</version>
-		</dependency>
+        <!-- dom -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- newland -->
-		<dependency>
-			<groupId>com.newland.bi</groupId>
-			<artifactId>edc-bigdata-XmlBossFrame</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.nl.sri.sam</groupId>
-			<artifactId>sam-toolkit</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- excel.poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.10-FINAL</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.10-FINAL</version>
+        </dependency>
 
-		<!-- mysql -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.36</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- other -->
+        <dependency>
+            <groupId>org.w3c.css</groupId>
+            <artifactId>sac</artifactId>
+            <version>1.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.42</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cverges.expect4j</groupId>
+            <artifactId>expect4j</artifactId>
+            <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.htmlparser.jericho</groupId>
+            <artifactId>jericho-html</artifactId>
+            <version>3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.oro</artifactId>
+            <version>2.0.8_6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit-core-js</artifactId>
+            <version>2.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>2.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.cssparser</groupId>
+            <artifactId>cssparser</artifactId>
+            <version>0.9.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- oracle -->
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
-			<!-- <artifactId>ojdbc6</artifactId> -->
-			<!-- <version>11.2.0.4.0</version> -->
-			<!-- <artifactId>ojdbc14</artifactId> -->
-			<!-- <version>10.2.0.5.0</version> -->
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- json -->
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ezmorph</groupId>
+            <artifactId>ezmorph</artifactId>
+            <version>1.0.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.8.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- alibaba fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.1.41</version>
+        </dependency>
+
+        <!-- newland -->
+        <dependency>
+            <groupId>com.newland.bi</groupId>
+            <artifactId>edc-bigdata-XmlBossFrame</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.nl.sri.sam</groupId>
+            <artifactId>sam-toolkit</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- mysql -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.36</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- oracle -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.2</version>
+            <!-- <artifactId>ojdbc6</artifactId> -->
+            <!-- <version>11.2.0.4.0</version> -->
+            <!-- <artifactId>ojdbc14</artifactId> -->
+            <!-- <version>10.2.0.5.0</version> -->
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 
-		<dependency>
-			<groupId>org.apache.htrace</groupId>
-			<artifactId>htrace-core</artifactId>
-			<version>3.1.0-incubating</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.htrace</groupId>
+            <artifactId>htrace-core</artifactId>
+            <version>3.1.0-incubating</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.axis</groupId>
-			<artifactId>axis-jaxrpc</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml</groupId>
-			<artifactId>jaxrpc-api</artifactId>
-			<version>1.1</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>jaxrpc-api</artifactId>
+            <version>1.1</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.thrift</groupId>
-			<artifactId>libthrift</artifactId>
-			<version>0.9.0</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.9.0</version>
+        </dependency>
 
-		<!-- 4a金库 -->
-		<dependency>
-			<groupId>com.linkage.cas</groupId>
-			<artifactId>authenclient</artifactId>
-			<version>3.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.linkage.cas</groupId>
-			<artifactId>lcap</artifactId>
-			<version>3.1.0</version>
-		</dependency>
+        <!-- 4a金库 -->
+        <dependency>
+            <groupId>com.linkage.cas</groupId>
+            <artifactId>authenclient</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.linkage.cas</groupId>
+            <artifactId>lcap</artifactId>
+            <version>3.1.0</version>
+        </dependency>
 
-		<!-- c3p0 -->
-		<dependency>
-			<groupId>c3p0</groupId>
-			<artifactId>c3p0</artifactId>
-			<version>0.9.1.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- c3p0 -->
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- nl bi -->
-		<dependency>
-			<groupId>com.newland.bi</groupId>
-			<artifactId>nl-bi-util</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.newland.bi</groupId>
-			<artifactId>bi-ws-core</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>com.newland.bi</groupId>
-			<artifactId>edc-storm-agent</artifactId>
-			<version>1.0</version>
-		</dependency> -->
-				<!-- ftp -->
-		<dependency>
-			<groupId>com.enterprisedt</groupId>
-			<artifactId>edtFTPj-pro</artifactId>
-			<version>4.8.1</version>
-			<optional>true</optional>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>*</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.newland.bi.component</groupId>
-			<artifactId>nl-rtc-core-file</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.newland.bi</groupId>
-			<artifactId>nl-storm-common</artifactId>
-			<version>2.0</version>
-		</dependency>
+        <!-- nl bi -->
+        <dependency>
+            <groupId>com.newland.bi</groupId>
+            <artifactId>nl-bi-util</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.newland.bi</groupId>
+            <artifactId>bi-ws-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>com.newland.bi</groupId>
+            <artifactId>edc-storm-agent</artifactId>
+            <version>1.0</version>
+        </dependency> -->
+        <!-- ftp -->
+        <dependency>
+            <groupId>com.enterprisedt</groupId>
+            <artifactId>edtFTPj-pro</artifactId>
+            <version>4.8.1</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.newland.bi.component</groupId>
+            <artifactId>nl-rtc-core-file</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.newland.bi</groupId>
+            <artifactId>nl-storm-common</artifactId>
+            <version>2.0</version>
+        </dependency>
 
-		<!-- XSLT 2.0 SAXON -->
-		<dependency>
-			<groupId>net.sf.saxon</groupId>
-			<artifactId>Saxon-HE</artifactId>
-			<version>9.7.0-10</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<!-- xml -->
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom2</artifactId>
-			<version>2.0.5</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>*</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- XSLT 2.0 SAXON -->
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.7.0-10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<!-- Jotm -->
-		<!-- https://mvnrepository.com/artifact/org.ow2.jotm/jotm-core -->
-		<dependency>
-			<groupId>org.ow2.jotm</groupId>
-			<artifactId>jotm-core</artifactId>
-			<version>2.2.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- <dependency> <groupId>org.objectweb.jotm</groupId> <artifactId>com.springsource.org.objectweb.jotm</artifactId> 
-			<version>2.0.10</version> <exclusions> <exclusion> <groupId>org.apache.commons</groupId> 
-			<artifactId>com.springsource.org.apache.commons.logging</artifactId> </exclusion> 
-			</exclusions> </dependency> -->
-		<dependency>
-			<groupId>com.experlog</groupId>
-			<artifactId>xapool</artifactId>
-			<version>1.5.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.ow2.carol</groupId>
-			<artifactId>carol</artifactId>
-			<version>3.0.10</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.ow2.carol</groupId>
-			<artifactId>carol-interceptors</artifactId>
-			<version>1.0.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.ow2.spec.ee</groupId>
-			<artifactId>ow2-connector-1.5-spec</artifactId>
-			<version>1.0.13</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-			<version>1.1.9</version>
-		</dependency>
-		
-		<!-- memory -->
+        <!-- xml -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Jotm -->
+        <!-- https://mvnrepository.com/artifact/org.ow2.jotm/jotm-core -->
+        <dependency>
+            <groupId>org.ow2.jotm</groupId>
+            <artifactId>jotm-core</artifactId>
+            <version>2.2.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- <dependency> <groupId>org.objectweb.jotm</groupId> <artifactId>com.springsource.org.objectweb.jotm</artifactId>
+            <version>2.0.10</version> <exclusions> <exclusion> <groupId>org.apache.commons</groupId>
+            <artifactId>com.springsource.org.apache.commons.logging</artifactId> </exclusion>
+            </exclusions> </dependency> -->
+        <dependency>
+            <groupId>com.experlog</groupId>
+            <artifactId>xapool</artifactId>
+            <version>1.5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.carol</groupId>
+            <artifactId>carol</artifactId>
+            <version>3.0.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.carol</groupId>
+            <artifactId>carol-interceptors</artifactId>
+            <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.spec.ee</groupId>
+            <artifactId>ow2-connector-1.5-spec</artifactId>
+            <version>1.0.13</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.9</version>
+        </dependency>
+
+        <!-- memory -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
@@ -826,144 +854,144 @@
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- 字符编码解析 -->
         <dependency>
-    		<groupId>com.googlecode.juniversalchardet</groupId>
-    		<artifactId>juniversalchardet</artifactId>
-    		<version>1.0.3</version>
-		</dependency>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>1.0.3</version>
+        </dependency>
 
-		<!-- solr -->
-		<dependency>
-			<groupId>org.apache.solr</groupId>
-			<artifactId>solr-solrj</artifactId>
-			<version>${solr.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <!-- solr -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>${solr.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>com.cqx</groupId>
-			<artifactId>TestNetty</artifactId>
+        <dependency>
+            <groupId>com.cqx</groupId>
+            <artifactId>TestNetty</artifactId>
             <version>1.0.0</version>
-		</dependency>
-	</dependencies>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<!-- Ignore/Execute plugin execution -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-dependency-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals>
-											<goal>copy-dependencies</goal>
-											<goal>unpack</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<resources>
-			<!-- 控制资源文件的拷贝 -->
-			<resource>
-				<directory>src/main/resources</directory>
-				<targetPath>${project.build.directory}</targetPath>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.newland.bi.bigdata.hdfs.SymlinkTest</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			-->
-			<!-- 拷贝依赖的jar包到lib目录 -->
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>
-								${project.build.directory}/lib
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			-->
-			<!-- 解决资源文件的编码问题 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<!-- avro -->
-			<plugin>
-				<groupId>org.apache.avro</groupId>
-				<artifactId>avro-maven-plugin</artifactId>
-				<version>1.8.0</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>schema</goal>
-						</goals>
-						<configuration>
-							<sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
-							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Ignore/Execute plugin execution -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[1.0.0,)</versionRange>
+                                        <goals>
+                                            <goal>copy-dependencies</goal>
+                                            <goal>unpack</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <resources>
+            <!-- 控制资源文件的拷贝 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.newland.bi.bigdata.hdfs.SymlinkTest</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            -->
+            <!-- 拷贝依赖的jar包到lib目录 -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+            <!-- 解决资源文件的编码问题 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <!-- avro -->
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>1.8.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/avro/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

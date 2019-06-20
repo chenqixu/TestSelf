@@ -260,7 +260,7 @@ public class ChangeCode {
 		return sublist;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ChangeCode cc = new ChangeCode();
 		cc.setScan_path("D:/Document/Workspaces/Git/TestSelf");
 		cc.setScan_rule(".*\\.java");

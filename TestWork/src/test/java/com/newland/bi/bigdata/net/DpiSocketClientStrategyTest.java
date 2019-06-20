@@ -25,4 +25,16 @@ public class DpiSocketClientStrategyTest {
             dpiSocketClientStrategy.close();
         }
     }
+
+    @Test
+    public void choiceMod() {
+        String[] port_arr = {"10111", "10112", "10113"};
+        dpiSocketClientStrategy.choiceMod(4, port_arr);
+    }
+
+    @Test
+    public void choiceSequentialAllocation() {
+        String[] port_arr = {"10111", "10112", "10113"};
+        dpiSocketClientStrategy.choiceSequentialAllocation(4, port_arr);
+    }
 }

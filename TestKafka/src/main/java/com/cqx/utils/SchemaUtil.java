@@ -49,7 +49,9 @@ public class SchemaUtil {
                 "{\"name\": \"downbytes\", \"type\": [\"string\"]}\n" +
                 "]\n" +
                 "}";
-        schemaMap.put("nmc_tb_lte_http", paramValStr);
+        schemaMap.put("nmc_tb_lte_http_test", paramValStr);
+        paramValStr = "{\"namespace\": \"com.newland\",\"type\": \"record\",\"name\": \"DEL_HTTP_SESSION_OUT\",\"fields\":[{ \"name\": \"city\", \"type\": [\"string\", \"null\"] },{ \"name\": \"imsi\", \"type\": [\"string\", \"null\"] },{ \"name\": \"imei\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"msisdn\", \"type\": [\"string\", \"null\"] },{ \"name\": \"lac\", \"type\": [\"string\", \"null\"] },{ \"name\": \"cid\", \"type\": [\"string\", \"null\"] },{ \"name\": \"start_time\", \"type\": [\"string\", \"null\"] },{ \"name\": \"apply_classify\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"apply_name\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"service_name\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"uri\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"web_classify\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"web_name\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"search_keyword\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"host\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"rat\",  \"type\": [\"string\", \"null\"] }]}";
+        schemaMap.put("nmc_tb_gn_http_test", paramValStr);
     }
 
     private String urlStr;
@@ -67,6 +69,10 @@ public class SchemaUtil {
 
     public static Schema getSchemaByTopic(String topic) {
         return new Schema.Parser().parse(getSchemaValueByTopic(topic));
+    }
+
+    public Schema getSchemaByUrlTopic(String topic) {
+        return new Schema.Parser().parse(readUrlContent(topic));
     }
 
     public String readUrlContent(String topic) {

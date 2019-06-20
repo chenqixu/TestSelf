@@ -26,7 +26,8 @@ public class GenericRecordUtil {
     }
 
     public void addTopic(String topic) {
-        Schema schema = schemaUtil.getSchemaByTopic(topic);
+        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
+//        Schema schema = schemaUtil.getSchemaByTopic(topic);
         schemaMap.put(topic, schema);
         recordConvertorMap.put(topic, new RecordConvertor(schema));
     }

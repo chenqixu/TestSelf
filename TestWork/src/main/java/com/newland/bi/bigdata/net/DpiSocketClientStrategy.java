@@ -7,6 +7,11 @@ import com.newland.bi.bigdata.zookeeper.ZookeeperTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * DpiSocketClientStrategy
  * <pre>
@@ -64,6 +69,85 @@ public class DpiSocketClientStrategy {
             } catch (TestSelfException e) {
                 logger.error(e.getMessage(), e);
             }
+        }
+    }
+
+    public void choiceMod(int parallelism, String[] dpiPorts) {
+        if (dpiPorts.length > 0 && parallelism > dpiPorts.length) {
+            int quotient = parallelism / dpiPorts.length;
+            int mod = parallelism % dpiPorts.length;
+            // mod 判断能否被整除
+            // 不停加1直到被整除为止
+            logger.info("quotient：{}，mod：{}", quotient, mod);
+            int _parallelism = parallelism;
+            while (mod != 0) {
+                _parallelism++;
+                mod = _parallelism % dpiPorts.length;
+                logger.info("_parallelism：{}，mod：{}", _parallelism, mod);
+            }
+        }
+    }
+
+    /**
+     * <per>
+     * zookeeper对应结构
+     * ip/port/num
+     * 重要的是port/num，List要能体现这个关系即可
+     * </per>
+     *
+     * @param parallelism
+     * @param dpiPorts
+     */
+    public void choiceSequentialAllocation(int parallelism, String[] dpiPorts) {
+        if (dpiPorts.length > 0 && parallelism > dpiPorts.length) {
+            int all = parallelism;
+            // 先分配，在根据分配循环去抢占zookeeper
+            // 分配
+            List<SequentialAllocation> allocationList = new ArrayList<>();
+            int cycles = 0;
+            while (all > 0) {
+                for (int i = 0; i < dpiPorts.length; i++) {
+                    allocationList.add(new SequentialAllocation(dpiPorts[i], cycles));
+                    logger.info("dpiPorts[i]：{}，cycles：{}，all：{}", dpiPorts[i], cycles, all);
+                    all--;
+                    if (all == 0) break;
+                }
+                cycles++;
+            }
+            // 根据分配循环去抢占zookeeper
+            for (SequentialAllocation sequentialAllocation : allocationList) {
+                logger.info("sequentialAllocation：{}", sequentialAllocation);
+            }
+        }
+    }
+
+    class SequentialAllocation {
+        private String port;
+        private int num;
+
+        public SequentialAllocation(String port, int num) {
+            this.port = port;
+            this.num = num;
+        }
+
+        public String getPort() {
+            return port;
+        }
+
+        public void setPort(String port) {
+            this.port = port;
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public void setNum(int num) {
+            this.num = num;
+        }
+
+        public String toString() {
+            return "port：" + port + "，num：" + num;
         }
     }
 }

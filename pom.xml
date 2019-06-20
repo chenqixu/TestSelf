@@ -28,7 +28,6 @@
         <module>TestHdfsTool</module>
         <module>TestAigTool</module>
         <module>TestKafka</module>
-        <module>TestSpring</module>
         <module>TestDeploy</module>
         <module>TestExcelTool</module>
         <module>TestWork</module>
@@ -36,7 +35,6 @@
         <module>TestJavaThinking</module>
         <module>TestQuestions</module>
         <module>TestMR</module>
-        <module>TestSpringCXF</module>
         <module>TestWorkJDK8</module>
         <module>TestJMX</module>
         <module>TestSpark</module>
@@ -47,7 +45,6 @@
         <module>TestJersey2X</module>
         <module>TestJersey1X</module>
         <module>TestNetty</module>
-        <module>TestWeb</module>
         <module>TestPool</module>
         <module>TestCommon</module>
     </modules>
