@@ -46,6 +46,46 @@ public class SchemaService {
                     "{\"name\": \"downbytes\", \"type\": [\"string\"]}\n" +
                     "]\n" +
                     "}";
+        } else if (topic.equals("nmc_tb_lte_s1mme")) {
+            return "{\n" +
+                    "\"namespace\": \" com.newland\",\n" +
+                    "\"type\": \"record\",\n" +
+                    "\"name\": \"Lte_Signal_Output_Schema\",\n" +
+                    "\"fields\":[\n" +
+                    "{\"name\": \"city\",  \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"xdr_id\",  \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"imsi\",  \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"imei\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"msisdn\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"procedure_type\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"subprocedure_type\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"procedure_start_time\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"procedure_delay_time\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"procedure_end_time\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"procedure_status\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"old_mme_group_id\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"old_mme_code\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"lac\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"tac\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"cell_id\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"other_tac\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"other_eci\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"home_code\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"msisdn_home_code\", \"type\": [\"int\", \"null\"]},\n" +
+                    "{\"name\": \"old_mme_group_id_1\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"old_mme_code_1\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"old_m_tmsi\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"old_tac\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"old_eci\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"cause\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"keyword\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"mme_ue_s1ap_id\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"request_cause\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"keyword_2\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"keyword_3\", \"type\": [\"string\", \"null\"]},\n" +
+                    "{\"name\": \"keyword_4\", \"type\": [\"string\", \"null\"]}\n" +
+                    "]\n" +
+                    "}";
         }
         return "";
     }
