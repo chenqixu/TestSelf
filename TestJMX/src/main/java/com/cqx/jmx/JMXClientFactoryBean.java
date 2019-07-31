@@ -9,6 +9,7 @@ public class JMXClientFactoryBean {
     private String objectname;
     private String ip;
     private int rmiPort;
+    private boolean isNeedMBEAN;
 
     public static JMXClientFactoryBean builder() {
         return new JMXClientFactoryBean();
@@ -38,6 +39,15 @@ public class JMXClientFactoryBean {
 
     public JMXClientFactoryBean setRmiPort(int rmiPort) {
         this.rmiPort = rmiPort;
+        return this;
+    }
+
+    public boolean isNeedMBEAN() {
+        return isNeedMBEAN;
+    }
+
+    public JMXClientFactoryBean setNeedMBEAN(boolean needMBEAN) {
+        isNeedMBEAN = needMBEAN;
         return this;
     }
 }

@@ -1,5 +1,8 @@
 package com.newland.bi.bigdata.changecode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.Vector;
 public class FileUtil {
 
     private static final String valueSplit = "\\|";
+    private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private BufferedWriter writer;
     private BufferedReader reader;
 
@@ -119,5 +123,26 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    public static String[] listFile(String path, final String keyword) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            if (keyword != null && keyword.length() > 0) {
+                logger.debug("listFile use keyword：{}.", keyword);
+                return file.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.contains(keyword);
+                    }
+                });
+            } else {
+                logger.debug("listFile not use keyword.");
+                return file.list();
+            }
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
     }
 }

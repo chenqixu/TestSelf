@@ -16,6 +16,7 @@ public class TimeHelper {
 
     protected static final Logger logger = LoggerFactory.getLogger(TimeHelper.class);
     protected static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHH");
+    protected static SimpleDateFormat ymdhmsFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 补0
@@ -97,5 +98,15 @@ public class TimeHelper {
         Date now = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         return sdf.format(now);
+    }
+
+    /**
+     * 时间戳转时间
+     *
+     * @param value
+     */
+    public static void timestampToDate(long value) {
+        Date date = new Date(value);
+        logger.info("timestampToDate：{}", ymdhmsFormat.format(date));
     }
 }

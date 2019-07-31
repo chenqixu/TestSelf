@@ -34,7 +34,7 @@ public class FileRandomCreate {
     }
 
     public void createFile(String fileName) throws IOException {
-        System.out.println("create file：" + fileName);
+//        System.out.println("create file：" + fileName);
         File file = new File(fileName);
         if (!file.exists()) {
             file.createNewFile();
@@ -58,7 +58,8 @@ public class FileRandomCreate {
 
         @Override
         public String create() {
-            return values[random.nextInt(2)];
+//            return values[random.nextInt(2)];
+            return "S1MME";
         }
     }
 

@@ -215,7 +215,7 @@ public class JvmMetrics {
             sb.append("\n\t [delta thread info] => \n");
             sb.append("\t\t");
             sb.append(String.format("jvm %-20s | %-20s ", "currentThreadCount", "peekThreadCount"));
-            sb.append("\\n\t\t");
+            sb.append("\n\t\t");
             sb.append(String.format("jvm %-20s | %-20s  \n", threadMxBean.getThreadCount(),
                     threadMxBean.getPeakThreadCount()));
 

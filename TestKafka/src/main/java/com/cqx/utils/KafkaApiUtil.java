@@ -3,9 +3,18 @@ package com.cqx.utils;
 import kafka.admin.AdminUtils;
 import kafka.admin.TopicCommand;
 import kafka.utils.ZkUtils;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.security.JaasUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * KafkaApiUtil
@@ -80,6 +89,13 @@ public class KafkaApiUtil {
         zkUtils.close();
     }
 
+    public void fetchAllTopicConfigs() {
+        check();
+        ZkUtils zkUtils = ZkUtils.apply(zookeeper_ip_port, 30000, 30000, JaasUtils.isZkSecurityEnabled());
+        logger.info("{}", AdminUtils.fetchAllTopicConfigs(zkUtils));
+        zkUtils.close();
+    }
+
     public String getZookeeper_ip_port() {
         return zookeeper_ip_port;
     }
@@ -96,5 +112,48 @@ public class KafkaApiUtil {
     public KafkaApiUtil setZookeeper_path(String zookeeper_path) {
         this.zookeeper_path = zookeeper_path;
         return this;
+    }
+
+    public void listTopic(String brokerUrl, String propertiesFile) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(propertiesFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //java.security.auth.login.config 变量设置
+        String propertyAuth = properties.getProperty("java.security.auth.login.config");
+        if (propertyAuth != null && !"".equals(propertyAuth)) {
+            logger.info("java.security.auth.login.config is not null，{}", propertyAuth);
+            System.setProperty("java.security.auth.login.config", propertyAuth);
+            properties.remove("java.security.auth.login.config");
+            logger.info("java.security.auth.login.config remove from properties");
+        }
+//        properties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, brokerUrl);
+        AdminClient adminClient = AdminClient.create(properties);
+        ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
+        listTopicsOptions.listInternal(true);
+        ListTopicsResult result = adminClient.listTopics(listTopicsOptions);
+        Collection<TopicListing> list = null;
+        try {
+            list = result.listings().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        System.out.println(list);
+        adminClient.close();
+    }
+
+    public void createTopics(String brokerUrl, String topic_name) {
+        Properties properties = new Properties();
+        properties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, brokerUrl);
+        AdminClient adminClient = AdminClient.create(properties);
+        NewTopic newTopic = new NewTopic(topic_name, 1, (short) 1);
+        Collection<NewTopic> newTopicList = new ArrayList<>();
+        newTopicList.add(newTopic);
+        adminClient.createTopics(newTopicList);
+        adminClient.close();
     }
 }

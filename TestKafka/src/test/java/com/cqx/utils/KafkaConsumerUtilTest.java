@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.List;
 
 public class KafkaConsumerUtilTest {
@@ -18,6 +19,8 @@ public class KafkaConsumerUtilTest {
     private RecordConvertor recordConvertor;
     private String topic = "nmc_tb_lte_http_test";
     private String conf = path + "consumer.properties";
+    private String schemaUrl = "http://10.1.8.203:18061/SchemaService/getSchema?t=";
+    private SchemaUtil schemaUtil;
 
     @Before
     public void setUp() throws Exception {
@@ -35,6 +38,21 @@ public class KafkaConsumerUtilTest {
 
     @Test
     public void poll() {
+        List<byte[]> list = kafkaConsumerUtil.poll(1000);
+        for (byte[] bytes : list) {
+            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+            logger.info("genericRecord：{}", genericRecord);
+        }
+    }
+
+    @Test
+    public void pollS1mme() throws Exception {
+        String topic = "nmc_tb_lte_s1mme";
+        schemaUtil = new SchemaUtil(schemaUrl);
+        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
+        recordConvertor = new RecordConvertor(schema);
+        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "alice", "alice");
+        kafkaConsumerUtil.subscribe(topic);
         List<byte[]> list = kafkaConsumerUtil.poll(1000);
         for (byte[] bytes : list) {
             GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);

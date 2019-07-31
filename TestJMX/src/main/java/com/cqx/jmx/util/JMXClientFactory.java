@@ -18,6 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JMXClientFactory {
+    public static final String JMXRMI = "jmxrmi";
+    public static final String MBEAN = "MBean";
+    public static final String MBEAN_NAME = "MBean:name=";
+    public static final String RMI = "service:jmx:rmi:///jndi/rmi://";
     private static Logger logger = LoggerFactory.getLogger(JMXClientFactory.class);
     private static JMXClientFactory jmxcf = new JMXClientFactory();
     private static Map<JMXClientFactoryBean, JMXClientUtil> clientUtilMap = new HashMap<>();
@@ -38,17 +42,8 @@ public class JMXClientFactory {
      * 默认使用1099端口
      */
     public static JMXClientUtil startJMXClient(String objectname) {
-        String ip = "127.0.0.1";
         int rmiPort = 1099;
-        try {
-            ip = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            logger.error(e.getMessage(), e);
-        }
-        JMXClientFactoryBean jmxClientFactoryBean = JMXClientFactoryBean.builder()
-                .setObjectname(objectname).setIp(ip).setRmiPort(rmiPort);
-        startJMXClient(jmxClientFactoryBean);
-        return getJMXClientUtil(jmxClientFactoryBean);
+        return startJMXClient(objectname, rmiPort);
     }
 
     public static JMXClientUtil startJMXClient(String objectname, int rmiPort) {
@@ -58,15 +53,16 @@ public class JMXClientFactory {
         } catch (UnknownHostException e) {
             logger.error(e.getMessage(), e);
         }
-        JMXClientFactoryBean jmxClientFactoryBean = JMXClientFactoryBean.builder()
-                .setObjectname(objectname).setIp(ip).setRmiPort(rmiPort);
-        startJMXClient(jmxClientFactoryBean);
-        return getJMXClientUtil(jmxClientFactoryBean);
+        return startJMXClient(objectname, ip, rmiPort);
     }
 
     public static JMXClientUtil startJMXClient(String objectname, String ip, int rmiPort) {
+        return startJMXClient(objectname, ip, rmiPort, true);
+    }
+
+    public static JMXClientUtil startJMXClient(String objectname, String ip, int rmiPort, boolean isNeedMBEAN) {
         JMXClientFactoryBean jmxClientFactoryBean = JMXClientFactoryBean.builder()
-                .setObjectname(objectname).setIp(ip).setRmiPort(rmiPort);
+                .setObjectname(objectname).setIp(ip).setRmiPort(rmiPort).setNeedMBEAN(isNeedMBEAN);
         startJMXClient(jmxClientFactoryBean);
         return getJMXClientUtil(jmxClientFactoryBean);
     }
@@ -86,11 +82,10 @@ public class JMXClientFactory {
         private void startJMXClient(String objectname, int rmiPort) {
             try {
                 String ip = InetAddress.getLocalHost().getHostAddress();
-                url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + ip + ":"
-                        + rmiPort + "/" + objectname + "MBean");
+                url = new JMXServiceURL(RMI + ip + ":" + rmiPort + "/" + objectname + MBEAN);
                 JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
                 server = jmxc.getMBeanServerConnection();
-                mbeanName = new ObjectName(objectname + "MBean:name=" + objectname);
+                mbeanName = new ObjectName(objectname + MBEAN_NAME + objectname);
             } catch (MalformedURLException e) {
                 logger.error(e.getMessage(), e);
             } catch (IOException e) {
@@ -104,12 +99,22 @@ public class JMXClientFactory {
             String objectname = jmxClientFactoryBean.getObjectname();
             String ip = jmxClientFactoryBean.getIp();
             int rmiPort = jmxClientFactoryBean.getRmiPort();
+            boolean isNeedMBEAN = jmxClientFactoryBean.isNeedMBEAN();
             try {
-                url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + ip + ":"
-                        + rmiPort + "/" + objectname + "MBean");
+                String urlstr = RMI + ip + ":" + rmiPort + "/";
+                if (isNeedMBEAN) {
+                    urlstr = urlstr + objectname + MBEAN;
+                } else {
+                    urlstr = urlstr + JMXRMI;
+                }
+                url = new JMXServiceURL(urlstr);
                 JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
                 server = jmxc.getMBeanServerConnection();
-                mbeanName = new ObjectName(objectname + "MBean:name=" + objectname);
+                if (isNeedMBEAN) {
+                    mbeanName = new ObjectName(objectname + MBEAN_NAME + objectname);
+                } else {
+                    mbeanName = new ObjectName(objectname);
+                }
             } catch (MalformedURLException e) {
                 logger.error(e.getMessage(), e);
             } catch (IOException e) {
@@ -121,11 +126,10 @@ public class JMXClientFactory {
 
         private void startJMXClient(String objectname, String ip, int rmiPort) {
             try {
-                url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + ip + ":"
-                        + rmiPort + "/" + objectname + "MBean");
+                url = new JMXServiceURL(RMI + ip + ":" + rmiPort + "/" + objectname + MBEAN);
                 JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
                 server = jmxc.getMBeanServerConnection();
-                mbeanName = new ObjectName(objectname + "MBean:name=" + objectname);
+                mbeanName = new ObjectName(objectname + MBEAN_NAME + objectname);
             } catch (MalformedURLException e) {
                 logger.error(e.getMessage(), e);
             } catch (IOException e) {

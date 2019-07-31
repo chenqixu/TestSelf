@@ -102,4 +102,11 @@ public class StringUtilsTest {
         list.add("abc");
         System.out.println(list.get(0));
     }
+
+    @Test
+    public void replaseTest() {
+        String separator = "\t";// 落地文件分隔符
+        separator = separator.replace("\\", "");// 去掉转义符，因为落地时候不用转义
+        System.out.println("a" + separator + "b");
+    }
 }

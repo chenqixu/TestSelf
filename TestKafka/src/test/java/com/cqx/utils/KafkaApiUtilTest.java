@@ -12,16 +12,18 @@ public class KafkaApiUtilTest {
     private KafkaApiUtil kafkaApiUtil;
     private String zookeeper_ip_port;
     private String zookeeper_path;
+    private String brokerUrl;
 
     @Before
     public void setUp() throws Exception {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(path + "common.vm.properties"));
+        properties.load(new FileInputStream(path + "common.properties"));
         zookeeper_ip_port = properties.getProperty("zookeeper_ip_port");
         zookeeper_path = properties.getProperty("zookeeper_path");
         kafkaApiUtil = KafkaApiUtil.builder()
                 .setZookeeper_ip_port(zookeeper_ip_port)
                 .setZookeeper_path(zookeeper_path);
+        brokerUrl = "edc-mqc-01:9092";
     }
 
     @Test
@@ -42,5 +44,20 @@ public class KafkaApiUtilTest {
     @Test
     public void deleteTopicByName() {
         kafkaApiUtil.deleteTopicByName("topic1");
+    }
+
+    @Test
+    public void fetchAllTopicConfigs() {
+        kafkaApiUtil.fetchAllTopicConfigs();
+    }
+
+    @Test
+    public void listTopic() {
+        kafkaApiUtil.listTopic(brokerUrl, path + "producer.properties");
+    }
+
+    @Test
+    public void createTopics() {
+        kafkaApiUtil.createTopics(brokerUrl, "test123_topic");
     }
 }
