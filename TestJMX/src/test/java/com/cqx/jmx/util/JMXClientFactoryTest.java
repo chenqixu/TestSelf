@@ -10,7 +10,7 @@ public class JMXClientFactoryTest {
 
     @Test
     public void getJMXClientUtil() {
-        String ip = "192.168.230.128";
+        String ip = "10.1.8.200";
         int port = 8998;
 
         IJMXClient OSjmxClientUtil = JMXClientFactory.startJMXClient(

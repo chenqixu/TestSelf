@@ -1,7 +1,9 @@
 package com.cqx.utils;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,7 @@ import java.util.Properties;
  */
 public class KafkaProducerUtil<K, V> {
 
-    private static Logger logger = LoggerFactory.getLogger(KafkaProducerUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaProducerUtil.class);
     private KafkaProducer<K, V> producer;
 
     public KafkaProducerUtil(String conf) throws IOException {
@@ -55,6 +57,27 @@ public class KafkaProducerUtil<K, V> {
 
     public void send(String topic, V value) {
         producer.send(new ProducerRecord<K, V>(topic, value));
+    }
+
+    /**
+     * 异步发送
+     *
+     * @param topic
+     * @param key
+     * @param value
+     */
+    public void sendCallBack(String topic, K key, V value) {
+        ProducerRecord<K, V> record = new ProducerRecord<>(topic, key, value);
+        producer.send(record,
+                new Callback() {
+                    public void onCompletion(RecordMetadata metadata, Exception e) {
+                        if (e != null) {
+                            e.printStackTrace();
+                        } else {
+                            logger.info("The offset of the record we just sent is: {}", metadata.offset());
+                        }
+                    }
+                });
     }
 
     public void release() {
