@@ -1,11 +1,6 @@
 package com.newland.bi.bigdata.excel;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.newland.bi.bigdata.bean.ExcelSheetList;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -15,11 +10,16 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.newland.bi.bigdata.bean.ExcelSheetList;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExcelUtils {
-	/**
+    /**
      * read the Excel file
+     *
      * @param path the path of the Excel file
      * @return
      * @throws IOException
@@ -44,91 +44,103 @@ public class ExcelUtils {
 
     /**
      * Read the Excel 2010
+     *
      * @param path the path of the excel file
      * @return
      * @throws IOException
      */
     public List<ExcelSheetList> readXlsx(String path) throws IOException {
 //        System.out.println(ExcelCommons.PROCESSING + path);
-        InputStream is = new FileInputStream(path);
-        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+        InputStream is = null;
         List<ExcelSheetList> resultlist = new ArrayList<ExcelSheetList>();
-        // 循环每一页，并处理当前页
-        for (XSSFSheet xssfSheet : xssfWorkbook) {
-            if (xssfSheet == null) {
-                continue;
-            }
-            ExcelSheetList esl = new ExcelSheetList();
-            // 设置sheetName
-            esl.setSheetName(xssfSheet.getSheetName());
-        	List<List<String>> sheetlist = new ArrayList<List<String>>();
-        	// 设置sheet内容
-        	esl.setSheetList(sheetlist);
-            // 处理当前页，循环每一行
-            for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
-                XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-                if (xssfRow != null) {
-                	int minColIx = xssfRow.getFirstCellNum();
-                	int maxColIx = xssfRow.getLastCellNum();
-                	List<String> rowlist = new ArrayList<String>();
-                	// 遍历该行，获取每个cell元素
-                	for (int colIx = minColIx; colIx<maxColIx; colIx++){
-                		XSSFCell cell = xssfRow.getCell(colIx);
-                		if (cell == null) {
-                			continue;
-                		}
-                		rowlist.add(getValue(cell));
-                	}
-                	sheetlist.add(rowlist);
+        try {
+            is = new FileInputStream(path);
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+            // 循环每一页，并处理当前页
+            for (XSSFSheet xssfSheet : xssfWorkbook) {
+                if (xssfSheet == null) {
+                    continue;
                 }
+                ExcelSheetList esl = new ExcelSheetList();
+                // 设置sheetName
+                esl.setSheetName(xssfSheet.getSheetName());
+                List<List<String>> sheetlist = new ArrayList<List<String>>();
+                // 设置sheet内容
+                esl.setSheetList(sheetlist);
+                // 处理当前页，循环每一行
+                for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+                    XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+                    if (xssfRow != null) {
+                        int minColIx = xssfRow.getFirstCellNum();
+                        int maxColIx = xssfRow.getLastCellNum();
+                        List<String> rowlist = new ArrayList<String>();
+                        // 遍历该行，获取每个cell元素
+                        for (int colIx = minColIx; colIx < maxColIx; colIx++) {
+                            XSSFCell cell = xssfRow.getCell(colIx);
+                            if (cell == null) {
+                                continue;
+                            }
+                            rowlist.add(getValue(cell));
+                        }
+                        sheetlist.add(rowlist);
+                    }
+                }
+                resultlist.add(esl);
             }
-            resultlist.add(esl);
+        } finally {
+            if (is != null) is.close();
         }
         return resultlist;
     }
 
     /**
      * Read the Excel 2003-2007
+     *
      * @param path the path of the Excel
      * @return
      * @throws IOException
      */
     public List<ExcelSheetList> readXls(String path) throws IOException {
 //        System.out.println(ExcelCommons.PROCESSING + path);
-        InputStream is = new FileInputStream(path);
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
+        InputStream is = null;
         List<ExcelSheetList> resultlist = new ArrayList<ExcelSheetList>();
-        // 循环每一页，并处理当前页
-        for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
-            HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
-            if (hssfSheet == null) {
-                continue;
-            }
-            ExcelSheetList esl = new ExcelSheetList();
-            // 设置sheetName
-            esl.setSheetName(hssfSheet.getSheetName());
-        	List<List<String>> sheetlist = new ArrayList<List<String>>();
-        	// 设置sheet内容
-        	esl.setSheetList(sheetlist);
-            // 处理当前页，循环每一行
-            for (int rowNum = 1; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
-                HSSFRow hssfRow = hssfSheet.getRow(rowNum);
-                if (hssfRow != null) {
-                	int minColIx = hssfRow.getFirstCellNum();
-                	int maxColIx = hssfRow.getLastCellNum();
-                	List<String> rowlist = new ArrayList<String>();
-                	// 遍历该行，获取每个cell元素
-                	for (int colIx = minColIx; colIx<maxColIx; colIx++){
-                		HSSFCell cell = hssfRow.getCell(colIx);
-                		if (cell == null) {
-                			continue;
-                		}
-                		rowlist.add(getValue(cell));
-                	}
-                	sheetlist.add(rowlist);
+        try {
+            is = new FileInputStream(path);
+            HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
+            // 循环每一页，并处理当前页
+            for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
+                HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
+                if (hssfSheet == null) {
+                    continue;
                 }
+                ExcelSheetList esl = new ExcelSheetList();
+                // 设置sheetName
+                esl.setSheetName(hssfSheet.getSheetName());
+                List<List<String>> sheetlist = new ArrayList<List<String>>();
+                // 设置sheet内容
+                esl.setSheetList(sheetlist);
+                // 处理当前页，循环每一行
+                for (int rowNum = 1; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
+                    HSSFRow hssfRow = hssfSheet.getRow(rowNum);
+                    if (hssfRow != null) {
+                        int minColIx = hssfRow.getFirstCellNum();
+                        int maxColIx = hssfRow.getLastCellNum();
+                        List<String> rowlist = new ArrayList<String>();
+                        // 遍历该行，获取每个cell元素
+                        for (int colIx = minColIx; colIx < maxColIx; colIx++) {
+                            HSSFCell cell = hssfRow.getCell(colIx);
+                            if (cell == null) {
+                                continue;
+                            }
+                            rowlist.add(getValue(cell));
+                        }
+                        sheetlist.add(rowlist);
+                    }
+                }
+                resultlist.add(esl);
             }
-            resultlist.add(esl);
+        } finally {
+            if (is != null) is.close();
         }
         return resultlist;
     }
@@ -154,9 +166,10 @@ public class ExcelUtils {
             return String.valueOf(hssfCell.getStringCellValue());
         }
     }
-    
+
     /**
      * get postfix of the path
+     *
      * @param path
      * @return
      */

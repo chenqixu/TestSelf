@@ -116,12 +116,15 @@ public class PswEncrypt {
 	 * @throws Exception
 	 */
 	public static void main(String[] args)throws Exception{
-		String passwd = "000000";
+//		String passwd = "000000";
 		//二次加密后密码
 		PswEncrypt synenc = new PswEncrypt();
-		System.out.println(synenc.MD5PswEncrypt("111111","9990035"));
+//		System.out.println(synenc.MD5PswEncrypt("111111","9990035"));
 		System.out.println(synenc.MD5PswEncrypt("111111","9990424"));
-		System.out.println(synenc.MD5PswEncrypt("111111","9999022"));
+//		System.out.println(synenc.MD5PswEncrypt("111111","9999022"));
+		System.out.println(synenc.MD5PswEncrypt("Ww16873313~~","9990986"));
+		System.out.println(synenc.MD5PswEncrypt("123qwe","9990158"));
+		System.out.println(synenc.MD5PswEncrypt("123qwe","9990888"));
 //		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990122")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990122);");
 //		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"9990424")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990424);");
 //		System.out.println("update sm_user set passwd='"+synenc.MD5PswEncrypt(md5passwd,"8000005")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (8000005);");
