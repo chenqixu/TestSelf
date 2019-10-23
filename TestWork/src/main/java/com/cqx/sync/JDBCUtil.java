@@ -2,6 +2,7 @@ package com.cqx.sync;
 
 import com.cqx.sync.bean.BatchBean;
 import com.cqx.sync.bean.BeanUtil;
+import com.cqx.sync.bean.DBBean;
 import com.cqx.sync.bean.QueryResult;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;

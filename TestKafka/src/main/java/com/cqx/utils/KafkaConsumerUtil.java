@@ -64,7 +64,7 @@ public class KafkaConsumerUtil<K, V> {
             resultList.add(msgByte);
         }
 //        // 同步提交 消费偏移量，todo 已经设置了自动提交，其实这里可以不需要
-//        consumer.commitSync();
+        consumer.commitSync();
         return resultList;
     }
 

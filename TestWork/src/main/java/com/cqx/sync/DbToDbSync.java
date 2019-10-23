@@ -1,5 +1,7 @@
 package com.cqx.sync;
 
+import com.cqx.sync.bean.DBSyncBean;
+
 import java.util.Map;
 
 /**

@@ -1,5 +1,6 @@
 package com.cqx.sync;
 
+import com.cqx.sync.bean.DBBean;
 import org.junit.Before;
 import org.junit.Test;
 

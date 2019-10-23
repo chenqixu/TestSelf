@@ -9,11 +9,16 @@
     </parent>
     <artifactId>TestWork</artifactId>
     <distributionManagement>
-        <repository>
+        <!-- repository>
             <id>cloudera-releases</id>
             <name>cloudera-releases</name>
             <url>https://repository.cloudera.com/content/repositories/releases/</url>
-        </repository>
+        </repository -->
+        <!-- repository>
+            <id>maven_central</id>
+            <name>maven_central</name>
+            <url>http://10.1.4.161:8085/repository/maven_central/</url>
+        </repository -->
     </distributionManagement>
     <properties>
         <!-- <hadoop.version>2.0.0-cdh4.3.0</hadoop.version> <hadoop.mr.version>2.0.0-mr1-cdh4.3.0</hadoop.mr.version>
@@ -880,6 +885,14 @@
             <artifactId>TestNetty</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- pdi -->
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-big-data-kettle-plugins-kafka</artifactId>
+            <version>8.0.0.0-28</version>
+        </dependency>
+
     </dependencies>
     <build>
         <pluginManagement>

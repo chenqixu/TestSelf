@@ -1,6 +1,7 @@
 package com.cqx.sync;
 
 import com.cqx.sync.bean.BeanUtil;
+import com.cqx.sync.bean.DBBean;
 import com.cqx.sync.bean.QueryResult;
 import com.cqx.sync.bean.SyncConf;
 import org.junit.After;

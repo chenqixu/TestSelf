@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 线程池监控
@@ -35,7 +36,7 @@ public class ThreadPoolMonitor {
                 while (true) {
                     heartUtil.printStatus();
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -54,7 +55,7 @@ public class ThreadPoolMonitor {
                 while (true) {
                     printPoolStatus();
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -67,11 +68,13 @@ public class ThreadPoolMonitor {
      * 打印线程池状态
      */
     private void printPoolStatus() {
-        logger.info("ActiveCount：{}，CorePoolSize：{}，PoolSize：{}，Queue：{}，TaskCount：{}",
+        logger.info("ActiveCount：{}，CorePoolSize：{}，PoolSize：{}，Queue.size：{}，TaskCount：{}，CompletedTaskCount：{}，KeepAliveTime：{}",
                 threadPoolExecutor.getActiveCount(),
                 threadPoolExecutor.getCorePoolSize(),
                 threadPoolExecutor.getPoolSize(),
-                threadPoolExecutor.getQueue(),
-                threadPoolExecutor.getTaskCount());
+                threadPoolExecutor.getQueue().size(),
+                threadPoolExecutor.getTaskCount(),
+                threadPoolExecutor.getCompletedTaskCount(),
+                threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS));
     }
 }

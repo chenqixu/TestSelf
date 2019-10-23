@@ -63,8 +63,9 @@ public class ProjectManagement {
             for (StoryBean storyBean1 : projectManagementBean.getStoryBeanList()) {
                 System.out.println("  " + storyBean1);
                 for (TaskBean taskBean : storyBean1.getTaskBeanList()) {
-                    System.out.println("    " + taskBean);
+                    System.out.println("  " + taskBean);
                 }
+                System.out.println();
             }
             System.out.println("##下周计划##");
             for (StoryBean storyBean1 : projectManagementBean.getStoryBeanList()) {

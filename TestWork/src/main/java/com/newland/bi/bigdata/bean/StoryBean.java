@@ -24,6 +24,9 @@ public class StoryBean {
     }
 
     public void setStory_name(String story_name) {
+        // 去掉故事编号
+        int index = story_name.indexOf("(#");
+        if (index > 0) story_name = story_name.substring(0, index);
         this.story_name = story_name;
     }
 

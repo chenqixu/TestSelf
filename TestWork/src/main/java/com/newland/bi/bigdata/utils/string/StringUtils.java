@@ -235,4 +235,23 @@ public class StringUtils {
     public static String addPathAndSuffix(String data, String path, String suffix) {
         return StringUtils.getEndsWithPath(path) + data + suffix;
     }
+
+    /**
+     * 去重
+     *
+     * @param value
+     * @param split
+     */
+    public static void distinct(String value, String split) {
+        if (value != null && split != null) {
+            String[] array = value.split(split, -1);
+            Map<String, String> map = new HashMap<>();
+            for (String str : array) {
+                map.put(str, "");
+            }
+            System.out.println("source.size：" + array.length + "，map.size：" + map.size());
+        } else {
+            System.out.println("please input param.");
+        }
+    }
 }

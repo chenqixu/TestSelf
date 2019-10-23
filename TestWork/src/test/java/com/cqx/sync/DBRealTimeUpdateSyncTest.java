@@ -8,15 +8,14 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DBFullSyncTest {
+public class DBRealTimeUpdateSyncTest {
 
-    private DBFullSync dbFullSync;
+    private DBRealTimeUpdateSync dbRealTimeUpdateSync;
 
     @Before
     public void setUp() throws Exception {
-        dbFullSync = new DBFullSync();
-        Map<String, Object> params = generateParams();
-        dbFullSync.init(params);
+        dbRealTimeUpdateSync = new DBRealTimeUpdateSync();
+        dbRealTimeUpdateSync.init(generateParams());
     }
 
     @After
@@ -25,22 +24,26 @@ public class DBFullSyncTest {
 
     @Test
     public void run() throws Exception {
-        dbFullSync.run();
+        dbRealTimeUpdateSync.run();
     }
 
     private Map<String, Object> generateParams() {
         Map<String, Object> params = new HashMap<>();
         DBBean srcdbBean = new DBBean();
         srcdbBean.setDbType(DBType.MYSQL);
-        srcdbBean.setTns("jdbc:mysql://10.1.8.200:3306/suyan_perf?useUnicode=true");
-        srcdbBean.setUser_name("suyan");
-        srcdbBean.setPass_word("suyan");
+        srcdbBean.setTns("jdbc:mysql://127.0.0.1:3306/utap?useUnicode=true");
+        srcdbBean.setUser_name("udap");
+        srcdbBean.setPass_word("udap");
         params.put("srcdbBean", srcdbBean);
         DBBean dstdbBean = new DBBean();
-        dstdbBean.setDbType(DBType.ORACLE);
-        dstdbBean.setTns("jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1");
-        dstdbBean.setUser_name("cctsys_dev");
-        dstdbBean.setPass_word("cctsys_dev");
+//        dstdbBean.setDbType(DBType.ORACLE);
+//        dstdbBean.setTns("jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1");
+//        dstdbBean.setUser_name("cctsys_dev");
+//        dstdbBean.setPass_word("cctsys_dev");
+        dstdbBean.setDbType(DBType.MYSQL);
+        dstdbBean.setTns("jdbc:mysql://127.0.0.1:3306/utap?useUnicode=true");
+        dstdbBean.setUser_name("udap");
+        dstdbBean.setPass_word("udap");
         params.put("dstdbBean", dstdbBean);
         // op_org_storage_res
         params.put("src_tab_name", "op_org_storage_res");

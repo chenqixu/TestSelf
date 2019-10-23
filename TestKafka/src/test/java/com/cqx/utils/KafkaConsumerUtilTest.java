@@ -51,12 +51,16 @@ public class KafkaConsumerUtilTest {
         schemaUtil = new SchemaUtil(schemaUrl);
         Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
         recordConvertor = new RecordConvertor(schema);
-        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "alice", "alice");
+        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
-        List<byte[]> list = kafkaConsumerUtil.poll(1000);
-        for (byte[] bytes : list) {
-            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-            logger.info("genericRecord：{}", genericRecord);
+//        List<byte[]> list = kafkaConsumerUtil.poll(2000);
+//        for (byte[] bytes : list) {
+//            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+//            logger.info("genericRecord：{}", genericRecord);
+//        }
+        while (true) {
+            SleepUtils.sleepMilliSecond(2000);
+            kafkaConsumerUtil.poll(1000);
         }
     }
 }
