@@ -64,6 +64,15 @@ public class OtherUtils {
         return System.currentTimeMillis();
     }
 
+    /**
+     * 获取调用者的类名
+     *
+     * @return
+     */
+    public static String getCallerName() {
+        return new Exception().getStackTrace()[2].getClassName();
+    }
+
     static class TimeOut {
         Object object;
         long time = 0l;

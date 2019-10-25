@@ -1,6 +1,7 @@
 package com.newland.bi.bigdata.hash;
 
 import com.newland.bi.bigdata.bean.HashCodeFile;
+import com.newland.bi.bigdata.utils.OtherUtils;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +28,8 @@ public class MyHashCode {
     }
 
     public String[] createFileName(int num) {
+        String classname = OtherUtils.getCallerName();
+        System.out.println("classname:" + classname);
         String[] result = new String[num];
         String head = "S04002";
         String[] bodys = {"20190813120000", "20190813130000", "20190813140000"
