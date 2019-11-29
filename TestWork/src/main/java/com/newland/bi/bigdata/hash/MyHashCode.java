@@ -60,7 +60,9 @@ public class MyHashCode {
 
     public void grouping(HashCodeFile hashCodeFile, Map<Integer, List<HashCodeFile>> modMap) {
         // 文件分组
-        int _mod = Math.abs(hashCodeFile.getFileName().hashCode()) % mod;
+//        int _mod = Math.abs(hashCodeFile.getFileName().hashCode()) % mod;
+//        int _mod = hashCodeFile.getFileName().hashCode() % mod;
+        int _mod = Math.abs(hashCodeFile.hashCode()) % mod;
         hashCodeFile.setDataIndex(_mod);
         List<HashCodeFile> _modHashCodeFile = modMap.get(_mod);
         if (_modHashCodeFile == null) {

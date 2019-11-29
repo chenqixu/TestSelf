@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class MyFutureCancelTest {
@@ -55,6 +57,52 @@ public class MyFutureCancelTest {
         for (int i = 0; i < 1000000; i++) {
             if (i % 9 == 0)
                 logger.info("{}", i);
+        }
+    }
+
+    @Test
+    public void testThreadException() {
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        List<TestThreadCallable> testThreadCallableList = new ArrayList<>();
+        testThreadCallableList.add(new TestThreadCallable());
+        testThreadCallableList.add(new TestThreadCallable(4));
+        List<Future<Integer>> futureList = new ArrayList<>();
+        // 提交任务
+        for (TestThreadCallable testThreadCallable : testThreadCallableList) {
+            futureList.add(executor.submit(testThreadCallable));
+        }
+        // 等待任务完成
+        List<Integer> resultList = new ArrayList<>();
+        for (Future<Integer> future : futureList) {
+            try {
+                resultList.add(future.get(3, TimeUnit.SECONDS));
+            } catch (InterruptedException e) {
+                logger.error("任务被中断：" + e.getMessage(), e);
+            } catch (ExecutionException e) {
+                logger.error("当前线程执行出错：" + e.getMessage(), e);
+            } catch (TimeoutException e) {
+                logger.error("任务执行超时：" + e.getMessage(), e);
+            }
+        }
+        logger.info("resultList：{}", resultList);
+    }
+
+    class TestThreadCallable implements Callable<Integer> {
+
+        int sleep = 0;
+
+        public TestThreadCallable() {
+        }
+
+        public TestThreadCallable(int sleep) {
+            this.sleep = sleep;
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            if (sleep > 0) SleepUtils.sleepSecond(sleep);
+            logger.info("sleep：{}", sleep);
+            return 1;
         }
     }
 }

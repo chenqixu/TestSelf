@@ -119,4 +119,11 @@ public class StringUtilsTest {
         // rtsp
         StringUtils.distinct("length,city_1,interface,xdr_id,imsi,imei,msisdn,m_tmsi,ip_add_type,user_ip,sgw_ip_add,enodeb_ip_add,sgw_port,enodeb_port,tac,eci,other_tac,other_eci,rat,apn,sid,app_type_code,procedure_id,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,ownclass,l4_protocol,busi_bear_type,source_port,server_ip,destination_port,mcc,mnc,upbytes,downbytes,dura,dura_1,upflow,downflow,updura,downdura,up_packet,down_packet,up_packet_flow,down_packet_flow,busi_behavior_identify,busi_complete_identify,busi_dura,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_built_delay,tcp_confirm_delay,first_tcp_success_delay,first_answer_delay,window_size,mss_size,tcp_attempts_cnt,tcp_connection_status,session_end_flag,url,user_agent,rtp_server_ip,client_start_prot,client_end_prot,server_start_prot,server_end_prot,video_flux,audio_flux,answer_dely,area,city,areaclass,s_year,s_month,s_day,s_hour,s_minute,telnumber,imei_prefix8,terminaltype,mobilevendor,mobiletype,mobileos,sys_reported_time,p_id,mmeues1apid,enbues1apid,enb_sgsn_gtp_teid,sgw_ggsn_gtp_teid,protocol_type,app_content,app_status,user_ipv6,app_server_ipv6,reserve_1,reserve_2,reserve_3,label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5,parser_tag", ",");
     }
+
+    @Test
+    public void arrayTest() {
+        int[] array = {1};
+        for (int i = 0; i < array.length; i++)
+            System.out.println(array[i]);
+    }
 }
