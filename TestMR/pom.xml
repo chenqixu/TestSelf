@@ -12,7 +12,7 @@
 		<hadoop.version>2.6.0</hadoop.version>
 		<hadoop.mr.version>2.6.0-mr1-cdh5.7.2</hadoop.mr.version>
 		<hbase.version>1.1.1</hbase.version>
-		<hive.version>1.2.0</hive.version>
+		<hive.version>2.3.4</hive.version>
 		<solr.version>4.1.0</solr.version>
 		<JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>
 	</properties>
