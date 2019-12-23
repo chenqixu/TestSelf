@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:createrandomfile="uri:custom:createrandomfile-action:0.1"
+           elementFormDefault="qualified"
+           targetNamespace="uri:custom:createrandomfile-action:0.1">
+    <xs:element name="createrandomfile" type="createrandomfile:MESSAGE"></xs:element>
+    <xs:complexType name="MESSAGE">
+        <xs:sequence>
+            <xs:element name="file_path" type="xs:string"></xs:element>
+            <xs:element name="file_name_length" type="xs:string"></xs:element>
+            <xs:element name="file_name_suffix" type="xs:string"></xs:element>
+            <xs:element name="file_content_size" type="xs:string"></xs:element>
+            <xs:element name="file_content_length" type="xs:string"></xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

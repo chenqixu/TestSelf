@@ -2,14 +2,11 @@ package com.cqx.util;
 
 import com.cqx.common.utils.system.SleepUtil;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 public class HdfsToolTest {
@@ -20,7 +17,8 @@ public class HdfsToolTest {
 
     @Before
     public void setUp() throws Exception {
-        HdfsTool.setHadoopUser("udapdev");
+//        HdfsTool.setHadoopUser("udapdev");
+        HdfsTool.setHadoopUser("edc_base");
     }
 
     private void runThread(final String path) {
@@ -73,5 +71,19 @@ public class HdfsToolTest {
         } finally {
             HdfsTool.closeFileSystem(fs);
         }
+    }
+
+    @Test
+    public void writeTest() throws Exception {
+        Configuration conf;
+        FileSystem fs;
+        conf = HdfsTool.getRemoteConf();
+        fs = HdfsTool.getFileSystem(conf);
+        String path = "/cqx/data/mrinput/2.txt";
+        OutputStream outputStream = HdfsTool.createFile(fs, path);
+        String content = "1234567890";
+        outputStream.write(content.getBytes());
+        outputStream.close();
+        fs.close();
     }
 }

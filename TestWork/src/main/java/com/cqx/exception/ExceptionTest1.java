@@ -2,6 +2,7 @@ package com.cqx.exception;
 
 import java.io.IOException;
 
+import com.cqx.process.LogInfoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +39,14 @@ public class ExceptionTest1 {
 	
 	public void test3() {
 		try {
-			throwIOException();
-		} catch (IOException e) {
-			log.error("具体错误：" + e.getMessage(), new FujianBIException(ErrorCode.FJBIE000, e, "bishow"));
-			log.info("test3");
+//			throwIOException();
+//			new NoClassDefFoundError();
+//			new ClassNotFoundException();
+			throw new RuntimeException("测试运行时异常");
+		} catch (Throwable e) {
+//			log.error("具体错误：" + e.getMessage(), new FujianBIException(ErrorCode.FJBIE000, e, "bishow"));
+//			log.info("test3");
+			LogInfoFactory.getStackTrace(e);
 		}
 	}
 	

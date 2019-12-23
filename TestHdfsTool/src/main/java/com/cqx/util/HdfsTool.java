@@ -199,7 +199,7 @@ public class HdfsTool {
     public static Configuration getRemoteConf() {
         Configuration hadoopConfig = new Configuration();
         String path;
-        path = "D:\\tmp\\etc\\hadoop\\conf\\";
+        path = "D:\\tmp\\etc\\hadoop\\conf75\\";
         hadoopConfig.addResource(new Path(path + "core-site.xml"));
         hadoopConfig.addResource(new Path(path + "hdfs-site.xml"));
         hadoopConfig.addResource(new Path(path + "mapred-site.xml"));

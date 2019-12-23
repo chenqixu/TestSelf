@@ -1,5 +1,6 @@
 package com.cqx.process;
 
+import java.io.*;
 import java.text.SimpleDateFormat;
 
 public class LogInfoFactory implements Logger {
@@ -37,6 +38,46 @@ public class LogInfoFactory implements Logger {
         StackTraceElement[] ste = new Throwable().getStackTrace();
 //        System.out.println("getLineInfo：" + Arrays.asList(ste));
         return ":" + ste[ste.length - 2].getLineNumber();
+    }
+
+    /**
+     * 获取堆栈并输出
+     *
+     * @param e
+     */
+    public static void getStackTrace(Throwable e) {
+        // 使用byte
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+//        e.printStackTrace(printStream);
+//        byte b[] = byteArrayOutputStream.toByteArray();
+//        String result = new String(b, StandardCharsets.UTF_8);
+//        System.out.println(result);
+
+        // 使用char
+//        StringWriter stringWriter;
+        CharArrayWriter charArrayWriter = new CharArrayWriter();
+        PrintWriter printWriter = new PrintWriter(charArrayWriter);
+        e.printStackTrace(printWriter);
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(charArrayWriter.toString()));
+//        StringReader stringReader = new StringReader(charArrayWriter.toString());
+//        System.out.println(charArrayWriter.toString());
+        try {
+            String msg;
+            while ((msg = bufferedReader.readLine()) != null) {
+                System.out.println("==" + msg);
+            }
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            charArrayWriter.close();
+            printWriter.close();
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.cqx.oozie;
+package com.cqx.oozie.action;
 
 import org.apache.oozie.action.ActionExecutor;
 import org.apache.oozie.action.ActionExecutorException;

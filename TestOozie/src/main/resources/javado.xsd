@@ -3,10 +3,10 @@
 	xmlns:javado="uri:custom:javado-action:0.1"
 	elementFormDefault="qualified"
 	targetNamespace="uri:custom:javado-action:0.1">
+	<xs:element name="javado" type="javado:MESSAGE"></xs:element>
 	<xs:complexType name="MESSAGE">
 		<xs:sequence>
 			<xs:element name="content" type="xs:string"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:element name="javado" type="javado:MESSAGE"></xs:element>
 </xs:schema>

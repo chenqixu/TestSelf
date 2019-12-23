@@ -33,6 +33,8 @@ public class SubMitTest {
 		try {
 			String appPath = "/user/edc_base/udap/xml/101169491131@2018010707000002";
 			String user = "edc_base";
+			Services services = new Services();
+			services.init();
 			HadoopAccessorService has = Services.get().get(HadoopAccessorService.class);
 	        URI uri = new Path(appPath).toUri();
 	        System.out.println("##uri.getAuthority##"+uri.getAuthority());

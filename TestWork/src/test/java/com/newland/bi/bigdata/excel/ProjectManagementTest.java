@@ -12,11 +12,11 @@ public class ProjectManagementTest {
 
     @Test
     public void run() {
-//        projectManagement.run("d:\\Work\\WEB\\资源服务化\\rsmgr20190830.xlsx");
-//        projectManagement.run("d:\\Work\\WEB\\资源服务化\\rsmgr20190906.xlsx");
-//        projectManagement.run("d:\\Work\\WEB\\资源服务化\\rsmgr20190912.xlsx");
+//        projectManagement.run("d:\\Work\\WEB\\资源服务化\项目管理\\rsmgr20190830.xlsx");
+//        projectManagement.run("d:\\Work\\WEB\\资源服务化\项目管理\\rsmgr20190906.xlsx");
+//        projectManagement.run("d:\\Work\\WEB\\资源服务化\项目管理\\rsmgr20190912.xlsx");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        String fileName = "d:\\Work\\WEB\\资源服务化\\rsmgr" + simpleDateFormat.format(new Date()) + ".xlsx";
+        String fileName = "d:\\Work\\WEB\\资源服务化\\项目管理\\rsmgr" + simpleDateFormat.format(new Date()) + ".xlsx";
         File file = new File(fileName);
         if (file.exists() && file.isFile()) {
             projectManagement.run(fileName);
