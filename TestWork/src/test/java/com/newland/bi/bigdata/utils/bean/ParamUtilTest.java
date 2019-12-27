@@ -27,4 +27,13 @@ public class ParamUtilTest {
         FileToRedisBean fileToRedisBean = paramUtil.setValueByMap(map, FileToRedisBean.class);
         ParamUtil.info(fileToRedisBean, logger);
     }
+
+    public void localCommit1() {
+    }
+
+    public void localCommit2() {
+    }
+
+    public void localCommit3() {
+    }
 }
