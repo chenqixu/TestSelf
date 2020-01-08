@@ -118,6 +118,7 @@ public class MyFutureCancel {
                 MyFutureCancelUtil.copyFromLocalFile(this);
             } catch (InterruptedException e) {
                 logger.error("收到InterruptedException");
+//                Thread.currentThread().interrupt();
             }
         }
     }
