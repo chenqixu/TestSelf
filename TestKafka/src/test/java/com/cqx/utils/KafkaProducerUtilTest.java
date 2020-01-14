@@ -27,7 +27,16 @@ public class KafkaProducerUtilTest {
     @Before
     public void setUp() throws Exception {
 //        kafkaProducerUtil = new KafkaProducerUtil<>(conf);
-        kafkaProducerUtil = new KafkaProducerUtil<>(conf, "admin", "admin");
+//        kafkaProducerUtil = new KafkaProducerUtil<>(conf, "admin", "admin");
+        Map map = new HashMap();
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "bootstrap.servers", "edc-mqc-01:9092,edc-mqc-02:9092,edc-mqc-03:9092");
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "acks", "0");
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "batch.size", "1048576");
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "security.protocol", "SASL_PLAINTEXT");
+        map.put(KafkaProducerUtil.KAFKA_HEADER + "sasl.mechanism", "PLAIN");
+        kafkaProducerUtil = new KafkaProducerUtil<>(map, "admin", "admin");
         genericRecordUtil = new GenericRecordUtil(schemaUrl);
     }
 
@@ -137,9 +146,9 @@ public class KafkaProducerUtilTest {
             @Override
             public void run() {
                 KafkaTuple kafkaTuple;
-                while (true){
+                while (true) {
                     while ((kafkaTuple = kafkaTupleBlockingQueue.poll()) != null) {
-                        System.out.println("poll："+kafkaTuple);
+                        System.out.println("poll：" + kafkaTuple);
                     }
                     SleepUtils.sleepMilliSecond(50);
                 }

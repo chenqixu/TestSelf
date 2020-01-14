@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.Configuration;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -19,6 +20,7 @@ import java.util.Properties;
  */
 public class KafkaProducerUtil<K, V> {
 
+    public static final String KAFKA_HEADER = "kafkaconf.";
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerUtil.class);
     private KafkaProducer<K, V> producer;
 
@@ -37,6 +39,24 @@ public class KafkaProducerUtil<K, V> {
         properties.load(new FileInputStream(conf));
         Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
         producer = new KafkaProducer<>(properties);
+    }
+
+    public KafkaProducerUtil(Map stormConf, String kafka_username, String kafka_password) throws IOException {
+        Properties properties = initConf(stormConf);
+        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+        producer = new KafkaProducer<>(properties);
+    }
+
+    private Properties initConf(Map stormConf) {
+        Properties properties = new Properties();
+        for (Object entry : stormConf.entrySet()) {
+            String key = ((Map.Entry<String, String>) entry).getKey();
+            String value = ((Map.Entry<String, String>) entry).getValue();
+            if (key.startsWith(KAFKA_HEADER)) {
+                properties.setProperty(key.replace(KAFKA_HEADER, ""), value);
+            }
+        }
+        return properties;
     }
 
     public void init(Properties properties) {
