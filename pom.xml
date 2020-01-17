@@ -46,5 +46,6 @@
         <module>TestNetty</module>
         <module>TestPool</module>
         <module>TestCommon</module>
+        <module>TestGBKCode</module>
     </modules>
 </project>
