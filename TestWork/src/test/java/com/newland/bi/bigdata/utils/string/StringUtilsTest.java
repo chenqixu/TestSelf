@@ -1,13 +1,38 @@
 package com.newland.bi.bigdata.utils.string;
 
+import com.newland.bi.bigdata.metric.JvmMetrics;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 
 public class StringUtilsTest {
+
+    private static final String baseStr = "1234567890abcdefghijklmnopqrstuvwxyz~!@#$%^&*()_+";
+    private static final char[] arr = baseStr.toCharArray();
+    private JvmMetrics jvmMetrics;
+    private Random random = new Random();
+
+    @Before
+    public void setUp() throws Exception {
+        jvmMetrics = JvmMetrics.getVmInfo();
+        printMemInfo();
+    }
+
+    @After
+    public void down() throws Exception {
+//        printMemInfo();
+    }
+
+    private void printMemInfo() {
+//        System.out.println(jvmMetrics.toString());
+        jvmMetrics.getDelta();
+    }
 
     @Test
     public void telnumberProcessing() {
@@ -125,5 +150,28 @@ public class StringUtilsTest {
         int[] array = {1};
         for (int i = 0; i < array.length; i++)
             System.out.println(array[i]);
+    }
+
+    private String getRandomStr(int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(arr[random.nextInt(arr.length - 1)]);
+        }
+        return sb.toString();
+    }
+
+    @Test
+    public void memTest() {
+//        String str = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        List<String> message = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+//            message.add(getRandomStr(100) + "\\r\\n");
+            message.add(new StringBuilder().append(getRandomStr(100)).append("\\r\\n").toString());
+            if (i % 1000 == 0) {
+                printMemInfo();
+            }
+        }
+        System.out.println(message.size());
+        System.out.println(message.get(0));
     }
 }

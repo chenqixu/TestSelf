@@ -1,6 +1,9 @@
 package com.cqx.common.utils.file;
 
 import java.io.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -194,5 +197,22 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    /**
+     * 创建软链接
+     *
+     * @param sourceFilePath
+     * @param linkPath
+     * @throws IOException
+     */
+    public static void createSymbolicLink(String sourceFilePath, String linkPath) throws IOException {
+        Path link = FileSystems.getDefault().getPath(linkPath);
+        Path target = FileSystems.getDefault().getPath(sourceFilePath);
+
+        // // 创建软链接时设置软链接的属性
+//		PosixFileAttributes attrs = Files.readAttributes(target, PosixFileAttributes.class);
+//		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(attrs.permissions());
+        Files.createSymbolicLink(link, target); // , attr
     }
 }

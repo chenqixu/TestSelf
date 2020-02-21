@@ -1,11 +1,12 @@
 package com.cqx.jerseyclient;
 
-import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang3.StringUtils;
 
 import com.cqx.bean.ResultBean;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import org.apache.commons.lang.StringUtils;
 
 public class ClientFactory {
 	protected Client client;
@@ -23,9 +24,9 @@ public class ClientFactory {
 
 	public <T> ResultBean<T> callGetBean(String url, String MediaType, Class<T> tClass) {
 		ResultBean<T> result = null;
-		if(StringUtils.isNoneBlank(url)) {
+		if(StringUtils.isNotBlank(url)) {
 			webResource = client.resource(url);
-			if(StringUtils.isNoneBlank(MediaType)) 
+			if(StringUtils.isNotBlank(MediaType))
 				response = webResource.accept(MediaType).get(ClientResponse.class);
 			else
 				response = webResource.get(ClientResponse.class);
@@ -46,9 +47,9 @@ public class ClientFactory {
 	
 	public <T> T call(String url, String MediaType, Class<T> tClass) {
 		T result = null;
-		if(StringUtils.isNoneBlank(url)) {
+		if(StringUtils.isNotBlank(url)) {
 			webResource = client.resource(url);
-			if(StringUtils.isNoneBlank(MediaType)) 
+			if(StringUtils.isNotBlank(MediaType))
 				response = webResource.accept(MediaType).get(ClientResponse.class);
 			else
 				response = webResource.get(ClientResponse.class);

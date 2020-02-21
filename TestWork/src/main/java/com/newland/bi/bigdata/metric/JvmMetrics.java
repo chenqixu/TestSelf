@@ -182,9 +182,9 @@ public class JvmMetrics {
                 }
             }
 
-            LOG.info(processCpuStatus.getDeltaString() + processMomoryStatus.getDeltaString()
-                    + processGCStatus.getDeltaString() + processThreadStatus.getDeltaString());
-
+//            LOG.info(processCpuStatus.getDeltaString() + processMomoryStatus.getDeltaString()
+//                    + processGCStatus.getDeltaString() + processThreadStatus.getDeltaString());
+            LOG.info(processMomoryStatus.getDeltaString());
         } catch (Exception e) {
             LOG.warn("no need care, the fail is ignored : jvmMetrics getDelta failed " + e.getMessage(), e);
         }

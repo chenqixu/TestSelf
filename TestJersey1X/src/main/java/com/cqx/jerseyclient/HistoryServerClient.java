@@ -6,7 +6,8 @@ import java.io.StringReader;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
+//import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -121,7 +122,7 @@ public class HistoryServerClient {
 	}
 	
 	public void jobhistorylogs(String url) {
-		if(StringUtils.isNoneBlank(url)){
+		if(StringUtils.isNotBlank(url)){
 			ResultBean<String> textEntity = ClientFactory.getInstance().callGetBean(url);
 			System.out.println("[status]"+textEntity.getStatus());
 			System.out.println("[textEntity]"+textEntity.getT());
@@ -130,7 +131,7 @@ public class HistoryServerClient {
 	
 	public String parserHtmlGetSyslogLink(String url) {
 		String result = null;
-		if(StringUtils.isNoneBlank(url)){
+		if(StringUtils.isNotBlank(url)){
 //			Document doc = null;
 //			try {
 //				doc = Jsoup.parse(new URL(url), TIMEOUTMILLIS);
@@ -154,7 +155,7 @@ public class HistoryServerClient {
 	
 	public String parserHtmlGetErrLog(String url) {
 		StringBuffer sb = new StringBuffer();
-		if(StringUtils.isNoneBlank(url)){
+		if(StringUtils.isNotBlank(url)){
 			Document doc = Jsoup.parse(ClientFactory.getInstance().call(url));
 			Elements es = doc.select("pre");
 			for(Element e : es) {
