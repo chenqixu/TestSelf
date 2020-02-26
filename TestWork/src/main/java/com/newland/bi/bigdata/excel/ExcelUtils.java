@@ -1,6 +1,7 @@
 package com.newland.bi.bigdata.excel;
 
 import com.newland.bi.bigdata.bean.ExcelSheetList;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -10,9 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class ExcelUtils {
      * @return
      * @throws IOException
      */
-    public List<ExcelSheetList> readXlsx(String path) throws IOException {
+    private List<ExcelSheetList> readXlsx(String path) throws IOException {
 //        System.out.println(ExcelCommons.PROCESSING + path);
         InputStream is = null;
         List<ExcelSheetList> resultlist = new ArrayList<ExcelSheetList>();
@@ -68,7 +67,7 @@ public class ExcelUtils {
                 // 设置sheet内容
                 esl.setSheetList(sheetlist);
                 // 处理当前页，循环每一行
-                for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+                for (int rowNum = 0; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
                     XSSFRow xssfRow = xssfSheet.getRow(rowNum);
                     if (xssfRow != null) {
                         int minColIx = xssfRow.getFirstCellNum();
@@ -100,7 +99,7 @@ public class ExcelUtils {
      * @return
      * @throws IOException
      */
-    public List<ExcelSheetList> readXls(String path) throws IOException {
+    private List<ExcelSheetList> readXls(String path) throws IOException {
 //        System.out.println(ExcelCommons.PROCESSING + path);
         InputStream is = null;
         List<ExcelSheetList> resultlist = new ArrayList<ExcelSheetList>();
@@ -182,4 +181,105 @@ public class ExcelUtils {
         }
         return ExcelCommons.EMPTY;
     }
+
+    /**
+     * Write the Excel 2003-2007
+     *
+     * @param path
+     * @param excelSheetLists
+     * @return
+     * @throws IOException
+     */
+    private int writeXls(String path, List<ExcelSheetList> excelSheetLists) throws IOException {
+        FileOutputStream stream = null;
+        int result = 0;
+        try {
+            //创建Excel文件薄
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            //数据加载
+            for (int i = 0; i < excelSheetLists.size(); i++) {
+                String sheetName = excelSheetLists.get(i).getSheetName();
+                List<List<String>> rowList = excelSheetLists.get(i).getSheetList();
+                //创建工作表sheeet
+                HSSFSheet sheet = workbook.createSheet(sheetName);
+                for (int j = 0; j < rowList.size(); j++) {
+                    //创建行
+                    HSSFRow row = sheet.createRow(j);
+                    List<String> cellList = rowList.get(j);
+                    for (int z = 0; z < cellList.size(); z++) {
+                        //创建列
+                        HSSFCell cell = row.createCell(z);
+                        cell.setCellValue(cellList.get(z));
+                    }
+                }
+                result++;
+            }
+            //创建一个文件
+            File file = new File(path);
+            boolean create_file_status = file.createNewFile();
+            if (create_file_status) {
+                stream = FileUtils.openOutputStream(file);
+                workbook.write(stream);
+            }
+        } finally {
+            if (stream != null) stream.close();
+        }
+        return result;
+    }
+
+    private int writeXlsx(String path, List<ExcelSheetList> excelSheetLists) throws IOException {
+        FileOutputStream stream = null;
+        int result = 0;
+        try {
+            //创建Excel文件薄
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            //数据加载
+            for (int i = 0; i < excelSheetLists.size(); i++) {
+                String sheetName = excelSheetLists.get(i).getSheetName();
+                List<List<String>> rowList = excelSheetLists.get(i).getSheetList();
+                //创建工作表sheeet
+                XSSFSheet sheet = workbook.createSheet(sheetName);
+                for (int j = 0; j < rowList.size(); j++) {
+                    //创建行
+                    XSSFRow nextrow = sheet.createRow(j);
+                    List<String> cellList = rowList.get(j);
+                    for (int z = 0; z < cellList.size(); z++) {
+                        //创建列
+                        XSSFCell cell = nextrow.createCell(z);
+                        cell.setCellValue(cellList.get(z));
+                    }
+                }
+                result++;
+            }
+            //创建一个文件
+            File file = new File(path);
+            boolean create_file_status = file.createNewFile();
+            if (create_file_status) {
+                stream = FileUtils.openOutputStream(file);
+                workbook.write(stream);
+            }
+        } finally {
+            if (stream != null) stream.close();
+        }
+        return result;
+    }
+
+    public int writeExcel(String path, List<ExcelSheetList> excelSheetLists) throws IOException {
+        if (path == null || ExcelCommons.EMPTY.equals(path)) {
+            return -1;
+        } else {
+            String postfix = getPostfix(path);
+            if (!ExcelCommons.EMPTY.equals(postfix)) {
+                if (ExcelCommons.OFFICE_EXCEL_2003_POSTFIX.equals(postfix)) {
+                    return writeXls(path, excelSheetLists);
+                } else if (ExcelCommons.OFFICE_EXCEL_2010_POSTFIX.equals(postfix)) {
+                    return writeXlsx(path, excelSheetLists);
+                }
+            } else {
+                System.out.println(path + ExcelCommons.NOT_EXCEL_FILE);
+            }
+        }
+        return -1;
+    }
+
 }

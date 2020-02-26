@@ -16,26 +16,30 @@ import oracle.jdbc.pool.OracleDataSource;
  * */
 public class JDBCTest {
 	private static Timer timer = new Timer();
-	private static String dbUsername = "edc_etl_col";
-	private static String dbPassword = "Yx_9z52t";//"edc_etl_col";
+	private static String dbUsername = "edc_addressquery";//"edc_etl_col";
+	private static String dbPassword = "edc_addressquery";//"Yx_9z52t";//"edc_etl_col";
 	
 	public static class MyTask extends TimerTask {
+
         @Override
         public void run() {
         	//SERVICE
 //        	String jdbcURLSERVICE = "jdbc:oracle:thin:@10.1.8.83:1521/edcetlXDB";
-        	String jdbcURLSERVICE = "jdbc:oracle:thin:@10.46.103.169:1521/edc_etl";
+//        	String jdbcURLSERVICE = "jdbc:oracle:thin:@10.46.103.169:1521/edc_etl";
+        	String jdbcURLSERVICE = "jdbc:oracle:thin:@(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = 10.1.8.204)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = orapri)))";
         	//SID
 //        	String jdbcURLSID = "jdbc:oracle:thin:@10.1.8.83:1521:edcetlXDB";
         	JDBCTest.test(jdbcURLSERVICE);
 //        	JDBCTest.test(jdbcURLSID);
+			timer.cancel();
         }
     }
 	
 	public static void test(String jdbcURL){
 		try{
 			Connection conn = null;
-			String DriverClassName = "oracle.jdbc.driver.OracleDriver";
+//			String DriverClassName = "oracle.jdbc.driver.OracleDriver";
+			String DriverClassName = "oracle.jdbc.OracleDriver";
 			Class.forName(DriverClassName);
 			DriverManager.setLoginTimeout(15); // 超时
 			conn = DriverManager.getConnection(jdbcURL, dbUsername, dbPassword);
@@ -70,7 +74,9 @@ public class JDBCTest {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
+
+
 		MyTask task = new MyTask();
-		timer.schedule(task, 500, 100);
+		timer.schedule(task, 5);
 	}
 }
