@@ -22,22 +22,32 @@ public class ThreadManagerment {
     private BlockingQueue<TitleAndUrl> titleAndUrlBlockingQueue = new LinkedBlockingQueue<>();
     //是否下载
     private boolean isDownload = true;
-    private int downloadNum = 10;
+    private int downloadNum = 10;//下载并发
+    private int max_down_page_count = 1;//默认下载一页
 
     public ThreadManagerment() {
     }
 
-    public ThreadManagerment(boolean isDownload, int downloadNum) {
+    public ThreadManagerment(boolean isDownload, int downloadNum, int max_down_page_count) {
         this.isDownload = isDownload;
         this.downloadNum = downloadNum;
+        this.max_down_page_count = max_down_page_count;
     }
 
     public ThreadManagerment(boolean isDownload) {
-        this(isDownload, 10);
+        this(isDownload, 10, 1);
     }
 
     public ThreadManagerment(int downloadNum) {
-        this(true, downloadNum);
+        this(true, downloadNum, 1);
+    }
+
+    public ThreadManagerment(boolean isDownload, int max_down_page_count) {
+        this(isDownload, 10, max_down_page_count);
+    }
+
+    public ThreadManagerment(int downloadNum, int max_down_page_count) {
+        this(true, downloadNum, max_down_page_count);
     }
 
     public Map<String, String> scanLocalFile() {
@@ -60,7 +70,7 @@ public class ThreadManagerment {
         //下载并发队列
         Map<String, BookWork> bookWorkMap = new ConcurrentHashMap<>();
         //启动首页线程，把数据吐到待下载队列中
-        BaseWork pageWork = new PageWork(titleAndUrlBlockingQueue);
+        BaseWork pageWork = new PageWork(max_down_page_count, titleAndUrlBlockingQueue);
         pageWork.start();
         while (flag) {
             //启动图书下载线程，消费队列，最多维持在${downloadNum}个并发

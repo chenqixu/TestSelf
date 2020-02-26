@@ -12,7 +12,7 @@ public class AppMain {
     public static final String FILE_PATH = "e:\\Photo\\Comic\\爬虫\\image\\";
 
     public static void main(String[] args) {
-        new ThreadManagerment(false, 24).exec();
+        new ThreadManagerment(true, 12, 6).exec();
     }
 
 }

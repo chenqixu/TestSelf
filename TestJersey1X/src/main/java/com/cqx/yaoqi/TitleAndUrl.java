@@ -19,6 +19,7 @@ public class TitleAndUrl {
     }
 
     public void setTitle(String title) {
+        title = title.replaceAll(":", "：");
         this.title = title;
     }
 
