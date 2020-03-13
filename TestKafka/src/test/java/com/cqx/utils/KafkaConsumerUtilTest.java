@@ -53,14 +53,38 @@ public class KafkaConsumerUtilTest {
         recordConvertor = new RecordConvertor(schema);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
-//        List<byte[]> list = kafkaConsumerUtil.poll(2000);
-//        for (byte[] bytes : list) {
-//            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-//            logger.info("genericRecord：{}", genericRecord);
-//        }
-        while (true) {
-            SleepUtils.sleepMilliSecond(2000);
-            kafkaConsumerUtil.poll(1000);
+        //只消费一次
+        List<byte[]> list = kafkaConsumerUtil.poll(2000);
+        for (byte[] bytes : list) {
+            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+            logger.info("genericRecord：{}", genericRecord);
         }
+        //2秒消费一次
+//        while (true) {
+//            SleepUtils.sleepMilliSecond(2000);
+//            kafkaConsumerUtil.poll(1000);
+//        }
     }
+
+    @Test
+    public void pollMcCdr() throws Exception {
+        String topic = "nmc_tb_mc_cdr";
+        schemaUtil = new SchemaUtil(schemaUrl);
+        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
+        recordConvertor = new RecordConvertor(schema);
+        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
+        kafkaConsumerUtil.subscribe(topic);
+        //只消费一次
+        List<byte[]> list = kafkaConsumerUtil.poll(2000);
+        for (byte[] bytes : list) {
+            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+            logger.info("genericRecord：{}", genericRecord);
+        }
+        //2秒消费一次
+//        while (true) {
+//            SleepUtils.sleepMilliSecond(2000);
+//            kafkaConsumerUtil.poll(1000);
+//        }
+    }
+
 }

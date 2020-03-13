@@ -126,6 +126,69 @@ public class KafkaProducerUtilTest {
     }
 
     @Test
+    public void sendMcCdr() {
+        topic = "nmc_tb_mc_cdr";
+        genericRecordUtil.addTopic(topic);
+        for (int i = 0; i < 1; i++) {
+            String key = "17859626986";
+            Map<String, String> valueMap = new HashMap<>();
+            valueMap.put("BTIME", "1");
+            valueMap.put("ETIME", "1");
+            valueMap.put("GLOBALID", "1");
+            valueMap.put("PROTOCOLID", "1");
+            valueMap.put("EVENTID", "1");
+            valueMap.put("MSCCODE", "1");
+            valueMap.put("LAC", "1");
+            valueMap.put("CI", "1");
+            valueMap.put("OLAC", "1");
+            valueMap.put("OCI", "1");
+            valueMap.put("DLAC", "1");
+            valueMap.put("DCI", "1");
+            valueMap.put("FIRSTLAC", "1");
+            valueMap.put("FIRSTCI", "1");
+            valueMap.put("LASTLAC", "1");
+            valueMap.put("LASTCI", "1");
+            valueMap.put("CALLINGNUM", "1");
+            valueMap.put("CALLEDNUM", "1");
+            valueMap.put("CALLINGIMSI", "1");
+            valueMap.put("CALLEDIMSI", "1");
+            valueMap.put("CALLINGIMEI", "1");
+            valueMap.put("CALLEDIMEI", "1");
+            valueMap.put("CALLINGTMSI", "1");
+            valueMap.put("CALLEDTMSI", "1");
+            valueMap.put("EVENTRESULT", "1");
+            valueMap.put("ALERTOFFSET", "1");
+            valueMap.put("CONNOFFSET", "1");
+            valueMap.put("DISCONDIRECT", "1");
+            valueMap.put("DISCONNOFFSET", "1");
+            valueMap.put("ANSWERDUR", "1");
+            valueMap.put("PAGINGRESPTYPE", "1");
+            valueMap.put("ALERTSTATUS", "1");
+            valueMap.put("CONSTATUS", "1");
+            valueMap.put("DISCONNSTATUS", "1");
+            valueMap.put("DISCONNCAUSE", "1");
+            valueMap.put("RELCAUSE", "1");
+            valueMap.put("HOFLAG", "1");
+            valueMap.put("Callingnumnature", "1");
+            valueMap.put("Callednumnature", "1");
+            valueMap.put("CALLING_CITY", "1");
+            valueMap.put("CALLING_COUNTY", "1");
+            valueMap.put("CALLED_CITY", "1");
+            valueMap.put("CALLED_COUNTY", "1");
+            valueMap.put("CALL_COUNTY", "1");
+            valueMap.put("FIRST_CALL_COUNTY", "1");
+            valueMap.put("LAST_CALL_COUNTY", "1");
+            valueMap.put("CDRID", "1");
+            valueMap.put("SESSIONID", "1");
+            valueMap.put("SPCKIND", "1");
+//            logger.info("valueMap：{}", valueMap);
+            byte[] value = genericRecordUtil.genericRecord(topic, valueMap);
+            kafkaProducerUtil.send(topic, key, value);
+            logger.info("send，topic：{}，key：{}，value：{}", topic, key, value);
+        }
+    }
+
+    @Test
     public void mapTest() {
         Map<String, Object> map = new HashMap<>();
         String a = (String) map.get("test");

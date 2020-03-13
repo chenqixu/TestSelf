@@ -86,6 +86,57 @@ public class SchemaService {
                     "{\"name\": \"keyword_4\", \"type\": [\"string\", \"null\"]}\n" +
                     "]\n" +
                     "}";
+        } else if (topic.equals("nmc_tb_mc_cdr")) {
+            return "{ \"namespace\": \"com.newland.spl\", \"type\": \"record\", \"name\": \"CRM_Source_Schema\", \"fields\":[ \n" +
+                    "{\"name\": \"BTIME\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"ETIME\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"GLOBALID\", \"type\": [\"long\"]}, \n" +
+                    "{\"name\": \"PROTOCOLID\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"EVENTID\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"MSCCODE\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"LAC\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CI\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"OLAC\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"OCI\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"DLAC\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"DCI\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"FIRSTLAC\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"FIRSTCI\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"LASTLAC\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"LASTCI\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CALLINGNUM\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLEDNUM\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLINGIMSI\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLEDIMSI\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLINGIMEI\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLEDIMEI\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLINGTMSI\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLEDTMSI\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"EVENTRESULT\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"ALERTOFFSET\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CONNOFFSET\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"DISCONDIRECT\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"DISCONNOFFSET\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"ANSWERDUR\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"PAGINGRESPTYPE\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"ALERTSTATUS\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CONSTATUS\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"DISCONNSTATUS\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"DISCONNCAUSE\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"RELCAUSE\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"HOFLAG\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"Callingnumnature\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"Callednumnature\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"CALLING_CITY\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CALLING_COUNTY\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CALLED_CITY\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CALLED_COUNTY\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"CALL_COUNTY\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"FIRST_CALL_COUNTY\", \"type\": [\"int\"]}, \n" +
+                    "{\"name\": \"LAST_CALL_COUNTY\", \"type\": [\"int\"]},\n" +
+                    "{\"name\": \"CDRID\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"SESSIONID\", \"type\": [\"string\"]}, \n" +
+                    "{\"name\": \"SPCKIND\", \"type\": [\"string\"]} ] }";
         }
         return "";
     }

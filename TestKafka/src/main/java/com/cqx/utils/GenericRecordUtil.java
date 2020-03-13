@@ -95,6 +95,13 @@ public class GenericRecordUtil {
                             obj = Integer.valueOf(value);
                         }
                         break;
+                    case LONG:
+                        if (value == null || value.length() == 0) {
+                            obj = 0L;
+                        } else {
+                            obj = Long.valueOf(value);
+                        }
+                        break;
                     default:
                         break;
                 }
