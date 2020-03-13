@@ -1,12 +1,11 @@
 package com.cqx.sync;
 
-import com.cqx.sync.bean.BeanUtil;
-import com.cqx.sync.bean.DBBean;
-import com.cqx.sync.bean.QueryResult;
-import com.cqx.sync.bean.SyncConf;
+import com.cqx.sync.bean.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +13,7 @@ import java.util.List;
 
 public class JDBCUtilTest {
 
+    private static Logger logger = LoggerFactory.getLogger(JDBCUtilTest.class);
     private JDBCUtil jdbcUtil;
 
     private DBBean mysqlConfig(String type) {
@@ -41,7 +41,7 @@ public class JDBCUtilTest {
             case "dev":
                 srcdbBean.setTns("jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1");
                 srcdbBean.setUser_name("cctsys_dev");
-                srcdbBean.setPass_word("cctsys_dev");
+                srcdbBean.setPass_word("TyM*2CnEm");
                 break;
             case "local":
 //                srcdbBean.setTns("jdbc:mysql://127.0.0.1:3306/jutap?useUnicode=true");
@@ -55,6 +55,7 @@ public class JDBCUtilTest {
     @Before
     public void setUp() throws Exception {
         DBBean srcdbBean = oracleConfig("dev");
+//        DBBean srcdbBean = mysqlConfig("local");
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
@@ -108,4 +109,50 @@ public class JDBCUtilTest {
         beans.add(syncConf);
         jdbcUtil.executeBatch(sql, beans, SyncConf.class, fields);
     }
+
+    @Test
+    public void executeQuery1() throws Exception {
+//        CfgEtlTimeRule cfgEtlTimeRule = new CfgEtlTimeRule();
+//        cfgEtlTimeRule.setTime_rule("%001D");
+//        List<CfgEtlTimeRule> resultList = jdbcUtil.executeQuery("select * from cfg_etl_time_rule where time_rule=:time_rule",
+//                cfgEtlTimeRule, CfgEtlTimeRule.class);
+//        for (CfgEtlTimeRule cfgEtlTimeRule1 : resultList) {
+//            System.out.println(cfgEtlTimeRule1);
+//        }
+        RsmgrCluster cluster = new RsmgrCluster();
+        cluster.setType_id("h%");
+        List<RsmgrCluster> resultList = jdbcUtil.executeQuery("select * from sm2_rsmgr_cluster where type_id like :type_id"
+                , cluster, RsmgrCluster.class);
+        for (RsmgrCluster rsmgrCluster : resultList) {
+            System.out.println(rsmgrCluster);
+        }
+    }
+
+    @Test
+    public void getParam() {
+        String sql = "select * from sm2_rsmgr_cluster where type_id like %:type_id% and resource_id=:resource_id";
+        //解析sql，找到所有的:xx，比如：select a from b where a=:a and b=:b and c>=:c and (d=:d)
+        String[] params = (sql + " ").split(":", -1);
+        List<ParamKey> paramList = new ArrayList<>();
+        for (int i = 1; i < params.length; i++) {
+            //把前面2个字符加入
+            String _front = params[i - 1];
+            String firstChar = _front.substring(_front.length() - 1);
+            String _tmp = params[i];
+            //找到空格、括号等等就返回
+            String key = jdbcUtil.getParam(_tmp, ")", 0);
+            //获取key后面那个字符
+            String behindChar = _tmp.replace(key, "").substring(0, 1);
+            ParamKey paramKey = new ParamKey(key, firstChar, behindChar);
+            paramList.add(paramKey);
+            logger.info("Front：【{}】，Behind：【{}】，Now：【{}】，Deal：【{}】", firstChar, behindChar, params[i], key);
+            if (paramKey.isFrontLike() || paramKey.isBehindLike()) {
+                sql = sql.replaceAll("%", "");
+            }
+            sql = sql.replace(":" + key, "?");
+        }
+        logger.info("sql：{}", sql);
+        logger.info("paramList：{}", paramList);
+    }
+
 }

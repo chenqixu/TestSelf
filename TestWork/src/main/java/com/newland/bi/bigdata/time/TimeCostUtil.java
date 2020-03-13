@@ -11,7 +11,16 @@ import java.util.Date;
 public class TimeCostUtil {
     long start;
     long end;
-    long lastCheckTime = System.currentTimeMillis();
+    long incrementCost = 0;
+    boolean isNanoTime = false;
+    long lastCheckTime = getCurrentTime();
+
+    public TimeCostUtil() {
+    }
+
+    public TimeCostUtil(boolean isNanoTime) {
+        this.isNanoTime = isNanoTime;
+    }
 
     public static String getNow(String format) {
         Date now = new Date();
@@ -19,17 +28,25 @@ public class TimeCostUtil {
         return sdf.format(now);
     }
 
+    private long getCurrentTime() {
+        if (isNanoTime) {
+            return System.nanoTime();//纳秒
+        } else {
+            return System.currentTimeMillis();
+        }
+    }
+
     public void start() {
-        start = System.currentTimeMillis();
+        start = getCurrentTime();
     }
 
     public void stop() {
-        end = System.currentTimeMillis();
+        end = getCurrentTime();
     }
 
     public boolean tag(long limitTime) {
-        if (System.currentTimeMillis() - lastCheckTime > limitTime) {
-            lastCheckTime = System.currentTimeMillis();
+        if (getCurrentTime() - lastCheckTime > limitTime) {
+            lastCheckTime = getCurrentTime();
             return true;
         }
         return false;
@@ -41,6 +58,7 @@ public class TimeCostUtil {
      * @return
      */
     public long getCost() {
+        if (start == 0) return 0;
         return end - start;
     }
 
@@ -57,5 +75,21 @@ public class TimeCostUtil {
     public String getEnd() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return sdf.format(new Date(end));
+    }
+
+    public void stopAndIncrementCost() {
+        stop();
+        incrementCost += getCost();
+    }
+
+    public long getIncrementCost() {
+        if (isNanoTime)
+            return incrementCost / 1000000;
+        else
+            return incrementCost;
+    }
+
+    public void resetIncrementCost() {
+        incrementCost = 0;
     }
 }

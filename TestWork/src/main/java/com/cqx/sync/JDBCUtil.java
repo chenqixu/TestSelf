@@ -1,9 +1,6 @@
 package com.cqx.sync;
 
-import com.cqx.sync.bean.BatchBean;
-import com.cqx.sync.bean.BeanUtil;
-import com.cqx.sync.bean.DBBean;
-import com.cqx.sync.bean.QueryResult;
+import com.cqx.sync.bean.*;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +29,12 @@ public class JDBCUtil {
     private Statement stm = null;
     private PreparedStatement pstmt = null;
     private DataSource dataSource;
+    private List<String> keyList = new ArrayList<>();
 
     public JDBCUtil(DBBean dbBean) {
+        keyList.add(")");
+        keyList.add("%");
+        keyList.add(" ");
         try {
 //            String DriverClassName = dbBean.getDbType().getDriver();
 //            Class.forName(DriverClassName);
@@ -274,7 +275,7 @@ public class JDBCUtil {
                 Object queryParam = paramList.get(i);
                 pstmt.setObject(i, queryParam);
             }
-            rs = pstmt.executeQuery(sql);
+            rs = pstmt.executeQuery();//注意，上面已经绑定变量了，这里不需要再传sql
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
                 t = beanCls.newInstance();
@@ -288,9 +289,27 @@ public class JDBCUtil {
                             String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
                             // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
                             if (propertyName.equals("int")) {
-                                setter.invoke(t, Integer.valueOf(value.toString()));
+                                if (value == null) {
+                                    setter.invoke(t, 0);
+                                } else {
+                                    setter.invoke(t, Integer.valueOf(value.toString()));
+                                }
                             } else if (propertyName.equals("long")) {
-                                setter.invoke(t, Long.valueOf(value.toString()));
+                                if (value == null) {
+                                    setter.invoke(t, 0);
+                                } else {
+                                    setter.invoke(t, Long.valueOf(value.toString()));
+                                }
+                            } else if (propertyName.equals("java.lang.Long")) {
+                                if (value == null) {
+                                    setter.invoke(t, 0L);
+                                } else {
+                                    setter.invoke(t, Long.valueOf(value.toString()));
+                                }
+                            } else if (propertyName.equals("java.sql.Date")) {
+                                if (value instanceof Timestamp) {
+                                    setter.invoke(t, new Date(((Timestamp) value).getTime()));
+                                }
                             } else {
                                 setter.invoke(t, value);
                             }
@@ -308,6 +327,241 @@ public class JDBCUtil {
             closeConn(conn);
         }
         return tList;
+    }
+
+    public String getParam(String param, String key, int i) {
+        if (param != null && param.length() > 0) {
+            int index = param.indexOf(key);
+            if (index > 0) {
+                return param.substring(0, index);
+            } else {
+                i++;
+                if (keyList.size() > i) return getParam(param, keyList.get(i), i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 执行sql查询语句，返回结果
+     *
+     * @param sql
+     * @param paramObject
+     * @param beanCls
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> executeQuery(String sql, Object paramObject, Class<T> beanCls) {
+        ResultSet rs;
+        T t;
+        List<T> tList = new ArrayList<>();
+        Connection conn = null;
+
+        //解析sql，找到所有的:xx，比如：select a from b where a=:a and b=:b and c>=:c and (d=:d)
+        String[] params = (sql + " ").split(":", -1);
+        List<String> paramList = new ArrayList<>();
+        for (int i = 1; i < params.length; i++) {
+            String _tmp = params[i];
+            //找到空格、括号等等就返回
+            String key = getParam(_tmp, ")", 0);
+            paramList.add(key);
+            logger.info(String.format("%s：【%s】", params[i], key));
+            sql = sql.replace(":" + key, "?");
+        }
+        logger.info("sql：{}", sql);
+
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+
+            BeanInfo paramBeanInfo = Introspector.getBeanInfo(paramObject.getClass());
+            PropertyDescriptor[] paramPropertyDescriptors = paramBeanInfo.getPropertyDescriptors();
+            //循环参数，设置值
+            int parameterIndex = 0;
+            for (String param : paramList) {
+                for (PropertyDescriptor property : paramPropertyDescriptors) {
+                    String key = property.getName().toUpperCase();
+                    String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
+                    if (param.toUpperCase().equals(key)) {
+                        parameterIndex++;
+                        logger.info("param：{}，key：{}，propertyName：{}", param, key, propertyName);
+                        Method getter = property.getReadMethod();// Java中提供了用来访问某个属性的
+                        Object value = getter.invoke(paramObject);
+                        // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
+                        if (propertyName.equals("int")) {
+                            if (value == null) {
+                                pstmt.setInt(parameterIndex, 0);
+                            } else {
+                                pstmt.setInt(parameterIndex, (Integer) value);
+                            }
+                        } else if (propertyName.equals("long") || propertyName.equals("java.lang.Long")) {
+                            if (value == null) {
+                                pstmt.setLong(parameterIndex, 0L);
+                            } else {
+                                pstmt.setLong(parameterIndex, (Long) value);
+                            }
+                        } else if (propertyName.equals("java.sql.Timestamp")) {
+                            if (value == null) {
+                                pstmt.setTimestamp(parameterIndex, null);
+                            } else {
+                                pstmt.setTimestamp(parameterIndex, (java.sql.Timestamp) value);
+                            }
+                        } else if (propertyName.equals("java.sql.Date")) {
+                            if (value == null) {
+                                pstmt.setDate(parameterIndex, null);
+                            } else {
+                                pstmt.setDate(parameterIndex, (java.sql.Date) value);
+                            }
+                        } else if (propertyName.equals("java.lang.String")) {
+                            if (value == null) {
+                                pstmt.setString(parameterIndex, null);
+                            } else {
+//                                if (param.isFrontLike()) {
+//                                    pstmt.setString(parameterIndex, "%" + value);
+//                                } else if (param.isBehindLike()) {
+//                                    pstmt.setString(parameterIndex, value + "%");
+//                                } else if (param.isFrontLike() && param.isBehindLike()) {
+//                                    pstmt.setString(parameterIndex, "%" + value + "%");
+//                                } else {
+                                    pstmt.setString(parameterIndex, (String) value);
+//                                }
+                            }
+                        } else {
+                            pstmt.setObject(parameterIndex, value);
+                        }
+                        break;
+                    }
+                }
+            }
+            rs = pstmt.executeQuery();
+            ResultSetMetaData rsMeta = rs.getMetaData();
+            while (rs.next()) {
+                t = beanCls.newInstance();
+                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
+                    String ColumnLabel = rsMeta.getColumnLabel(i + 1).toUpperCase();
+                    Object value = rs.getObject(i + 1);
+                    for (PropertyDescriptor property : propertyDescriptors) {
+                        String key = property.getName().toUpperCase();
+                        if (ColumnLabel.equals(key)) {
+                            Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
+                            String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
+                            // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
+                            if (propertyName.equals("int")) {
+                                if (value == null) {
+                                    setter.invoke(t, 0);
+                                } else {
+                                    setter.invoke(t, Integer.valueOf(value.toString()));
+                                }
+                            } else if (propertyName.equals("long")) {
+                                if (value == null) {
+                                    setter.invoke(t, 0);
+                                } else {
+                                    setter.invoke(t, Long.valueOf(value.toString()));
+                                }
+                            } else if (propertyName.equals("java.lang.Long")) {
+                                if (value == null) {
+                                    setter.invoke(t, 0L);
+                                } else {
+                                    setter.invoke(t, Long.valueOf(value.toString()));
+                                }
+                            } else if (propertyName.equals("java.sql.Date")) {
+                                if (value instanceof Timestamp) {
+                                    setter.invoke(t, new Date(((Timestamp) value).getTime()));
+                                }
+                            } else {
+                                setter.invoke(t, value);
+                            }
+                            break;
+                        }
+                    }
+                }
+                tList.add(t);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            tList = null;
+        } finally {
+            closeStm();
+            closeConn(conn);
+        }
+        return tList;
+    }
+
+    /**
+     * 执行sql查询语句，返回结果
+     *
+     * @param sql
+     * @return ResultSet
+     */
+    public <T> List<T> executeQuery(String sql, Class<T> beanCls, Map<String, ?> paramMap) {
+        return null;
+//        ResultSet rs;
+//        T t;
+//        List<T> tList = new ArrayList<>();
+//        Connection conn = null;
+//        try {
+//            BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
+//            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+//            conn = getConnection();
+//            pstmt = conn.prepareStatement(sql);
+//            for (int i = 1; i <= paramList.size(); i++) {
+//                Object queryParam = paramList.get(i);
+//                pstmt.setObject(i, queryParam);
+//            }
+//            rs = pstmt.executeQuery(sql);
+//            ResultSetMetaData rsMeta = rs.getMetaData();
+//            while (rs.next()) {
+//                t = beanCls.newInstance();
+//                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
+//                    String ColumnLabel = rsMeta.getColumnLabel(i + 1).toUpperCase();
+//                    Object value = rs.getObject(i + 1);
+//                    for (PropertyDescriptor property : propertyDescriptors) {
+//                        String key = property.getName().toUpperCase();
+//                        if (ColumnLabel.equals(key)) {
+//                            Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
+//                            String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
+//                            // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
+//                            if (propertyName.equals("int")) {
+//                                if (value == null) {
+//                                    setter.invoke(t, 0);
+//                                } else {
+//                                    setter.invoke(t, Integer.valueOf(value.toString()));
+//                                }
+//                            } else if (propertyName.equals("long")) {
+//                                if (value == null) {
+//                                    setter.invoke(t, 0);
+//                                } else {
+//                                    setter.invoke(t, Long.valueOf(value.toString()));
+//                                }
+//                            } else if (propertyName.equals("java.lang.Long")) {
+//                                if (value == null) {
+//                                    setter.invoke(t, 0L);
+//                                } else {
+//                                    setter.invoke(t, Long.valueOf(value.toString()));
+//                                }
+//                            } else if (propertyName.equals("java.sql.Date")) {
+//                                if (value instanceof Timestamp) {
+//                                    setter.invoke(t, new Date(((Timestamp) value).getTime()));
+//                                }
+//                            } else {
+//                                setter.invoke(t, value);
+//                            }
+//                            break;
+//                        }
+//                    }
+//                }
+//                tList.add(t);
+//            }
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            tList = null;
+//        } finally {
+//            closeStm();
+//            closeConn(conn);
+//        }
+//        return tList;
     }
 
     /**
