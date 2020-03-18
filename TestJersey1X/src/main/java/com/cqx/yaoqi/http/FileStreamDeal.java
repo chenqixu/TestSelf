@@ -1,5 +1,6 @@
 package com.cqx.yaoqi.http;
 
+import com.cqx.util.LogUtil;
 import com.cqx.yaoqi.AppMain;
 import com.cqx.yaoqi.FileUtil;
 
@@ -11,6 +12,7 @@ import java.io.*;
  * @author chenqixu
  */
 public class FileStreamDeal implements StreamDeal {
+    private static final LogUtil logger = LogUtil.getInstance();
 
     @Override
     public Object deal(InputStream inputStream, FileUtil fileUtil) throws IOException {
@@ -25,7 +27,7 @@ public class FileStreamDeal implements StreamDeal {
             }
             //输出流
             File file = new File(saveDir + File.separator + fileUtil.getIndexAndIncrease() + ".jpg");
-            System.out.println("下载" + file.getPath());
+            logger.debug("下载" + file.getPath());
             fos = new FileOutputStream(file);
             fos.write(getData);
         } finally {

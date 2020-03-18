@@ -1,6 +1,7 @@
 package com.cqx.yaoqi.work;
 
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.util.LogUtil;
 import com.cqx.yaoqi.AppMain;
 import com.cqx.yaoqi.TitleAndUrl;
 
@@ -18,6 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author chenqixu
  */
 public class ThreadManagerment {
+    private static final LogUtil logger = LogUtil.getInstance();
     //待下载队列
     private BlockingQueue<TitleAndUrl> titleAndUrlBlockingQueue = new LinkedBlockingQueue<>();
     //是否下载
@@ -78,7 +80,7 @@ public class ThreadManagerment {
                 TitleAndUrl titleAndUrl = titleAndUrlBlockingQueue.poll();
                 if (titleAndUrl != null) {
                     boolean isLocalDown = (localMap.get(titleAndUrl.getTitle()) == null);
-                    System.out.println(titleAndUrl.getTitle() + ",[isDownload]" + isDownload +
+                    logger.info(titleAndUrl.getTitle() + ",[isDownload]" + isDownload +
                             ",[是否能下载]" + isLocalDown);
                     //需要确认没有下载过，防止重复下载
                     if (isDownload && isLocalDown) {

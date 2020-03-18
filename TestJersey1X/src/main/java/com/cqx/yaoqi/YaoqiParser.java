@@ -1,5 +1,7 @@
 package com.cqx.yaoqi;
 
+import com.cqx.util.LogUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -10,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class YaoqiParser {
-
+    private static final LogUtil logger = LogUtil.getInstance();
     private static final String F1 = "<li><a  title=\"";
     private static final String F2 = "href=\"";
     private static final String F3 = "\">";
@@ -24,7 +26,7 @@ public class YaoqiParser {
     public static List<TitleAndUrl> getATitle(String str) {
         //获取下一页地址
         String nextPageUrl = getNextPage(str);
-        System.out.println("下一页地址：" + nextPageUrl);
+        logger.info("下一页地址：" + nextPageUrl);
         List<TitleAndUrl> titleAndUrlList = new ArrayList<>();
         //找到<li><a  title=
         //获取title
@@ -44,7 +46,7 @@ public class YaoqiParser {
             titleAndUrl.setTitle_url(href);
             titleAndUrl.setNext_page_url(nextPageUrl);
             titleAndUrlList.add(titleAndUrl);
-            System.out.println(titleAndUrl);
+            logger.debug(titleAndUrl.toString());
             _str = _new_str;
         }
         return titleAndUrlList;
@@ -59,7 +61,7 @@ public class YaoqiParser {
                 e.printStackTrace();
             }
         }
-        System.out.println("吐到待下载队列大小：" + titleAndUrls.size());
+        logger.debug("吐到待下载队列大小：" + titleAndUrls.size());
         return titleAndUrls;
     }
 
@@ -149,7 +151,7 @@ public class YaoqiParser {
                 }
             }
         }
-        System.out.println(imageAndNext);
+        logger.debug(imageAndNext.toString());
         return imageAndNext;
     }
 }

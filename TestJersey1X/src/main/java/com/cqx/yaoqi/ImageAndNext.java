@@ -23,7 +23,7 @@ public class ImageAndNext {
     }
 
     public String toString() {
-        return "[image_url]" + image_url + ",[next_image_url]" + next_image_url;
+        return "[image_url]" + image_url + ",[next_image_url]" + next_image_url + ",[image_urlIShttpOrhttps]" + image_urlIShttpOrhttps + ",[next_image_urlIShttpOrhttps]" + next_image_urlIShttpOrhttps;
     }
 
     public String getImage_url() {

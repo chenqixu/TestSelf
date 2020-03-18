@@ -1,6 +1,7 @@
 package com.cqx.yaoqi.work;
 
 import com.cqx.bean.RestParam;
+import com.cqx.util.LogUtil;
 import com.cqx.yaoqi.FileUtil;
 import com.cqx.yaoqi.ImageAndNext;
 import com.cqx.yaoqi.TitleAndUrl;
@@ -13,6 +14,7 @@ import com.cqx.yaoqi.http.HttpsUtil;
  * @author chenqixu
  */
 public class BookWork extends BaseWork {
+    private static final LogUtil logger = LogUtil.getInstance();
     private TitleAndUrl titleAndUrl;
     private HttpsUtil httpsUtil = new HttpsUtil();
 
@@ -25,7 +27,7 @@ public class BookWork extends BaseWork {
     }
 
     public void run() {
-        System.out.println("下载新书：" + titleAndUrl);
+        logger.info("下载新书：" + titleAndUrl);
         FileUtil fileUtil = new FileUtil();
         //设置标题
         fileUtil.setTitle(titleAndUrl.getTitle());
@@ -55,7 +57,7 @@ public class BookWork extends BaseWork {
                     "", "", "", "",
                     "", ""), "file", fileUtil);
         }
-        System.out.println(titleAndUrl.getTitle() + "，下载完成。");
+        logger.info(titleAndUrl.getTitle() + "，下载完成。");
         //完成
         complete();
     }

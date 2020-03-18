@@ -8,6 +8,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,8 +20,7 @@ import java.net.*;
  * @author chenqixu
  */
 public class HttpsUtil {
-
-    private static final LogUtil log = LogUtil.getInstance();
+    private static final LogUtil logger = LogUtil.getInstance();
 
     /**
      * 发起http/https请求并获取结果
@@ -87,11 +87,11 @@ public class HttpsUtil {
             }
 
         } catch (ConnectException ce) {
-            log.error("API server connection timed out.");
-            log.error("【rest连接异常信息】" + ce.getMessage());
+            logger.error("API server connection timed out.");
+            logger.error("【rest连接异常信息】" + ce.getMessage());
         } catch (Exception e) {
-            log.error("API https or http request error:{}", e);
-            log.error("【rest异常信息】" + e.getMessage());
+            logger.error("API https or http request error:{}", e);
+            logger.error("【rest异常信息】" + e.getMessage());
         }
         return jsonObject;
     }
@@ -148,11 +148,13 @@ public class HttpsUtil {
             inputStream = httpUrlConn.getInputStream();
             jsonObject = streamDeal.deal(inputStream, fileUtil).toString();
         } catch (ConnectException ce) {
-            log.error("API server connection timed out.");
-            log.error("【rest http连接异常信息】" + ce.getMessage());
+            logger.error("API server connection timed out.");
+            logger.error("【rest http连接异常信息】" + ce.getMessage());
+        } catch (FileNotFoundException e) {
+            logger.error("【找不到文件，网站可能已经删除】" + e.getMessage());
         } catch (Exception e) {
-            log.error("API http request error:{}", e);
-            log.error("【rest http异常信息】" + e.getMessage());
+            logger.error("API http request error:{}", e);
+            logger.error("【rest http异常信息】" + e.getMessage());
         } finally {
             // 释放资源
             try {
@@ -220,11 +222,11 @@ public class HttpsUtil {
             inputStream = httpUrlConn.getInputStream();
             jsonObject = streamDeal.deal(inputStream, fileUtil).toString();
         } catch (ConnectException ce) {
-            log.error("API server connection timed out.");
-            log.error("【rest https连接异常信息】" + ce.getMessage());
+            logger.error("API server connection timed out.");
+            logger.error("【rest https连接异常信息】" + ce.getMessage());
         } catch (Exception e) {
-            log.error("API https request error:{}", e);
-            log.error("【rest https异常信息】" + e.getMessage());
+            logger.error("API https request error:{}", e);
+            logger.error("【rest https异常信息】" + e.getMessage());
         } finally {
             // 释放资源
             try {

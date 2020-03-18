@@ -19,7 +19,9 @@ public class TitleAndUrl {
     }
 
     public void setTitle(String title) {
+        //替换创建文件夹时候的异常字符
         title = title.replaceAll(":", "：");
+        title = title.trim();
         this.title = title;
     }
 
