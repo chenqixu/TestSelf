@@ -1,5 +1,6 @@
 package com.cqx.util;
 
+import com.cqx.common.utils.log.LogUtil;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public class HttpUtil {
 
-    private static final LogUtil logger = LogUtil.getInstance();
+    private static final LogUtil logger = LogUtil.getLogger(HttpUtil.class);
     private static final String GBK_CODE = "GBK";
     private static final String UTF8_CODE = "UTF-8";
 

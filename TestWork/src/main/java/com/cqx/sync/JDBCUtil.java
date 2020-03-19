@@ -1,6 +1,9 @@
 package com.cqx.sync;
 
-import com.cqx.sync.bean.*;
+import com.cqx.sync.bean.BatchBean;
+import com.cqx.sync.bean.BeanUtil;
+import com.cqx.sync.bean.DBBean;
+import com.cqx.sync.bean.QueryResult;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +33,16 @@ public class JDBCUtil {
     private PreparedStatement pstmt = null;
     private DataSource dataSource;
     private List<String> keyList = new ArrayList<>();
+    private List<String> endList = new ArrayList<>();
 
     public JDBCUtil(DBBean dbBean) {
         keyList.add(")");
         keyList.add("%");
+        keyList.add(",");
         keyList.add(" ");
+
+        endList.add("'");
+
         try {
 //            String DriverClassName = dbBean.getDbType().getDriver();
 //            Class.forName(DriverClassName);
@@ -329,6 +337,14 @@ public class JDBCUtil {
         return tList;
     }
 
+    /**
+     * 找到空格、括号等等就返回
+     *
+     * @param param
+     * @param key
+     * @param i
+     * @return
+     */
     public String getParam(String param, String key, int i) {
         if (param != null && param.length() > 0) {
             int index = param.indexOf(key);
@@ -340,6 +356,20 @@ public class JDBCUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 判断结尾字符是否异常
+     *
+     * @param param
+     * @return
+     */
+    public boolean paramEndWith(String param) {
+        if (param == null) return false;
+        for (String endStr : endList) {
+            if (param.trim().endsWith(endStr)) return false;
+        }
+        return true;
     }
 
     /**
@@ -364,9 +394,14 @@ public class JDBCUtil {
             String _tmp = params[i];
             //找到空格、括号等等就返回
             String key = getParam(_tmp, ")", 0);
-            paramList.add(key);
+            //判断结尾字符是否异常
+            if (paramEndWith(key)) {
+                paramList.add(key);
+            } else {
+                key = null;
+            }
             logger.info(String.format("%s：【%s】", params[i], key));
-            sql = sql.replace(":" + key, "?");
+            if (key != null) sql = sql.replace(":" + key, "?");
         }
         logger.info("sql：{}", sql);
 
@@ -425,7 +460,7 @@ public class JDBCUtil {
 //                                } else if (param.isFrontLike() && param.isBehindLike()) {
 //                                    pstmt.setString(parameterIndex, "%" + value + "%");
 //                                } else {
-                                    pstmt.setString(parameterIndex, (String) value);
+                                pstmt.setString(parameterIndex, (String) value);
 //                                }
                             }
                         } else {

@@ -1,4 +1,4 @@
-package com.cqx.util;
+package com.cqx.common.utils.log;
 
 /**
  * LogLEVEL

@@ -24,11 +24,11 @@ import javax.net.ssl.X509TrustManager;
 import net.sf.json.JSONObject;
 
 import com.cqx.bean.RestParam;
-import com.cqx.util.LogUtil;
+import com.cqx.common.utils.log.LogUtil;
 
 public class RestUtil {
 	
-	private static LogUtil log = LogUtil.getInstance();
+	private static LogUtil log = LogUtil.getLogger(RestUtil.class);
 	
 	/**
 	 * 发起http/https请求并获取结果

@@ -131,6 +131,7 @@ public class JDBCUtilTest {
     @Test
     public void getParam() {
         String sql = "select * from sm2_rsmgr_cluster where type_id like %:type_id% and resource_id=:resource_id";
+        sql = "select to_date(:start_time,'yyyy-mm-dd hh24:mi:ss') from dual";
         //解析sql，找到所有的:xx，比如：select a from b where a=:a and b=:b and c>=:c and (d=:d)
         String[] params = (sql + " ").split(":", -1);
         List<ParamKey> paramList = new ArrayList<>();
@@ -150,6 +151,30 @@ public class JDBCUtilTest {
                 sql = sql.replaceAll("%", "");
             }
             sql = sql.replace(":" + key, "?");
+        }
+        logger.info("sql：{}", sql);
+        logger.info("paramList：{}", paramList);
+    }
+
+    @Test
+    public void getParam1() {
+        String sql = "select * from sm2_rsmgr_cluster where type_id like %:type_id% and resource_id=:resource_id";
+        sql = "select to_date(:start_time,'yyyy-mm-dd hh24:mi:ss') from dual";
+        //解析sql，找到所有的:xx，比如：select a from b where a=:a and b=:b and c>=:c and (d=:d)
+        String[] params = (sql + " ").split(":", -1);
+        List<String> paramList = new ArrayList<>();
+        for (int i = 1; i < params.length; i++) {
+            String _tmp = params[i];
+            //找到空格、括号等等就返回
+            String key = jdbcUtil.getParam(_tmp, ")", 0);
+            logger.info(String.format("before：%s：【%s】", params[i], key));
+            if (jdbcUtil.paramEndWith(key)) {
+                paramList.add(key);
+            } else {
+                key = null;
+            }
+            logger.info(String.format("deal：%s：【%s】", params[i], key));
+            if (key != null) sql = sql.replace(":" + key, "?");
         }
         logger.info("sql：{}", sql);
         logger.info("paramList：{}", paramList);

@@ -1,6 +1,6 @@
 package com.cqx.yaoqi.http;
 
-import com.cqx.util.LogUtil;
+import com.cqx.common.utils.log.LogUtil;
 import com.cqx.yaoqi.AppMain;
 import com.cqx.yaoqi.FileUtil;
 
@@ -12,7 +12,7 @@ import java.io.*;
  * @author chenqixu
  */
 public class FileStreamDeal implements StreamDeal {
-    private static final LogUtil logger = LogUtil.getInstance();
+    private static final LogUtil logger = LogUtil.getLogger(FileStreamDeal.class);
 
     @Override
     public Object deal(InputStream inputStream, FileUtil fileUtil) throws IOException {

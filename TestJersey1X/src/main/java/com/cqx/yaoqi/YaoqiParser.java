@@ -1,6 +1,6 @@
 package com.cqx.yaoqi;
 
-import com.cqx.util.LogUtil;
+import com.cqx.common.utils.log.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class YaoqiParser {
-    private static final LogUtil logger = LogUtil.getInstance();
+    private static final LogUtil logger = LogUtil.getLogger(YaoqiParser.class);
     private static final String F1 = "<li><a  title=\"";
     private static final String F2 = "href=\"";
     private static final String F3 = "\">";

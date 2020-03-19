@@ -1,7 +1,7 @@
 package com.cqx.yaoqi.work;
 
 import com.cqx.bean.RestParam;
-import com.cqx.util.LogUtil;
+import com.cqx.common.utils.log.LogUtil;
 import com.cqx.yaoqi.FileUtil;
 import com.cqx.yaoqi.ImageAndNext;
 import com.cqx.yaoqi.TitleAndUrl;
@@ -14,7 +14,7 @@ import com.cqx.yaoqi.http.HttpsUtil;
  * @author chenqixu
  */
 public class BookWork extends BaseWork {
-    private static final LogUtil logger = LogUtil.getInstance();
+    private static final LogUtil logger = LogUtil.getLogger(BookWork.class);
     private TitleAndUrl titleAndUrl;
     private HttpsUtil httpsUtil = new HttpsUtil();
 

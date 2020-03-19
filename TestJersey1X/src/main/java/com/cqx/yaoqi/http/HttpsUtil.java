@@ -1,7 +1,7 @@
 package com.cqx.yaoqi.http;
 
 import com.cqx.bean.RestParam;
-import com.cqx.util.LogUtil;
+import com.cqx.common.utils.log.LogUtil;
 import com.cqx.yaoqi.FileUtil;
 
 import javax.net.ssl.HostnameVerifier;
@@ -20,7 +20,7 @@ import java.net.*;
  * @author chenqixu
  */
 public class HttpsUtil {
-    private static final LogUtil logger = LogUtil.getInstance();
+    private static final LogUtil logger = LogUtil.getLogger(HttpsUtil.class);
 
     /**
      * 发起http/https请求并获取结果
