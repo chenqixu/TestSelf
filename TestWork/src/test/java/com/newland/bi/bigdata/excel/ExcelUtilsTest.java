@@ -18,7 +18,7 @@ public class ExcelUtilsTest {
 
     @Test
     public void readExcel() throws IOException {
-        String read_path = "d:\\tmp\\data\\zip\\设计.xlsx";
+        String read_path = "d:\\tmp\\data\\zip\\read.xlsx";
         List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
         for (ExcelSheetList sheet : excelSheetLists) {
             System.out.println(sheet.getSheetName());

@@ -155,7 +155,14 @@ public class ExcelUtils {
         } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_BOOLEAN) {
             return String.valueOf(xssfRow.getBooleanCellValue());
         } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_NUMERIC) {
-            return String.valueOf(xssfRow.getNumericCellValue());
+            //可能有小数点、也可能是科学计数法
+            double d = xssfRow.getNumericCellValue();
+            //判断绝对值和原值相减是否为0，为0则取longValue，不为0则保留小数
+            if (Math.round(d) - d == 0) {
+                return String.valueOf(Double.valueOf(d).longValue());
+            } else {
+                return String.valueOf(d);
+            }
         } else {
             return String.valueOf(xssfRow.getStringCellValue());
         }
@@ -168,7 +175,14 @@ public class ExcelUtils {
         } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
             return String.valueOf(hssfCell.getBooleanCellValue());
         } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_NUMERIC) {
-            return String.valueOf(hssfCell.getNumericCellValue());
+            //可能有小数点、也可能是科学计数法
+            double d = hssfCell.getNumericCellValue();
+            //判断绝对值和原值相减是否为0，为0则取longValue，不为0则保留小数
+            if (Math.round(d) - d == 0) {
+                return String.valueOf(Double.valueOf(d).longValue());
+            } else {
+                return String.valueOf(d);
+            }
         } else {
             return String.valueOf(hssfCell.getStringCellValue());
         }
