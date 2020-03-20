@@ -9,10 +9,12 @@ import java.util.Date;
 public class MyLoggerFactory implements MyLogger {
 
     private static final String LOG4J_NAME = "log4j.properties";
+    private static final String LOG4J_ROOTLOGGER = "log4j.rootLogger";
     private static final String SPLIT_STR = "\\{\\}";
     private static final String CLASS_NAME = MyLoggerFactory.class.getName();
     private static final String SIMPLE_CLASS_NAME = MyLoggerFactory.class.getSimpleName();
     private static LogLEVEL LOG_LEVEL = LogLEVEL.INFO;//0:error 1:warn 2:info 3:debug
+    private static PrintStream printStream;
 
     static {
         init();
@@ -25,6 +27,8 @@ public class MyLoggerFactory implements MyLogger {
     }
 
     private static void init() {
+        //设置输出流
+        setPrintStream(System.out);
         //可以搜索下classpath下有没有log4j.properties
         Object obj = new Object();
         String path = obj.getClass().getResource("/").getPath() + LOG4J_NAME;
@@ -34,21 +38,30 @@ public class MyLoggerFactory implements MyLogger {
             //读取配置
             PropertyUtil propertyUtil = new PropertyUtil(path);
             //默认是INFO级别
-            String level = propertyUtil.getProperty("log4j.rootLogger", LogLEVEL.INFO.getDesc());
+            String level = propertyUtil.getProperty(LOG4J_ROOTLOGGER, LogLEVEL.INFO.getDesc());
             try {
                 LOG_LEVEL = Enum.valueOf(LogLEVEL.class, level);
-                System.out.println("\033[31;0m" + SIMPLE_CLASS_NAME + "：Load conf path in [" + path + "]，Get log level [" + LOG_LEVEL + "]\033[0m");
+                printStream.println(getRedString(SIMPLE_CLASS_NAME + "：Load conf path in [" + path + "]，Get log level [" + LOG_LEVEL + "]"));
             } catch (Exception e) {
-                System.out.println("\033[31;0m" + SIMPLE_CLASS_NAME + "：Load conf path in [" + path + "] Parse error，use defaults log level." + "\033[0m");
+                printStream.println(getRedString(SIMPLE_CLASS_NAME + "：Load conf path in [" + path + "] Parse error，use defaults log level."));
                 LOG_LEVEL = LogLEVEL.INFO;
             }
         } else {
-            System.out.println("\033[31;0m" + SIMPLE_CLASS_NAME + "：" + LOG4J_NAME + " not find，use defaults log level." + "\033[0m");
+            printStream.println(getRedString(SIMPLE_CLASS_NAME + "：" + LOG4J_NAME + " not find，use defaults log level."));
         }
     }
 
     public static void setLogLevel(LogLEVEL LEVEL) {
         LOG_LEVEL = LEVEL;
+    }
+
+    private static String getRedString(String msg) {
+        return "\033[31;0m" + msg + "\033[0m";
+    }
+
+    public static void setPrintStream(PrintStream printStream) {
+        MyLoggerFactory.printStream = printStream;
+//        printStream.println(getRedString(SIMPLE_CLASS_NAME + "：setPrintStream [" + printStream + "]"));
     }
 
     public static MyLoggerFactory getLogger(Class<?> cs) {
@@ -105,7 +118,7 @@ public class MyLoggerFactory implements MyLogger {
     }
 
     private void println(String msg) {
-        System.out.println(getHeader() + msg);
+        printStream.println(getHeader() + msg);
     }
 
     private void println(String msg, Object... param) {
@@ -157,7 +170,7 @@ public class MyLoggerFactory implements MyLogger {
 //        e.printStackTrace(printStream);
 //        byte b[] = byteArrayOutputStream.toByteArray();
 //        String result = new String(b, StandardCharsets.UTF_8);
-//        System.out.println(result);
+//        printStream.println(result);
 
         // 使用Writer
         // 输出流（可以是String，也可以是CharArray）
@@ -173,7 +186,7 @@ public class MyLoggerFactory implements MyLogger {
         try {
             String msg;
             while ((msg = bufferedReader.readLine()) != null) {
-                System.out.println(msg);
+                printStream.println(msg);
             }
         } catch (IOException e1) {
             e1.printStackTrace();

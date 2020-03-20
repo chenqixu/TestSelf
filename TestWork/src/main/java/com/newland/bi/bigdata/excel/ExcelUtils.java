@@ -12,10 +12,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExcelUtils {
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     /**
      * read the Excel file
      *
@@ -49,7 +53,6 @@ public class ExcelUtils {
      * @throws IOException
      */
     private List<ExcelSheetList> readXlsx(String path) throws IOException {
-//        System.out.println(ExcelCommons.PROCESSING + path);
         InputStream is = null;
         List<ExcelSheetList> resultlist = new ArrayList<ExcelSheetList>();
         try {
@@ -100,7 +103,6 @@ public class ExcelUtils {
      * @throws IOException
      */
     private List<ExcelSheetList> readXls(String path) throws IOException {
-//        System.out.println(ExcelCommons.PROCESSING + path);
         InputStream is = null;
         List<ExcelSheetList> resultlist = new ArrayList<ExcelSheetList>();
         try {
@@ -119,7 +121,7 @@ public class ExcelUtils {
                 // 设置sheet内容
                 esl.setSheetList(sheetlist);
                 // 处理当前页，循环每一行
-                for (int rowNum = 1; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
+                for (int rowNum = 0; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
                     HSSFRow hssfRow = hssfSheet.getRow(rowNum);
                     if (hssfRow != null) {
                         int minColIx = hssfRow.getFirstCellNum();
@@ -146,7 +148,9 @@ public class ExcelUtils {
 
     @SuppressWarnings("static-access")
     private String getValue(XSSFCell xssfRow) {
-        if (xssfRow.getCellType() == xssfRow.CELL_TYPE_BOOLEAN) {
+        if (xssfRow.getCellStyle().getDataFormat() > 0) {
+            return simpleDateFormat.format(xssfRow.getDateCellValue());
+        } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_BOOLEAN) {
             return String.valueOf(xssfRow.getBooleanCellValue());
         } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_NUMERIC) {
             return String.valueOf(xssfRow.getNumericCellValue());
@@ -157,7 +161,9 @@ public class ExcelUtils {
 
     @SuppressWarnings("static-access")
     private String getValue(HSSFCell hssfCell) {
-        if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
+        if (hssfCell.getCellStyle().getDataFormat() > 0) {
+            return simpleDateFormat.format(hssfCell.getDateCellValue());
+        } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
             return String.valueOf(hssfCell.getBooleanCellValue());
         } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_NUMERIC) {
             return String.valueOf(hssfCell.getNumericCellValue());
