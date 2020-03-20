@@ -17,7 +17,31 @@ public class ExcelUtilsTest {
     }
 
     @Test
-    public void readExcel() {
+    public void readExcel() throws IOException {
+        String read_path = "d:\\tmp\\data\\zip\\设计.xlsx";
+        List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
+        for (ExcelSheetList sheet : excelSheetLists) {
+            System.out.println(sheet.getSheetName());
+            if (sheet.getSheetName().equals("Sheet1")) {
+                for (List<String> content : sheet.getSheetList()) {
+                    System.out.println(content);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void readExcelXLS() throws IOException {
+        String read_path = "d:\\tmp\\data\\zip\\设计.xls";
+        List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
+        for (ExcelSheetList sheet : excelSheetLists) {
+            System.out.println(sheet.getSheetName());
+            if (sheet.getSheetName().equals("Sheet1")) {
+                for (List<String> content : sheet.getSheetList()) {
+                    System.out.println(content);
+                }
+            }
+        }
     }
 
     @Test

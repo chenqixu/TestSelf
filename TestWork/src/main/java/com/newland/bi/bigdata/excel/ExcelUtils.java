@@ -80,9 +80,10 @@ public class ExcelUtils {
                         for (int colIx = minColIx; colIx < maxColIx; colIx++) {
                             XSSFCell cell = xssfRow.getCell(colIx);
                             if (cell == null) {
-                                continue;
+                                rowlist.add("");
+                            } else {
+                                rowlist.add(getValue(cell));
                             }
-                            rowlist.add(getValue(cell));
                         }
                         sheetlist.add(rowlist);
                     }
@@ -131,9 +132,10 @@ public class ExcelUtils {
                         for (int colIx = minColIx; colIx < maxColIx; colIx++) {
                             HSSFCell cell = hssfRow.getCell(colIx);
                             if (cell == null) {
-                                continue;
+                                rowlist.add("");
+                            } else {
+                                rowlist.add(getValue(cell));
                             }
-                            rowlist.add(getValue(cell));
                         }
                         sheetlist.add(rowlist);
                     }
