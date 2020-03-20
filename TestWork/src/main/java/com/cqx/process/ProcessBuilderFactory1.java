@@ -1,12 +1,15 @@
 package com.cqx.process;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ProcessBuilderFactory1 {
-	private LogInfoFactory log = LogInfoFactory.getInstance(ProcessBuilderFactory1.class);
+	private static MyLogger log = MyLoggerFactory.getLogger(ProcessBuilderFactory1.class);
 	private boolean status = false;
 	protected int resultcode = 0;
 	protected ProcessBuilder builder = null;

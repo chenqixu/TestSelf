@@ -2,11 +2,13 @@ package com.newland.bi.bigdata.thread;
 
 import java.util.concurrent.TimeUnit;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 public class MyRunable implements Runnable {
 	// 日志类
-	private static LogInfoFactory logger = LogInfoFactory.getInstance(MyRunable.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(MyRunable.class);
 	private String threadName = this + "";
 	private int index = 0;
 	

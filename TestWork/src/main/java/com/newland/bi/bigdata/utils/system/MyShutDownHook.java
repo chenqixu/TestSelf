@@ -1,8 +1,10 @@
 package com.newland.bi.bigdata.utils.system;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.cqx.concurrent.IBolt;
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+
+
 import com.newland.bi.bigdata.time.TimeHelper;
 import com.newland.bi.bigdata.utils.SleepUtils;
 
@@ -13,7 +15,7 @@ import com.newland.bi.bigdata.utils.SleepUtils;
  */
 public class MyShutDownHook extends IBolt {
 
-    private static Logger logger = LogInfoFactory.getInstance(MyShutDownHook.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(MyShutDownHook.class);
 
     @Override
     public void init() {

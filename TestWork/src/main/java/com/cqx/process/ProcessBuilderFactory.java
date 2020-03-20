@@ -1,5 +1,8 @@
 package com.cqx.process;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +10,7 @@ import java.io.InputStreamReader;
 
 public class ProcessBuilderFactory {
 	private static ProcessBuilderFactory instance;
-	private LogInfoFactory log = LogInfoFactory.getInstance(ProcessBuilderFactory.class);
+	private static MyLogger log = MyLoggerFactory.getLogger(ProcessBuilderFactory.class);
 	
 	private ProcessBuilderFactory () {}
 	

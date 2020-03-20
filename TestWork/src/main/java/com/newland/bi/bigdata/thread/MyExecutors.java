@@ -11,14 +11,16 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 /**
  * 线程池测试
  */
 public class MyExecutors {
 	// 日志类
-	private static LogInfoFactory logger = LogInfoFactory.getInstance(MyExecutors.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(MyExecutors.class);
 	// 封闭线程池
 	private ExecutorService executor;
 	// 延迟启动线程池

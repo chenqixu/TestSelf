@@ -21,7 +21,7 @@ public class PropertyUtil {
 
     public String getProperty(String name, String defaultsValue) {
         String value = getProperty(name);
-        return value == "" ? defaultsValue : value;
+        return value.equals("") ? defaultsValue : value;
     }
 
     public String getProperty(String name) {

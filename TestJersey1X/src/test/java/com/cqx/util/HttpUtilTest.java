@@ -1,11 +1,12 @@
 package com.cqx.util;
 
-import com.cqx.common.utils.log.LogUtil;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.Test;
 
 public class HttpUtilTest {
 
-    private static final LogUtil logger = LogUtil.getLogger(HttpUtilTest.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(HttpUtilTest.class);
 
     @Test
     public void doSend() {

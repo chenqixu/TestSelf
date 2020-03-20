@@ -1,13 +1,15 @@
 package com.cqx.annotation;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 public abstract class AbsTestFactory {
 	
 	/**
 	 * 日志类
 	 */
-	protected static LogInfoFactory logger = LogInfoFactory.getInstance(AbsTestFactory.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(AbsTestFactory.class);
 
 	/**
 	 * 通过自定义注解进行测试

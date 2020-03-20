@@ -1,7 +1,9 @@
 package com.cqx.concurrent;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 import com.newland.bi.bigdata.utils.SleepUtils;
 
 /**
@@ -11,7 +13,7 @@ import com.newland.bi.bigdata.utils.SleepUtils;
  */
 public class ConcurrenceExec {
 
-    private static Logger logger = LogInfoFactory.getInstance(ConcurrenceExec.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(ConcurrenceExec.class);
     private IBolt iBolt;
     /**
      * 默认1并发

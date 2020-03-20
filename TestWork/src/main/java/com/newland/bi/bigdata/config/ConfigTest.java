@@ -1,9 +1,11 @@
 package com.newland.bi.bigdata.config;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 public class ConfigTest {
-	private LogInfoFactory logger = LogInfoFactory.getInstance(ConfigTest.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(ConfigTest.class);
 	
 	public void init() {
 		BaseConfig.setIntValue(BaseConfig.BATCH_SIZE, 10);

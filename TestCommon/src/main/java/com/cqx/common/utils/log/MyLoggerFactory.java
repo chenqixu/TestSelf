@@ -2,15 +2,16 @@ package com.cqx.common.utils.log;
 
 import com.cqx.common.utils.file.PropertyUtil;
 
-import java.io.File;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class LogUtil {
+public class MyLoggerFactory implements MyLogger {
 
     private static final String LOG4J_NAME = "log4j.properties";
     private static final String SPLIT_STR = "\\{\\}";
-    private static final String CLASS_NAME = LogUtil.class.getName();
+    private static final String CLASS_NAME = MyLoggerFactory.class.getName();
+    private static final String SIMPLE_CLASS_NAME = MyLoggerFactory.class.getSimpleName();
     private static LogLEVEL LOG_LEVEL = LogLEVEL.INFO;//0:error 1:warn 2:info 3:debug
 
     static {
@@ -19,7 +20,7 @@ public class LogUtil {
 
     private Class<?> cs;
 
-    private LogUtil(Class<?> cs) {
+    private MyLoggerFactory(Class<?> cs) {
         this.cs = cs;
     }
 
@@ -36,13 +37,13 @@ public class LogUtil {
             String level = propertyUtil.getProperty("log4j.rootLogger", LogLEVEL.INFO.getDesc());
             try {
                 LOG_LEVEL = Enum.valueOf(LogLEVEL.class, level);
-                System.out.println("\033[31;0m" + "====LogUtil====[load conf path]" + path + "，[get log level]" + LOG_LEVEL + "\033[0m");
+                System.out.println("\033[31;0m" + SIMPLE_CLASS_NAME + "：Load conf path in [" + path + "]，Get log level [" + LOG_LEVEL + "]\033[0m");
             } catch (Exception e) {
-                System.out.println("\033[31;0m" + "====LogUtil====[load conf path]" + path + " parse error，use defaults log level." + "\033[0m");
+                System.out.println("\033[31;0m" + SIMPLE_CLASS_NAME + "：Load conf path in [" + path + "] Parse error，use defaults log level." + "\033[0m");
                 LOG_LEVEL = LogLEVEL.INFO;
             }
         } else {
-            System.out.println("\033[31;0m" + "====LogUtil====" + LOG4J_NAME + " not find，use defaults log level." + "\033[0m");
+            System.out.println("\033[31;0m" + SIMPLE_CLASS_NAME + "：" + LOG4J_NAME + " not find，use defaults log level." + "\033[0m");
         }
     }
 
@@ -50,8 +51,8 @@ public class LogUtil {
         LOG_LEVEL = LEVEL;
     }
 
-    public static LogUtil getLogger(Class<?> cs) {
-        LogUtil log = new LogUtil(cs);
+    public static MyLoggerFactory getLogger(Class<?> cs) {
+        MyLoggerFactory log = new MyLoggerFactory(cs);
         return log;
     }
 
@@ -139,8 +140,55 @@ public class LogUtil {
         error(msg, null);
     }
 
-    public void error(String msg, Exception ex) {
+    public void error(String msg, Throwable throwable) {
         if (LOG_LEVEL.getLevel() >= LogLEVEL.ERROR.getLevel()) println(msg);
-        if (ex != null) ex.printStackTrace();
+        if (throwable != null) throwable.printStackTrace();
+    }
+
+    /**
+     * 获取堆栈并输出
+     *
+     * @param e
+     */
+    private void getStackTrace(Throwable e) {
+        // 使用Stream
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+//        e.printStackTrace(printStream);
+//        byte b[] = byteArrayOutputStream.toByteArray();
+//        String result = new String(b, StandardCharsets.UTF_8);
+//        System.out.println(result);
+
+        // 使用Writer
+        // 输出流（可以是String，也可以是CharArray）
+        StringWriter writer = new StringWriter();
+//        CharArrayWriter writer = new CharArrayWriter();
+        // 打印输出流
+        PrintWriter printWriter = new PrintWriter(writer);
+        // 错误堆栈往打印输出流进行输出
+        e.printStackTrace(printWriter);
+        // 读取流从输出流进行读取
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(writer.toString()));
+        // 按行读取
+        try {
+            String msg;
+            while ((msg = bufferedReader.readLine()) != null) {
+                System.out.println(msg);
+            }
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            try {
+                writer.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            printWriter.close();
+        }
     }
 }

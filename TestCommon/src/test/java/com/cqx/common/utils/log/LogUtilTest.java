@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class LogUtilTest {
 
-    private static final LogUtil logger = LogUtil.getLogger(LogUtilTest.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(LogUtilTest.class);
 
     @Test
     public void testEnum() throws Exception {

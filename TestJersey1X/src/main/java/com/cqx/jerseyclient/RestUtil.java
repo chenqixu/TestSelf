@@ -21,14 +21,15 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.cqx.common.utils.log.MyLogger;
 import net.sf.json.JSONObject;
 
 import com.cqx.bean.RestParam;
-import com.cqx.common.utils.log.LogUtil;
+import com.cqx.common.utils.log.MyLoggerFactory;
 
 public class RestUtil {
 	
-	private static LogUtil log = LogUtil.getLogger(RestUtil.class);
+	private static final MyLogger logger = MyLoggerFactory.getLogger(RestUtil.class);
 	
 	/**
 	 * 发起http/https请求并获取结果
@@ -94,11 +95,11 @@ public class RestUtil {
 			}
 
 		} catch (ConnectException ce) {
-			log.error("API server connection timed out.");
-			log.error("【rest连接异常信息】" + ce.getMessage());
+			logger.error("API server connection timed out.");
+			logger.error("【rest连接异常信息】" + ce.getMessage());
 		} catch (Exception e) {
-			log.error("API https or http request error:{}", e);
-			log.error("【rest异常信息】" + e.getMessage());
+			logger.error("API https or http request error:{}", e);
+			logger.error("【rest异常信息】" + e.getMessage());
 		}
 		return jsonObject;
 	}
@@ -167,11 +168,11 @@ public class RestUtil {
 			httpUrlConn.disconnect();
 			jsonObject = JSONObject.fromObject(buffer.toString());
 		} catch (ConnectException ce) {
-			log.error("API server connection timed out.");
-			log.error("【rest http连接异常信息】" + ce.getMessage());
+			logger.error("API server connection timed out.");
+			logger.error("【rest http连接异常信息】" + ce.getMessage());
 		} catch (Exception e) {
-			log.error("API http request error:{}", e);
-			log.error("【rest http异常信息】" + e.getMessage());
+			logger.error("API http request error:{}", e);
+			logger.error("【rest http异常信息】" + e.getMessage());
 		}
 		return jsonObject;
 	}
@@ -242,11 +243,11 @@ public class RestUtil {
 			httpUrlConn.disconnect();
 			jsonObject = JSONObject.fromObject(buffer.toString());
 		} catch (ConnectException ce) {
-			log.error("API server connection timed out.");
-			log.error("【rest https连接异常信息】" + ce.getMessage());
+			logger.error("API server connection timed out.");
+			logger.error("【rest https连接异常信息】" + ce.getMessage());
 		} catch (Exception e) {
-			log.error("API https request error:{}", e);
-			log.error("【rest https异常信息】" + e.getMessage());
+			logger.error("API https request error:{}", e);
+			logger.error("【rest https异常信息】" + e.getMessage());
 		}
 		return jsonObject;
 	}

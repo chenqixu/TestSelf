@@ -12,14 +12,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.cqx.process.LogInfoFactory;
+
 
 public class CollectTest1 {
 
-	private LogInfoFactory log = LogInfoFactory.getInstance(CollectTest1.class);
+	private static MyLogger log = MyLoggerFactory.getLogger(CollectTest1.class);
 	public static final String SPLIT_STR = ",";
 	
 	/**

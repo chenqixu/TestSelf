@@ -2,13 +2,15 @@ package com.newland.bi.bigdata.excel;
 
 import java.util.List;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import org.apache.commons.lang.StringUtils;
 
-import com.cqx.process.LogInfoFactory;
+
 import com.newland.bi.bigdata.bean.ExcelSheetList;
 
 public class LoopholeRectificationClient {
-	private LogInfoFactory logger = LogInfoFactory.getInstance(LoopholeRectificationClient.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(LoopholeRectificationClient.class);
 	private List<ExcelSheetList> list = null;
 	private ExcelUtils eu = new ExcelUtils();
 	

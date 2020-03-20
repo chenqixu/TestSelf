@@ -1,11 +1,12 @@
 package com.cqx.yaoqi;
 
-import com.cqx.common.utils.log.LogUtil;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.Test;
 
 public class YaoqiParserTest {
 
-    private static LogUtil logger = LogUtil.getLogger(YaoqiParserTest.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(YaoqiParserTest.class);
 
     /**
      * 网站某一页

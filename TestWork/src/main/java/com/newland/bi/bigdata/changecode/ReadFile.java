@@ -1,7 +1,9 @@
 package com.newland.bi.bigdata.changecode;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 import org.apache.commons.lang3.StringUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 
@@ -11,7 +13,7 @@ import java.io.InputStream;
 
 public class ReadFile {
 
-    private static Logger logger = LogInfoFactory.getInstance(ReadFile.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(ReadFile.class);
     private ChangeCode cc = null;
 
     public ReadFile() {

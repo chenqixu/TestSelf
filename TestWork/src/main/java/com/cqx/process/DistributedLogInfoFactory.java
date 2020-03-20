@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.newland.bd.utils.log.IDistributedLogger;
 
 public class DistributedLogInfoFactory implements IDistributedLogger {
-//	private static LogInfoFactory log = LogInfoFactory.getInstance();
+//	private static MyLogger log = MyLoggerFactory.getLogger();
 	private static final Logger log = LoggerFactory.getLogger(DistributedLogInfoFactory.class);
 	
 	public DistributedLogInfoFactory() {

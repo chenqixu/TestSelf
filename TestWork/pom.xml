@@ -886,11 +886,11 @@
         </dependency>
 
         <!-- pdi -->
-        <dependency>
-            <groupId>pentaho</groupId>
-            <artifactId>pentaho-big-data-kettle-plugins-kafka</artifactId>
-            <version>8.0.0.0-28</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>pentaho</groupId>-->
+            <!--<artifactId>pentaho-big-data-kettle-plugins-kafka</artifactId>-->
+            <!--<version>8.0.0.0-28</version>-->
+        <!--</dependency>-->
 
         <!-- joda-time -->
         <!--

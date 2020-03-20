@@ -1,7 +1,9 @@
 package com.newland.bi.bigdata.xml.util;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 import com.newland.bi.ResultXML;
 import com.newland.bi.XMLData;
 import com.newland.bi.bigdata.changecode.ChangeCode;
@@ -19,7 +21,7 @@ import java.util.Map;
  */
 public class XMLParserUtil {
 
-    private static Logger logger = LogInfoFactory.getInstance(XMLParserUtil.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(XMLParserUtil.class);
     private ChangeCode changeCode = null;
     private ResultXML rx = null;
     private XMLData xd = null;

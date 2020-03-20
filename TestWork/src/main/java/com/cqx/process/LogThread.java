@@ -1,12 +1,15 @@
 package com.cqx.process;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LogThread extends Thread {
-	private LogInfoFactory log = LogInfoFactory.getInstance(LogThread.class);
+	private static MyLogger log = MyLoggerFactory.getLogger(LogThread.class);
 	private InputStream is;
 
 	private String type;

@@ -4,13 +4,15 @@ import java.io.IOException;
 
 import com.cqx.annotation.AbsTestFactory;
 import com.cqx.annotation.MyTest.Test;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.cqx.exception.DistCollectErrorCode;
 import com.cqx.exception.DistCollectException;
-import com.cqx.process.LogInfoFactory;
+
 
 public class DistCollectExceptionTest extends AbsTestFactory {	
 
-	private static LogInfoFactory log = LogInfoFactory.getInstance(DistCollectExceptionTest.class);
+	private static MyLogger log = MyLoggerFactory.getLogger(DistCollectExceptionTest.class);
 	
 	@Test(status="start")
 	public void testException() {

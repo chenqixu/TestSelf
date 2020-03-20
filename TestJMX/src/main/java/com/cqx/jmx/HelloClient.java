@@ -1,8 +1,9 @@
 package com.cqx.jmx;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.cqx.jmx.util.IJMXClient;
 import com.cqx.jmx.util.JMXClientFactory;
-import com.cqx.jmx.util.LogInfoFactory;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -11,12 +12,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 public class HelloClient {
-    private LogInfoFactory log = LogInfoFactory.getInstance();
-
-    public HelloClient() {
-        log.setNeedTime(false);
-        log.setLevel(1);
-    }
+    private static MyLogger log = MyLoggerFactory.getLogger(HelloClient.class);
 
     public static void main(String[] args) {
 //		new HelloClient().start("HelloWorld");

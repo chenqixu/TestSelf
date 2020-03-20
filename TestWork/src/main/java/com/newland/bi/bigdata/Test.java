@@ -1,13 +1,15 @@
 package com.newland.bi.bigdata;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Test {
 
-    private static LogInfoFactory logger = LogInfoFactory.getInstance(Test.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(Test.class);
 
     public static void checkTokenName(String namedOutput) {
         if (namedOutput == null || namedOutput.length() == 0) {

@@ -1,7 +1,8 @@
 package com.cqx.yaoqi.work;
 
+import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.system.SleepUtil;
-import com.cqx.common.utils.log.LogUtil;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.cqx.yaoqi.AppMain;
 import com.cqx.yaoqi.TitleAndUrl;
 
@@ -19,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author chenqixu
  */
 public class ThreadManagerment {
-    private static final LogUtil logger = LogUtil.getLogger(ThreadManagerment.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(ThreadManagerment.class);
     //待下载队列
     private BlockingQueue<TitleAndUrl> titleAndUrlBlockingQueue = new LinkedBlockingQueue<>();
     //是否下载

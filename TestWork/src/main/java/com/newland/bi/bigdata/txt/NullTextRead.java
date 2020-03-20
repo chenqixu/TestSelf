@@ -2,12 +2,14 @@ package com.newland.bi.bigdata.txt;
 
 import java.util.List;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import com.newland.bi.bigdata.changecode.ChangeCode;
 
 public class NullTextRead extends ChangeCode {
 
-	private static LogInfoFactory logger = LogInfoFactory.getInstance(NullTextRead.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(NullTextRead.class);
 	
 	public void run(String scanpath) {
 		setRead_code("UTF-8");

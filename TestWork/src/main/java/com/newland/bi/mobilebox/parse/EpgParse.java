@@ -1,8 +1,10 @@
 package com.newland.bi.mobilebox.parse;
 
 import com.alibaba.fastjson.JSON;
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 import com.newland.bi.mobilebox.bean.EpgTag;
 import com.newland.bi.mobilebox.bean.EpgTagInfo;
 
@@ -18,7 +20,7 @@ import static com.newland.bi.bigdata.utils.string.StringUtils.println;
  */
 public class EpgParse {
 
-    public static final Logger logger = LogInfoFactory.getInstance(EpgParse.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(EpgParse.class);
     public static final String newLine = System.getProperty("line.separator");
     /**
      * 是否需要打印树形结构

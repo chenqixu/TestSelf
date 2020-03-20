@@ -1,6 +1,6 @@
 package com.cqx.exception;
 
-import com.cqx.process.LogInfoFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,6 @@ public class ExceptionTest1 {
         } catch (Throwable e) {
 //			log.error("具体错误：" + e.getMessage(), new FujianBIException(ErrorCode.FJBIE000, e, "bishow"));
 //			log.info("test3");
-            LogInfoFactory.getStackTrace(e);
         }
     }
 }

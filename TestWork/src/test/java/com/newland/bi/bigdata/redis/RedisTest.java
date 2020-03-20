@@ -3,7 +3,9 @@ package com.newland.bi.bigdata.redis;
 import com.cqx.annotation.AbsTestFactory;
 import com.cqx.annotation.MyTest.Before;
 import com.cqx.annotation.MyTest.Test;
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import com.newland.bi.bigdata.utils.OtherUtils;
 import redis.clients.jedis.ScanResult;
 
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public class RedisTest extends AbsTestFactory {
 
-    private static LogInfoFactory logger = LogInfoFactory.getInstance(RedisTest.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(RedisTest.class);
     private RedisClient rc = null;
 
     public static void main(String[] args) {

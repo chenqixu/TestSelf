@@ -1,7 +1,8 @@
 package com.cqx.yaoqi.work;
 
 import com.cqx.bean.RestParam;
-import com.cqx.common.utils.log.LogUtil;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.cqx.yaoqi.TitleAndUrl;
 import com.cqx.yaoqi.YaoqiParser;
 import com.cqx.yaoqi.http.HttpsUtil;
@@ -15,7 +16,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class PageWork extends BaseWork {
-    private static final LogUtil logger = LogUtil.getLogger(PageWork.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(PageWork.class);
     private HttpsUtil httpsUtil = new HttpsUtil();
     private BlockingQueue<TitleAndUrl> titleAndUrlBlockingQueue;
     private int max_down_page_count = 1;//默认下载一页

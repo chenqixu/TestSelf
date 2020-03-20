@@ -7,7 +7,9 @@ import java.util.List;
 
 import com.cqx.annotation.MyTest.Before;
 import com.cqx.annotation.MyTest.Test;
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 /**
  * 自定义注解工厂
@@ -17,13 +19,12 @@ import com.cqx.process.LogInfoFactory;
  */
 public class MyTestFactory {
 
-	private static LogInfoFactory logger = LogInfoFactory.getInstance(MyTestFactory.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(MyTestFactory.class);
 	private List<String> useTests;
 	public static final String START_STATUS = "start";
 	public static final String STOP_STATUS = "stop";
 
 	public MyTestFactory() {
-		logger.setLevel(1);
 		useTests = new ArrayList<String>();
 		Collections.addAll(useTests, "start", "stop");
 	}

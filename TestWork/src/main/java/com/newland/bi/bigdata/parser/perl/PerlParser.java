@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import com.newland.bi.bigdata.parser.perl.bean.ContentNode;
 import com.newland.bi.bigdata.parser.perl.bean.INode;
 
@@ -27,7 +29,7 @@ import com.newland.bi.bigdata.parser.perl.bean.INode;
  * */
 public class PerlParser {
 
-	private LogInfoFactory log = LogInfoFactory.getInstance(PerlParser.class);
+	private static MyLogger log = MyLoggerFactory.getLogger(PerlParser.class);
 	public static final String Return_And_Line = "\r\n";
 	public static final String Well_Number = "#";
 	public static final String Print_KeyWord = "print";
@@ -36,14 +38,14 @@ public class PerlParser {
 	private String file_name;
 	private Map<String, PerlSub> ps;
 	private String currentSubName = null;
-	
+
 	/**
 	 * 处理规则接口
 	 * */
 	interface Deal {
 		public String run(String tmp);
 	}
-	
+
 	/**
 	 * 处理左右空格
 	 * 处理#
@@ -56,9 +58,9 @@ public class PerlParser {
 			if(tmp.startsWith(Well_Number))return null;
 			if(isFindStr(tmp, Print_KeyWord))return null;
 			return tmp;
-		}		
+		}
 	}
-	
+
 	/**
 	 * 处理sub
 	 * 处理{}
@@ -68,7 +70,7 @@ public class PerlParser {
 		public String run(String tmp) {
 			if(tmp.toLowerCase().contains(PerlSub.KeyWord)){
 				currentSubName = PerlSub.getSubName(tmp);
-				ps.put(currentSubName, new PerlSub());					
+				ps.put(currentSubName, new PerlSub());
 			}
 			Integer[] leftbrace_arr = findStr(tmp, Left_Brace);
 			Integer[] rightbrace_arr = findStr(tmp, Right_Brace);
@@ -76,7 +78,7 @@ public class PerlParser {
 				log.debug(Arrays.toString(leftbrace_arr)+"|"+Arrays.toString(rightbrace_arr));
 				ps.get(currentSubName).increaseLeftBraceArr(leftbrace_arr);
 				ps.get(currentSubName).increateRigthBraceArr(rightbrace_arr);
-				if(!ps.get(currentSubName).isEnd()){						
+				if(!ps.get(currentSubName).isEnd()){
 					ps.get(currentSubName).appendContent(tmp);
 					ps.get(currentSubName).appendContent(Return_And_Line);
 				}
@@ -84,7 +86,7 @@ public class PerlParser {
 			return tmp;
 		}
 	}
-	
+
 	/**
 	 * 按指定关键字进行删除
 	 * */
@@ -99,7 +101,7 @@ public class PerlParser {
 			return tmp;
 		}
 	}
-	
+
 	/**
 	 * 按指定关键字进行保留
 	 * */
@@ -114,7 +116,7 @@ public class PerlParser {
 			return tmp;
 		}
 	}
-	
+
 	/**
 	 * 保留关键字前面内容
 	 * */
@@ -128,16 +130,15 @@ public class PerlParser {
 			return retainKeywordBeforeContent(tmp, keyword);
 		}
 	}
-	
+
 	/**
 	 * 构造
 	 * */
 	public PerlParser(String file_name){
 		this.file_name = file_name;
 		this.ps = new HashMap<String, PerlSub>();
-		log.setLevel(1);
 	}
-	
+
 	/**
 	 * 读字符串
 	 * */
@@ -151,10 +152,10 @@ public class PerlParser {
 			String currentstr = findstr.substring(0, index);
 			findstr = findstr.substring(index+1);
 			list.add(currentstr);
-		} while (index>=0);		
+		} while (index>=0);
 		return list;
 	}
-	
+
 	/**
 	 * 读文件
 	 * 处理前后空格和#和print
@@ -201,7 +202,7 @@ public class PerlParser {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 找到所有关键字，写入数组
 	 * */
@@ -217,12 +218,12 @@ public class PerlParser {
 			if(result_index<0){
 				break;
 			}else{
-				list.add(result_index);				
+				list.add(result_index);
 			}
 		}
 		return list.toArray(new Integer[0]);
 	}
-	
+
 	/**
 	 * 根据给定的关键字找到第一次出现的整行
 	 * */
@@ -237,16 +238,16 @@ public class PerlParser {
 		if(index>=0 && endindex>=0 && startindex>=0){
 			return findstr.substring(startindex+2, endindex).trim();
 		}
-		return null;		
+		return null;
 	}
-	
-	private String findAssignmentStatementByStrStopBySql(String str, String keyword, String type){		
+
+	private String findAssignmentStatementByStrStopBySql(String str, String keyword, String type){
 		String findstr = str;
 		int index = -1;
 		int endindex = -1;
 		int startindex = -1;
 		String _tmp = "";
-		boolean findtag = false; 
+		boolean findtag = false;
 		while(true){
 			index = findstr.indexOf(keyword);
 			endindex = findstr.indexOf(Return_And_Line, index);
@@ -273,7 +274,7 @@ public class PerlParser {
 		log.info("[代码]"+_tmp);
 		return findtag==true?_tmp:null;
 	}
-	
+
 	/**
 	 * 查找values (
 	 * 查找values(
@@ -284,7 +285,7 @@ public class PerlParser {
 		if(startindex<0)startindex = findstr.lastIndexOf("values(");
 		return startindex>=0;
 	}
-	
+
 	/**
 	 * keyword应该在等号的右边
 	 * */
@@ -296,14 +297,14 @@ public class PerlParser {
 		int equalindex = findstr.lastIndexOf("=", startindex);
 		return equalindex>=0;
 	}
-	
+
 	/**
 	 * 查找指定关键字
 	 * */
 	private boolean isFindStr(String str, String keyword){
 		return str.indexOf(keyword)>=0;
 	}
-	
+
 	/**
 	 * 保留关键字前面内容
 	 * */
@@ -312,7 +313,7 @@ public class PerlParser {
 		int startindex = findstr.lastIndexOf(keyword);
 		return findstr.substring(0, startindex);
 	}
-	
+
 	/**
 	 * 去重
 	 * */
@@ -329,7 +330,7 @@ public class PerlParser {
 		}
 		return newstr.toString();
 	}
-	
+
 	/**
 	 * 先按SQL方式找，找不到，就按变量方式找，然后继续按SQL方式找
 	 * */
@@ -348,7 +349,7 @@ public class PerlParser {
 		}
 		return findresult;
 	}
-	
+
 	/**
 	 * 根据给定的某行查找=前面的变量
 	 * */
@@ -362,7 +363,7 @@ public class PerlParser {
 		log.info("[变量]"+tmp);
 		return tmp;
 	}
-	
+
 	public void start(){
 		log.debug(read(this.file_name));
 		read(this.file_name);
@@ -390,11 +391,11 @@ public class PerlParser {
 			log.info("[key]"+key+"[查找结果]"+list);
 		}
 	}
-	
+
 	/**
 	 * 根据关键字进行逐行删除
 	 * */
-	public void deleteByKeyWord(String keyword){		
+	public void deleteByKeyWord(String keyword){
 		List<Deal> deallist = new ArrayList<Deal>();
 		deallist.add(new DealSpaceAndWellAndPrint());
 		deallist.add(new DealDelKeyWord(keyword));
@@ -409,7 +410,7 @@ public class PerlParser {
 		deallist.add(new DealSaveKeyWord(keyword));
 		log.info(read(file_name, deallist));
 	}
-	
+
 	/**
 	 * 仅保留关键字 keyword1
 	 * 保留关键字前面内容 keyword2
@@ -421,7 +422,7 @@ public class PerlParser {
 		deallist.add(new DealRetainKeywordBeforeContent(keyword2));
 		log.info(distinctStr(read(file_name, deallist)));
 	}
-	
+
 	public void printINodeListTree(List<INode> inode, String tip){
 		for(INode id : inode){
 			log.info(tip+id.getContent().getContent());
@@ -430,14 +431,14 @@ public class PerlParser {
 			}
 		}
 	}
-	
+
 	public void printINodeTree(INode inode, String tip){
 		log.info(tip+inode.getContent().getContent());
 		if(inode.hasChild()){
 			printINodeListTree(inode.getChildList(), tip+"--");
 		}
 	}
-	
+
 	public void parserTree(String str){
 		log.info("[str]"+str);
 		Integer[] leftarr = findStr(str, PerlParser.Left_Brace);
@@ -450,7 +451,7 @@ public class PerlParser {
 		INode previosINode = null;
 		boolean superflag = false;
 		if(leftarr.length>0){
-			//找到第一个左括号和第二个左括号之间的内容，增加			
+			//找到第一个左括号和第二个左括号之间的内容，增加
 			for(int i=0;i<leftarr.length;i++){
 				first_left = i;
 				if(leftarr.length>1 && first_left<leftarr.length-1){
@@ -487,7 +488,7 @@ public class PerlParser {
 								log.debug("[wwX new current]"+rightfindcontent);
 								currentINode.setContent(cn);
 								currentINode.setParent(previosINode);
-								previosINode.addChild(currentINode);	
+								previosINode.addChild(currentINode);
 							}else{
 								previosINode = currentINode;
 								currentINode = new INode();
@@ -497,7 +498,7 @@ public class PerlParser {
 								if(previosINode!=null){
 									previosINode.addChild(currentINode);
 									currentINode.setParent(previosINode);
-								}								
+								}
 							}
 						}else{
 							previosINode.getContent().add(rightfindcontent);
@@ -539,7 +540,7 @@ public class PerlParser {
 						log.debug("[wX new current]"+findcontent);
 						currentINode.setContent(cn);
 						currentINode.setParent(previosINode);
-						previosINode.addChild(currentINode);	
+						previosINode.addChild(currentINode);
 					}
 					else{
 						//同级没有其他节点，只要新增
@@ -561,7 +562,7 @@ public class PerlParser {
 			printINodeTree(firstINode, "");
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		String parserfile;
 //		parserfile = "j:\\Work\\CVS\\BI\\program_script\\bass\\perl_program\\other\\tool_cfg_etl.pl";
@@ -573,13 +574,13 @@ public class PerlParser {
 //		pp.deleteByKeyWord(" rows ");
 //		pp.statisticsSqlAndSave("insert into", "(");
 		pp.statisticsSql("delete");
-		
+
 //		PerlSub ps = new PerlSub();
 //		Integer[] a = new Integer[1];
 //		System.out.println(a.length);
 //		ps.increaseLeftBraceArr(a);
 //		System.out.println(ps.getLeftBrace());
-		
+
 //		String str = "a{be{ce{dxxxx}e}f{x}{y{ttt}z}}";
 //		str = "a{be{c}f}";
 //		str = "a{b{c}1{d}2{e}3{f}4}";

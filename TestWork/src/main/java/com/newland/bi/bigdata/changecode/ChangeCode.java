@@ -13,12 +13,14 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 
 public class ChangeCode {
 
-	private static Logger logger = LogInfoFactory.getInstance(ChangeCode.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(ChangeCode.class);
 	/**
 	 * 扫描路径
 	 */

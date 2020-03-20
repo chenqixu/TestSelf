@@ -1,7 +1,9 @@
 package com.newland.bi.bigdata.xml.util;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +15,7 @@ import java.util.Map;
  */
 public class Component {
 
-    private static Logger logger = LogInfoFactory.getInstance(Component.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(Component.class);
     private Map<String, String> paramMap = new HashMap<>();
 
     public Map<String, String> getParamMap() {

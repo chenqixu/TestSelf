@@ -5,11 +5,13 @@ import java.util.concurrent.TimeUnit;
 import com.cqx.annotation.MyTest.Before;
 import com.cqx.annotation.MyTestFactory;
 import com.cqx.annotation.MyTest.Test;
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 public class MyExecutorsTest {
 	
-	private static LogInfoFactory logger = LogInfoFactory.getInstance(MyExecutorsTest.class);
+	private static MyLogger logger = MyLoggerFactory.getLogger(MyExecutorsTest.class);
 	private MyExecutors et;
 	
 	@Before

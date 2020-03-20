@@ -1,7 +1,9 @@
 package com.newland.bi.bigdata.utils.math;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 
 /**
  * 随机工具
@@ -10,7 +12,7 @@ import com.cqx.process.Logger;
  */
 public class RandomUtil {
 
-    private static Logger logger = LogInfoFactory.getInstance(RandomUtil.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(RandomUtil.class);
 
     public static int getInt() {
         return (int) (Math.random() * 5 + 1);

@@ -1,7 +1,9 @@
 package com.newland.bi.bigdata.utils.regex;
 
 
-import com.cqx.process.LogInfoFactory;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 
 import java.util.regex.Pattern;
 
@@ -12,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class RegexUtils {
 
-    private LogInfoFactory logger = LogInfoFactory.getInstance(RegexUtils.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(RegexUtils.class);
 
     /**
      * 更新规则

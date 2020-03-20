@@ -1,14 +1,16 @@
 package com.newland.bi.bigdata.utils;
 
-import com.cqx.process.LogInfoFactory;
-import com.cqx.process.Logger;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
+
 import com.newland.bi.bigdata.utils.system.IRedo;
 import com.newland.bi.bigdata.utils.system.RedoFactory;
 import org.junit.Test;
 
 public class OtherUtilsTest {
 
-    private static Logger logger = LogInfoFactory.getInstance(OtherUtilsTest.class);
+    private static MyLogger logger = MyLoggerFactory.getLogger(OtherUtilsTest.class);
 
     public void redo(int seq, String msg) {
         if (msg.equals("no") && seq > 0) {
