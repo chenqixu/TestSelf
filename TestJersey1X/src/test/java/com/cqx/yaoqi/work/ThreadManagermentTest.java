@@ -1,5 +1,7 @@
 package com.cqx.yaoqi.work;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -7,6 +9,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class ThreadManagermentTest {
+
+    private static final MyLogger logger = MyLoggerFactory.getLogger(ThreadManagermentTest.class);
 
     @Test
     public void exec() {
@@ -22,11 +26,11 @@ public class ThreadManagermentTest {
             if (bookWork.equals("2"))
                 iterator.remove();
         }
-        System.out.println(map);
+        logger.info(map.toString());
     }
 
     @Test
     public void scanLocalFile() {
-        System.out.println(new ThreadManagerment().scanLocalFile());
+        logger.info(new ThreadManagerment().scanLocalFile().toString());
     }
 }

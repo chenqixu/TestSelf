@@ -3,6 +3,7 @@ package com.cqx.common.utils.log;
 import com.cqx.common.utils.file.PropertyUtil;
 
 import java.io.*;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,10 +15,11 @@ public class MyLoggerFactory implements MyLogger {
     private static final String CLASS_NAME = MyLoggerFactory.class.getName();
     private static final String SIMPLE_CLASS_NAME = MyLoggerFactory.class.getSimpleName();
     private static LogLEVEL LOG_LEVEL = LogLEVEL.INFO;//0:error 1:warn 2:info 3:debug
-    private static PrintStream printStream;
+    private static PrintStream printStream;//输出流
+    private static volatile boolean isLoad = false;//是否需要重新加载
 
     static {
-        init();
+        init(null);
     }
 
     private Class<?> cs;
@@ -26,15 +28,22 @@ public class MyLoggerFactory implements MyLogger {
         this.cs = cs;
     }
 
-    private static void init() {
+    /**
+     * 初始化
+     *
+     * @param cs
+     */
+    private static void init(Class<?> cs) {
         //设置输出流
         setPrintStream(System.out);
         //可以搜索下classpath下有没有log4j.properties
-        Object obj = new Object();
-        String path = obj.getClass().getResource("/").getPath() + LOG4J_NAME;
+        String path = getClassPath(cs);
         //判断文件是否存在
         File confFile = new File(path);
-        if (confFile.exists() && confFile.isFile()) {
+        //三种情况：1、path没有；2、log4j.properties没有；3、有log4j.properties
+        if (path.equals("")) {
+            printStream.println(getRedString(SIMPLE_CLASS_NAME + "：Static output is used, waiting for the second load of getLogger method."));
+        } else if (confFile.exists() && confFile.isFile()) {
             //读取配置
             PropertyUtil propertyUtil = new PropertyUtil(path);
             //默认是INFO级别
@@ -51,28 +60,87 @@ public class MyLoggerFactory implements MyLogger {
         }
     }
 
+    /**
+     * 设置日志级别
+     *
+     * @param LEVEL
+     */
     public static void setLogLevel(LogLEVEL LEVEL) {
         LOG_LEVEL = LEVEL;
     }
 
-    private static String getRedString(String msg) {
-        return "\033[31;0m" + msg + "\033[0m";
-    }
-
-    public static void setPrintStream(PrintStream printStream) {
-        MyLoggerFactory.printStream = printStream;
-//        printStream.println(getRedString(SIMPLE_CLASS_NAME + "：setPrintStream [" + printStream + "]"));
-    }
-
+    /**
+     * 获取一个日志实例
+     *
+     * @param cs
+     * @return
+     */
     public static MyLoggerFactory getLogger(Class<?> cs) {
+        if (isLoad) init(cs);//如果需要重新加载，则进行重新加载
         MyLoggerFactory log = new MyLoggerFactory(cs);
         return log;
     }
 
+    /**
+     * 获取类路径
+     *
+     * @param cs
+     * @return
+     */
+    private static String getClassPath(Class<?> cs) {
+        String path = "";
+        if (cs == null) {
+            Object obj = new Object();
+            URL classResource = obj.getClass().getResource("/");
+            if (classResource != null) {
+                path = classResource.getPath() + LOG4J_NAME;
+                isLoad = false;//加载到了，不需要重复加载
+            } else {
+                isLoad = true;//需要重新加载配置，由于类加载顺序问题，导致这里获取不到Resource路径
+            }
+        } else {
+            URL classResource = cs.getResource("/");
+            if (classResource != null) {
+                path = classResource.getPath() + LOG4J_NAME;
+                isLoad = false;//加载到了，不需要重复加载
+            }
+        }
+        return path;
+    }
+
+    /**
+     * 字符转换成红色
+     *
+     * @param msg
+     * @return
+     */
+    private static String getRedString(String msg) {
+        return "\033[31;0m" + msg + "\033[0m";
+    }
+
+    /**
+     * 设置输出流
+     *
+     * @param printStream
+     */
+    public static void setPrintStream(PrintStream printStream) {
+        MyLoggerFactory.printStream = printStream;
+    }
+
+    /**
+     * 获取当前线程名
+     *
+     * @return
+     */
     private String getThreadName() {
         return Thread.currentThread().getName();
     }
 
+    /**
+     * 获取行号
+     *
+     * @return
+     */
     private StackTraceElement getLineInfo() {
         StackTraceElement[] ste = new Throwable().getStackTrace();
         for (int i = 0; i < ste.length; i++) {
@@ -83,6 +151,11 @@ public class MyLoggerFactory implements MyLogger {
         return null;
     }
 
+    /**
+     * 拼接日志头部内容
+     *
+     * @return
+     */
     private String getHeader() {
         StringBuffer sb = new StringBuffer();
         long time = System.currentTimeMillis();

@@ -1,5 +1,8 @@
 package com.newland.bi.bigdata.collect;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -11,17 +14,18 @@ import java.util.Set;
  */
 public class MyMap<K, V> implements Map<K, V> {
 
+    private static final MyLogger logger = MyLoggerFactory.getLogger(MyMap.class);
     /**
      * 输出一个int的二进制数
      *
      * @param num
      */
     public static void printInfo(int num) {
-        System.out.println(Integer.toBinaryString(num));
+        logger.info(Integer.toBinaryString(num));
     }
 
     public static void print(String msg) {
-        System.out.print(msg + "：");
+        logger.info(msg + "：");
     }
 
     /**
