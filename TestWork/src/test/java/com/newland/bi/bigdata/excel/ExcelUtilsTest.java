@@ -13,7 +13,7 @@ public class ExcelUtilsTest {
 
     @Before
     public void setUp() {
-        excelUtils = new ExcelUtils();
+        excelUtils = new ExcelUtils(true);
     }
 
     @Test
