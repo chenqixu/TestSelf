@@ -156,7 +156,7 @@ public class MyLoggerFactory implements MyLogger {
      *
      * @return
      */
-    private String getHeader() {
+    private String getHeader(LogLEVEL printLev) {
         StringBuffer sb = new StringBuffer();
         long time = System.currentTimeMillis();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -164,7 +164,7 @@ public class MyLoggerFactory implements MyLogger {
                 .append(" [")
                 .append(getThreadName())//当前线程名
                 .append("] ")
-                .append(LOG_LEVEL.getDesc())//日志级别
+                .append(printLev.getDesc())//日志级别
                 .append(" ")
 //                .append(cs.getCanonicalName())//类名
                 .append(getLineInfo())//获取代码行号、方法名
@@ -177,9 +177,12 @@ public class MyLoggerFactory implements MyLogger {
         String[] msgArr = msg.split(SPLIT_STR, -1);
         if (msgArr != null && param != null) {
             if (msgArr.length > 0 && param.length > 0 && (msgArr.length - 1 == param.length)) {
-                //从第二个开始
+                //先拼接上第一个分割
+                sb.append(msgArr[0]);
+                //从第二个开始拼接参数和分割
                 for (int i = 1; i < msgArr.length; i++) {
-                    sb.append(param[i - 1] + msgArr[i]);
+                    sb.append(param[i - 1])
+                            .append(msgArr[i]);
                 }
             } else {
                 sb.append(msg);
@@ -190,36 +193,38 @@ public class MyLoggerFactory implements MyLogger {
         return sb.toString();
     }
 
-    private void println(String msg) {
-        printStream.println(getHeader() + msg);
+    private void println(LogLEVEL printLev, String msg) {
+        String printlnMsg = getHeader(printLev) + msg;
+        if (printLev.equals(LogLEVEL.WARN)) printlnMsg = getRedString(printlnMsg);
+        printStream.println(printlnMsg);
     }
 
-    private void println(String msg, Object... param) {
-        println(join(msg, param));
+    private void println(LogLEVEL printLev, String msg, Object... param) {
+        println(printLev, join(msg, param));
     }
 
     public void warn(String msg) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.WARN.getLevel()) println(msg);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.WARN.getLevel()) println(LogLEVEL.WARN, msg);
     }
 
     public void warn(String msg, Object... param) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.WARN.getLevel()) println(msg, param);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.WARN.getLevel()) println(LogLEVEL.WARN, msg, param);
     }
 
     public void info(String msg) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.INFO.getLevel()) println(msg);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.INFO.getLevel()) println(LogLEVEL.INFO, msg);
     }
 
     public void info(String msg, Object... param) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.INFO.getLevel()) println(msg, param);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.INFO.getLevel()) println(LogLEVEL.INFO, msg, param);
     }
 
     public void debug(String msg) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.DEBUG.getLevel()) println(msg);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.DEBUG.getLevel()) println(LogLEVEL.DEBUG, msg);
     }
 
     public void debug(String msg, Object... param) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.DEBUG.getLevel()) println(msg, param);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.DEBUG.getLevel()) println(LogLEVEL.DEBUG, msg, param);
     }
 
     public void error(String msg) {
@@ -227,7 +232,7 @@ public class MyLoggerFactory implements MyLogger {
     }
 
     public void error(String msg, Throwable throwable) {
-        if (LOG_LEVEL.getLevel() >= LogLEVEL.ERROR.getLevel()) println(msg);
+        if (LOG_LEVEL.getLevel() >= LogLEVEL.ERROR.getLevel()) println(LogLEVEL.ERROR, msg);
         if (throwable != null) throwable.printStackTrace();
     }
 

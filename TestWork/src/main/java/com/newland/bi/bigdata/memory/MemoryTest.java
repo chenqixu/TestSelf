@@ -1,14 +1,17 @@
 package com.newland.bi.bigdata.memory;
 
-import com.newland.bi.bigdata.utils.SleepUtils;
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.agent.ObjectSizeFetcherAgent;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
+import com.newland.bi.bigdata.bean.FtpHostInfo;
 
 import java.util.*;
 
 public class MemoryTest {
 
-    public static final String STR_SEED = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final char[] STR_CHAR = STR_SEED.toCharArray();
+    private static final MyLogger logger = MyLoggerFactory.getLogger(MemoryTest.class);
+    private static final String STR_SEED = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final char[] STR_CHAR = STR_SEED.toCharArray();
     private Map<String, String> map = new HashMap<>();
     private List<String> idfiles;
 
@@ -20,16 +23,39 @@ public class MemoryTest {
         return new MemoryTest();
     }
 
-    public static void main(String[] args) {
-        Runtime runtime = Runtime.getRuntime();
-        runtime.gc();
-        MemoryTest memoryTest = MemoryTest.builder();
-        for (int i = 0; i < 5; i++) {
-            SleepUtils.sleepSecond(10);
-            runtime.gc();
-            memoryTest.test();
-            printMemInfo(runtime);
-        }
+    public static void main(String[] args) throws Exception {
+//        Runtime runtime = Runtime.getRuntime();
+//        runtime.gc();
+//        MemoryTest memoryTest = MemoryTest.builder();
+//        for (int i = 0; i < 5; i++) {
+//            SleepUtils.sleepSecond(10);
+//            runtime.gc();
+//            memoryTest.test();
+//            printMemInfo(runtime);
+//        }
+
+//        FtpHostInfo ftpHostInfo = new FtpHostInfo();
+//        ftpHostInfo.setHost("127.0.0.1");
+//        ftpHostInfo.setUpdateTime(new Date().getTime());
+//        ftpHostInfo.setCurrentFirstFileName("abc");
+//        ftpHostInfo.setCurrentFirstFileTime("2020-03-24");
+//        ftpHostInfo.setCurrentTotelFilesNum(100);
+//        long size = ObjectSizeFetcherAgent.fullSizeOf(ftpHostInfo);
+//        logger.info("ftpHostInfo.size：{}", size);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("13509323821", "4300000000000");//第一个160
+        map.put("13509323822", "4300000000001");//第二个往后，每个都是32
+//        map.put("13509323823", "4300000000002");
+//        map.put("13509323824", "4300000000003");
+//        map.put("13509323825", "4300000000004");
+//        map.put("13509323826", "4300000000005");
+//        map.put("13509323827", "4300000000006");
+//        map.put("13509323828", "4300000000007");
+//        map.put("13509323829", "4300000000008");
+//        map.put("13509323830", "4300000000009");
+        long size = ObjectSizeFetcherAgent.fullSizeOf(map);
+        logger.info("Map.size：{}", size);
     }
 
     public static void printMemInfo(Runtime run) {

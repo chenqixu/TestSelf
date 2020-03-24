@@ -58,6 +58,11 @@ public class MyMapTest {
         map.put("11111", "22222");
         map.get("1");
         String[] arr = new String[16];
+    }
 
+    @Test
+    public void ModTest() {
+        MyMap myMap = new MyMap();
+        myMap.Mod();
     }
 }

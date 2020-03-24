@@ -3,9 +3,7 @@ package com.newland.bi.bigdata.collect;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * MyMap
@@ -15,6 +13,7 @@ import java.util.Set;
 public class MyMap<K, V> implements Map<K, V> {
 
     private static final MyLogger logger = MyLoggerFactory.getLogger(MyMap.class);
+
     /**
      * 输出一个int的二进制数
      *
@@ -108,5 +107,44 @@ public class MyMap<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         return null;
+    }
+
+    public void Mod() {
+        //随机50个不重复的数，对50取模
+        Random random = new Random();
+        Map<Long, MyMapData> map = new HashMap<>();
+        long[] sources = {13509323820L, 13509323821L, 13509323822L, 13509323823L, 13509323824L, 13509323825L};
+        for (int i = 0; i < sources.length; i++) {
+//            int source = random.nextInt(1000);
+//            while (map.get(source) != null) {
+//                source = random.nextInt(1000);
+//            }
+            long source = sources[i];
+            long dst = source % sources.length;
+            MyMapData myMapData = map.get(dst);
+            if (myMapData != null) {
+                myMapData.add(source);
+            } else {
+                myMapData = new MyMapData(source);
+            }
+            map.put(dst, myMapData);
+        }
+        logger.info("map.size：{}，map：{}", map.size(), map);
+    }
+
+    class MyMapData {
+        List<Long> dataList = new ArrayList<>();
+
+        MyMapData(Long data) {
+            add(data);
+        }
+
+        void add(long data) {
+            dataList.add(data);
+        }
+
+        public String toString() {
+            return dataList.toString();
+        }
     }
 }

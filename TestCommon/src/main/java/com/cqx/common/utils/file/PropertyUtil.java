@@ -5,26 +5,40 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class PropertyUtil {
-    private final static String spltstr = File.separator;
-    private final static String rootPath = System.getProperty("user.dir");
-    private String logpath = rootPath + spltstr + "conf" + spltstr + "loginfofactory.properties";
-
-    public PropertyUtil() {
-    }
+    //    private final static String spltstr = File.separator;
+//    private final static String rootPath = System.getProperty("user.dir");
+//    private String logpath = rootPath + spltstr + "conf" + spltstr + "log4j.properties";
+    private Map<String, String> propertyMap;
 
     public PropertyUtil(String logpath) {
-        this.logpath = logpath;
+        propertyMap = new HashMap<>();
+        init(logpath);
     }
 
+    /**
+     * 获取属性
+     *
+     * @param name
+     * @param defaultsValue
+     * @return
+     */
     public String getProperty(String name, String defaultsValue) {
-        String value = getProperty(name);
-        return value.equals("") ? defaultsValue : value;
+        String value = propertyMap.get(name);
+        return (value == null || value.equals("")) ? defaultsValue : value;
     }
 
-    public String getProperty(String name) {
+    /**
+     * 初始化加载文件
+     *
+     * @param logpath
+     * @return
+     */
+    private String init(String logpath) {
         String result = "";
         File f = null;
         FileInputStream pInStream = null;
@@ -38,7 +52,9 @@ public class PropertyUtil {
             while (enuVersion.hasMoreElements()) {
                 enuVersion.nextElement();
             }
-            result = p.getProperty(name);
+            for (Map.Entry<Object, Object> entry : p.entrySet()) {
+                propertyMap.put(entry.getKey().toString(), entry.getValue().toString());
+            }
             f = null;
             pInStream.close();
             p.clear();

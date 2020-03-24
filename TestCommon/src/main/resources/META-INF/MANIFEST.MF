@@ -1,0 +1,1 @@
+Premain-Class: com.cqx.common.utils.agent.ObjectSizeFetcherAgent
