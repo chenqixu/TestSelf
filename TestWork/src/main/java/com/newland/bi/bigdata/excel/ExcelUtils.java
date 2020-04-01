@@ -147,10 +147,10 @@ public class ExcelUtils {
                 return simpleDateFormat.format(cell.getDateCellValue());
             } else {
                 //可能有小数点、也可能是科学计数法
-                double d = cell.getNumericCellValue();
+                Double d = cell.getNumericCellValue();
                 //判断绝对值和原值相减是否为0，为0则取longValue，不为0则保留小数
                 if (Math.round(d) - d == 0) {
-                    return String.valueOf(Double.valueOf(d).longValue());
+                    return String.valueOf(d.longValue());
                 } else {
                     return String.valueOf(d);
                 }

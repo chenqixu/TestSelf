@@ -1,5 +1,7 @@
 package com.newland.bi.bigdata.memory;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.newland.bi.bigdata.metric.MetricsUtil;
 import com.newland.bi.bigdata.utils.string.StringUtils;
 
@@ -22,6 +24,7 @@ import java.util.Map;
  */
 public class ShareMemoryCache {
 
+    private static final MyLogger logger = MyLoggerFactory.getLogger(ShareMemoryCache.class);
     private RandomAccessFile raFile;
     private FileChannel fc;
     private MappedByteBuffer mapBuf;
@@ -50,8 +53,7 @@ public class ShareMemoryCache {
         ms.addTimeTag();
         String datapath = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestWork\\src\\main\\resources\\data\\yyzs";
         String datafilename = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestWork\\src\\main\\resources\\data\\yyzs\\memoryfile.txt";
-        List<String> idfiles = new ArrayList<String>();
-        idfiles = MemoryTest.builder().getIdfiles();
+        List<String> idfiles = MemoryTest.builder().getIdfiles();
 //        idfiles.add("123");
 //        idfiles.add("456");
         ShareMemoryCache shareMemoryCache = ShareMemoryCache
@@ -64,9 +66,10 @@ public class ShareMemoryCache {
 //        shareMemoryCache.getDataFromFile(datapath, "567", 10);
 //        shareMemoryCache.getDataFromFile(datapath, "1234", 10);
         for (String _tmp : idfiles) {
-            shareMemoryCache.getDataFromFile(datapath, _tmp, 10);
+            String result = shareMemoryCache.getDataFromFile(datapath, _tmp, 10);
+            logger.info("read：{}", result);
         }
-        System.out.println("spend：" + ms.getTimeOut());
+        logger.info("spend：{}", ms.getTimeOut());
         shareMemoryCache.closeAll();
     }
 
@@ -102,7 +105,7 @@ public class ShareMemoryCache {
             datafile.seek(start);
             datafile.read(data, 0, length);
             result = new String(data);
-            System.out.println("start:" + start + ",end:" + end + ",length:" + length + ",result:" + result);
+            logger.info("start：{}，end：{}，length：{}，result：{}", start, end, length, result);
         } finally {
             if (idfile != null)
                 idfile.close();
@@ -121,7 +124,7 @@ public class ShareMemoryCache {
         String find = result.substring(derviceindex + derviceID.length() + 1, end);
         int off = Integer.valueOf(find.substring(0, find.indexOf(",")));
         int len = Integer.valueOf(find.substring(find.indexOf(",") + 1));
-//        System.out.println("result:" + result + "，index:" + derviceindex + "，end:" + end + "，find:" + find + "，off:" + off + "，len:" + len);
+        logger.info("result：{}" + result + "，index:" + derviceindex + "，end:" + end + "，find:" + find + "，off:" + off + "，len:" + len);
         result = mydatafile.read(off, len);
 //        System.out.println("result:" + result);
         return result;
@@ -150,7 +153,7 @@ public class ShareMemoryCache {
             String msg = memoryTest.random(msglen);
             int length = msg.length();
             end = start + length;
-            System.out.println("start:" + start + ",end:" + end + ",length:" + length + ",msg:" + msg);
+            logger.info("start：{}，end：{}，length：{}，msg：{}", start, end, length, msg);
             RandomAccessFile idfile = null;
             try {
                 idfile = new RandomAccessFile(idfilename, MemoryCacheMode.READ_WRITE.getCode());
@@ -224,10 +227,10 @@ public class ShareMemoryCache {
         raFile = new RandomAccessFile(filename, memoryCacheMode.getCode());
         // 获得相应的文件通道
         fc = raFile.getChannel();
-        System.out.println("fc：" + fc);
+        logger.info("fc：{}", fc);
         // 获得文件的独占锁，该方法不产生堵塞，立刻返回
         fileLock = fc.tryLock();
-        System.out.println("fileLock：" + fileLock + " isShared：" + fileLock.isShared() + " isValid：" + fileLock.isValid());
+        logger.info("fileLock：{}，sShared：{}，isValid：{}", fileLock, fileLock.isShared(), fileLock.isValid());
         fileLock.release();
 //        // 取得文件的实际大小，以便映像到共享内存
 //        int size = (int) fc.size();
@@ -245,7 +248,7 @@ public class ShareMemoryCache {
             while ((text = raFile.readLine()) != null) {
                 //打印读取的内容,并将字节转为字符串输入
 //                System.out.println(new String(buff, 0, hasRead));
-                System.out.println(new String(text.getBytes("ISO-8859-1"), "UTF-8"));
+                logger.info("{}", new String(text.getBytes("ISO-8859-1"), "UTF-8"));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -279,7 +282,7 @@ public class ShareMemoryCache {
             try {
                 if (fileLock.isValid()) {
                     fileLock.close();
-                    System.out.println("fileLock.close");
+                    logger.info("fileLock.close");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

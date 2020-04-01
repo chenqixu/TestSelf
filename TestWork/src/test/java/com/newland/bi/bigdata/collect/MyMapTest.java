@@ -65,4 +65,10 @@ public class MyMapTest {
         MyMap myMap = new MyMap();
         myMap.Mod();
     }
+
+    @Test
+    public void testHash() {
+        MyMap myMap = new MyMap();
+        myMap.testHash("13509323824");
+    }
 }

@@ -1,10 +1,16 @@
 package com.newland.bi.bigdata.memory;
 
-import com.cqx.common.utils.agent.ObjectSizeFetcherAgent;
+import com.cqx.common.utils.file.FileUtil;
+import com.cqx.common.utils.hdfs.HdfsBean;
+import com.cqx.common.utils.hdfs.HdfsTool;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
-import com.newland.bi.bigdata.bean.FtpHostInfo;
+import com.newland.bi.bigdata.collect.MyMap;
+import org.apache.hadoop.fs.FileStatus;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class MemoryTest {
@@ -14,6 +20,7 @@ public class MemoryTest {
     private static final char[] STR_CHAR = STR_SEED.toCharArray();
     private Map<String, String> map = new HashMap<>();
     private List<String> idfiles;
+    private HdfsTool hdfsTool;
 
     private MemoryTest() {
         init();
@@ -43,21 +50,24 @@ public class MemoryTest {
 //        long size = ObjectSizeFetcherAgent.fullSizeOf(ftpHostInfo);
 //        logger.info("ftpHostInfo.size：{}", size);
 
-        Map<String, String> map = new HashMap<>();
-        map.put("13509323821", "4300000000000");//第一个160
-        map.put("13509323822", "4300000000001");//第二个往后，每个都是32
-//        map.put("13509323823", "4300000000002");
-//        map.put("13509323824", "4300000000003");
-//        map.put("13509323825", "4300000000004");
-//        map.put("13509323826", "4300000000005");
-//        map.put("13509323827", "4300000000006");
-//        map.put("13509323828", "4300000000007");
-//        map.put("13509323829", "4300000000008");
-//        map.put("13509323830", "4300000000009");
-        long size = ObjectSizeFetcherAgent.fullSizeOf(map);
-        logger.info("Map.size：{}", size);
+//        Map<String, String> map = new HashMap<>();
+//        map.put("13822184656", "460000056579069");//第一个160
+//        map.put("13822105180", "460000056586448");//第二个往后，每个都是32
+//        map.put("13822103659", "460000056587754");
+//        map.put("13822156192", "460000056587991");
+//        map.put("13822155936", "460000056598820");
+//        long size = ObjectSizeFetcherAgent.fullSizeOf(map);
+//        logger.info("Map.size：{}", size);
+
+        MemoryTest memoryTest = MemoryTest.builder();
+        memoryTest.readHdfs();
     }
 
+    /**
+     * 打印运行时内存
+     *
+     * @param run
+     */
     public static void printMemInfo(Runtime run) {
         long max = run.maxMemory();
         long total = run.totalMemory();
@@ -69,6 +79,67 @@ public class MemoryTest {
         System.out.println("最大可用内存 = " + usable);
     }
 
+    /**
+     * 读取hdfs文件
+     *
+     * @throws Exception
+     */
+    public void readHdfs() throws Exception {
+        String conf_path = FileUtil.endWith(FileUtil.getClassResourcePath(MemoryTest.class)) + "75hadoop/";
+//        String conf_path = FileUtil.endWith(FileUtil.getClassResourcePath(MemoryTest.class)) + "206hadoop/";
+        logger.info("conf_path：{}", conf_path);
+        HdfsBean hdfsBean = new HdfsBean();
+//        hdfsBean.setAuth_type("kerberos");
+//        hdfsBean.setKrb5(conf_path + "krb5.conf");
+//        hdfsBean.setPrincipal("edc_base/bdoc@FJBDKDC");
+//        hdfsBean.setKeytab(conf_path + "edc_base.keytab");
+        hdfsTool = new HdfsTool(conf_path, hdfsBean);
+        List<FileStatus> fileList = hdfsTool.ls("/cqz/mccdr/sum_date=20200326");
+//        hdfsTool.ls("/user/edc_base/data/cqz/sum_date=20200311");
+        String filePath = null;
+        for (FileStatus file : fileList) {
+            filePath = file.getPath().toString();
+            logger.info("{}", filePath);
+            break;
+        }
+
+        InputStream is = null;
+        BufferedReader br = null;
+//        Map<String, String> cache = new HashMap<>();
+        MyMap cache = new MyMap();
+        cache.setMod(100001);
+        if (filePath != null) {
+            try {
+                is = hdfsTool.openFile(filePath);
+                br = new BufferedReader(new InputStreamReader(is));
+
+                String str;
+                int readCnt = 0;
+                while ((str = br.readLine()) != null) {
+                    String[] arr = str.split("\\|", -1);
+//                    logger.info("str：{}，arr[0]：{}，arr[1]：{}", str, arr[0], arr[1]);
+//                    cache.put(arr[0], arr[1]);
+                    if (arr[1].length() > 0) cache.add(Long.valueOf(arr[1]));
+                    readCnt++;
+                    if (readCnt > 100000) break;
+                    //1000000 38mb
+                    //2000000 77mb
+                    if (readCnt % 100000 == 0) logger.info("readCnt：{}", readCnt);
+                }
+            } finally {
+                if (br != null) br.close();
+                if (is != null) is.close();
+            }
+        }
+        cache.printMyMapData();
+        hdfsTool.closeFileSystem();
+//        long size = ObjectSizeFetcherAgent.fullSizeOf(cache);
+//        logger.info("cache.size：{}，mb：{}", size, size / 1024 / 1024);
+    }
+
+    /**
+     * 初始化
+     */
     private void init() {
         idfiles = new ArrayList<>();
         idfiles.add("cMK26QEwuJrRbhBhudacJqcN3lGpsRCx");
