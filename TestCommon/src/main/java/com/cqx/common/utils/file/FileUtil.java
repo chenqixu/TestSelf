@@ -1,6 +1,7 @@
 package com.cqx.common.utils.file;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +18,7 @@ public class FileUtil {
 
     private static final String valueSplit = "\\|";
     private static final int BUFF_SIZE = 4096;
+    private static final String fileSparator = File.separator;
     private BufferedWriter writer;
     private BufferedReader reader;
 
@@ -82,6 +84,84 @@ public class FileUtil {
 
     public static boolean del(String src) {
         return new File(src).delete();
+    }
+
+    /**
+     * 创建软链接
+     *
+     * @param sourceFilePath
+     * @param linkPath
+     * @throws IOException
+     */
+    public static void createSymbolicLink(String sourceFilePath, String linkPath) throws IOException {
+        Path link = FileSystems.getDefault().getPath(linkPath);
+        Path target = FileSystems.getDefault().getPath(sourceFilePath);
+
+        // // 创建软链接时设置软链接的属性
+//		PosixFileAttributes attrs = Files.readAttributes(target, PosixFileAttributes.class);
+//		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(attrs.permissions());
+        Files.createSymbolicLink(link, target); // , attr
+    }
+
+    /**
+     * 如果文件夹不以\结尾则加上
+     *
+     * @param path
+     * @return
+     */
+    public static String endWith(String path) {
+        if (path.endsWith(fileSparator)) return path;
+        else return path + fileSparator;
+    }
+
+    /**
+     * 创建路径，可以递归
+     *
+     * @param path
+     */
+    public static void CreateDir(String path) {
+        if (path != null && path.length() > 0) {
+            File file = new File(path);
+            if (!(file.exists() && file.isDirectory())) {
+                file.mkdirs();
+            }
+        }
+    }
+
+    /**
+     * 获取类的资源文件路径
+     *
+     * @return
+     */
+    public static String getClassResourcePath() {
+        return getClassResourcePath(null);
+    }
+
+    /**
+     * 获取类的资源文件路径
+     *
+     * @param cs
+     * @return
+     */
+    public static String getClassResourcePath(Class<?> cs) {
+        String path = "";
+        if (cs == null) {
+            Object obj = new Object();
+            URL classResource = obj.getClass().getResource("/");
+            if (classResource != null) {
+                path = classResource.getPath();
+            }
+        } else {
+            URL classResource = cs.getResource("/");
+            if (classResource != null) {
+                path = classResource.getPath();
+            }
+        }
+        // 如果不是test，而是java下的，配置文件会在classes的同级而不在里面
+        String sourceTargetClass = "target/classes/";
+        String sourceClass = "classes/";
+        if (path.endsWith(sourceTargetClass)) path = path.substring(0, path.length() - sourceClass.length());
+        return path;
     }
 
     public void getFile(String filename, String read_code)
@@ -199,20 +279,4 @@ public class FileUtil {
         }
     }
 
-    /**
-     * 创建软链接
-     *
-     * @param sourceFilePath
-     * @param linkPath
-     * @throws IOException
-     */
-    public static void createSymbolicLink(String sourceFilePath, String linkPath) throws IOException {
-        Path link = FileSystems.getDefault().getPath(linkPath);
-        Path target = FileSystems.getDefault().getPath(sourceFilePath);
-
-        // // 创建软链接时设置软链接的属性
-//		PosixFileAttributes attrs = Files.readAttributes(target, PosixFileAttributes.class);
-//		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(attrs.permissions());
-        Files.createSymbolicLink(link, target); // , attr
-    }
 }
