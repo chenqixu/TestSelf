@@ -94,7 +94,7 @@ public class MemoryTest {
 //        hdfsBean.setPrincipal("edc_base/bdoc@FJBDKDC");
 //        hdfsBean.setKeytab(conf_path + "edc_base.keytab");
         hdfsTool = new HdfsTool(conf_path, hdfsBean);
-        List<FileStatus> fileList = hdfsTool.ls("/cqz/mccdr/sum_date=20200326");
+        List<FileStatus> fileList = hdfsTool.lsFileStatus("/cqz/mccdr/sum_date=20200326");
 //        hdfsTool.ls("/user/edc_base/data/cqz/sum_date=20200311");
         String filePath = null;
         for (FileStatus file : fileList) {

@@ -11,6 +11,7 @@ public class ShareCacheFileTest {
     private static final MyLogger logger = MyLoggerFactory.getLogger(ShareCacheFileTest.class);
     private ShareCacheFile sm;
     private String str = "中文测试123";
+    private String str1 = "应该可能";
 
     @Before
     public void setUp() {
@@ -25,6 +26,7 @@ public class ShareCacheFileTest {
     @Test
     public void write() throws Exception {
         sm.write(0, str.getBytes().length, str.getBytes("UTF-8"));
+        sm.write(0, str1.getBytes().length, str1.getBytes("UTF-8"));
     }
 
     @Test

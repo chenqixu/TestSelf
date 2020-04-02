@@ -1,5 +1,6 @@
 package com.newland.bi.bigdata.utils.bean;
 
+import com.cqx.common.utils.param.ParamUtil;
 import com.newland.bi.bigdata.bean.FileToRedisBean;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,16 +25,12 @@ public class ParamUtilTest {
         Map<String, String> map = new HashMap<>();
         map.put("scan_path", "/bi/app/A001/");
         map.put("scan_rule", "*.TXT");
+        map.put("scan_seq", "111");
+        map.put("start_cnt", "111");
+        map.put("end_cnt", "111");
+        map.put("cnt", "111");
         FileToRedisBean fileToRedisBean = paramUtil.setValueByMap(map, FileToRedisBean.class);
         ParamUtil.info(fileToRedisBean, logger);
     }
 
-    public void localCommit1() {
-    }
-
-    public void localCommit2() {
-    }
-
-    public void localCommit3() {
-    }
 }

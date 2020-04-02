@@ -34,7 +34,7 @@ public class ShareMemoryCacheTest {
     @Test
     public void read() throws Exception {
 //        shareMemoryCache.createRandomAccessFile(fileName, ShareMemoryCache.MemoryCacheMode.READ_ONLY);
-        shareMemoryCache.createRandomAccessFile(fileName, ShareMemoryCache.MemoryCacheMode.READ_WRITE);
+        shareMemoryCache.createRandomAccessFile(fileName, MemoryCacheMode.READ_WRITE);
         shareMemoryCache.read();
         shareMemoryCache.close();
     }
@@ -47,7 +47,7 @@ public class ShareMemoryCacheTest {
                 .setIp_ports("10.1.4.185:6380,10.1.4.185:6381,10.1.4.185:6382,10.1.4.185:6383,10.1.4.185:6384,10.1.4.185:6385")
                 .build();
         fileName = "d:\\test\\yyzs\\20190110141813\\xml";
-        shareMemoryCache.createRandomAccessFile(fileName, ShareMemoryCache.MemoryCacheMode.READ_WRITE);
+        shareMemoryCache.createRandomAccessFile(fileName, MemoryCacheMode.READ_WRITE);
         Map<String, String> resultMap = rc.hgetAll("06006008");
         Iterator<Map.Entry<String, String>> iterator = resultMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -61,8 +61,8 @@ public class ShareMemoryCacheTest {
 
     @Test
     public void lock() throws Exception {
-        ShareMemoryCache.newbuilder().createRandomAccessFile(fileName, ShareMemoryCache.MemoryCacheMode.READ_WRITE);
-        ShareMemoryCache.newbuilder().createRandomAccessFile(fileName, ShareMemoryCache.MemoryCacheMode.READ_WRITE);
+        ShareMemoryCache.newbuilder().createRandomAccessFile(fileName, MemoryCacheMode.READ_WRITE);
+        ShareMemoryCache.newbuilder().createRandomAccessFile(fileName, MemoryCacheMode.READ_WRITE);
     }
 
     @Test

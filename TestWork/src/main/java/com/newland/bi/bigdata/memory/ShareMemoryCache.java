@@ -13,9 +13,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 共享内存缓存
@@ -140,9 +138,9 @@ public class ShareMemoryCache {
         MyRandomAccessFile newraf = rafMap.get(newfilename);
         indexMsg = indexMsg + "," + mydatafile.getIndex() + "," + length + ";";
         // 写数据文件
-        mydatafile.write(msg.getBytes(), 0, length);
+        mydatafile.write(msg.getBytes(), length);
         // 写索引文件，格式：id,off,len;，如：567,0,3;
-        newraf.write(indexMsg.getBytes(), 0, indexMsg.length());
+        newraf.write(indexMsg.getBytes(), indexMsg.length());
     }
 
     public void writeData(List<String> idfilenames, int msglen) throws IOException {
@@ -322,114 +320,4 @@ public class ShareMemoryCache {
         return Math.abs(derviceID.hashCode()) % dies;
     }
 
-    public enum MemoryCacheMode {
-        READ_ONLY("r", FileChannel.MapMode.READ_ONLY),
-        READ_WRITE("rw", FileChannel.MapMode.READ_WRITE);
-
-        private final String code;
-        private final FileChannel.MapMode mapMode;
-
-        private MemoryCacheMode(String code, FileChannel.MapMode mapMode) {
-            this.code = code;
-            this.mapMode = mapMode;
-        }
-
-        public String getCode() {
-            return this.code;
-        }
-
-        public FileChannel.MapMode getMapMode() {
-            return this.mapMode;
-        }
-    }
-
-    class MyRandomAccessFile {
-        int index = 0;
-        private RandomAccessFile randomAccessFile;
-        // 内容缓存，比较消耗内存
-        private String data;
-
-        public MyRandomAccessFile(String filename) throws FileNotFoundException {
-            randomAccessFile = new RandomAccessFile(filename, MemoryCacheMode.READ_WRITE.getCode());
-        }
-
-        public MyRandomAccessFile(String filename, boolean isGetData) throws IOException {
-            this(filename);
-            if (isGetData)
-                data = readAll();
-        }
-
-        public void write(byte[] b, int off, int len) throws IOException {
-            randomAccessFile.seek(index);
-            randomAccessFile.write(b, 0, len);
-            index += off + len;
-        }
-
-        public String read(int off, int len) throws IOException {
-            byte[] b = new byte[len];
-            randomAccessFile.seek(off);
-            randomAccessFile.read(b, 0, len);
-            return new String(b);
-        }
-
-        private String readAll() throws IOException {
-            int len = (int) randomAccessFile.length();
-            byte[] b = new byte[len];
-            randomAccessFile.seek(0);
-            randomAccessFile.read(b, 0, len);
-            return new String(b);
-        }
-
-        public void close() throws IOException {
-            if (randomAccessFile != null) {
-                // 关闭文件
-                randomAccessFile.close();
-            }
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public String getData() {
-            return data;
-        }
-    }
-
-    class RafMap {
-        // 索引文件引用缓存，不占资源
-        private Map<String, MyRandomAccessFile> idfileMap;
-
-        public RafMap() {
-            idfileMap = new HashMap<>();
-        }
-
-        public MyRandomAccessFile get(String key) throws FileNotFoundException {
-            MyRandomAccessFile myRandomAccessFile = idfileMap.get(key);
-            if (myRandomAccessFile == null) {
-                myRandomAccessFile = new MyRandomAccessFile(key);
-                put(key, myRandomAccessFile);
-            }
-            return myRandomAccessFile;
-        }
-
-        public MyRandomAccessFile get(String key, boolean isGetData) throws IOException {
-            MyRandomAccessFile myRandomAccessFile = idfileMap.get(key);
-            if (myRandomAccessFile == null) {
-                myRandomAccessFile = new MyRandomAccessFile(key, isGetData);
-                put(key, myRandomAccessFile);
-            }
-            return myRandomAccessFile;
-        }
-
-        public void put(String key, MyRandomAccessFile myRandomAccessFile) {
-            idfileMap.put(key, myRandomAccessFile);
-        }
-
-        public void close() throws IOException {
-            for (MyRandomAccessFile myRandomAccessFile : idfileMap.values()) {
-                myRandomAccessFile.close();
-            }
-        }
-    }
 }
