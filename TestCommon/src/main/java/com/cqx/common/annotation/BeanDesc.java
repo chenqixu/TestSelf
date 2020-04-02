@@ -1,4 +1,4 @@
-package com.newland.bi.bigdata.annotation;
+package com.cqx.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

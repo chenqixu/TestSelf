@@ -1,4 +1,4 @@
-package com.newland.bi.bigdata.bean;
+package com.cqx.common.bean.javabean;
 
 import java.util.LinkedHashMap;
 

@@ -274,7 +274,16 @@ public class HdfsTool {
         return fs.getFileStatus(new Path(path));
     }
 
-    public List<FileStatus> ls(String path) throws IOException {
+    public List<String> lsPath(String path) throws IOException {
+        List<FileStatus> fileStatusList = ls(fs, path);
+        List<String> result = new ArrayList<>();
+        for (FileStatus fileStatus : fileStatusList) {
+            result.add(fileStatus.getPath().toString());
+        }
+        return result;
+    }
+
+    public List<FileStatus> lsFileStatus(String path) throws IOException {
         return ls(fs, path);
     }
 

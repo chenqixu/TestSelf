@@ -1,7 +1,7 @@
-package com.newland.bi.bigdata.utils.bean;
+package com.cqx.common.utils.param;
 
-import com.newland.bi.bigdata.annotation.BeanDesc;
-import com.newland.bi.bigdata.bean.BaseBean;
+import com.cqx.common.annotation.BeanDesc;
+import com.cqx.common.bean.javabean.BaseBean;
 import org.slf4j.Logger;
 
 import java.beans.BeanInfo;
@@ -50,8 +50,24 @@ public class ParamUtil {
         for (PropertyDescriptor property : propertyDescriptors) {
             String key = property.getName();
             Method setter = property.getWriteMethod();
+            Method getter = property.getReadMethod();
             if (!key.equals(CLASS)) {
-                setter.invoke(t, map.get(key));
+                //类型转换，bean里可能不是String
+                Class<?> returnType = getter.getReturnType();
+                Object key_value = map.get(key);
+                switch (returnType.getName()) {
+                    case "java.lang.String":
+                        break;
+                    case "int":
+                    case "java.lang.Integer":
+                        key_value = Integer.valueOf(key_value.toString());
+                        break;
+                    case "long":
+                    case "java.lang.Long":
+                        key_value = Long.valueOf(key_value.toString());
+                        break;
+                }
+                setter.invoke(t, key_value);
                 if (t instanceof BaseBean) {
                     String desc = fieldDesc.get(key);
                     if (desc != null) ((BaseBean) t).setBeanDesc(desc, map.get(key));
