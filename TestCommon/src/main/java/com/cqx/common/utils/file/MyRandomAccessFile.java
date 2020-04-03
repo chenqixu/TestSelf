@@ -39,9 +39,18 @@ public class MyRandomAccessFile {
         index += len;
     }
 
-    public String read(int off, int len) throws IOException {
+    public void write(long pos, byte[] b) throws IOException {
+        randomAccessFile.seek(pos);
+        randomAccessFile.write(b, 0, b.length);
+    }
+
+    public void write(long pos, String msg) throws IOException {
+        write(pos, msg.getBytes());
+    }
+
+    public String read(long pos, int len) throws IOException {
         byte[] b = new byte[len];
-        randomAccessFile.seek(off);
+        randomAccessFile.seek(pos);
         randomAccessFile.read(b, 0, len);
         return new String(b);
     }

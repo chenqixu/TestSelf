@@ -1,5 +1,7 @@
 package com.newland.bi.bigdata.memory;
 
+import com.cqx.common.utils.file.MyRandomAccessFile;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;

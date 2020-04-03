@@ -1,5 +1,6 @@
 package com.newland.bi.bigdata.memory;
 
+import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.After;
@@ -25,17 +26,23 @@ public class MyRandomAccessFileTest {
 
     @Test
     public void write() throws IOException {
-        myRandomAccessFile.write("450009493554750");
-        myRandomAccessFile.write("450009493554771");
+//        myRandomAccessFile.write("450009493554750");
+//        myRandomAccessFile.write("450009493554771");
+//        myRandomAccessFile.write(0L, "450009493554750".getBytes());
+        myRandomAccessFile.write(15L, "450009493554771".getBytes());
     }
 
     @Test
     public void read() throws IOException {
         int len = 15;
+        byte[] null_byte = new byte[15];
+        String NULL_VALUE = new String(null_byte);
+        logger.info("NULL_VALUE：{}", NULL_VALUE);
         for (int i = 0; i < 2; i++) {
             int off = i * len;
             String msg = myRandomAccessFile.read(off, len);
-            logger.info("{}", msg);
+            if (!msg.equals(NULL_VALUE))
+                logger.info("{}，{}", msg, msg.length());
         }
     }
 }

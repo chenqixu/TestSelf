@@ -82,8 +82,15 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 删除文件
+     *
+     * @param src
+     * @return
+     */
     public static boolean del(String src) {
-        return new File(src).delete();
+        if (isExists(src)) return new File(src).delete();
+        else return false;
     }
 
     /**
@@ -164,10 +171,34 @@ public class FileUtil {
         return path;
     }
 
+    /**
+     * 文件是否存在
+     *
+     * @param fileName
+     * @return
+     */
+    public static boolean isExists(String fileName) {
+        return new File(fileName).exists();
+    }
+
+
     public void getFile(String filename, String read_code)
             throws FileNotFoundException, UnsupportedEncodingException {
         File readFile = new File(filename);
         reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), read_code));
+    }
+
+    /**
+     * 逐行处理
+     *
+     * @param iFileRead
+     * @throws IOException
+     */
+    public void read(IFileRead iFileRead) throws IOException {
+        String _tmp;
+        while ((_tmp = reader.readLine()) != null) {
+            iFileRead.run(_tmp);
+        }
     }
 
     public List<String> read(String sql) {
@@ -278,5 +309,4 @@ public class FileUtil {
             }
         }
     }
-
 }

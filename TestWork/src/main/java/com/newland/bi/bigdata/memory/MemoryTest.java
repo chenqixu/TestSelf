@@ -94,7 +94,7 @@ public class MemoryTest {
 //        hdfsBean.setPrincipal("edc_base/bdoc@FJBDKDC");
 //        hdfsBean.setKeytab(conf_path + "edc_base.keytab");
         hdfsTool = new HdfsTool(conf_path, hdfsBean);
-        List<FileStatus> fileList = hdfsTool.lsFileStatus("/cqz/mccdr/sum_date=20200326");
+        List<FileStatus> fileList = hdfsTool.lsFileStatus("/cqz/mccdr/sum_date=20200326/000000_0");
 //        hdfsTool.ls("/user/edc_base/data/cqz/sum_date=20200311");
         String filePath = null;
         for (FileStatus file : fileList) {
@@ -119,12 +119,12 @@ public class MemoryTest {
                     String[] arr = str.split("\\|", -1);
 //                    logger.info("str：{}，arr[0]：{}，arr[1]：{}", str, arr[0], arr[1]);
 //                    cache.put(arr[0], arr[1]);
-                    if (arr[1].length() > 0) cache.add(Long.valueOf(arr[1]));
+//                    if (arr[1].length() > 0) cache.add(Long.valueOf(arr[1]));
                     readCnt++;
-                    if (readCnt > 100000) break;
+                    if (readCnt > 10000) break;
                     //1000000 38mb
                     //2000000 77mb
-                    if (readCnt % 100000 == 0) logger.info("readCnt：{}", readCnt);
+                    if (readCnt % 1000 == 0) logger.info("readCnt：{}", readCnt);
                 }
             } finally {
                 if (br != null) br.close();
