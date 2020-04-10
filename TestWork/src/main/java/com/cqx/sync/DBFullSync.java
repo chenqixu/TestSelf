@@ -81,8 +81,8 @@ public class DBFullSync implements IDBSync {
             int ret = dstJDBC.executeBatch(sync_sql, srcResultList, dst_beanUtil.getFieldsType());
             if (ret < 0) throw new Exception("同步到目标端失败");
         } finally {
-            srcJDBC.closeAll();
-            dstJDBC.closeAll();
+            srcJDBC.close();
+            dstJDBC.close();
         }
     }
 }

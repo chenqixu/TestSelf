@@ -44,8 +44,8 @@ public class DBRealTimeUpdateSync implements IDBSync {
             listBeanCompare.setT2(realTimeBeanList2);
             listBeanCompare.compare();
         } finally {
-            srcJDBC.closeAll();
-            dstJDBC.closeAll();
+            srcJDBC.close();
+            dstJDBC.close();
         }
     }
 }

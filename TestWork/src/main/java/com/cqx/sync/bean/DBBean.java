@@ -12,10 +12,11 @@ public class DBBean {
     private String pass_word;
     private String tns;
     private DBType dbType;
+    private boolean isPool = true;//默认走连接池
 
     @Override
     public String toString() {
-        return "DBType：" + dbType + "，tns：" + tns + "，user_name：" + user_name + "，pass_word：" + pass_word;
+        return "DBType：" + dbType + "，tns：" + tns + "，user_name：" + user_name + "，pass_word：" + pass_word + "，isPool：" + isPool;
     }
 
     public String getUser_name() {
@@ -48,5 +49,13 @@ public class DBBean {
 
     public void setDbType(DBType dbType) {
         this.dbType = dbType;
+    }
+
+    public boolean isPool() {
+        return isPool;
+    }
+
+    public void setPool(boolean pool) {
+        isPool = pool;
     }
 }

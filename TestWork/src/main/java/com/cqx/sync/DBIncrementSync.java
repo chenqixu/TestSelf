@@ -86,8 +86,8 @@ public class DBIncrementSync implements IDBSync {
                 }
             }
         } finally {
-            srcJDBC.closeAll();
-            dstJDBC.closeAll();
+            srcJDBC.close();
+            dstJDBC.close();
         }
     }
 

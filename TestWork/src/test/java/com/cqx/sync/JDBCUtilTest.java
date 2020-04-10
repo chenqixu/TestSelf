@@ -61,8 +61,7 @@ public class JDBCUtilTest {
 
     @After
     public void tearDown() throws Exception {
-        jdbcUtil.closeAll();
-        jdbcUtil.closeDataSource();
+        jdbcUtil.close();
     }
 
     @Test
@@ -70,7 +69,7 @@ public class JDBCUtilTest {
         String sql = "select max(collect_time) as collect_time from t_job_stat";
         List<List<QueryResult>> queryResults = jdbcUtil.executeQuery(sql);
         System.out.println(queryResults);
-        jdbcUtil.closeAll();
+        jdbcUtil.close();
     }
 
     @Test
@@ -180,4 +179,15 @@ public class JDBCUtilTest {
         logger.info("paramList：{}", paramList);
     }
 
+    @Test
+    public void to_char() {
+        logger.info("{}", JDBCUtil.to_char("last_login_time", DBFormatEnum.YYYYMMDDHH24MISS));
+        logger.info("{}", JDBCUtil.to_char("last_login_time", "create_time", DBFormatEnum.YYYYMMDDHH24MISS));
+        logger.info("{}", JDBCUtil.to_date("last_login_time", DBFormatEnum.YYYYMMDDHH24MISS));
+        logger.info("{}", JDBCUtil.to_date("last_login_time", "create_time", DBFormatEnum.YYYYMMDDHH24MISS));
+        logger.info("{}", JDBCUtil.to_char(JDBCUtil.sysdate(), DBFormatEnum.YYYYMM));
+        logger.info("{}", JDBCUtil.sysdate());
+        logger.info("{}", JDBCUtil.to_number("123"));
+        logger.info("{}", JDBCUtil.to_number(JDBCUtil.to_char(JDBCUtil.sysdate(), DBFormatEnum.YYYYMM)));
+    }
 }
