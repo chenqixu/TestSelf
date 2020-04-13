@@ -12,6 +12,8 @@ import java.io.IOException;
 public class MyRandomAccessFileTest {
 
     private static final MyLogger logger = MyLoggerFactory.getLogger(MyRandomAccessFileTest.class);
+    private static final byte[] NULL_BYTE = new byte[3];
+    private static final String NULL_VALUE = new String(NULL_BYTE);
     private MyRandomAccessFile myRandomAccessFile;
 
     @Before
@@ -44,5 +46,67 @@ public class MyRandomAccessFileTest {
             if (!msg.equals(NULL_VALUE))
                 logger.info("{}，{}", msg, msg.length());
         }
+    }
+
+    @Test
+    public void threadTest() throws InterruptedException {
+        Thread t1 = new Thread() {
+            public void run() {
+                int cnt = 0;
+                while (cnt < 1000) {
+                    try {
+                        String msg = myRandomAccessFile.read(0, 3);
+                        if (msg.equals(NULL_VALUE)) {
+                            myRandomAccessFile.write(0, "123");
+                        } else {
+                            logger.info("{} read!", msg);
+                            break;
+                        }
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    cnt++;
+                }
+            }
+        };
+        Thread t2 = new Thread() {
+            public void run() {
+                int cnt = 0;
+                while (cnt < 1000) {
+                    try {
+                        String msg = myRandomAccessFile.read(0, 3);
+                        if (msg.equals(NULL_VALUE)) {
+                            myRandomAccessFile.write(0, "456");
+                        } else {
+                            logger.info("{} read!", msg);
+                            break;
+                        }
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    cnt++;
+                }
+            }
+        };
+        Thread t3 = new Thread() {
+            public void run() {
+                int cnt = 0;
+                while (cnt < 100) {
+                    try {
+                        String msg = myRandomAccessFile.read(0, 3);
+                        logger.info("{}", msg);
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                    cnt++;
+                }
+            }
+        };
+        t1.start();
+        t2.start();
+        t3.start();
+        t1.join();
+        t2.join();
+        t3.join();
     }
 }

@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 文件工具
@@ -181,6 +184,22 @@ public class FileUtil {
         return new File(fileName).exists();
     }
 
+    /**
+     * 重命名文件
+     *
+     * @param source
+     * @param dist
+     * @return
+     */
+    public static boolean rename(String source, String dist) {
+        File sourcefile = new File(source);
+        File distfile = new File(dist);
+        if (sourcefile.exists() && sourcefile.isFile() && !distfile.exists()) {
+            return sourcefile.renameTo(distfile);
+        } else {
+            return false;
+        }
+    }
 
     public void getFile(String filename, String read_code)
             throws FileNotFoundException, UnsupportedEncodingException {
@@ -198,6 +217,38 @@ public class FileUtil {
         String _tmp;
         while ((_tmp = reader.readLine()) != null) {
             iFileRead.run(_tmp);
+        }
+    }
+
+    public void read(IFileRead iFileRead, int threadNum) throws IOException {
+        BlockingQueue<String> contentQueue = new LinkedBlockingQueue<>();
+        List<DealThread> threads = new ArrayList<>();
+        //生产者线程
+        ReaderThread readerThread = new ReaderThread(contentQueue);
+        //启动生产者线程
+        readerThread.start();
+        //消费者线程
+        for (int i = 0; i < threadNum; i++) {
+            threads.add(new DealThread(readerThread, iFileRead, contentQueue));
+        }
+        //启动消费者线程
+        for (Thread thread : threads) {
+            thread.start();
+        }
+        //监控打印
+
+        //等待处理
+        try {
+            readerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -307,6 +358,106 @@ public class FileUtil {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void setReader(BufferedReader reader) {
+        this.reader = reader;
+    }
+
+    public void setReader(InputStream is, String read_code) throws UnsupportedEncodingException {
+        setReader(new BufferedReader(new InputStreamReader(is, read_code)));
+    }
+
+    public void setReader(InputStream is) throws UnsupportedEncodingException {
+        setReader(is, "UTF-8");
+    }
+
+    public void setReader(String fileName, String read_code) throws FileNotFoundException, UnsupportedEncodingException {
+        setReader(new FileInputStream(new File(fileName)), read_code);
+    }
+
+    public void setReader(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+        setReader(fileName, "UTF-8");
+    }
+
+    class ReaderThread extends Monitor {
+        private BlockingQueue<String> contentQueue;
+        private boolean flag = false;
+
+        public ReaderThread(BlockingQueue<String> contentQueue) {
+            this.contentQueue = contentQueue;
+        }
+
+        public void run() {
+            String _tmp;
+            try {
+                while ((_tmp = reader.readLine()) != null) {
+                    contentQueue.put(_tmp);
+                    count();
+                }
+                flag = true;
+            } catch (Exception e) {
+                //异常也视为完成，否则消费者线程不会停止
+                flag = true;
+                e.printStackTrace();
+            }
+        }
+
+        public boolean isComplete() {
+            return flag;
+        }
+    }
+
+    class DealThread extends Monitor {
+        private IFileRead iFileRead;
+        private BlockingQueue<String> contentQueue;
+        private ReaderThread readerThread;
+
+        public DealThread(ReaderThread readerThread, IFileRead iFileRead, BlockingQueue<String> contentQueue) {
+            this.readerThread = readerThread;
+            this.iFileRead = iFileRead;
+            this.contentQueue = contentQueue;
+        }
+
+        public void run() {
+            String str;
+            while (!readerThread.isComplete()) {
+                while ((str = contentQueue.poll()) != null) {
+                    try {
+                        iFileRead.run(str);
+                        count();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    abstract class Monitor extends Thread {
+        private AtomicLong cnt = new AtomicLong(0L);
+
+        public abstract void run();
+
+        protected void count() {
+            cnt.incrementAndGet();
+        }
+
+        public long getCnt() {
+            return cnt.get();
+        }
+    }
+
+    class MonitorThread extends Thread {
+        private List<Monitor> monitors;
+
+        public MonitorThread(List<Monitor> monitors) {
+            this.monitors = monitors;
+        }
+
+        public void run() {
+
         }
     }
 }

@@ -14,9 +14,12 @@ public class MyRandomAccessFile {
     private RandomAccessFile randomAccessFile;
     // 内容缓存，比较消耗内存
     private String data;
+    //文件名
+    private String fileName;
 
     public MyRandomAccessFile(String filename) throws FileNotFoundException {
         randomAccessFile = new RandomAccessFile(filename, MemoryCacheMode.READ_WRITE.getCode());
+        fileName = filename;
     }
 
     public MyRandomAccessFile(String filename, boolean isGetData) throws IOException {
@@ -77,4 +80,9 @@ public class MyRandomAccessFile {
     public String getData() {
         return data;
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
 }

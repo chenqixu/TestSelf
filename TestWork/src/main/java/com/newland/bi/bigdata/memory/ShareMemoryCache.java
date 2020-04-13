@@ -1,5 +1,6 @@
 package com.newland.bi.bigdata.memory;
 
+import com.cqx.common.utils.file.MemoryCacheMode;
 import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
