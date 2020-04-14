@@ -1,6 +1,4 @@
-package com.cqx.sync.bean;
-
-import com.cqx.sync.DBType;
+package com.cqx.common.utils.jdbc;
 
 /**
  * DBBean

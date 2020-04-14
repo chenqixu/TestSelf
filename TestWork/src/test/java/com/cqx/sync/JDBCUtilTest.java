@@ -1,6 +1,9 @@
 package com.cqx.sync;
 
-import com.cqx.sync.bean.*;
+import com.cqx.common.utils.jdbc.*;
+import com.cqx.sync.bean.ParamKey;
+import com.cqx.sync.bean.RsmgrCluster;
+import com.cqx.sync.bean.SyncConf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -177,17 +180,5 @@ public class JDBCUtilTest {
         }
         logger.info("sql：{}", sql);
         logger.info("paramList：{}", paramList);
-    }
-
-    @Test
-    public void to_char() {
-        logger.info("{}", JDBCUtil.to_char("last_login_time", DBFormatEnum.YYYYMMDDHH24MISS));
-        logger.info("{}", JDBCUtil.to_char("last_login_time", "create_time", DBFormatEnum.YYYYMMDDHH24MISS));
-        logger.info("{}", JDBCUtil.to_date("last_login_time", DBFormatEnum.YYYYMMDDHH24MISS));
-        logger.info("{}", JDBCUtil.to_date("last_login_time", "create_time", DBFormatEnum.YYYYMMDDHH24MISS));
-        logger.info("{}", JDBCUtil.to_char(JDBCUtil.sysdate(), DBFormatEnum.YYYYMM));
-        logger.info("{}", JDBCUtil.sysdate());
-        logger.info("{}", JDBCUtil.to_number("123"));
-        logger.info("{}", JDBCUtil.to_number(JDBCUtil.to_char(JDBCUtil.sysdate(), DBFormatEnum.YYYYMM)));
     }
 }

@@ -1,4 +1,4 @@
-package com.cqx.sync.bean;
+package com.cqx.common.utils.jdbc;
 
 import net.sf.cglib.beans.BeanGenerator;
 import net.sf.cglib.beans.BeanMap;

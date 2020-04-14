@@ -1,9 +1,10 @@
 package com.cqx.sync;
 
+import com.cqx.common.utils.jdbc.DBBean;
+import com.cqx.common.utils.jdbc.JDBCUtil;
+import com.cqx.common.utils.jdbc.QueryResult;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
-import com.cqx.sync.bean.DBBean;
-import com.cqx.sync.bean.QueryResult;
 
 import java.sql.SQLException;
 import java.util.HashMap;

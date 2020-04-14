@@ -1,8 +1,9 @@
 package com.cqx.sync;
 
-import com.cqx.sync.bean.BeanUtil;
-import com.cqx.sync.bean.DBBean;
-import com.cqx.sync.bean.QueryResult;
+import com.cqx.common.utils.jdbc.BeanUtil;
+import com.cqx.common.utils.jdbc.DBBean;
+import com.cqx.common.utils.jdbc.JDBCUtil;
+import com.cqx.common.utils.jdbc.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,10 +1,9 @@
 package com.cqx.sync.bean;
 
+import com.cqx.common.utils.jdbc.BeanUtil;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class BeanUtilTest {
 

@@ -1,4 +1,4 @@
-package com.cqx.sync.bean;
+package com.cqx.common.utils.jdbc;
 
 /**
  * QueryResult

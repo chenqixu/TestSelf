@@ -1,6 +1,7 @@
 package com.cqx.sync;
 
-import com.cqx.sync.bean.DBBean;
+import com.cqx.common.utils.jdbc.DBBean;
+import com.cqx.common.utils.jdbc.JDBCUtil;
 import com.cqx.sync.bean.RealTimeBean;
 
 import java.util.List;

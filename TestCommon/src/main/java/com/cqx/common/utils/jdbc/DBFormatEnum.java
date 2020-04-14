@@ -1,4 +1,4 @@
-package com.cqx.sync;
+package com.cqx.common.utils.jdbc;
 
 /**
  * DateFormatEnum
