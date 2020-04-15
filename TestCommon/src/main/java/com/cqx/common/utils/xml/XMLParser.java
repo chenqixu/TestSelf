@@ -4,7 +4,6 @@ import com.cqx.common.utils.string.StringUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -58,30 +56,39 @@ public class XMLParser {
         }
     }
 
-    public List<XMLParserElement> parseDocumentToElementList() {
-        List<XMLParserElement> dogList = new ArrayList<>();
+    private XMLParserElement parseDocument() {
         if (document != null) {
-            Element root = document.getRootElement();
-            Iterator iterable = root.elementIterator();
-            while (iterable.hasNext()) {
-                Element element = (Element) iterable.next();
-                String name = element.getName();
-                if (name.contains("action")) {
-                    Iterator actionIterable = element.elementIterator();
-                    while (actionIterable.hasNext()) {
-                        Element actionChildElement = (Element) actionIterable.next();
-                        String actionChildName = actionChildElement.getName();
-                        if (actionChildName.contains("dog")) {
-                            dogList.add(new XMLParserElement(actionChildElement));
-                        }
-                    }
+            return new XMLParserElement(document.getRootElement());
+        }
+        return null;
+    }
+
+    public List<XMLParserElement> parseRootChildElement(String elementName) {
+        List<XMLParserElement> resultList = new ArrayList<>();
+        //从root解析
+        XMLParserElement xmlParserElement = parseDocument();
+        if (xmlParserElement != null) {
+            List<XMLParserElement> childElementList = xmlParserElement.getChildElementList();
+            for (XMLParserElement child : childElementList) {
+                if (child.getElementName().equals(elementName)) {
+                    resultList.add(child);
                 }
             }
-            for (XMLParserElement xmlParserElement : dogList) {
-                logger.info("xml：{}", xmlParserElement.toXml());
+        }
+        return resultList;
+    }
+
+    public List<XMLParserElement> getChildElement(List<XMLParserElement> elementList, String elementName) {
+        List<XMLParserElement> resultList = new ArrayList<>();
+        for (XMLParserElement element : elementList) {
+            List<XMLParserElement> childList = element.getChildElementList();
+            for (XMLParserElement child : childList) {
+                if (child.getElementName().equals(elementName)) {
+                    resultList.add(child);
+                }
             }
         }
-        return dogList;
+        return resultList;
     }
 
     public String getFileName() {

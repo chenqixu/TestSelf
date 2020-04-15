@@ -110,4 +110,12 @@ public class XMLParserElement {
     public void setElementText(String elementText) {
         this.elementText = elementText;
     }
+
+    public Namespace getElementNamespace() {
+        return elementNamespace;
+    }
+
+    public void setElementNamespace(Namespace elementNamespace) {
+        this.elementNamespace = elementNamespace;
+    }
 }

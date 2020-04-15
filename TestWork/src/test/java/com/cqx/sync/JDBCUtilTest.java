@@ -4,6 +4,7 @@ import com.cqx.common.utils.jdbc.*;
 import com.cqx.common.utils.xml.ResultXML;
 import com.cqx.common.utils.xml.XMLData;
 import com.cqx.common.utils.xml.XMLParser;
+import com.cqx.common.utils.xml.XMLParserElement;
 import com.cqx.sync.bean.ParamKey;
 import com.cqx.sync.bean.RsmgrCluster;
 import com.cqx.sync.bean.SyncConf;
@@ -12,7 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.util.ArrayList;
@@ -236,6 +236,10 @@ public class JDBCUtilTest {
         XMLParser xmlParser = new XMLParser();
         xmlParser.setFileName("d:\\Work\\ETL\\天空\\组件脚本调用\\101169491131\\node297342823.xml");
         xmlParser.init();
-        xmlParser.parseDocumentToElementList();
+        List<XMLParserElement> actionList = xmlParser.parseRootChildElement("action");
+        List<XMLParserElement> dogList = xmlParser.getChildElement(actionList, "dog");
+        for (XMLParserElement xmlParserElement : dogList) {
+            logger.info("xml：{}", xmlParserElement.toXml());
+        }
     }
 }
