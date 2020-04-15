@@ -1,15 +1,20 @@
 package com.cqx.sync;
 
 import com.cqx.common.utils.jdbc.*;
+import com.cqx.common.utils.xml.ResultXML;
+import com.cqx.common.utils.xml.XMLData;
+import com.cqx.common.utils.xml.XMLParser;
 import com.cqx.sync.bean.ParamKey;
 import com.cqx.sync.bean.RsmgrCluster;
 import com.cqx.sync.bean.SyncConf;
-import org.junit.After;
-import org.junit.Before;
+import com.newland.bi.bigdata.compress.ZipUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,18 +56,24 @@ public class JDBCUtilTest {
 //                srcdbBean.setUser_name("udap");
 //                srcdbBean.setPass_word("udap");
                 break;
+            case "jutap":
+                srcdbBean.setTns("jdbc:oracle:thin:@10.1.0.242:1521:ywxx");
+                srcdbBean.setUser_name("jutap_dev");
+                srcdbBean.setPass_word("J%pSvi#o$7");
+                break;
         }
         return srcdbBean;
     }
 
-    @Before
+    //    @Before
     public void setUp() throws Exception {
-        DBBean srcdbBean = oracleConfig("dev");
+        DBBean srcdbBean = oracleConfig("jutap");
+//        DBBean srcdbBean = oracleConfig("dev");
 //        DBBean srcdbBean = mysqlConfig("local");
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
-    @After
+    //    @After
     public void tearDown() throws Exception {
         jdbcUtil.close();
     }
@@ -180,5 +191,51 @@ public class JDBCUtilTest {
         }
         logger.info("sql：{}", sql);
         logger.info("paramList：{}", paramList);
+    }
+
+    @Test
+    public void queryBlob() throws Exception {
+        List<List<QueryResult>> result = jdbcUtil.executeQuery("select fstream from extern_flowtask_cfg where id='101697251921'");
+        for (List<QueryResult> queryResults : result) {
+            for (QueryResult queryResult : queryResults) {
+                logger.info("{}", queryResult);
+                Object value = queryResult.getValue();
+                InputStream is = null;
+                try {
+                    if (value instanceof Blob) {
+                        is = ((Blob) value).getBinaryStream();
+                        ZipUtils zipUtils = new ZipUtils();
+                        String xml = zipUtils.unZip(is, "node");
+                        logger.info("xml：{}", xml);
+                        ResultXML rx = new ResultXML();
+                        XMLData xd = new XMLData(xml);
+                        rx.rtFlag = true;
+                        rx.bXmldata = true;
+                        rx.xmldata = xd;
+                        rx.setbFlag(false);
+                        rx.setRowFlagInfo("action");
+//                        rx.setRowFlagInfo("dog");
+                        rx.First();
+                        while (!rx.isEof()) {
+//                            rx.getColumnsValue("dog");
+                            String column = rx.getColumnsValue("dog");
+                            String prop = rx.getPropData("dog");
+                            logger.info("rowvalue：{}", rx.getRowValue());
+                            rx.Next();
+                        }
+                    }
+                } finally {
+                    if (is != null) is.close();
+                }
+            }
+        }
+    }
+
+    @Test
+    public void xmlParser() throws Exception {
+        XMLParser xmlParser = new XMLParser();
+        xmlParser.setFileName("d:\\Work\\ETL\\天空\\组件脚本调用\\101169491131\\node297342823.xml");
+        xmlParser.init();
+        xmlParser.parseDocumentToElementList();
     }
 }

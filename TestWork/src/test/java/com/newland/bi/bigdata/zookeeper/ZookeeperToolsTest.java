@@ -1,6 +1,6 @@
 package com.newland.bi.bigdata.zookeeper;
 
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.string.StringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,12 +23,12 @@ public class ZookeeperToolsTest {
     public void init() throws Exception {
         String path = "/test-1";
         List<String> list = zookeeperTools.listForPath("/");
-        StringUtils.printList(list);
+        StringUtil.printList(list);
         zookeeperTools.createNode(path);
         zookeeperTools.deleteNode(path);
         System.out.println("#########################");
         list = zookeeperTools.listForPath("/");
-        StringUtils.printList(list);
+        StringUtil.printList(list);
         zookeeperTools.close();
     }
 }

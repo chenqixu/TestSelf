@@ -1,10 +1,9 @@
 package com.newland.bi.bigdata.compress;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -94,5 +93,25 @@ public class ZipUtils {
                 }
             }
         }
+    }
+
+    public String unZip(InputStream is, String filename_rule) throws IOException {
+        ZipInputStream zis = null;
+        ZipEntry zipEntry;
+        if (is != null) zis = new ZipInputStream(is);
+        while (zis != null && (zipEntry = zis.getNextEntry()) != null) {
+            String filename = zipEntry.getName();
+            if (filename.contains(filename_rule)) {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                byte[] byte_s = new byte[BUFFER_SIZE];
+                int num;
+                while ((num = zis.read(byte_s, 0, byte_s.length)) > -1) {//通过read方法来读取文件内容
+                    byteArrayOutputStream.write(byte_s, 0, num);
+                }
+                byte[] byte_s_result = byteArrayOutputStream.toByteArray();
+                return new String(byte_s_result, StandardCharsets.UTF_8);//将字节数组转化为字符串，UTF-8格式（容许中文）
+            }
+        }
+        return "";
     }
 }

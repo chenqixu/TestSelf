@@ -5,7 +5,7 @@ import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 import com.newland.bi.bigdata.metric.MetricsUtil;
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.string.StringUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,11 +76,11 @@ public class ShareMemoryCache {
     public void init() throws FileNotFoundException {
         rafMap = new RafMap();
         memoryTest = MemoryTest.builder();
-        if (StringUtils.isNotEmpty(datafilename)) {
+        if (StringUtil.isNotEmpty(datafilename)) {
             datafile = new RandomAccessFile(datafilename, MemoryCacheMode.READ_WRITE.getCode());
             mydatafile = new MyRandomAccessFile(datafilename);
         }
-        if (StringUtils.isNotEmpty(idfilename))
+        if (StringUtil.isNotEmpty(idfilename))
             idfile = new RandomAccessFile(idfilename, MemoryCacheMode.READ_WRITE.getCode());
     }
 
@@ -116,7 +116,7 @@ public class ShareMemoryCache {
     public String getDataFromFile(String path, String derviceID, int dies) throws IOException {
         String result;
         int flag = getHashCodeDies(derviceID, dies);
-        String newfilename = StringUtils.getEndsWithPath(path) + flag + ".txt";
+        String newfilename = StringUtil.getEndsWithPath(path) + flag + ".txt";
         MyRandomAccessFile newraf = rafMap.get(newfilename, true);
         result = newraf.getData();
         int derviceindex = result.indexOf(derviceID);
@@ -136,7 +136,7 @@ public class ShareMemoryCache {
         String indexMsg = derviceID;
         int length = msg.length();
         int flag = getHashCodeDies(derviceID, dies);
-        String newfilename = StringUtils.getEndsWithPath(path) + flag + ".txt";
+        String newfilename = StringUtil.getEndsWithPath(path) + flag + ".txt";
         MyRandomAccessFile newraf = rafMap.get(newfilename);
         indexMsg = indexMsg + "," + mydatafile.getIndex() + "," + length + ";";
         // 写数据文件
@@ -178,7 +178,7 @@ public class ShareMemoryCache {
     public List<String> createRandomFileName(String path, int len) {
         List<String> files = new ArrayList<>();
         for (int i = 0; i < len; i++) {
-            files.add(StringUtils.getEndsWithPath(path) + memoryTest.random(32) + ".txt");
+            files.add(StringUtil.getEndsWithPath(path) + memoryTest.random(32) + ".txt");
         }
         return files;
     }

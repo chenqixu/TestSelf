@@ -11,7 +11,7 @@ import com.newland.bi.mobilebox.bean.EpgTagInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.newland.bi.bigdata.utils.string.StringUtils.println;
+import static com.cqx.common.utils.string.StringUtil.println;
 
 /**
  * epg解析

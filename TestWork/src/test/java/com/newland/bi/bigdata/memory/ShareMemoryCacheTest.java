@@ -4,7 +4,7 @@ import com.cqx.common.utils.file.MemoryCacheMode;
 import com.newland.bi.bigdata.metric.MetricsUtil;
 import com.newland.bi.bigdata.redis.RedisClient;
 import com.newland.bi.bigdata.redis.RedisFactory;
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.string.StringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,7 +100,7 @@ public class ShareMemoryCacheTest {
 //        idfiles.add(StringUtils.getEndsWithPath(datapath) + "123.txt");
 //        idfiles.add(StringUtils.getEndsWithPath(datapath) + "456.txt");
         for (String filename : idfiles) {
-            shareMemoryCache.getDataFromFile(StringUtils.addPathAndSuffix(filename, datapath, ".txt"));
+            shareMemoryCache.getDataFromFile(StringUtil.addPathAndSuffix(filename, datapath, ".txt"));
         }
         System.out.println("spend：" + ms.getTimeOut());
         shareMemoryCache.closeAll();
@@ -147,7 +147,7 @@ public class ShareMemoryCacheTest {
                 .newbuilder()
                 .setDatafilename(datafilename);
         shareMemoryCache.init();
-        List<String> newlist = StringUtils.addPathAndSuffix(idfiles, datapath, ".txt");
+        List<String> newlist = StringUtil.addPathAndSuffix(idfiles, datapath, ".txt");
         shareMemoryCache.writeData(newlist, 3);
         shareMemoryCache.closeAll();
     }
@@ -156,7 +156,7 @@ public class ShareMemoryCacheTest {
     public void createRandomFileName() {
         ShareMemoryCache shareMemoryCache = ShareMemoryCache
                 .newbuilder();
-        StringUtils.printList(shareMemoryCache.createRandomFileName(datapath, 1000));
+        StringUtil.printList(shareMemoryCache.createRandomFileName(datapath, 1000));
     }
 
     @Test

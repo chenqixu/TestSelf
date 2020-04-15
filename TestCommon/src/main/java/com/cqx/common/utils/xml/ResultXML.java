@@ -1,12 +1,17 @@
-package com.newland.bi.bigdata.http.frame;
+package com.cqx.common.utils.xml;
 
-import java.io.*;
+import org.dom4j.Document;
+import org.dom4j.Element;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import org.dom4j.Document;
-import org.dom4j.Element;
+import java.util.Date;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
  * @ClassName ResultXML
@@ -447,51 +452,51 @@ _L3:
 
     private Object getConertObj(Class cField, String strValue)
     {
-        if(cField == java.lang.String.class)
+        if(cField == String.class)
         {
             if(strValue.equals(""))
                 strValue = "";
             return strValue;
         }
-        if(cField == java.util.Date.class)
+        if(cField == Date.class)
             return this.getObjectDate(strValue);
-        if(cField == Integer.TYPE || cField == java.lang.Integer.class)
+        if(cField == Integer.TYPE || cField == Integer.class)
         {
             if(strValue.equals(""))
                 strValue = "0";
             return Integer.valueOf(strValue);
         }
-        if(cField == Double.TYPE || cField == java.lang.Double.class)
+        if(cField == Double.TYPE || cField == Double.class)
         {
             if(strValue.equals(""))
                 strValue = "0.0";
             return Double.valueOf(strValue);
         }
-        if(cField == Float.TYPE || cField == java.lang.Float.class)
+        if(cField == Float.TYPE || cField == Float.class)
         {
             if(strValue.equals(""))
                 strValue = "0.0";
             return Float.valueOf(strValue);
         }
-        if(cField == Byte.TYPE || cField == java.lang.Byte.class)
+        if(cField == Byte.TYPE || cField == Byte.class)
         {
             if(strValue.equals(""))
                 strValue = "0";
             return Byte.valueOf(strValue);
         }
-        if(cField == Short.TYPE || cField == java.lang.Short.class)
+        if(cField == Short.TYPE || cField == Short.class)
         {
             if(strValue.equals(""))
                 strValue = "0";
             return Short.valueOf(strValue);
         }
-        if(cField == Long.TYPE || cField == java.lang.Long.class)
+        if(cField == Long.TYPE || cField == Long.class)
         {
             if(strValue.equals(""))
                 strValue = "0";
             return Long.valueOf(strValue);
         }
-        if(cField == Boolean.TYPE || cField == java.lang.Boolean.class)
+        if(cField == Boolean.TYPE || cField == Boolean.class)
         {
             if(strValue.equals(""))
                 strValue = "0";

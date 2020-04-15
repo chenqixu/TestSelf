@@ -1,4 +1,4 @@
-package com.newland.bi.bigdata.http.frame;
+package com.cqx.common.utils.xml;
 
 import java.util.List;
 import org.dom4j.*;

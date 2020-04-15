@@ -1,6 +1,6 @@
 package com.newland.bi.bigdata.file;
 
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.string.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,10 +88,10 @@ public class FileRandomCreate {
             int hour = random.nextInt(23);
             int minute = random.nextInt(59);
             int seconds = random.nextInt(59);
-            sb.append(StringUtils.fillZero(day, 2));
-            sb.append(StringUtils.fillZero(hour, 2));
-            sb.append(StringUtils.fillZero(minute, 2));
-            sb.append(StringUtils.fillZero(seconds, 2));
+            sb.append(StringUtil.fillZero(day, 2));
+            sb.append(StringUtil.fillZero(hour, 2));
+            sb.append(StringUtil.fillZero(minute, 2));
+            sb.append(StringUtil.fillZero(seconds, 2));
             return sb.toString();
         }
     }

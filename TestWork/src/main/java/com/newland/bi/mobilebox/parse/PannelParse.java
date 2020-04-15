@@ -1,6 +1,6 @@
 package com.newland.bi.mobilebox.parse;
 
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.string.StringUtil;
 import com.newland.bi.mobilebox.bean.Pannel;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -35,7 +35,7 @@ public class PannelParse {
     }
 
     public void init() throws FileNotFoundException {
-        if (StringUtils.isNotEmpty(fileName)) {
+        if (StringUtil.isNotEmpty(fileName)) {
             document = loadXml(fileName);
         }
     }

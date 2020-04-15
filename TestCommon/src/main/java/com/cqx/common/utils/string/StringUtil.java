@@ -77,12 +77,6 @@ public class StringUtil {
         return strlist;
     }
 
-    /**
-     * list转Map
-     *
-     * @param list
-     * @return
-     */
     public static Map<String, String> listToMap(List<String> list) {
         Map<String, String> map = new HashMap<>();
         for (String tmp : list) {
@@ -192,22 +186,72 @@ public class StringUtil {
         return !isNotEmpty(str);
     }
 
-    /**
-     * 打印对象不换行
-     *
-     * @param obj
-     */
     public static void println(Object obj) {
         System.out.println(obj);
     }
 
-    /**
-     * 打印对象并换行
-     *
-     * @param obj
-     * @param tag
-     */
     public static void println(Object obj, String tag) {
         System.out.println(tag + obj);
+    }
+
+    /**
+     * 给路径加上"/"
+     *
+     * @param path
+     * @return
+     */
+    public static String getEndsWithPath(String path) {
+        String _tmp = path;
+        if (!_tmp.endsWith("/")) {
+            _tmp = _tmp + "/";
+        }
+        return _tmp;
+    }
+
+    /**
+     * 给文件列表加上路径和后缀
+     *
+     * @param datalist
+     * @param path
+     * @param suffix
+     * @return
+     */
+    public static List<String> addPathAndSuffix(List<String> datalist, String path, String suffix) {
+        List<String> results = new ArrayList<>();
+        for (String str : datalist) {
+            results.add(getEndsWithPath(path) + str + suffix);
+        }
+        return results;
+    }
+
+    /**
+     * 给文件加上路径和后缀
+     *
+     * @param data
+     * @param path
+     * @param suffix
+     * @return
+     */
+    public static String addPathAndSuffix(String data, String path, String suffix) {
+        return getEndsWithPath(path) + data + suffix;
+    }
+
+    /**
+     * 去重
+     *
+     * @param value
+     * @param split
+     */
+    public static void distinct(String value, String split) {
+        if (value != null && split != null) {
+            String[] array = value.split(split, -1);
+            Map<String, String> map = new HashMap<>();
+            for (String str : array) {
+                map.put(str, "");
+            }
+            System.out.println("source.size：" + array.length + "，map.size：" + map.size());
+        } else {
+            System.out.println("please input param.");
+        }
     }
 }

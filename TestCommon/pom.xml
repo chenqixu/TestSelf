@@ -64,6 +64,19 @@
             </exclusions>
         </dependency>
 
+        <!-- xml -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- hadoop -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>

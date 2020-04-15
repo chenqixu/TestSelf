@@ -1,6 +1,6 @@
 package com.newland.bi.mobilebox.parse;
 
-import com.newland.bi.bigdata.utils.string.StringUtils;
+import com.cqx.common.utils.string.StringUtil;
 import com.newland.bi.mobilebox.bean.HeaderInfo;
 import com.newland.bi.mobilebox.exception.MobileBoxException;
 
@@ -50,7 +50,7 @@ public class HeaderParse {
      * @throws MobileBoxException
      */
     protected void init() throws MobileBoxException {
-        if (StringUtils.isEmpty(logValue)) throw new MobileBoxException("原始日志为空！");
+        if (StringUtil.isEmpty(logValue)) throw new MobileBoxException("原始日志为空！");
         String[] arr = logValue.split(KEY_KY);
         throwError(arr, 2, "原始日志：{}，无法通过关键字：{}，进行解析", logValue, KEY_KY);
         deviceid = arr[0];
