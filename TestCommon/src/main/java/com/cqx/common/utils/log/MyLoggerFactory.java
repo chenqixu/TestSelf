@@ -211,12 +211,20 @@ public class MyLoggerFactory implements MyLogger {
         if (LOG_LEVEL.getLevel() >= LogLEVEL.WARN.getLevel()) println(LogLEVEL.WARN, msg, param);
     }
 
+    public void info(Object msg) {
+        info(msg.toString());
+    }
+
     public void info(String msg) {
         if (LOG_LEVEL.getLevel() >= LogLEVEL.INFO.getLevel()) println(LogLEVEL.INFO, msg);
     }
 
     public void info(String msg, Object... param) {
         if (LOG_LEVEL.getLevel() >= LogLEVEL.INFO.getLevel()) println(LogLEVEL.INFO, msg, param);
+    }
+
+    public void debug(Object msg) {
+        debug(msg.toString());
     }
 
     public void debug(String msg) {
@@ -227,6 +235,10 @@ public class MyLoggerFactory implements MyLogger {
         if (LOG_LEVEL.getLevel() >= LogLEVEL.DEBUG.getLevel()) println(LogLEVEL.DEBUG, msg, param);
     }
 
+    public void error(Object msg) {
+        error(msg.toString());
+    }
+
     public void error(String msg) {
         error(msg, null);
     }
@@ -234,6 +246,10 @@ public class MyLoggerFactory implements MyLogger {
     public void error(String msg, Throwable throwable) {
         if (LOG_LEVEL.getLevel() >= LogLEVEL.ERROR.getLevel()) println(LogLEVEL.ERROR, msg);
         if (throwable != null) throwable.printStackTrace();
+    }
+
+    public void warn(Object msg) {
+        warn(msg.toString());
     }
 
     /**

@@ -45,13 +45,13 @@ public class SFTPTool {
 		String l = commandLine.getOptionValue('l');
 		String r = commandLine.getOptionValue('r');
 		String f = commandLine.getOptionValue('f');
-		
+
 		SFtpUtils sFtpUtil = new SFtpUtils();
 		ChannelSftp chSftp = sFtpUtil.getChannel(u, h, 22, p);
 		if (chSftp != null) {
 			sFtpUtil.dowload(chSftp, l, r, f);
 		}
-        // ¹Ø±ÕsftpÁ¬½Ó
-        sFtpUtil.closeSftpConnection();
+		// å…³é—­sftpè¿žæŽ¥
+		sFtpUtil.closeSftpConnection();
 	}
 }

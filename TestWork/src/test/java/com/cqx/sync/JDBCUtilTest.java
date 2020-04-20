@@ -1,14 +1,14 @@
 package com.cqx.sync;
 
 import com.cqx.common.utils.jdbc.*;
-import com.cqx.common.utils.xml.ResultXML;
-import com.cqx.common.utils.xml.XMLData;
 import com.cqx.common.utils.xml.XMLParser;
 import com.cqx.common.utils.xml.XMLParserElement;
 import com.cqx.sync.bean.ParamKey;
 import com.cqx.sync.bean.RsmgrCluster;
 import com.cqx.sync.bean.SyncConf;
 import com.newland.bi.bigdata.compress.ZipUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class JDBCUtilTest {
         return srcdbBean;
     }
 
-    //    @Before
+    @Before
     public void setUp() throws Exception {
         DBBean srcdbBean = oracleConfig("jutap");
 //        DBBean srcdbBean = oracleConfig("dev");
@@ -73,7 +73,7 @@ public class JDBCUtilTest {
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
-    //    @After
+    @After
     public void tearDown() throws Exception {
         jdbcUtil.close();
     }
@@ -206,22 +206,14 @@ public class JDBCUtilTest {
                         is = ((Blob) value).getBinaryStream();
                         ZipUtils zipUtils = new ZipUtils();
                         String xml = zipUtils.unZip(is, "node");
-                        logger.info("xml：{}", xml);
-                        ResultXML rx = new ResultXML();
-                        XMLData xd = new XMLData(xml);
-                        rx.rtFlag = true;
-                        rx.bXmldata = true;
-                        rx.xmldata = xd;
-                        rx.setbFlag(false);
-                        rx.setRowFlagInfo("action");
-//                        rx.setRowFlagInfo("dog");
-                        rx.First();
-                        while (!rx.isEof()) {
-//                            rx.getColumnsValue("dog");
-                            String column = rx.getColumnsValue("dog");
-                            String prop = rx.getPropData("dog");
-                            logger.info("rowvalue：{}", rx.getRowValue());
-                            rx.Next();
+                        logger.info("xmlData：{}", xml);
+                        XMLParser xmlParser = new XMLParser();
+                        xmlParser.setXmlData(xml);
+                        xmlParser.init();
+                        List<XMLParserElement> actionList = xmlParser.parseRootChildElement("action");
+                        List<XMLParserElement> dogList = xmlParser.getChildElement(actionList, "dog");
+                        for (XMLParserElement xmlParserElement : dogList) {
+                            logger.info("dogXml：{}", xmlParserElement.toXml());
                         }
                     }
                 } finally {

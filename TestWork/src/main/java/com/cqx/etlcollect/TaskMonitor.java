@@ -1,6 +1,6 @@
-package com.cqx.collect;
+package com.cqx.etlcollect;
 
-import com.cqx.collect.bean.TaskBean;
+import com.cqx.etlcollect.bean.TaskBean;
 
 /**
  * 任务监控

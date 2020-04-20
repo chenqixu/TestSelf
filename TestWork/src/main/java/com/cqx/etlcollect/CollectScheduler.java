@@ -1,4 +1,4 @@
-package com.cqx.collect;
+package com.cqx.etlcollect;
 
 /**
  * 调度器

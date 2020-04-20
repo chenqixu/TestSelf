@@ -1,6 +1,5 @@
-package com.cqx.collect;
+package com.cqx.etlcollect;
 
-import com.cqx.collect.bean.TaskBean;
 import com.newland.bi.bigdata.utils.SleepUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

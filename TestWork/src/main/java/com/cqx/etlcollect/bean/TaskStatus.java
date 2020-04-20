@@ -1,4 +1,4 @@
-package com.cqx.collect.bean;
+package com.cqx.etlcollect.bean;
 
 /**
  * 任务状态
