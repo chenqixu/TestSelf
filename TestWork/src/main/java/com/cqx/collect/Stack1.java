@@ -7,11 +7,14 @@ import java.util.Stack;
 
 /**
  * Stack1
+ * <pre>
+ *     如果没有右括号，这个算法就不成立
+ * </pre>
  *
  * @author chenqixu
  */
 public class Stack1 {
-    private static MyLogger logger = MyLoggerFactory.getLogger(Stack1.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(Stack1.class);
 
     /**
      * 栈测试
@@ -34,7 +37,7 @@ public class Stack1 {
     private void evaluate(Stack<String> ops, Stack<Double> vals, String val) {
         logger.debug("evaluate，val：{}", val);
         //运算符压入 操作符栈
-        if (val.equals("(")) ;
+        if (val.equals("(")) ;//忽略左括号，其他运算符压入运算符栈
         else if (val.equals("+")) ops.push(val);
         else if (val.equals("-")) ops.push(val);
         else if (val.equals("*")) ops.push(val);
@@ -42,16 +45,20 @@ public class Stack1 {
         else if (val.equals(")")) {
             //遇到右括号开始计算
             String op = ops.pop();
-            double v = vals.pop();
-            if (op.equals("+")) v = vals.pop() + v;
-            if (op.equals("-")) v = vals.pop() - v;
-            if (op.equals("*")) v = vals.pop() * v;
-            if (op.equals("/")) v = vals.pop() / v;
-
-            vals.push(v);
+            double v_right = vals.pop();
+            double v_left = vals.pop();
+            double v_eva = 0;
+            logger.debug("遇到右括号开始计算，op：{}，v_left：{}，v_right：{}", op, v_left, v_right);
+            if (op.equals("+")) v_eva = v_left + v_right;
+            if (op.equals("-")) v_eva = v_left - v_right;
+            if (op.equals("*")) v_eva = v_left * v_right;
+            if (op.equals("/")) v_eva = v_left / v_right;
+            logger.debug("计算结果推入操作数栈，v_eva：{}", v_eva);
+            vals.push(v_eva);
         } else {
             //数字压入 操作数栈
             vals.push(Double.parseDouble(val));
+            logger.debug("数字压入 操作数栈：{}", val);
         }
     }
 
@@ -75,7 +82,7 @@ public class Stack1 {
         for (int i = 0; i < evl.length(); i++) {
             String s = String.valueOf(evl.charAt(i));
             boolean tag = true;
-            if ((i == 0) || (i + 1 == evl.length())) {
+            if (i == 0) {
                 tag = false;
             }
             switch (current.checkType(s)) {
@@ -92,6 +99,16 @@ public class Stack1 {
                     current.addVal(s);
                     break;
             }
+            //最后一次数据入栈操作
+            if (i + 1 == evl.length() && ops.size() > 0 && current.hasVal()) {
+                evaluate(ops, vals, current.getVal());
+                current = new EvalBean();
+            }
+        }
+        //最后一次操作
+        if (ops.size() > 0) {
+            logger.debug("ops：{}，vals：{}", ops, vals);
+            evaluate(ops, vals, ")");
         }
         Double result = vals.pop();
         logger.info("result：{}", result);
@@ -99,32 +116,27 @@ public class Stack1 {
     }
 
     enum EvalType {
-        OP, VAL;
+        OP, VAL,
+        ;
     }
 
     class EvalBean {
         String val = "";
-        EvalType evalType;
 
-        public boolean hasVal() {
+        private boolean hasVal() {
             return val.length() > 0;
         }
 
-        public String getVal() {
+        private String getVal() {
             return val;
         }
 
-        public void setVal(String val) {
-            this.val = val;
-            evalType = checkType(val);
-        }
-
-        public void addVal(String val) {
+        private void addVal(String val) {
             this.val = this.val + val;
             logger.debug("addVal：{}", this.val);
         }
 
-        public EvalType checkType(String val) {
+        private EvalType checkType(String val) {
             if (val.equals("+") || val.equals("-") || val.equals("*") || val.equals("/") || val.equals("(") || val.equals(")")) {
                 return EvalType.OP;
             } else {

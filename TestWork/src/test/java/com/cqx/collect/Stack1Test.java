@@ -11,7 +11,7 @@ public class Stack1Test {
 
     @Test
     public void evaluateTest() {
-        String t = "(1+((22+3)*(14*5)))";
+        String t = "1+(2*(1+((2+3)*(4*5))))";
         new Stack1().evaluate(t);
     }
 }
