@@ -3,6 +3,9 @@ package com.cqx.common.utils.file;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 
 /**
  * MyRandomAccessFile
@@ -10,22 +13,28 @@ import java.io.RandomAccessFile;
  * @author chenqixu
  */
 public class MyRandomAccessFile {
-    int index = 0;
+    private int index = 0;
     private RandomAccessFile randomAccessFile;
-    // 内容缓存，比较消耗内存
+    //内容缓存，比较消耗内存
     private String data;
     //文件名
     private String fileName;
+    //文件通道，用来解决写入冲突
+    private FileChannel fileChannel;
+    //写入时候是否需要锁定
+    private boolean isLock;
 
     public MyRandomAccessFile(String filename) throws FileNotFoundException {
-        randomAccessFile = new RandomAccessFile(filename, MemoryCacheMode.READ_WRITE.getCode());
-        fileName = filename;
+        this.randomAccessFile = new RandomAccessFile(filename, MemoryCacheMode.READ_WRITE.getCode());
+        this.fileChannel = this.randomAccessFile.getChannel();
+        this.fileName = filename;
     }
 
     public MyRandomAccessFile(String filename, boolean isGetData) throws IOException {
         this(filename);
-        if (isGetData)
-            data = readAll();
+        if (isGetData) {
+            this.data = readAll();
+        }
     }
 
     public void write(String str) throws IOException {
@@ -42,13 +51,30 @@ public class MyRandomAccessFile {
         index += len;
     }
 
-    public void write(long pos, byte[] b) throws IOException {
-        randomAccessFile.seek(pos);
-        randomAccessFile.write(b, 0, b.length);
+    public boolean write(long pos, byte[] b) throws IOException {
+        FileLock fileLock = null;
+        try {
+            if (isLock) {//有锁
+                if (fileChannel != null) fileLock = fileChannel.tryLock();
+                if (fileLock != null) {
+                    randomAccessFile.seek(pos);
+                    randomAccessFile.write(b, 0, b.length);
+                }
+            } else {//没锁
+                randomAccessFile.seek(pos);
+                randomAccessFile.write(b, 0, b.length);
+            }
+        } catch (OverlappingFileLockException e) {
+            //抢不到锁抛出的异常，不做处理
+            return false;
+        } finally {
+            if (fileLock != null) fileLock.release();
+        }
+        return true;
     }
 
-    public void write(long pos, String msg) throws IOException {
-        write(pos, msg.getBytes());
+    public boolean write(long pos, String msg) throws IOException {
+        return write(pos, msg.getBytes());
     }
 
     public String read(long pos, int len) throws IOException {
@@ -67,8 +93,12 @@ public class MyRandomAccessFile {
     }
 
     public void close() throws IOException {
+        //文件通道
+        if (fileChannel != null) {
+            fileChannel.close();
+        }
+        //映像文件
         if (randomAccessFile != null) {
-            // 关闭文件
             randomAccessFile.close();
         }
     }
@@ -85,4 +115,7 @@ public class MyRandomAccessFile {
         return fileName;
     }
 
+    public void setLock(boolean lock) {
+        isLock = lock;
+    }
 }

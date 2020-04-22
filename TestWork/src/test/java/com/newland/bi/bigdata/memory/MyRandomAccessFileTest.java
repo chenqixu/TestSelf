@@ -1,5 +1,6 @@
 package com.newland.bi.bigdata.memory;
 
+import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
@@ -18,7 +19,10 @@ public class MyRandomAccessFileTest {
 
     @Before
     public void setUp() throws Exception {
-        myRandomAccessFile = new MyRandomAccessFile("d:\\tmp\\data\\mccdr\\r.sm");
+        String sm = "d:\\tmp\\data\\mccdr\\r.sm";
+        FileUtil.del(sm);
+        myRandomAccessFile = new MyRandomAccessFile(sm);
+        myRandomAccessFile.setLock(true);
     }
 
     @After
@@ -57,13 +61,16 @@ public class MyRandomAccessFileTest {
                     try {
                         String msg = myRandomAccessFile.read(0, 3);
                         if (msg.equals(NULL_VALUE)) {
-                            myRandomAccessFile.write(0, "123");
+                            String write_msg = "123";
+                            if (myRandomAccessFile.write(0, write_msg))
+                                logger.info("{} write", write_msg);
                         } else {
                             logger.info("{} read!", msg);
                             break;
                         }
                     } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
+                        logger.warn(e.getMessage());
+//                        logger.error(e.getMessage(), e);
                     }
                     cnt++;
                 }
@@ -76,13 +83,16 @@ public class MyRandomAccessFileTest {
                     try {
                         String msg = myRandomAccessFile.read(0, 3);
                         if (msg.equals(NULL_VALUE)) {
-                            myRandomAccessFile.write(0, "456");
+                            String write_msg = "456";
+                            if (myRandomAccessFile.write(0, write_msg))
+                                logger.info("{} write", write_msg);
                         } else {
                             logger.info("{} read!", msg);
                             break;
                         }
                     } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
+                        logger.warn(e.getMessage());
+//                        logger.error(e.getMessage(), e);
                     }
                     cnt++;
                 }
@@ -94,9 +104,10 @@ public class MyRandomAccessFileTest {
                 while (cnt < 100) {
                     try {
                         String msg = myRandomAccessFile.read(0, 3);
-                        logger.info("{}", msg);
+                        logger.info("{} read.", msg);
                     } catch (IOException e) {
-                        logger.error(e.getMessage(), e);
+                        logger.warn(e.getMessage());
+//                        logger.error(e.getMessage(), e);
                     }
                     cnt++;
                 }
@@ -109,4 +120,5 @@ public class MyRandomAccessFileTest {
         t2.join();
         t3.join();
     }
+
 }
