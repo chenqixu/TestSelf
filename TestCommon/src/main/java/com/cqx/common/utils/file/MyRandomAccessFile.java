@@ -55,7 +55,8 @@ public class MyRandomAccessFile {
         FileLock fileLock = null;
         try {
             if (isLock) {//有锁
-                if (fileChannel != null) fileLock = fileChannel.tryLock();
+                //对要写的块进行块锁定，锁不共享
+                if (fileChannel != null) fileLock = fileChannel.tryLock(pos, b.length, false);
                 if (fileLock != null) {
                     randomAccessFile.seek(pos);
                     randomAccessFile.write(b, 0, b.length);

@@ -16,19 +16,24 @@ public class XMLParserElement {
     private String elementName;
     private String elementText;
     private Namespace elementNamespace;
+    private String attributeName;
     private List<XMLParserAttribute> attributeList;
     private List<XMLParserElement> childElementList;
 
     public XMLParserElement(Element element) {
         this.elementNamespace = element.getNamespace();
         this.elementName = element.getName();
-        this.elementText = this.CDATA(element.getTextTrim());
+        this.elementText = element.getTextTrim();
         this.attributeList = new ArrayList<>();
         this.childElementList = new ArrayList<>();
         //加所有属性
         for (Object att_obj : element.attributes()) {
             if (att_obj instanceof Attribute) {
-                this.attributeList.add(new XMLParserAttribute(((Attribute) att_obj)));
+                Attribute attribute = (Attribute) att_obj;
+                this.attributeList.add(new XMLParserAttribute(attribute));
+                if (attribute.getName().equals("name")) {
+                    this.attributeName = attribute.getValue();
+                }
             }
         }
         //加所有子元素，会递归
@@ -70,7 +75,7 @@ public class XMLParserElement {
                 sb.append(xmlParserElement.toXml());
             }
         } else {//内容
-            sb.append(this.elementText);
+            sb.append(this.getCDATAElementText());
         }
         //结尾
         sb.append("</")
@@ -111,11 +116,19 @@ public class XMLParserElement {
         this.elementText = elementText;
     }
 
+    public String getCDATAElementText() {
+        return this.CDATA(elementText);
+    }
+
     public Namespace getElementNamespace() {
         return elementNamespace;
     }
 
     public void setElementNamespace(Namespace elementNamespace) {
         this.elementNamespace = elementNamespace;
+    }
+
+    public String getAttributeName() {
+        return attributeName;
     }
 }

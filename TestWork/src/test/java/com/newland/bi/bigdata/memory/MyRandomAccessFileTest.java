@@ -4,6 +4,7 @@ import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
+import com.cqx.common.utils.system.SleepUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +71,6 @@ public class MyRandomAccessFileTest {
                         }
                     } catch (IOException e) {
                         logger.warn(e.getMessage());
-//                        logger.error(e.getMessage(), e);
                     }
                     cnt++;
                 }
@@ -92,7 +92,6 @@ public class MyRandomAccessFileTest {
                         }
                     } catch (IOException e) {
                         logger.warn(e.getMessage());
-//                        logger.error(e.getMessage(), e);
                     }
                     cnt++;
                 }
@@ -101,21 +100,21 @@ public class MyRandomAccessFileTest {
         Thread t3 = new Thread() {
             public void run() {
                 int cnt = 0;
-                while (cnt < 100) {
+                while (cnt < 1000) {
                     try {
                         String msg = myRandomAccessFile.read(0, 3);
                         logger.info("{} read.", msg);
                     } catch (IOException e) {
                         logger.warn(e.getMessage());
-//                        logger.error(e.getMessage(), e);
                     }
                     cnt++;
                 }
             }
         };
+        t3.start();
+        SleepUtil.sleepMilliSecond(1);
         t1.start();
         t2.start();
-        t3.start();
         t1.join();
         t2.join();
         t3.join();

@@ -222,16 +222,4 @@ public class JDBCUtilTest {
             }
         }
     }
-
-    @Test
-    public void xmlParser() throws Exception {
-        XMLParser xmlParser = new XMLParser();
-        xmlParser.setFileName("d:\\Work\\ETL\\天空\\组件脚本调用\\101169491131\\node297342823.xml");
-        xmlParser.init();
-        List<XMLParserElement> actionList = xmlParser.parseRootChildElement("action");
-        List<XMLParserElement> dogList = xmlParser.getChildElement(actionList, "dog");
-        for (XMLParserElement xmlParserElement : dogList) {
-            logger.info("xml：{}", xmlParserElement.toXml());
-        }
-    }
 }

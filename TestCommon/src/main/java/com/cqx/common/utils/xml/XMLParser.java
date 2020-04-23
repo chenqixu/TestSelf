@@ -22,6 +22,7 @@ import java.util.List;
  */
 public class XMLParser {
 
+    public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     private static final Logger logger = LoggerFactory.getLogger(XMLParser.class);
     private String fileName;
     private String xmlData;
