@@ -1,16 +1,13 @@
 package com.newland.bi.bigdata.net;
 
-import com.cqx.exception.TestSelfException;
+import com.cqx.common.utils.zookeeper.ZookeeperTools;
 import com.newland.bi.bigdata.utils.SleepUtils;
 import com.newland.bi.bigdata.utils.net.IpUtil;
-import com.newland.bi.bigdata.zookeeper.ZookeeperTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * DpiSocketClientStrategy
@@ -66,7 +63,7 @@ public class DpiSocketClientStrategy {
         if (zookeeperTools != null) {
             try {
                 zookeeperTools.close();
-            } catch (TestSelfException e) {
+            } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
         }

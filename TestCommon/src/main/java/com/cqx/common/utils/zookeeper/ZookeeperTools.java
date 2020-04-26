@@ -1,19 +1,17 @@
-package com.newland.bi.bigdata.zookeeper;
+package com.cqx.common.utils.zookeeper;
 
-import com.cqx.exception.TestSelfErrorCode;
-import com.cqx.exception.TestSelfException;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
-import org.apache.curator.framework.recipes.nodes.PersistentEphemeralNode;
+import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
+import org.apache.curator.framework.recipes.atomic.PromotedToLock;
+import org.apache.curator.retry.BoundedExponentialBackoffRetry;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.apache.curator.utils.CloseableUtils;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,8 +19,8 @@ import java.util.List;
  */
 public class ZookeeperTools {
 
-    public static ZookeeperTools zookeeperTools = new ZookeeperTools();
-    private static Logger logger = LoggerFactory.getLogger(ZookeeperTools.class);
+    private static final Logger logger = LoggerFactory.getLogger(ZookeeperTools.class);
+    private static volatile ZookeeperTools zookeeperTools = new ZookeeperTools();
     private CuratorFramework client;
     private RetryPolicy retryPolicy;
 //    private List<PersistentEphemeralNode> persistentEphemeralNodeList = new ArrayList<>();
@@ -31,11 +29,12 @@ public class ZookeeperTools {
     }
 
     public static ZookeeperTools getInstance() {
-        synchronized (zookeeperTools) {
-            if (zookeeperTools == null)
-                synchronized (zookeeperTools) {
+        if (zookeeperTools == null) {
+            synchronized (ZookeeperTools.class) {
+                if (zookeeperTools == null) {
                     zookeeperTools = new ZookeeperTools();
                 }
+            }
         }
         return zookeeperTools;
     }
@@ -54,15 +53,15 @@ public class ZookeeperTools {
         client.start();
     }
 
-    public void checkClient() throws TestSelfException {
-        if (!isStarted()) throw new TestSelfException(TestSelfErrorCode.ZK_CLIENT_NULL, "客户端没有连接！");
+    public void checkClient() throws NullPointerException {
+        if (!isStarted()) throw new NullPointerException("客户端没有连接！");
     }
 
     public boolean isStarted() {
-        return client == null ? false : (client.getState() == CuratorFrameworkState.STARTED);
+        return client != null && (client.getState() == CuratorFrameworkState.STARTED);
     }
 
-    public void close() throws TestSelfException {
+    public void close() throws NullPointerException {
         checkClient();
 //        if (persistentEphemeralNodeList != null && persistentEphemeralNodeList.size() > 0)
 //            for (PersistentEphemeralNode persistentEphemeralNode : persistentEphemeralNodeList)
@@ -128,11 +127,26 @@ public class ZookeeperTools {
         if (client.checkExists().forPath(path) != null) {
             return client.getData().forPath(path);
         }
-        throw new TestSelfException(TestSelfErrorCode.ZK_NOT_EXIST_PATH, path + "路径不存在！");
+        throw new NullPointerException(path + "路径不存在！");
     }
 
     public boolean exists(String path) throws Exception {
         checkClient();
-        return client.checkExists().forPath(path) != null ? true : false;
+        return client.checkExists().forPath(path) != null;
+    }
+
+    /**
+     * 获取分布式序列号
+     *
+     * @param path
+     * @return
+     */
+    public DistributedAtomicLong getDistributedAtomicLong(String path) {
+        RetryPolicy retryPolicy = new BoundedExponentialBackoffRetry(1000, 3, 1000);
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        PromotedToLock.Builder builder = PromotedToLock.builder().lockPath(path + "/lock").retryPolicy(retryPolicy);
+        return new DistributedAtomicLong(client, path, retryPolicy, builder.build());
     }
 }
