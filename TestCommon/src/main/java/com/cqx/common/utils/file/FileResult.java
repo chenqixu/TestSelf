@@ -18,4 +18,8 @@ public abstract class FileResult<T> extends FileCount {
     public List<T> getFileresult() {
         return fileresult;
     }
+
+    protected void clearFileresult() {
+        fileresult.clear();
+    }
 }
