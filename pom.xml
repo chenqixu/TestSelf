@@ -26,7 +26,6 @@
         <module>TestSFTPTool</module>
         <module>TestHbaseTool</module>
         <module>TestHdfsTool</module>
-        <module>TestAigTool</module>
         <module>TestKafka</module>
         <module>TestExcelTool</module>
         <module>TestWork</module>
