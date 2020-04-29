@@ -21,7 +21,6 @@
     </build>
     <modules>
         <module>ReadFile</module>
-        <module>TestDataCollector</module>
         <module>TestShareClass</module>
         <module>TestSFTPTool</module>
         <module>TestHbaseTool</module>
