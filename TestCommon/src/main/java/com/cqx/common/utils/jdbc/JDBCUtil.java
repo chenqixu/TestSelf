@@ -23,7 +23,6 @@ import java.util.*;
  */
 public class JDBCUtil {
 
-    public static String DB_TYPE = "oracle";
     private static Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
     private DataSource dataSource;
     private DBBean dbBean;

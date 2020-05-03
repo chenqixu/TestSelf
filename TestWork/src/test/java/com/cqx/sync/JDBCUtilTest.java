@@ -44,6 +44,7 @@ public class JDBCUtilTest {
 
     private DBBean oracleConfig(String type) {
         DBBean srcdbBean = new DBBean();
+//        srcdbBean.setPool(false);
         srcdbBean.setDbType(DBType.ORACLE);
         switch (type) {
             case "dev":
@@ -61,15 +62,22 @@ public class JDBCUtilTest {
                 srcdbBean.setUser_name("jutap_dev");
                 srcdbBean.setPass_word("J%pSvi#o$7");
                 break;
+            case "jutap_tenant":
+                srcdbBean.setTns("jdbc:oracle:thin:@10.46.158.219:1521:ywxx");
+                srcdbBean.setUser_name("jutap_tenant");
+                srcdbBean.setPass_word("jutap");
+                break;
         }
         return srcdbBean;
     }
 
     @Before
     public void setUp() throws Exception {
-        DBBean srcdbBean = oracleConfig("jutap");
-//        DBBean srcdbBean = oracleConfig("dev");
-//        DBBean srcdbBean = mysqlConfig("local");
+        DBBean srcdbBean;
+        srcdbBean = oracleConfig("jutap_tenant");
+//        srcdbBean = oracleConfig("jutap");
+//        srcdbBean = oracleConfig("dev");
+//        srcdbBean = mysqlConfig("local");
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
@@ -195,7 +203,7 @@ public class JDBCUtilTest {
 
     @Test
     public void queryBlob() throws Exception {
-        List<List<QueryResult>> result = jdbcUtil.executeQuery("select fstream from extern_flowtask_cfg where id='101697251921'");
+        List<List<QueryResult>> result = jdbcUtil.executeQuery("select fstream from extern_flowtask_cfg where id='102705423439'");
         for (List<QueryResult> queryResults : result) {
             for (QueryResult queryResult : queryResults) {
                 logger.info("{}", queryResult);

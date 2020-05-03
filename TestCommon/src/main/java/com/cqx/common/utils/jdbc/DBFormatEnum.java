@@ -6,12 +6,12 @@ package com.cqx.common.utils.jdbc;
  * @author chenqixu
  */
 public enum DBFormatEnum {
-    YYYYMMDDHH24MISS(JDBCUtil.DB_TYPE, "YYYY-MM-DD HH24:MI:SS", "%Y-%m-%d %H:%i:%s"),
-    YYYYMM(JDBCUtil.DB_TYPE, "YYYYMM", "%Y%m"),
-    TOCHAR(JDBCUtil.DB_TYPE, "TO_CHAR", "DATE_FORMAT"),
-    TODATE(JDBCUtil.DB_TYPE, "TO_DATE", "STR_TO_DATE"),
-    TONUMBER_INT(JDBCUtil.DB_TYPE, "TO_NUMBER(%s)", "CAST(%s AS UNSIGNED INT)"),
-    SYSDATE(JDBCUtil.DB_TYPE, "SYSDATE", "CURRENT_TIMESTAMP"),
+    YYYYMMDDHH24MISS(DBFormatUtil.DB_TYPE, "YYYY-MM-DD HH24:MI:SS", "%Y-%m-%d %H:%i:%s"),
+    YYYYMM(DBFormatUtil.DB_TYPE, "YYYYMM", "%Y%m"),
+    TOCHAR(DBFormatUtil.DB_TYPE, "TO_CHAR", "DATE_FORMAT"),
+    TODATE(DBFormatUtil.DB_TYPE, "TO_DATE", "STR_TO_DATE"),
+    TONUMBER_INT(DBFormatUtil.DB_TYPE, "TO_NUMBER(%s)", "CAST(%s AS UNSIGNED INT)"),
+    SYSDATE(DBFormatUtil.DB_TYPE, "SYSDATE", "CURRENT_TIMESTAMP"),
     ;
     private String format;
     private String db_type;
