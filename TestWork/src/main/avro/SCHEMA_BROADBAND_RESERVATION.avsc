@@ -1,0 +1,452 @@
+{
+  "type" : "record",
+  "name" : "TB_SER_OGG_BROADBAND_RESERV",
+  "namespace": "com.newland.bi.bigdata.bean.avro",
+  "fields" : [ {
+    "name" : "table",
+    "type" : "string"
+  }, {
+    "name" : "op_type",
+    "type" : "string"
+  }, {
+    "name" : "op_ts",
+    "type" : "string"
+  }, {
+    "name" : "current_ts",
+    "type" : "string"
+  }, {
+    "name" : "pos",
+    "type" : "string"
+  }, {
+    "name" : "primary_keys",
+    "type" : {
+      "type" : "array",
+      "items" : "string"
+    }
+  }, {
+    "name" : "tokens",
+    "type" : {
+      "type" : "map",
+      "values" : "string"
+    },
+    "default" : { }
+  }, {
+    "name" : "before",
+    "type" : [ "null", {
+      "type" : "record",
+      "name" : "columns",
+      "fields" : [ {
+        "name" : "HOME_CITY",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "HOME_CITY_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "HOME_COUNTY",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "HOME_COUNTY_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CONTACT_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CONTACT_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CONTACT_TEL",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CONTACT_TEL_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ORDER_STATE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "ORDER_STATE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "MANAGER_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "MANAGER_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CREATE_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CREATE_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "COMMUNITY_CODE",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "COMMUNITY_CODE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ADDRESS",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "ADDRESS_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "OPTIONAL_DEAL_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "OPTIONAL_DEAL_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "LINE_COVERED",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "LINE_COVERED_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SMS_SEND_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "SMS_SEND_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "MODIFY_OPERATOR",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "MODIFY_OPERATOR_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "MODIFY_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "MODIFY_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "REMARK",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "REMARK_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "MANAGER_TEL",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "MANAGER_TEL_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CONFIRM_SERIAL",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CONFIRM_SERIAL_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "MSISDN",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "MSISDN_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "COMMUNITY_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "COMMUNITY_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "REQUEST_SOURCE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "REQUEST_SOURCE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CREATE_OPERATOR",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "CREATE_OPERATOR_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CREATE_OPERATOR_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CREATE_OPERATOR_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CREATE_ORGAN_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CREATE_ORGAN_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CREATE_ORGAN_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "CREATE_ORGAN_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "USER_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "USER_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "FINISH_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "FINISH_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "IS_SUCC",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "IS_SUCC_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "CNT_EFFECT_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "CNT_EFFECT_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "RESOURCE_REMARK",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "RESOURCE_REMARK_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ORDER_REMARK",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "ORDER_REMARK_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "RESOURCE_MODIFY_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "RESOURCE_MODIFY_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ORDER_MODIFY_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "ORDER_MODIFY_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SALE_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "SALE_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SALE_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "SALE_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "PRODUCT_ATTR",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "PRODUCT_ATTR_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "PARAM",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "PARAM_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "BROADBAND_USER_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "BROADBAND_USER_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "OPEN_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "OPEN_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "OPEN_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "OPEN_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ACCEPT_REASON_CODE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "ACCEPT_REASON_CODE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "TELE_INFO",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "TELE_INFO_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "LINE_STATE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "LINE_STATE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "EQUIPMENT_OUT_TYPE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "EQUIPMENT_OUT_TYPE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "USER_SOURCE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "USER_SOURCE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "RECOMMEND_ORDER_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "RECOMMEND_ORDER_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "RECOMMEND_ORG_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "RECOMMEND_ORG_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "RECOMMEND_MSISDN",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "RECOMMEND_MSISDN_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "IS_ORDER",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "IS_ORDER_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "RES_CHECK_RESULT",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "RES_CHECK_RESULT_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SEARCH_TYPE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "SEARCH_TYPE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ACCEPT_ORDER_STATE",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "ACCEPT_ORDER_STATE_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SEARCH_OPERATION_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "SEARCH_OPERATION_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "PD_CONTACT_TEL",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "PD_CONTACT_TEL_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "PD_CONTACT_NAME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "PD_CONTACT_NAME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "ACCEPT_REMARK",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "ACCEPT_REMARK_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SEARCH_TIME",
+        "type" : [ "null", "string" ],
+        "default" : null
+      }, {
+        "name" : "SEARCH_TIME_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SEARCH_ORGAN_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "SEARCH_ORGAN_ID_isMissing",
+        "type" : "boolean"
+      }, {
+        "name" : "SEARCH_OPERATOR_ID",
+        "type" : [ "null", "long" ],
+        "default" : null
+      }, {
+        "name" : "SEARCH_OPERATOR_ID_isMissing",
+        "type" : "boolean"
+      } ]
+    } ],
+    "default" : null
+  }, {
+    "name" : "after",
+    "type" : [ "null", "columns" ],
+    "default" : null
+  } ]
+}
