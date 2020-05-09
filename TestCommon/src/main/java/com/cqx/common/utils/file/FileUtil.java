@@ -1,5 +1,8 @@
 package com.cqx.common.utils.file;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.file.FileSystems;
@@ -19,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class FileUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private static final String valueSplit = "\\|";
     private static final int BUFF_SIZE = 4096;
     private static final String fileSparator = File.separator;
@@ -33,6 +37,82 @@ public class FileUtil {
         return null;
     }
 
+    public static String[] listFile(String path) {
+        return listFile(path, null);
+    }
+
+    public static String[] listFile(String path, final String keyword) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            if (keyword != null && keyword.length() > 0) {
+                logger.info("listFile use keyword：{}.", keyword);
+                return file.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.contains(keyword);
+                    }
+                });
+            } else {
+                logger.info("listFile not use keyword.");
+                return file.list();
+            }
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
+    }
+
+    public static String[] listFileEndWith(String path, final String endWith) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            return file.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(endWith);
+                }
+            });
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
+    }
+
+    /**
+     * 通过关键字和文件后缀来过滤文件
+     *
+     * @param path
+     * @param keyword
+     * @param endWith
+     * @return
+     */
+    public static String[] listFile(String path, final String keyword, final String endWith) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            if (keyword != null && keyword.length() > 0) {
+                logger.info("listFile use keyword：{}，endWith：{}.", keyword, endWith);
+                return file.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.contains(keyword) && name.endsWith(endWith);
+                    }
+                });
+            } else {
+                logger.info("listFile not use keyword.");
+                return file.list();
+            }
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
+    }
+
+    /**
+     * 文件合并
+     *
+     * @param srcList
+     * @param dst
+     * @throws IOException
+     */
     public static void mergeFile(List<String> srcList, String dst) throws IOException {
         OutputStream out = new FileOutputStream(dst);
         for (String src : srcList) {

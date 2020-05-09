@@ -4,12 +4,14 @@ import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
+import com.cqx.common.utils.string.StringUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class MyRandomAccessFileTest {
 
@@ -120,4 +122,93 @@ public class MyRandomAccessFileTest {
         t3.join();
     }
 
+    @Test
+    public void sync_os_test() throws Exception {
+//        String msg = "abcd";
+//        String header = StringUtil.fillZero(6, 3) + StringUtil.fillZero(msg.getBytes().length, 3);
+//        logger.info("{}", header);
+//        myRandomAccessFile.write(0, (header + msg).getBytes());
+//
+//        String read_header = myRandomAccessFile.read(0, 6);
+//        String h1 = read_header.substring(0, 3);
+//        String h2 = read_header.substring(3, 6);
+//        logger.info("{} {}", h1, h2);
+
+//        long read_header1 = Long.valueOf(myRandomAccessFile.read(0, 3));
+//        int read_header2 = Integer.valueOf(myRandomAccessFile.read(3, 3));
+//        String read_value = myRandomAccessFile.read(read_header1, read_header2);
+//        logger.info("pos：{}，len：{}，value：{}", read_header1, read_header2, read_value);
+
+        final int header_len = 20;
+        final int header_half_len = header_len / 2;
+        final int[] header_next = {0};
+        //写线程
+        Thread w = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i = 0;
+                int header_start = 0;
+                Random random = new Random();
+                while (i < 10) {
+                    i++;
+                    //随机产生内容
+                    String msg = "测试写入" + random.nextInt(10000);
+                    String header = StringUtil.fillZero(header_start + header_len, header_half_len)
+                            + StringUtil.fillZero(msg.getBytes().length, header_half_len);
+                    try {
+                        myRandomAccessFile.write(header_start, (header + msg).getBytes());
+                        header_start = header_start + header_len + msg.getBytes().length;
+                        logger.info("【write】msg：{}，header：{}，header_start：{}", msg, header, header_start);
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+        //读线程
+        Thread r = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int i = 0;
+                int header_start = 0;
+                byte[] null_byte = new byte[header_len];
+                String NULL_VALUE = new String(null_byte);
+                while (i < 10) {
+                    i++;
+                    //先读一个块
+                    try {
+                        String header = myRandomAccessFile.read(header_start, header_len);
+                        if (NULL_VALUE.equals(header)) {
+                            SleepUtil.sleepMilliSecond(50);
+                            continue;
+                        }
+                        //把header分为2部分
+                        String pos = header.substring(0, header_half_len);
+                        String len = header.substring(header_half_len, header_len);
+                        String msg = myRandomAccessFile.read(Long.valueOf(pos), Integer.valueOf(len));
+                        header_start = header_start + header_len + Integer.valueOf(len);
+                        header_next[0] = header_start;
+                        logger.info("【read】header：{}，pos：{}，len：{}，msg：{}，header_start：{}", header, pos, len, msg, header_start);
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+        w.start();
+        r.start();
+        w.join();
+        r.join();
+        //移动到第9个进行读取
+        //先读一个块
+        try {
+            String header = myRandomAccessFile.read(header_next[0], header_len);
+            if (!NULL_VALUE.equals(header)) {
+                //把header分为2部分
+                String pos = header.substring(0, header_half_len);
+                String len = header.substring(header_half_len, header_len);
+                String msg = myRandomAccessFile.read(Long.valueOf(pos), Integer.valueOf(len));
+                logger.info("【read】header：{}，pos：{}，len：{}，msg：{}", header, pos, len, msg);
+            }
+        } catch (IOException e) {
+        }
+    }
 }

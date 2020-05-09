@@ -22,8 +22,8 @@ public class DBFormatUtil {
     /**
      * 时间格式化成字符串
      *
-     * @param field          字段
-     * @param alias          别名
+     * @param field        字段
+     * @param alias        别名
      * @param DBFormatEnum 格式
      * @return
      */
@@ -39,7 +39,7 @@ public class DBFormatUtil {
     /**
      * 时间格式化成字符串
      *
-     * @param field          字段
+     * @param field        字段
      * @param DBFormatEnum 格式
      * @return
      */
@@ -50,8 +50,8 @@ public class DBFormatUtil {
     /**
      * 字符串格式化成时间
      *
-     * @param field          字段
-     * @param alias          别名
+     * @param field        字段
+     * @param alias        别名
      * @param DBFormatEnum 格式
      * @return
      */
@@ -67,7 +67,7 @@ public class DBFormatUtil {
     /**
      * 字符串格式化成时间
      *
-     * @param field          字段
+     * @param field        字段
      * @param DBFormatEnum 格式
      * @return
      */
@@ -110,4 +110,11 @@ public class DBFormatUtil {
         return to_number(field, null);
     }
 
+    public static void setOracleDbType() {
+        DB_TYPE = "oracle";
+    }
+
+    public static void setMysqlDbType() {
+        DB_TYPE = "mysql";
+    }
 }
