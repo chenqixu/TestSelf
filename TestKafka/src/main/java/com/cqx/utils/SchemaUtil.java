@@ -63,6 +63,10 @@ public class SchemaUtil {
         this.urlStr = urlStr;
     }
 
+    public static void addSchema(String topic, String schemaStr) {
+        schemaMap.put(topic, schemaStr);
+    }
+
     public static String getSchemaValueByTopic(String topic) {
         return schemaMap.get(topic);
     }

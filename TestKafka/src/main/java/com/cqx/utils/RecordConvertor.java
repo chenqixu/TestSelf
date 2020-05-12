@@ -16,9 +16,8 @@ import java.io.IOException;
  */
 public class RecordConvertor {
 
-    final private DatumReader<GenericRecord> reader;
-    final private DatumWriter<GenericRecord> writer;
-
+    private final DatumReader<GenericRecord> reader;
+    private final DatumWriter<GenericRecord> writer;
 
     /**
      * @param schema

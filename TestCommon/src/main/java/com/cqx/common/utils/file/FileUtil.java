@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -278,6 +279,30 @@ public class FileUtil {
             return sourcefile.renameTo(distfile);
         } else {
             return false;
+        }
+    }
+
+    /**
+     * 读取配置文件内容
+     *
+     * @param path
+     * @return
+     */
+    public static String readConfFile(String path) {
+        File readFile = new File(path);
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), StandardCharsets.UTF_8))) {
+            String _tmp;
+            while ((_tmp = reader.readLine()) != null) {
+                sb.append(_tmp);
+            }
+        } catch (IOException e) {
+            logger.error("Read " + path + " IOException. Message:" + e.getMessage());
+        }
+        if (sb.length() > 0) {
+            return sb.toString();
+        } else {
+            return null;
         }
     }
 

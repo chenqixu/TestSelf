@@ -1,5 +1,6 @@
 package com.cqx.utils;
 
+import com.cqx.common.utils.file.FileUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
@@ -8,7 +9,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 public class KafkaConsumerUtilTest {
@@ -24,20 +24,21 @@ public class KafkaConsumerUtilTest {
 
     @Before
     public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (kafkaConsumerUtil != null) kafkaConsumerUtil.close();
+    }
+
+    @Test
+    public void poll() throws Exception {
+        String topic = "nmc_tb_lte_http_test";
         Schema schema = SchemaUtil.getSchemaByTopic(topic);
         recordConvertor = new RecordConvertor(schema);
 //        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        kafkaConsumerUtil.close();
-    }
-
-    @Test
-    public void poll() {
         List<byte[]> list = kafkaConsumerUtil.poll(1000);
         for (byte[] bytes : list) {
             GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
@@ -85,6 +86,28 @@ public class KafkaConsumerUtilTest {
 //            SleepUtils.sleepMilliSecond(2000);
 //            kafkaConsumerUtil.poll(1000);
 //        }
+    }
+
+    @Test
+    public void pollOgg() throws Exception {
+        String topic = "ogg_to_kafka";
+        String url = FileUtil.getClassResourcePath(KafkaConsumerUtilTest.class);
+        String schemaStr = FileUtil.readConfFile(url + "oper_history.avsc");
+        logger.info("{}", schemaStr);
+        SchemaUtil.addSchema(topic, schemaStr);
+        Schema schema = SchemaUtil.getSchemaByTopic(topic);
+        recordConvertor = new RecordConvertor(schema);
+        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
+        kafkaConsumerUtil.subscribe(topic);
+        while (true) {
+            List<byte[]> list = kafkaConsumerUtil.poll(2000);
+            for (byte[] bytes : list) {
+//                logger.info("Record：{}", new String(bytes));
+                GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+                logger.info("genericRecord：{}", genericRecord);
+            }
+            SleepUtils.sleepMilliSecond(200);
+        }
     }
 
 }

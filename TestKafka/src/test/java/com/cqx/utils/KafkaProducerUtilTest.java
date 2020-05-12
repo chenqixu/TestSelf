@@ -225,4 +225,11 @@ public class KafkaProducerUtilTest {
             kafkaTupleBlockingQueue.put(kafkaTuple1);
         SleepUtils.sleepMilliSecond(5000);
     }
+
+    @Test
+    public void sendOgg() {
+        topic = "ogg_to_kafka";
+        byte[] value = "test".getBytes();
+        kafkaProducerUtil.send(topic, value);
+    }
 }

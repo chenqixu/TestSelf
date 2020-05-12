@@ -1,0 +1,1 @@
+{"namespace": " com.newland","type": "record","name": "ogg_to_kafka","fields":[{"name": "oper_acct",  "type": ["string", "null"]},{"name": "oper_type",  "type": ["string", "null"]},{"name": "oper",  "type": ["string", "null"]},{"name": "oper_time",  "type": ["string", "null"]}]}

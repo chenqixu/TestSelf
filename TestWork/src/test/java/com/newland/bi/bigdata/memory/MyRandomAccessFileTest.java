@@ -2,9 +2,9 @@ package com.newland.bi.bigdata.memory;
 
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.file.MyRandomAccessFile;
+import com.cqx.common.utils.file.RAFFileMangerCenter;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
-import com.cqx.common.utils.string.StringUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -19,13 +19,13 @@ public class MyRandomAccessFileTest {
     private static final byte[] NULL_BYTE = new byte[3];
     private static final String NULL_VALUE = new String(NULL_BYTE);
     private MyRandomAccessFile myRandomAccessFile;
+    private String sm = "d:\\tmp\\data\\mccdr\\r.sm";
 
     @Before
     public void setUp() throws Exception {
-        String sm = "d:\\tmp\\data\\mccdr\\r.sm";
         FileUtil.del(sm);
-        myRandomAccessFile = new MyRandomAccessFile(sm);
-        myRandomAccessFile.setLock(true);
+//        myRandomAccessFile = new MyRandomAccessFile(sm);
+//        myRandomAccessFile.setLock(true);
     }
 
     @After
@@ -139,28 +139,26 @@ public class MyRandomAccessFileTest {
 //        String read_value = myRandomAccessFile.read(read_header1, read_header2);
 //        logger.info("pos：{}，len：{}，value：{}", read_header1, read_header2, read_value);
 
-        final int header_len = 20;
-        final int header_half_len = header_len / 2;
-        final int[] header_next = {0};
         //写线程
         Thread w = new Thread(new Runnable() {
             @Override
             public void run() {
-                int i = 0;
-                int header_start = 0;
-                Random random = new Random();
-                while (i < 10) {
-                    i++;
-                    //随机产生内容
-                    String msg = "测试写入" + random.nextInt(10000);
-                    String header = StringUtil.fillZero(header_start + header_len, header_half_len)
-                            + StringUtil.fillZero(msg.getBytes().length, header_half_len);
-                    try {
-                        myRandomAccessFile.write(header_start, (header + msg).getBytes());
-                        header_start = header_start + header_len + msg.getBytes().length;
-                        logger.info("【write】msg：{}，header：{}，header_start：{}", msg, header, header_start);
-                    } catch (IOException e) {
+                try {
+                    int i = 0;
+                    Random random = new Random();
+                    RAFFileMangerCenter rafFileMangerCenter = new RAFFileMangerCenter(sm);
+                    while (i < 10) {
+                        i++;
+                        //随机产生内容
+                        String msg = "测试写入" + random.nextInt(10000);
+                        rafFileMangerCenter.write(msg);
+                        if (i == 10) {
+                            //写入结束符
+                            rafFileMangerCenter.write(RAFFileMangerCenter.END_TAG);
+                        }
                     }
+                    rafFileMangerCenter.close();
+                } catch (Exception e) {
                 }
             }
         });
@@ -168,28 +166,18 @@ public class MyRandomAccessFileTest {
         Thread r = new Thread(new Runnable() {
             @Override
             public void run() {
-                int i = 0;
-                int header_start = 0;
-                byte[] null_byte = new byte[header_len];
-                String NULL_VALUE = new String(null_byte);
-                while (i < 10) {
-                    i++;
-                    //先读一个块
-                    try {
-                        String header = myRandomAccessFile.read(header_start, header_len);
-                        if (NULL_VALUE.equals(header)) {
-                            SleepUtil.sleepMilliSecond(50);
-                            continue;
+                try {
+                    RAFFileMangerCenter rafFileMangerCenter = new RAFFileMangerCenter(sm);
+                    while (true) {
+                        String msg = rafFileMangerCenter.read();
+                        if (msg == null) {
+                            SleepUtil.sleepMilliSecond(5);
+                        } else if (msg.equals(RAFFileMangerCenter.END_TAG)) {
+                            break;
                         }
-                        //把header分为2部分
-                        String pos = header.substring(0, header_half_len);
-                        String len = header.substring(header_half_len, header_len);
-                        String msg = myRandomAccessFile.read(Long.valueOf(pos), Integer.valueOf(len));
-                        header_start = header_start + header_len + Integer.valueOf(len);
-                        header_next[0] = header_start;
-                        logger.info("【read】header：{}，pos：{}，len：{}，msg：{}，header_start：{}", header, pos, len, msg, header_start);
-                    } catch (IOException e) {
                     }
+                    rafFileMangerCenter.close();
+                } catch (Exception e) {
                 }
             }
         });
@@ -197,18 +185,5 @@ public class MyRandomAccessFileTest {
         r.start();
         w.join();
         r.join();
-        //移动到第9个进行读取
-        //先读一个块
-        try {
-            String header = myRandomAccessFile.read(header_next[0], header_len);
-            if (!NULL_VALUE.equals(header)) {
-                //把header分为2部分
-                String pos = header.substring(0, header_half_len);
-                String len = header.substring(header_half_len, header_len);
-                String msg = myRandomAccessFile.read(Long.valueOf(pos), Integer.valueOf(len));
-                logger.info("【read】header：{}，pos：{}，len：{}，msg：{}", header, pos, len, msg);
-            }
-        } catch (IOException e) {
-        }
     }
 }
