@@ -60,7 +60,7 @@ public class KafkaConsumerUtil<K, V> {
         ConsumerRecords<K, V> records = consumer.poll(timeout);
         for (ConsumerRecord<K, V> record : records.records(topic)) {
             V msgByte = record.value();
-            logger.info("######## offset = {}, key = {}, value = {}", record.offset(), record.key(), msgByte);
+            logger.debug("######## offset = {}, key = {}, value = {}", record.offset(), record.key(), msgByte);
             resultList.add(msgByte);
         }
 //        // 同步提交 消费偏移量，todo 已经设置了自动提交，其实这里可以不需要

@@ -2,6 +2,8 @@ package com.cqx.sync;
 
 import com.cqx.common.utils.jdbc.DBBean;
 import com.cqx.common.utils.jdbc.DBType;
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +12,8 @@ import java.sql.SQLException;
 
 public class OracleToMysqlTest {
 
+    private static final MyLogger logger = MyLoggerFactory.getLogger(OracleToMysqlTest.class);
     private OracleToMysql oracleToMysql;
-
 
     @Before
     public void setUp() throws Exception {
@@ -26,7 +28,7 @@ public class OracleToMysqlTest {
 
     @After
     public void tearDown() throws Exception {
-        oracleToMysql.release();
+        if (oracleToMysql != null) oracleToMysql.release();
     }
 
     @Test
@@ -37,6 +39,19 @@ public class OracleToMysqlTest {
     @Test
     public void descTable() throws SQLException {
         oracleToMysql.descTable("SM2_PASSWD_CODE");
+    }
+
+    @Test
+    public void getTableFields() throws SQLException {
+        DBBean dbBean = new DBBean();
+        dbBean.setDbType(DBType.ORACLE);
+        dbBean.setTns("jdbc:oracle:thin:@10.1.8.205:1521:cbass");
+        dbBean.setUser_name("xdcdr");
+        dbBean.setPass_word("xdcdr");
+        dbBean.setPool(false);
+        oracleToMysql = new OracleToMysql(dbBean);
+        String fields = oracleToMysql.getTableFields("SYNCOS_100000");
+        logger.info("{}", fields.toLowerCase());
     }
 
     @Test

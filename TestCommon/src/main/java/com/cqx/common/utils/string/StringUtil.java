@@ -254,4 +254,18 @@ public class StringUtil {
             System.out.println("please input param.");
         }
     }
+
+    /**
+     * 把byte数组转换成List
+     *
+     * @param bytes
+     * @return
+     */
+    public static List<Byte> byteArrayToList(byte[] bytes) {
+        List<Byte> list = new ArrayList<>();
+        for (byte b : bytes) {
+            list.add(b);
+        }
+        return list;
+    }
 }

@@ -1,6 +1,7 @@
 package com.cqx.utils;
 
 import com.cqx.common.utils.file.FileUtil;
+import com.cqx.common.utils.system.TimeCostUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
@@ -92,21 +93,35 @@ public class KafkaConsumerUtilTest {
     public void pollOgg() throws Exception {
         String topic = "ogg_to_kafka";
         String url = FileUtil.getClassResourcePath(KafkaConsumerUtilTest.class);
-        String schemaStr = FileUtil.readConfFile(url + "oper_history.avsc");
+//        String schemaStr = FileUtil.readConfFile(url + "oper_history.avsc");
+        String schemaStr = FileUtil.readConfFile(url + "syncos_100000.avsc");
         logger.info("{}", schemaStr);
         SchemaUtil.addSchema(topic, schemaStr);
         Schema schema = SchemaUtil.getSchemaByTopic(topic);
         recordConvertor = new RecordConvertor(schema);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
+        int consumerNum = 0;
+        TimeCostUtil<Integer> timeCostUtil = new TimeCostUtil<>(consumerNum);
+        long limitTime = 30000;
         while (true) {
             List<byte[]> list = kafkaConsumerUtil.poll(2000);
             for (byte[] bytes : list) {
 //                logger.info("Record：{}", new String(bytes));
                 GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-                logger.info("genericRecord：{}", genericRecord);
+                logger.debug("genericRecord：{}", genericRecord);
+                consumerNum++;
             }
-            SleepUtils.sleepMilliSecond(200);
+            //limitTime秒检测一次，检测limitTime秒内没有变化就退出循环
+            boolean tag = timeCostUtil.tag(limitTime, consumerNum);
+            logger.info("consumerNum：{}，tag：{}", consumerNum, tag);
+            if (tag) {
+                break;
+            }
+            if (consumerNum % 1000 == 0) {
+                logger.info("{} % 1000 == 0", consumerNum);
+                SleepUtils.sleepMilliSecond(200);
+            }
         }
     }
 

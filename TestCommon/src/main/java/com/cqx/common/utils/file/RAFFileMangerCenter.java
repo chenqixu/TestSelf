@@ -8,6 +8,10 @@ import java.io.IOException;
 
 /**
  * RAFFileMangerCenter
+ * <pre>
+ *     结构：头部+具体内容
+ *     头部：具体内容的起始位置+具体内容的长度
+ * </pre>
  *
  * @author chenqixu
  */
@@ -86,7 +90,7 @@ public class RAFFileMangerCenter {
         return result;
     }
 
-    public int getHeader_pos() {
+    public int getHeader_pos_next() {
         return header_pos_next;
     }
 

@@ -5,10 +5,18 @@ package com.cqx.common.utils.system;
  *
  * @author chenqixu
  */
-public class TimeCostUtil {
-    long start;
-    long end;
-    long lastCheckTime = System.currentTimeMillis();
+public class TimeCostUtil<T> {
+    private long start;
+    private long end;
+    private long lastCheckTime = System.currentTimeMillis();
+    private T lastCheckValue;
+
+    public TimeCostUtil() {
+    }
+
+    public TimeCostUtil(T lastCheckValue) {
+        this.lastCheckValue = lastCheckValue;
+    }
 
     public void start() {
         start = System.currentTimeMillis();
@@ -39,5 +47,27 @@ public class TimeCostUtil {
      */
     public long getCost() {
         return end - start;
+    }
+
+    /**
+     * 判断在时间范围内值是否有变化
+     *
+     * @param limitTime
+     * @param nowCheckValue
+     * @return
+     */
+    public boolean tag(long limitTime, T nowCheckValue) {
+        if (System.currentTimeMillis() - lastCheckTime > limitTime) {
+            lastCheckTime = System.currentTimeMillis();
+            if (nowCheckValue.equals(lastCheckValue)) {
+                //说明值在时间段内没有更新
+                return true;
+            } else {
+                //说明值在时间段内有更新
+                lastCheckValue = nowCheckValue;
+                return false;
+            }
+        }
+        return false;
     }
 }

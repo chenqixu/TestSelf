@@ -139,6 +139,7 @@ public class MyRandomAccessFileTest {
 //        String read_value = myRandomAccessFile.read(read_header1, read_header2);
 //        logger.info("pos：{}，len：{}，value：{}", read_header1, read_header2, read_value);
 
+        final int[] random_header_pos = {0};
         //写线程
         Thread w = new Thread(new Runnable() {
             @Override
@@ -152,6 +153,10 @@ public class MyRandomAccessFileTest {
                         //随机产生内容
                         String msg = "测试写入" + random.nextInt(10000);
                         rafFileMangerCenter.write(msg);
+                        if (i == 5) {
+                            //测试一下header_pos是否有用
+                            random_header_pos[0] = rafFileMangerCenter.getHeader_pos_next();
+                        }
                         if (i == 10) {
                             //写入结束符
                             rafFileMangerCenter.write(RAFFileMangerCenter.END_TAG);
@@ -182,8 +187,12 @@ public class MyRandomAccessFileTest {
             }
         });
         w.start();
-        r.start();
+//        r.start();
         w.join();
-        r.join();
+//        r.join();
+        //从测试的header_pos读起
+        RAFFileMangerCenter rafFileMangerCenter = new RAFFileMangerCenter(sm);
+        rafFileMangerCenter.setHeader_pos(random_header_pos[0]);
+        rafFileMangerCenter.read();
     }
 }
