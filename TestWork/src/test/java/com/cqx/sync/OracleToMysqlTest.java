@@ -50,7 +50,7 @@ public class OracleToMysqlTest {
         dbBean.setPass_word("xdcdr");
         dbBean.setPool(false);
         oracleToMysql = new OracleToMysql(dbBean);
-        String fields = oracleToMysql.getTableFields("SYNCOS_100000");
+        String fields = oracleToMysql.getTableFields("CQX_CCS_USER");
         logger.info("{}", fields.toLowerCase());
     }
 

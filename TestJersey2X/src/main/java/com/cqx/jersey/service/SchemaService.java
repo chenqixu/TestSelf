@@ -137,6 +137,93 @@ public class SchemaService {
                     "{\"name\": \"CDRID\", \"type\": [\"string\"]}, \n" +
                     "{\"name\": \"SESSIONID\", \"type\": [\"string\"]}, \n" +
                     "{\"name\": \"SPCKIND\", \"type\": [\"string\"]} ] }";
+        } else if (topic.equals("ogg_to_kafka")) {
+            return "{\n" +
+                    "  \"type\" : \"record\",\n" +
+                    "  \"name\" : \"ORA_TO_KAFKA\",\n" +
+                    "  \"namespace\" : \"TEST_OGG\",\n" +
+                    "  \"fields\" : [ {\n" +
+                    "    \"name\" : \"table\",\n" +
+                    "    \"type\" : \"string\"\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"op_type\",\n" +
+                    "    \"type\" : \"string\"\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"op_ts\",\n" +
+                    "    \"type\" : \"string\"\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"current_ts\",\n" +
+                    "    \"type\" : \"string\"\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"pos\",\n" +
+                    "    \"type\" : \"string\"\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"primary_keys\",\n" +
+                    "    \"type\" : {\n" +
+                    "      \"type\" : \"array\",\n" +
+                    "      \"items\" : \"string\"\n" +
+                    "    }\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"tokens\",\n" +
+                    "    \"type\" : {\n" +
+                    "      \"type\" : \"map\",\n" +
+                    "      \"values\" : \"string\"\n" +
+                    "    },\n" +
+                    "    \"default\" : { }\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"before\",\n" +
+                    "    \"type\" : [ \"null\", {\n" +
+                    "      \"type\" : \"record\",\n" +
+                    "      \"name\" : \"columns\",\n" +
+                    "      \"fields\" : [ {\n" +
+                    "        \"name\" : \"ID\",\n" +
+                    "        \"type\" : [ \"null\", \"long\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"ID_isMissing\",\n" +
+                    "        \"type\" : [ \"null\", \"boolean\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"NAME\",\n" +
+                    "        \"type\" : [ \"null\", \"string\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"NAME_isMissing\",\n" +
+                    "        \"type\" : [ \"null\", \"boolean\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"ADDR\",\n" +
+                    "        \"type\" : [ \"null\", \"string\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"ADDR_isMissing\",\n" +
+                    "        \"type\" : [ \"null\", \"boolean\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"IMSI\",\n" +
+                    "        \"type\" : [ \"null\", \"long\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"IMSI_isMissing\",\n" +
+                    "        \"type\" : [ \"null\", \"boolean\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"MISSION\",\n" +
+                    "        \"type\" : [ \"null\", \"string\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      }, {\n" +
+                    "        \"name\" : \"MISSION_isMissing\",\n" +
+                    "        \"type\" : [ \"null\", \"boolean\" ],\n" +
+                    "        \"default\" : null\n" +
+                    "      } ]\n" +
+                    "    } ],\n" +
+                    "    \"default\" : null\n" +
+                    "  }, {\n" +
+                    "    \"name\" : \"after\",\n" +
+                    "    \"type\" : [ \"null\", \"columns\" ],\n" +
+                    "    \"default\" : null\n" +
+                    "  } ]\n" +
+                    "}";
         }
         return "";
     }

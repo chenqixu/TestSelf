@@ -92,24 +92,26 @@ public class KafkaConsumerUtilTest {
     @Test
     public void pollOgg() throws Exception {
         String topic = "ogg_to_kafka";
-        String url = FileUtil.getClassResourcePath(KafkaConsumerUtilTest.class);
+//        String url = FileUtil.getClassResourcePath(KafkaConsumerUtilTest.class);
 //        String schemaStr = FileUtil.readConfFile(url + "oper_history.avsc");
-        String schemaStr = FileUtil.readConfFile(url + "syncos_100000.avsc");
-        logger.info("{}", schemaStr);
-        SchemaUtil.addSchema(topic, schemaStr);
-        Schema schema = SchemaUtil.getSchemaByTopic(topic);
+//        String schemaStr = FileUtil.readConfFile(url + "syncos_100000.avsc");
+//        logger.info("{}", schemaStr);
+//        SchemaUtil.addSchema(topic, schemaStr);
+//        Schema schema = SchemaUtil.getSchemaByTopic(topic);
+        schemaUtil = new SchemaUtil(schemaUrl);
+        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
         recordConvertor = new RecordConvertor(schema);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
         int consumerNum = 0;
         TimeCostUtil<Integer> timeCostUtil = new TimeCostUtil<>(consumerNum);
-        long limitTime = 30000;
+        long limitTime = 300000;
         while (true) {
             List<byte[]> list = kafkaConsumerUtil.poll(2000);
             for (byte[] bytes : list) {
 //                logger.info("Record：{}", new String(bytes));
                 GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-                logger.debug("genericRecord：{}", genericRecord);
+                logger.info("genericRecord：{}", genericRecord);
                 consumerNum++;
             }
             //limitTime秒检测一次，检测limitTime秒内没有变化就退出循环

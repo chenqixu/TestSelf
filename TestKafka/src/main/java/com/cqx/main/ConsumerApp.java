@@ -38,15 +38,16 @@ public class ConsumerApp {
     private void poll(String topic, String schemaUrl, String conf, String user, String pass) throws Exception {
         KafkaConsumerUtil<String, byte[]> kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, user, pass);
         try {
-            SchemaUtil schemaUtil = new SchemaUtil(schemaUrl);
-            Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
-            RecordConvertor recordConvertor = new RecordConvertor(schema);
+//            SchemaUtil schemaUtil = new SchemaUtil(schemaUrl);
+//            Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
+//            RecordConvertor recordConvertor = new RecordConvertor(schema);
             kafkaConsumerUtil.subscribe(topic);
             //只消费一次
             List<byte[]> list = kafkaConsumerUtil.poll(2000);
             for (byte[] bytes : list) {
-                GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-                logger.info("genericRecord：{}", genericRecord);
+                logger.info("Record：{}", new String(bytes));
+//                GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+//                logger.info("genericRecord：{}", genericRecord);
             }
         } finally {
             kafkaConsumerUtil.close();

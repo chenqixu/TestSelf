@@ -23,7 +23,7 @@ public class MyFileReader {
     }
 
     public void setLineSplit(String lineSplit) {
-
+        scanner.useDelimiter(lineSplit);
     }
 
     public String readLine() throws IOException {

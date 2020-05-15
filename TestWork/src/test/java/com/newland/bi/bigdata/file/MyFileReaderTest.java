@@ -4,7 +4,6 @@ import com.cqx.common.utils.file.FileMangerCenter;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
-import com.cqx.common.utils.string.StringUtil;
 import com.newland.bi.bigdata.time.TimeCostUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +45,7 @@ public class MyFileReaderTest {
             num++;
         }
         timeCostUtil.stop();
-        logger.info("num：{}，read cost：{}", num, timeCostUtil.getCost());
+        logger.info("read num：{}，read cost：{}", num, timeCostUtil.getCost());
 //        logger.info("line：" + StringUtil.byteArrayToList("\n".getBytes()));
 //        logger.info("line：" + StringUtil.byteArrayToList("\r".getBytes()));
     }
@@ -65,12 +64,14 @@ public class MyFileReaderTest {
             // \r\n 13 10  回车换行
             TimeCostUtil timeCostUtil = new TimeCostUtil();
             timeCostUtil.start();
+            int num = 0;
             for (int i = 0; i < 10; i++) {
+                num++;
                 fileMangerCenter.writeSingle("1234567890你\n");
             }
 //            fileMangerCenter.writeSingle(split + "你好");
             timeCostUtil.stop();
-            logger.info("write cost：{}", timeCostUtil.getCost());
+            logger.info("write num：{}，cost：{}", num, timeCostUtil.getCost());
         } finally {
             if (fileMangerCenter != null) fileMangerCenter.close();
         }
