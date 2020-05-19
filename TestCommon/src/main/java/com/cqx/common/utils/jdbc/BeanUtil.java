@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
  * BeanUtil
  *
  * @author chenqixu
+ * @version 2020-5-18 修复fieldsType的缺陷
  */
 public class BeanUtil implements Cloneable, Serializable {
 
@@ -21,20 +22,24 @@ public class BeanUtil implements Cloneable, Serializable {
     private LinkedHashMap properties;
     private LinkedHashMap<String, Object> fieldsMap;
     private List<String> fieldsType;
+    private List<String> fieldsName;
 
     public Object generateObject(LinkedHashMap properties) {
         this.properties = properties;
         fieldsMap = new LinkedHashMap<>();
         fieldsType = new ArrayList<>();
+        fieldsName = new ArrayList<>();
         BeanGenerator generator = new BeanGenerator();
         Set keySet = properties.keySet();
         StringBuffer sb = new StringBuffer();
         for (Iterator i = keySet.iterator(); i.hasNext(); ) {
             String key = (String) i.next();
+            String value = ((Class) properties.get(key)).getName();
             generator.addProperty(key, (Class) properties.get(key));
             String _key = key.toLowerCase();
-            fieldsMap.put(_key, "");
-            fieldsType.add(_key);
+            fieldsMap.put(_key, value);
+            fieldsType.add(value);
+            fieldsName.add(_key);
             sb.append(_key + ",");
         }
         obj = generator.create();
@@ -135,5 +140,9 @@ public class BeanUtil implements Cloneable, Serializable {
             }
         }
         return t;
+    }
+
+    public List<String> getFieldsName() {
+        return fieldsName;
     }
 }

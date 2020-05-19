@@ -27,6 +27,7 @@ public class FileMangerCenter {
     private BufferedWriter writer;
     private BufferedReader reader;
     private String lineSplit = "\n";
+    private int lineNum;
 
     public FileMangerCenter(String fileName) {
         this.fileName = fileName;
@@ -73,6 +74,7 @@ public class FileMangerCenter {
         int cnt = 1;
         while (reader.readLine() != null && lineNumber > 0 && cnt < lineNumber) {
             cnt++;
+            lineNum++;
         }
     }
 
@@ -80,13 +82,16 @@ public class FileMangerCenter {
         List<String> msg = new ArrayList<>();
         String tmp;
         while ((tmp = reader.readLine()) != null) {
+            lineNum++;
             msg.add(tmp);
         }
         return msg;
     }
 
     public String readLine() throws IOException {
-        return reader.readLine();
+        String content = reader.readLine();
+        lineNum++;
+        return content;
     }
 
     public String readByte() throws IOException {
@@ -128,5 +133,9 @@ public class FileMangerCenter {
     public void close() throws IOException {
         if (writer != null) writer.close();
         if (reader != null) reader.close();
+    }
+
+    public int getLineNum() {
+        return lineNum;
     }
 }
