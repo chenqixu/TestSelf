@@ -41,9 +41,7 @@ public class ParserSQLFile {
         fileMangerCenter.initReader();
     }
 
-    public void readAndExec() throws Exception {
-        String fields = "HOME_CITY, USER_ID, NETWORK_TYPE, CUSTOMER_ID, TYPE, SERVICE_TYPE, MSISDN, IMSI, USER_BRAND, HOME_COUNTY, CREATOR, CREATE_TIME, CREATE_SITE, SERVICE_STATUS, PASSWORD, TRANSFER_TIME, STOP_TIME, MODIFY_ID, MODIFY_SITE, MODIFY_TIME, MODIFY_CONTENT, RC_SN, RC_EXPIRE_TIME, ORDER_SEQ, BROKER_ID, HISTORY_SEQ, LOCK_FLAG, BILL_TYPE, BILL_CREDIT, BILL_TIME, EXPIRE_TIME, ARCHIVES_CREATE_TIME, PASSWORD_GET_TYPE, PASSWORD_GET_TIME, PASSWORD_RESET_TIME, SUB_TYPE";
-        String table_name = "USERS";
+    public void readAndExec(String fields, String table_name) throws Exception {
         BeanUtil beanUtil = jdbcUtil.generateBeanByTabeNameAndFields(fields.toLowerCase(), table_name);
         LinkedHashMap<String, Object> fieldsMap = beanUtil.getFieldsMap();
         logger.info("FieldsType：{}，FieldsMap：{}", beanUtil.getFieldsType(), fieldsMap);
@@ -128,6 +126,8 @@ public class ParserSQLFile {
                     queryResult.setValue(null);
                 } else {
                     try {
+                        //去掉'
+                        value = value.replace("'", "");
                         queryResult.setValue(new BigDecimal(value));
                     } catch (NumberFormatException e) {
                         logger.warn("value：{}，line：{}", value, fileMangerCenter.getLineNum());

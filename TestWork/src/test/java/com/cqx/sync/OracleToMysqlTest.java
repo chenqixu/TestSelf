@@ -51,7 +51,9 @@ public class OracleToMysqlTest {
         dbBean.setPool(false);
         oracleToMysql = new OracleToMysql(dbBean);
         String fields = oracleToMysql.getTableFields("CQX_CCS_USER");
-        logger.info("{}", fields.toLowerCase());
+        logger.info("CQX_CCS_USER：{}", fields.toLowerCase());
+        fields = oracleToMysql.getTableFields("CQX_CCS_USER");
+        logger.info("CQX_CSS_BROADBAND_RESERVATION：{}", fields.toLowerCase());
     }
 
     @Test
