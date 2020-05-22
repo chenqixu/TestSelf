@@ -64,4 +64,11 @@ public class HdfsToolTest {
         createFile();
         openFile();
     }
+
+    @Test
+    public void ls() throws Exception {
+        for (String path : hdfsTool.lsPath("/cqx/data/hbidc/20200520*/nat/*")) {
+            logger.info("path：{}", path);
+        }
+    }
 }

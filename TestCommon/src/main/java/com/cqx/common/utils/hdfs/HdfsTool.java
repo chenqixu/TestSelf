@@ -298,7 +298,9 @@ public class HdfsTool {
         List<FileStatus> fileList = new ArrayList<>();
         if (fs != null) {
             logger.info("ls：{}", path);
-            for (FileStatus fileStatus : fs.listStatus(new Path(path))) {
+            //listStatus 不支持通配符
+            //globStatus 支持通配符
+            for (FileStatus fileStatus : fs.globStatus(new Path(path))) {
                 fileList.add(fileStatus);
                 logger.info("{} {} {} {} {} {}", fileStatus.getPermission(), fileStatus.getOwner(),
                         fileStatus.getGroup(), fileStatus.isDirectory(), fileStatus.getLen(), fileStatus.getPath());
