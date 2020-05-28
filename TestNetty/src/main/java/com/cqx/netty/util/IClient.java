@@ -35,17 +35,20 @@ public class IClient<T> {
         return new IClient();
     }
 
-    public T query(Map<String, String> params) throws Exception {
+    private CountDownLatch query(Map<String, String> params, boolean isBlocking) throws Exception {
         if (!check()) throw new Exception("运行参数不满足！具体参数：" + getRunParams());
-        /**
-         * 设置同步
-         */
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = null;
+        if (isBlocking) {//是否同步
+            /**
+             * 设置同步
+             */
+            latch = new CountDownLatch(1);
+            iClientHandler.resetSync(latch);
+        }
         /**
          * 设置参数
          */
         iClientHandler.setParams(params);
-        iClientHandler.resetSync(latch);
         /**
          * 如果使用空构造，这里就会启动cpu核数两倍的线程
          * Create a new instance that uses twice as many {@link EventLoop}s as there processors/cores available
@@ -73,17 +76,33 @@ public class IClient<T> {
         } finally {
             group.shutdownGracefully().sync(); // 释放线程池资源
         }
-        /**
-         * 同步返回结果，最多允许10秒超时
-         */
-        if (latch.await(10, TimeUnit.SECONDS)) {
-            return iClientHandler.getResult();
+        if (isBlocking) {//是否同步
+            return latch;
         } else {
-            /**
-             * 超时
-             */
             return null;
         }
+    }
+
+    public void queryNoBlocking(Map<String, String> params) throws Exception {
+        query(params, false);
+    }
+
+    public T queryBlocking(Map<String, String> params) throws Exception {
+        CountDownLatch latch = query(params, true);
+        if (latch != null) {
+            /**
+             * 同步返回结果，最多允许10秒超时
+             */
+            if (latch.await(10, TimeUnit.SECONDS)) {
+                return iClientHandler.getResult();
+            } else {
+                /**
+                 * 超时
+                 */
+                return null;
+            }
+        }
+        return null;
     }
 
     private boolean check() {

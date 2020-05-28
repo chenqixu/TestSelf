@@ -85,6 +85,13 @@ public abstract class IClientHandler<T> extends SimpleChannelInboundHandler<Byte
         dealResponse(buf);
     }
 
+    /**
+     * 异常捕获处理
+     *
+     * @param ctx
+     * @param cause
+     * @throws Exception
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {

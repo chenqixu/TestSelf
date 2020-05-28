@@ -96,6 +96,13 @@
             </exclusions>
         </dependency> -->
 
+        <!-- TestNetty -->
+        <dependency>
+            <groupId>com.cqx</groupId>
+            <artifactId>TestNetty</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- avro -->
         <dependency>
             <groupId>org.apache.avro</groupId>

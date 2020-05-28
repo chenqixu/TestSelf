@@ -40,7 +40,7 @@ public class MobileboxClient {
                 });
         Map<String, String> params = new HashMap<>();
         params.put("id", "004403000003101016127868F700D901");
-        String result = iClient.query(params);
+        String result = iClient.queryBlocking(params);
         System.out.println("result：" + result);
     }
 }
