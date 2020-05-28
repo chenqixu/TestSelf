@@ -74,8 +74,8 @@ public class JDBCUtilTest {
     @Before
     public void setUp() throws Exception {
         DBBean srcdbBean;
-        srcdbBean = oracleConfig("jutap_tenant");
-//        srcdbBean = oracleConfig("jutap");
+//        srcdbBean = oracleConfig("jutap_tenant");
+        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
 //        srcdbBean = mysqlConfig("local");
         jdbcUtil = new JDBCUtil(srcdbBean);
@@ -203,7 +203,7 @@ public class JDBCUtilTest {
 
     @Test
     public void queryBlob() throws Exception {
-        List<List<QueryResult>> result = jdbcUtil.executeQuery("select fstream from extern_flowtask_cfg where id='102705423439'");
+        List<List<QueryResult>> result = jdbcUtil.executeQuery("select fstream from extern_flowtask_cfg where id='102604273664'");
         for (List<QueryResult> queryResults : result) {
             for (QueryResult queryResult : queryResults) {
                 logger.info("{}", queryResult);

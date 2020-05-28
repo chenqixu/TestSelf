@@ -4,6 +4,7 @@ import com.cqx.common.utils.file.FileMangerCenter;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
+import com.cqx.common.utils.string.StringUtil;
 import com.newland.bi.bigdata.time.TimeCostUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -36,12 +37,13 @@ public class MyFileReaderTest {
     @Test
     public void readLine() throws IOException {
         myFileReader = new MyFileReader(file_name);
+        myFileReader.setLineSplit("`\\|`\n");
         TimeCostUtil timeCostUtil = new TimeCostUtil();
         timeCostUtil.start();
         int num = 0;
         String tmp;
         while ((tmp = myFileReader.readLine()) != null) {
-//            logger.info(tmp + " " + StringUtil.byteArrayToList(tmp.getBytes()));
+            logger.info(tmp + " " + StringUtil.byteArrayToList(tmp.getBytes()));
             num++;
         }
         timeCostUtil.stop();
@@ -67,7 +69,7 @@ public class MyFileReaderTest {
             int num = 0;
             for (int i = 0; i < 10; i++) {
                 num++;
-                fileMangerCenter.writeSingle("1234567890你\n");
+                fileMangerCenter.writeSingle("1234567890你`|`\n");
             }
 //            fileMangerCenter.writeSingle(split + "你好");
             timeCostUtil.stop();

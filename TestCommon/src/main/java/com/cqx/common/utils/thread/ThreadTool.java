@@ -4,9 +4,9 @@ import com.cqx.common.utils.system.SleepUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -17,42 +17,50 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ThreadTool {
 
     private static final Logger logger = LoggerFactory.getLogger(ThreadTool.class);
-    private List<Thread> taskList = new ArrayList<>();
+    private final AtomicLong run = new AtomicLong();
+    private final AtomicLong end = new AtomicLong();
+    private Queue<Thread> task = new LinkedBlockingQueue<>();
     private int parallel_num;
+    private int scan_interval;
 
     public ThreadTool() {
-        this(5);//默认5个并发
+        this(5, 50);//默认5个并发，50毫秒的扫描间隔
     }
 
     public ThreadTool(int parallel_num) {
+        this(parallel_num, 50);//默认5个并发，50毫秒的扫描间隔
+    }
+
+    public ThreadTool(int parallel_num, int scan_interval) {
         if (parallel_num > 0) this.parallel_num = parallel_num;
+        if (scan_interval > 0) this.scan_interval = scan_interval;
     }
 
-    public void addTask(Thread thread) {
-        taskList.add(thread);
-    }
-
-    public void addTask(Runnable runnable) {
-        addTask(new Thread(runnable));
+    public void addTask(final Runnable runnable) {
+        task.add(new Thread() {
+            public void run() {
+                run.incrementAndGet();
+                runnable.run();
+                end.incrementAndGet();
+            }
+        });
     }
 
     public void startTask() {
-        final AtomicLong run = new AtomicLong();
-        final AtomicLong end = new AtomicLong();
-        while (taskList.size() > 0) {
+        while (task.size() > 0) {
             long running = run.get() - end.get();
-            logger.info("running {}，all_task：{}", running, taskList.size());
+            logger.info("running {}，all_task：{}", running, task.size());
             if (running < parallel_num) {
                 //启动5-cnt个线程
-                long start_num = parallel_num - running;
+                long enable_submit_num = parallel_num - running;
                 long s_num = 0;
-                logger.info("start_num {}", start_num);
+                logger.info("enable_submit_num {}", enable_submit_num);
                 //找到NEW的，启动它
-                Iterator<Thread> it = taskList.iterator();
+                Iterator<Thread> it = task.iterator();
                 while (it.hasNext()) {
                     Thread t = it.next();
                     if (t.getState().equals(Thread.State.NEW)) {
-                        if (s_num == start_num) break;
+                        if (s_num == enable_submit_num) break;
                         t.start();
                         s_num++;
                     } else if (t.getState().equals(Thread.State.TERMINATED)) {
@@ -60,7 +68,7 @@ public class ThreadTool {
                     }
                 }
             }
-            SleepUtil.sleepMilliSecond(50);
+            SleepUtil.sleepMilliSecond(scan_interval);
         }
     }
 }
