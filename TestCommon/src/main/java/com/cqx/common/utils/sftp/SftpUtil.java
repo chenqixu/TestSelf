@@ -230,7 +230,7 @@ public class SftpUtil {
             } catch (SftpException e) {
                 e.printStackTrace();
             }
-            timeCostUtil.end();
+            timeCostUtil.stop();
             logger.info("local_file：{}，remote_file：{}，cost：{}", local_file, remote_file, timeCostUtil.getCost());
         }
     }

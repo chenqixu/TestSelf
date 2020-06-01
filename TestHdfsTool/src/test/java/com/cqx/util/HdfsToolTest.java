@@ -147,14 +147,14 @@ public class HdfsToolTest {
                     for (int i = 0; i < 6000; i++) {
                         writeCost.start();
                         outputStream.write(sb.toString().getBytes());
-                        writeCost.end();
+                        writeCost.stop();
                         long cost = writeCost.getCost();
                         if (cost > 1) {
                             long_cost += cost;
                             logger.debug("file_cnt：{}，seq：{}，writeCost：{}", file_cnt, i, cost);
                         }
                     }
-                    allCost.end();
+                    allCost.stop();
                     long all_cost = allCost.getCost();
                     logger.info("ile_cnt：{}，cnt：{}，allCost：{}，long_cost：{}", file_cnt, cnt, all_cost, long_cost);
                 }
