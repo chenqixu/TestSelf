@@ -3,18 +3,42 @@ package com.cqx.netty.util;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
+/**
+ * 工具类
+ */
 public class Utils {
 
     private Class cls = Utils.class;
 
+    /**
+     * 通过反射创建类
+     *
+     * @param cls
+     * @param params
+     * @return
+     * @throws Exception
+     */
     public static IServerHandler genrate(Class cls, Map<String, String> params) throws Exception {
-        IServerHandler result = (IServerHandler) cls.newInstance();
-        result.setParams(params);
+        IServerHandler result;
+        String clsName = cls.getName();
+        String classSplit = "$";
+        int classSplitIndex = clsName.indexOf(classSplit);
+        if (classSplitIndex > 0) {//内部类
+            //获取父类
+            String superClsName = clsName.substring(0, classSplitIndex);
+            Class superCls = Class.forName(superClsName);
+            Object superObject = superCls.newInstance();
+            Constructor<?> constructor = cls.getDeclaredConstructor(superCls);
+            result = (IServerHandler) constructor.newInstance(superObject);
+        } else {
+            result = (IServerHandler) cls.newInstance();
+        }
+//        result.setParams(params);
         return result;
     }
 

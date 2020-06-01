@@ -5,6 +5,6 @@ package com.cqx.netty.util;
  *
  * @author chenqixu
  */
-public interface ICallBack {
-    void callBack();
+public interface ICallBack<T> {
+    void callBack(T t);
 }

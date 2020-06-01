@@ -20,15 +20,15 @@ import java.util.Map;
 public abstract class IServerHandler extends ChannelHandlerAdapter {
 
     protected static Logger logger = LoggerFactory.getLogger(IServerHandler.class);
-    private Map<String, String> params;
+//    private Map<String, String> params;
 
     public IServerHandler() {
         init();
     }
 
-    protected String getParams(String key) {
-        return this.params.get(key);
-    }
+//    protected String getParams(String key) {
+//        return this.params.get(key);
+//    }
 
     protected abstract void init();
 
@@ -82,7 +82,7 @@ public abstract class IServerHandler extends ChannelHandlerAdapter {
         // 第一种方法：写一个空的buf，并刷新写出区域。完成后关闭sock channel连接。
         ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
         //ctx.flush(); // 第二种方法：在client端关闭channel连接，这样的话，会触发两次channelReadComplete方法。
-        //ctx.flush().close().sync(); // 第三种：改成这种写法也可以，但是这中写法，没有第一种方法的好。
+        //ctx.flush().close().sync(); // 第三种：改成这种写法也可以，但是这种写法，没有第一种方法的好。
     }
 
     /***
@@ -104,7 +104,7 @@ public abstract class IServerHandler extends ChannelHandlerAdapter {
         ctx.close();
     }
 
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
+//    public void setParams(Map<String, String> params) {
+//        this.params = params;
+//    }
 }

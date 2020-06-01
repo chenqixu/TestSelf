@@ -20,10 +20,12 @@ import java.util.Map;
  */
 public class IServer {
 
-    private static Logger logger = LoggerFactory.getLogger(IServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(IServer.class);
     private int port = 0;
     private Map<String, String> params;
+    private IServerHandler iServerHandler;
     private Class cls;
+    private EventLoopGroup group;
 
     private IServer() {
     }
@@ -38,29 +40,42 @@ public class IServer {
          * 如果使用空构造，这里就会启动cpu核数两倍的线程
          * Create a new instance that uses twice as many {@link EventLoop}s as there processors/cores available
          */
-        EventLoopGroup group = new NioEventLoopGroup(1);
-        try {
-            ServerBootstrap sb = new ServerBootstrap();
-            sb.group(group) // 绑定线程池
-                    .channel(NioServerSocketChannel.class) // 指定使用的channel
-                    .localAddress(this.port)// 绑定监听端口
-                    .childHandler(new ChannelInitializer<SocketChannel>() { // 绑定客户端连接时候触发操作
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            logger.info("connected...; Client:" + ch.remoteAddress());
-                            ch.pipeline().addLast(Utils.genrate(cls, params)); // 客户端触发操作
-                        }
-                    });
-            ChannelFuture cf = sb.bind().sync(); // 服务器异步创建绑定
-            logger.info(this + " started and listen on " + cf.channel().localAddress());
-            cf.channel().closeFuture().sync(); // 关闭服务器通道
-        } finally {
-            group.shutdownGracefully().sync(); // 释放线程池资源
+        group = new NioEventLoopGroup(1);
+//        try {
+        ServerBootstrap sb = new ServerBootstrap();
+        sb.group(group) // 绑定线程池
+                .channel(NioServerSocketChannel.class) // 指定使用的channel
+                .localAddress(this.port)// 绑定监听端口
+                .childHandler(new ChannelInitializer<SocketChannel>() { // 绑定客户端连接时候触发操作
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        logger.info("connected...; Client:" + ch.remoteAddress());
+//                            ch.pipeline().addLast(Utils.genrate(cls, params)); // 客户端触发操作
+                        ch.pipeline().addLast(iServerHandler); // 客户端触发操作
+                    }
+                });
+        ChannelFuture cf = sb.bind().sync(); // 服务器异步创建绑定
+        logger.info(this + " started and listen on " + cf.channel().localAddress());
+        cf.channel().closeFuture(); // 关闭服务器通道
+//            cf.channel().closeFuture().sync(); // 关闭服务器通道
+//        } finally {
+//            group.shutdownGracefully().sync(); // 释放线程池资源
+//        }
+    }
+
+    public void close() {
+        if (group != null) {
+            try {
+                group.shutdownGracefully().sync(); // 释放线程池资源，加上sync会阻塞
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
     private boolean check() {
-        if (port > 0 && cls != null && params != null)
+//        if (port > 0 && cls != null && params != null)
+        if (port > 0)
             return true;
         return false;
     }
@@ -72,6 +87,11 @@ public class IServer {
 
     public IServer setCls(Class cls) {
         this.cls = cls;
+        return this;
+    }
+
+    public IServer setiServerHandler(IServerHandler iServerHandler) {
+        this.iServerHandler = iServerHandler;
         return this;
     }
 
