@@ -1,6 +1,6 @@
 package com.newland.bi.mobilebox.parse;
 
-import com.newland.bi.bigdata.utils.system.ClassUtil;
+import com.cqx.common.utils.system.ClassUtil;
 import com.newland.bi.mobilebox.bean.BodyInfo;
 import com.newland.bi.mobilebox.bean.HeaderInfo;
 import com.newland.bi.mobilebox.bean.MobileBoxInfo;
@@ -22,9 +22,11 @@ public class ParseFactory {
     private static Logger logger = LoggerFactory.getLogger(ParseFactory.class);
     private static Map<Integer, AbstractBodyParse> bodyParseMap = new HashMap<>();
     private static ParseFactory parseFactory = new ParseFactory();
+    private static ClassUtil classUtil = new ClassUtil();
 
     static {
-        Set<Class<?>> classSet = ClassUtil.getClassSet("com.newland.bi.mobilebox.impl");
+        Set<Class<?>> classSet = classUtil.getClassSet("com.newland.bi.mobilebox.impl",
+                com.newland.bi.mobilebox.utils.BodyImpl.class);
         for (Class<?> cls : classSet) {
             try {
                 AbstractBodyParse obj = (AbstractBodyParse) cls.newInstance();

@@ -1,13 +1,13 @@
-package com.newland.bi.bigdata.utils.system;
+package com.cqx.common.utils.system;
 
-import com.newland.bi.mobilebox.utils.BodyImpl;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -24,15 +24,25 @@ import java.util.jar.JarFile;
  */
 public class ClassUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
 
     /**
      * 获取类加载器
      *
      * @return
      */
-    public static ClassLoader getClassLoader() {
+    public ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    /**
+     * 获取当前加载类下的配置文件路径
+     *
+     * @param resourceName
+     * @return
+     */
+    public URL getResource(String resourceName) {
+        return getClassLoader().getResource(resourceName);
     }
 
     /**
@@ -44,7 +54,7 @@ public class ClassUtil {
      * @param isInitialized 为提高性能设置为false
      * @return
      */
-    public static Class<?> loadClass(String className, boolean isInitialized) {
+    public Class<?> loadClass(String className, boolean isInitialized) {
         Class<?> cls;
         try {
             cls = Class.forName(className, isInitialized, getClassLoader());
@@ -63,8 +73,8 @@ public class ClassUtil {
      * @param packageName
      * @return
      */
-    public static Set<Class<?>> getClassSet(String packageName) {
-        Set<Class<?>> classSet = new HashSet<Class<?>>();
+    public <A extends Annotation> Set<Class<?>> getClassSet(String packageName, Class<A> annotationClass) {
+        Set<Class<?>> classSet = new HashSet<>();
         try {
             Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
             while (urls.hasMoreElements()) {
@@ -76,7 +86,7 @@ public class ClassUtil {
                         String packagePath = URLDecoder.decode(url.getFile(), "UTF-8");
                         // String packagePath =url.getPath().replaceAll("%20", "");
                         // 添加
-                        addClass(classSet, packagePath, packageName);
+                        addClass(classSet, packagePath, packageName, annotationClass);
                     } else if (protocol.equals("jar")) {
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                         if (jarURLConnection != null) {
@@ -89,7 +99,7 @@ public class ClassUtil {
                                     if (jarEntryName.endsWith(".class")) {
                                         String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
                                                 .replaceAll("/", ".");
-                                        doAddClass(classSet, className);
+                                        doAddClass(classSet, className, annotationClass);
                                     }
                                 }
                             }
@@ -111,7 +121,7 @@ public class ClassUtil {
      * @param packagePath
      * @param packageName
      */
-    private static void addClass(Set<Class<?>> classSet, String packagePath, String packageName) {
+    private <A extends Annotation> void addClass(Set<Class<?>> classSet, String packagePath, String packageName, Class<A> annotationClass) {
         File[] files = new File(packagePath).listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -127,7 +137,7 @@ public class ClassUtil {
                     logger.info("className: {}", className);
                 }
                 // 添加
-                doAddClass(classSet, className);
+                doAddClass(classSet, className, annotationClass);
             } else {
                 // 子目录
                 String subPackagePath = fileName;
@@ -138,15 +148,14 @@ public class ClassUtil {
                 if (StringUtils.isNotEmpty(packageName)) {
                     subPackageName = packageName + "." + subPackageName;
                 }
-                addClass(classSet, subPackagePath, subPackageName);
+                addClass(classSet, subPackagePath, subPackageName, annotationClass);
             }
         }
     }
 
-    private static void doAddClass(Set<Class<?>> classSet, String className) {
+    private <A extends Annotation> void doAddClass(Set<Class<?>> classSet, String className, Class<A> annotationClass) {
         Class<?> cls = loadClass(className, false);
-        BodyImpl body = cls.getAnnotation(BodyImpl.class);
-        if (body != null)
-            classSet.add(cls);
+        A body = cls.getAnnotation(annotationClass);
+        if (body != null) classSet.add(cls);
     }
 }

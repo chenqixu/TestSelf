@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -227,6 +228,20 @@ public class JDBCUtilTest {
                 } finally {
                     if (is != null) is.close();
                 }
+            }
+        }
+    }
+
+    @Test
+    public void getTableMetaData() throws SQLException {
+        //元数据
+        for (QueryResult queryResult : jdbcUtil.getTableMetaData("cqx_test1")) {
+            logger.info("元数据 {}", queryResult);
+        }
+        //查询
+        for (List<QueryResult> queryResults : jdbcUtil.executeQuery("select * from cqx_test1")) {
+            for (QueryResult queryResult : queryResults) {
+                logger.info("查询 {}", queryResult);
             }
         }
     }
