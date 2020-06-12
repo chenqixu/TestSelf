@@ -1,4 +1,4 @@
-package com.cqx.jmx;
+package com.cqx.jmx.demo;
 
 public interface HelloWorldMBean {
 	String getGreeting();
@@ -7,4 +7,5 @@ public interface HelloWorldMBean {
 	boolean isPaused();
 	void pause(boolean paused);
 	String exec(String cmd);
+	int size();
 }

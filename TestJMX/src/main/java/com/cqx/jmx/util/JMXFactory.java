@@ -13,7 +13,7 @@ import java.net.InetAddress;
 import java.rmi.registry.LocateRegistry;
 
 public class JMXFactory {
-    private static Logger logger = LoggerFactory.getLogger(JMXFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(JMXFactory.class);
     private static JMXFactory jmxf = new JMXFactory();
 
     private JMXFactory() {
@@ -45,12 +45,12 @@ public class JMXFactory {
 
                 LocateRegistry.createRegistry(rmiPort);
                 String ip = InetAddress.getLocalHost().getHostAddress();
-                JMXServiceURL url = new JMXServiceURL(
-                        "service:jmx:rmi:///jndi/rmi://" + ip + ":" + rmiPort + "/" + objectname + "MBean");
+                String sUrl = "service:jmx:rmi:///jndi/rmi://" + ip + ":" + rmiPort + "/" + objectname + "MBean";
+                JMXServiceURL url = new JMXServiceURL(sUrl);
                 JMXConnectorServer jmxConnector = JMXConnectorServerFactory
                         .newJMXConnectorServer(url, null, mbs);
                 jmxConnector.start();
-                logger.info("[" + objectname + "] jmx is start.");
+                logger.info("[{}] jmx [{}] is start.",objectname,sUrl);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

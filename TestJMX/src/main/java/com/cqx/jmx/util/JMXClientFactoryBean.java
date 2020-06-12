@@ -1,4 +1,4 @@
-package com.cqx.jmx;
+package com.cqx.jmx.util;
 
 /**
  * JMXClientFactoryBean

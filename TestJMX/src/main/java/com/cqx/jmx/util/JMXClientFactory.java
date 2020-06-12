@@ -1,6 +1,5 @@
 package com.cqx.jmx.util;
 
-import com.cqx.jmx.JMXClientFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,7 @@ public class JMXClientFactory {
     public static final String MBEAN = "MBean";
     public static final String MBEAN_NAME = "MBean:name=";
     public static final String RMI = "service:jmx:rmi:///jndi/rmi://";
-    private static Logger logger = LoggerFactory.getLogger(JMXClientFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(JMXClientFactory.class);
     private static JMXClientFactory jmxcf = new JMXClientFactory();
     private static Map<JMXClientFactoryBean, JMXClientUtil> clientUtilMap = new HashMap<>();
 

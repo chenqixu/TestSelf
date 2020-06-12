@@ -1,4 +1,4 @@
-package com.cqx.jmx;
+package com.cqx.jmx.demo;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -15,12 +15,17 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.jmx.util.JMXFactory;
 import com.sun.jdmk.comm.HtmlAdaptorServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HelloAgent
 // implements NotificationListener
 {
+
+    private static final Logger logger = LoggerFactory.getLogger(HelloAgent.class);
 	// private MBeanServer mbs;
 	// @Override
 	// public void handleNotification(Notification notification, Object
@@ -53,7 +58,7 @@ public class HelloAgent
 	// System.out.println(" hello agent is running");
 	// HelloAgent agent = new HelloAgent();
 	// }
-	
+
 	public void agentStart() throws Exception {
 		// 下面这种方式不能再JConsole中使用
 		// MBeanServer server = MBeanServerFactory.createMBeanServer();
@@ -87,14 +92,26 @@ public class HelloAgent
 				.newJMXConnectorServer(url, null, mbs);
 		jmxConnector.start();
 	}
-	
+
 	public static void start() {
-		JMXFactory.startJMX("HelloWorld", new HelloWorld());
+        HelloWorld helloWorld = new HelloWorld();
+        final CacheBean cacheBean = new CacheBean();
+        cacheBean.init();
+        helloWorld.setCacheBean(cacheBean);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    SleepUtil.sleepMilliSecond(10000);//10秒刷一次
+                    cacheBean.reflush();
+                    logger.info("reflush……");
+                }
+            }
+        }).start();
+		JMXFactory.startJMX("HelloWorld", helloWorld);
 	}
-	
-	public static void main(String[] args) throws MalformedObjectNameException,
-			NotCompliantMBeanException, InstanceAlreadyExistsException,
-			MBeanRegistrationException, IOException {
+
+	public static void main(String[] args) {
 		start();
 	}
 }

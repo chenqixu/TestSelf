@@ -1,4 +1,4 @@
-package com.cqx.jmx;
+package com.cqx.jmx.demo;
 
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;

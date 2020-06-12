@@ -1,8 +1,9 @@
-package com.cqx.jmx;
+package com.cqx.jmx.demo;
 
 public class HelloWorld implements HelloWorldMBean {
     private String greeting;
     private boolean paused;
+    private CacheBean cacheBean;
 
     public HelloWorld(String greeting) {
         this.greeting = greeting;
@@ -41,5 +42,14 @@ public class HelloWorld implements HelloWorldMBean {
     public String exec(String cmd) {
         System.out.println("exec " + cmd);
         return "success";
+    }
+
+    @Override
+    public int size() {
+        return cacheBean == null ? 0 : cacheBean.size();
+    }
+
+    public void setCacheBean(CacheBean cacheBean) {
+        this.cacheBean = cacheBean;
     }
 }
