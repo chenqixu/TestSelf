@@ -1,5 +1,6 @@
 package com.cqx.common.utils.file;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,4 +31,6 @@ public abstract class FileCount implements IFileRead {
         count.put(name, cnt);
         return cnt;
     }
+
+    public void tearDown() throws IOException {}
 }

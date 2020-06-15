@@ -323,6 +323,8 @@ public class FileUtil {
         while ((_tmp = reader.readLine()) != null) {
             iFileRead.run(_tmp);
         }
+        //结束
+        iFileRead.tearDown();
     }
 
     public void read(IFileRead iFileRead, int threadNum) throws IOException {

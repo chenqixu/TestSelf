@@ -51,6 +51,11 @@ public class FileUtilTest {
                 public void run(String content) throws IOException {
                     logger.info(content);
                 }
+
+                @Override
+                public void tearDown() throws IOException {
+
+                }
             }, 3);
         } finally {
             fileUtil.closeRead();

@@ -1,5 +1,6 @@
 package com.cqx.common.utils.file;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,4 +23,6 @@ public abstract class FileResult<T> extends FileCount {
     protected void clearFileresult() {
         fileresult.clear();
     }
+
+    public void tearDown() throws IOException {}
 }

@@ -1,7 +1,7 @@
 package com.cqx.common.utils.system;
 
+import com.cqx.common.utils.file.FileCount;
 import com.cqx.common.utils.file.FileUtil;
-import com.cqx.common.utils.file.IFileRead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +53,9 @@ public class JarUtil {
                     logger.info("{}", is);
                     FileUtil fileUtil = new FileUtil();
                     fileUtil.setReader(is);
-                    fileUtil.read(new IFileRead() {
+                    fileUtil.read(new FileCount() {
                         @Override
-                        public void run(String content) throws IOException {
+                        public void run(String content) {
                             logger.info("{}", content);
                         }
                     });
