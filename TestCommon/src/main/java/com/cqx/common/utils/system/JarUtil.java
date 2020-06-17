@@ -1,6 +1,6 @@
 package com.cqx.common.utils.system;
 
-import com.cqx.common.utils.file.FileCount;
+import com.cqx.common.utils.file.FileResult;
 import com.cqx.common.utils.file.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +30,12 @@ public class JarUtil {
      * @param file 传入一个.jar文件,获取.jar文件对象实体
      * @return
      */
-    public static void loadJar(File file) throws IOException, ClassNotFoundException {
+    public static Map<String, List<String>> loadJar(File file) throws IOException, ClassNotFoundException {
         JarFile jarFile = null;
+        Map<String, List<String>> codeMap = new HashMap<>();
         try {
             if (file == null)
-                return;
+                return null;
             URLClassLoader loader = new URLClassLoader(new URL[]{new URL(
                     "file:" + file.getAbsolutePath())}, Thread.currentThread().getContextClassLoader());
             jarFile = new JarFile(file);
@@ -50,22 +51,24 @@ public class JarUtil {
                     jarClasses.put(clzname, clz);
                 } else if (jar.endsWith(".java")) {
                     InputStream is = loader.getResourceAsStream(jar);
-                    logger.info("{}", is);
+//                    logger.info("{}", jar);
                     FileUtil fileUtil = new FileUtil();
                     fileUtil.setReader(is);
-                    fileUtil.read(new FileCount() {
+                    FileResult<String> fileResult = new FileResult<String>() {
                         @Override
-                        public void run(String content) {
-                            logger.info("{}", content);
+                        public void run(String content) throws IOException {
+                            addFileresult(content);
                         }
-                    });
+                    };
+                    fileUtil.read(fileResult);
                     fileUtil.closeRead();
-                    break;
+                    codeMap.put(jar, fileResult.getFileresult());
                 }
             }
         } finally {
             if (jarFile != null) jarFile.close();
         }
+        return codeMap;
     }
 
     /**

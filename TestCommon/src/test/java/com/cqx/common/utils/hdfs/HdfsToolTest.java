@@ -2,12 +2,14 @@ package com.cqx.common.utils.hdfs;
 
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
+import com.cqx.common.utils.system.TimeUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class HdfsToolTest {
 
@@ -67,7 +69,20 @@ public class HdfsToolTest {
 
     @Test
     public void ls() throws Exception {
-        for (String path : hdfsTool.lsPath("/cqx/data/hbidc/20200520*/nat/*")) {
+        String scan_path = "hdfs://master75/user/bdoc/20/services/hdfs/17/yz/bigdata/if_upload_hb_netlog/[date:yyyyMMddHHmmss]/[type]/[content]";
+//        scan_path = "hdfs://master75/user/bdoc/20/services/hdfs/17/yz/bigdata/if_upload_hb_netlog/[date:yyyyMMddHHmmss]/nat/[content]";
+        //按[切割，找到]，把内容截取出来
+        String[] arr = scan_path.split("/", -1);
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].startsWith("[")) {
+                int index = arr[i].indexOf("]");
+                String param = arr[i].substring(1, index);
+                logger.info("i：{}，param：{}", i, param);
+                scan_path = scan_path.replace("[" + param + "]", "*");
+            }
+        }
+        logger.info("scan_path：{}", scan_path);
+        for (String path : hdfsTool.lsPath(scan_path)) {
             logger.info("path：{}", path);
         }
     }

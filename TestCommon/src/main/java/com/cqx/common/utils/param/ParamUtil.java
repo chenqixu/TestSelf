@@ -70,7 +70,7 @@ public class ParamUtil {
                 setter.invoke(t, key_value);
                 if (t instanceof BaseBean) {
                     String desc = fieldDesc.get(key);
-                    if (desc != null) ((BaseBean) t).setBeanDesc(desc, map.get(key));
+                    if (desc != null) ((BaseBean) t).setBeanDesc(desc, key_value.toString());
                 }
             }
         }
