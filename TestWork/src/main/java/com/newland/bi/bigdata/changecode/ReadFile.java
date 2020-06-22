@@ -2,8 +2,6 @@ package com.newland.bi.bigdata.changecode;
 
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
-
-
 import org.apache.commons.lang3.StringUtils;
 import org.mozilla.universalchardet.UniversalDetector;
 
@@ -18,6 +16,40 @@ public class ReadFile {
 
     public ReadFile() {
         cc = new ChangeCode();
+    }
+
+    public static void main(String[] args) throws Exception {
+        ReadFile readFile = new ReadFile();
+        //===============================
+        //获取文件编码
+//        String[] charsetpath_arr = {
+//                "D:/Document/Workspaces/Git/TestSelf/TestSpring/src/main/java/com/spring/printSystemProperties/servlet/GetDBConnServlet.java",
+//                "D:/Document/Workspaces/Git/TestSelf/TestWork/src/main/java/com/newland/bi/bigdata/changecode/ReadFile.java",
+//                "D:/Document/Workspaces/Git/TestSelf/TestFrameForm/src/main/java/mainForm.java",
+//                "D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\java\\com\\main\\MRSearchMain.java"
+//        };
+//        for (String charsetpath : charsetpath_arr) {
+//            readFile.getCharset(charsetpath);
+//        }
+        //===============================
+        //获取扫描的文件，进行编码转换
+//        String scanPath = "D:\\Document\\Workspaces\\Git\\ProjectAcc\\ProjectAccSvc\\src\\main\\java";
+//        scanPath = "D:\\Document\\Workspaces\\Git\\TestGame\\Tetris\\src\\main\\java";
+//        String scanRule = ".*\\.java";
+//        String readCode = "GBK";
+//        String writeCode = "UTF-8";
+//        readFile.getAllFileAndChangeCode(scanPath, scanRule, readCode, writeCode);
+        //===============================
+        //强制修改文件编码，从GBK改成UTF-8
+//        String[] path_arr = {
+//                "D:\\Document\\Workspaces\\Git\\TestGame\\Tetris\\src\\main\\java\\com\\cqx\\tetris\\block\\OBlock.java",
+//                "D:\\Document\\Workspaces\\Git\\TestGame\\Tetris\\src\\main\\java\\com\\cqx\\tetris\\block\\TBlock.java",
+//                "D:\\Document\\Workspaces\\Git\\TestGame\\Tetris\\src\\main\\java\\com\\cqx\\tetris\\block\\Z1Block.java",
+//                "D:\\Document\\Workspaces\\Git\\TestGame\\Tetris\\src\\main\\java\\com\\cqx\\tetris\\block\\ZBlock.java"
+//        };
+//        for (String path : path_arr) {
+//            readFile.changeFileCodeFormGBKToUTF8Force(path);
+//        }
     }
 
     /**
@@ -143,18 +175,5 @@ public class ReadFile {
                 logger.info("path：{}，encode：{} ", path, encode);
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        ReadFile readFile = new ReadFile();
-//        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestSpring/src/main/java/com/spring/printSystemProperties/servlet/GetDBConnServlet.java");
-//        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestWork/src/main/java/com/newland/bi/bigdata/changecode/ReadFile.java");
-//        readFile.getCharset("D:/Document/Workspaces/Git/TestSelf/TestFrameForm/src/main/java/mainForm.java");
-//        readFile.getCharset("D:\\Document\\Workspaces\\Git\\TestSelf\\TestMR\\src\\main\\java\\com\\main\\MRSearchMain.java");
-        readFile.getAllFileAndChangeCode("D:\\Document\\Workspaces\\Git\\ProjectAcc\\ProjectAccSvc\\src\\main\\java", ".*\\.java", "GBK", "UTF-8");
-
-//        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\HelloService.java");
-//        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\PathRest.java");
-//        readFile.changeFileCodeFormGBKToUTF8Force("D:\\Document\\Workspaces\\Git\\TestSelf\\TestJersey2X\\src\\main\\java\\com\\cqx\\jersey\\PathRest.java");
     }
 }

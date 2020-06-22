@@ -16,8 +16,9 @@ public class MyFileReaderTest {
 
     private static final MyLogger logger = MyLoggerFactory.getLogger(MyFileReaderTest.class);
     private MyFileReader myFileReader;
-    private String file_name = "d:\\tmp\\data\\syncos\\2.txt";
+    //    private String file_name = "d:\\tmp\\data\\syncos\\2.txt";
 //    private String file_name = "d:\\tmp\\data\\jk\\jk1.data";
+    private String file_name = "d:/tmp/logs/123.txt";
 
     @Before
     public void setUp() throws Exception {
@@ -43,7 +44,7 @@ public class MyFileReaderTest {
         int num = 0;
         String tmp;
         while ((tmp = myFileReader.readLine()) != null) {
-            logger.info(tmp + " " + StringUtil.byteArrayToList(tmp.getBytes()));
+            logger.info(tmp + " " + StringUtil.byteArrayToList(tmp.getBytes()) + " " + tmp.length());
             num++;
         }
         timeCostUtil.stop();

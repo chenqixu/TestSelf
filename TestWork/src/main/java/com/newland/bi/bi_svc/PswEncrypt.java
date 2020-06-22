@@ -127,6 +127,7 @@ public class PswEncrypt {
         if (args.length == 2) {
             String user_id = args[0];
             String passwd = args[1];
+            System.out.println(String.format("args[0]: %s, args[1]: %s", user_id, passwd));
             System.out.println(synenc.MD5PswEncrypt(passwd, user_id));
         } else {
             System.out.println("please input user_id & passwd");

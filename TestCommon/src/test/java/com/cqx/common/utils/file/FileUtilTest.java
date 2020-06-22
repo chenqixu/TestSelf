@@ -19,12 +19,17 @@ public class FileUtilTest {
 
     @org.junit.Test
     public void write() throws Exception {
+        String filename = "d:/tmp/logs/123.txt";
         // open file
-        fileUtil.createFile("d:/tmp/logs/123.txt", "GBK");
-        // test write
-        fileUtil.write("123", 1, 2);
-        // close
-        fileUtil.closeWrite();
+//        fileUtil.createFile(filename, "GBK");
+//        // test write
+//        fileUtil.write("移动");
+//        // close
+//        fileUtil.closeWrite();
+        for (String str : fileUtil.read(filename, "UTF-8")) {
+            logger.info("{}", str.length());
+        }
+        fileUtil.closeRead();
     }
 
     @Test

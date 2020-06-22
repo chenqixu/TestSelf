@@ -16,7 +16,7 @@ public class PortTest {
     static String user = "edc_base";
     static String pwd = "AkDXk0&d";
     static String filepath = "/home/edc_base/";
-    static String filename = "*.sh";
+    static String filename = "P9961420200618??????.AVL";
     int ftpPort = 21;
     int timeout = 120000;
     String contorlCharset = null;
@@ -28,6 +28,8 @@ public class PortTest {
             pwd = args[2];
             filepath = args[3];
             filename = args[4];
+            new PortTest().edtFtp();
+        } else {
             new PortTest().edtFtp();
         }
     }
@@ -90,11 +92,11 @@ public class PortTest {
             }
 //            String[] files = client.dir(filepath);
             client.chdir(filepath);
-            com.enterprisedt.net.ftp.FTPFile[] files = client.dirDetails(filename);
+            com.enterprisedt.net.ftp.FTPFile[] files = client.dirDetails(filepath + filename);
             int count = 0;
 //            for (String file : files) {
             for (com.enterprisedt.net.ftp.FTPFile file : files) {
-                System.out.println(file);
+                System.out.println("扫描到："+file);
                 count++;
                 if (count > 5) break;
             }

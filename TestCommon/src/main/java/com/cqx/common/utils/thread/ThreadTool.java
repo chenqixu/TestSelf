@@ -64,6 +64,7 @@ public class ThreadTool {
                         t.start();
                         s_num++;
                     } else if (t.getState().equals(Thread.State.TERMINATED)) {
+                        //完成才会移除，所以这里已经实现了join过程
                         it.remove();
                     }
                 }
