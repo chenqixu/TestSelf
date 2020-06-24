@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ParamUtil {
 
-    public static final String CLASS = "class";
+    private static final String CLASS = "class";
 
     /**
      * 日志打印
@@ -35,7 +35,7 @@ public class ParamUtil {
         }
     }
 
-    public <T> T setValueByMap(Map<String, String> map, Class<T> cls) throws Exception {
+    public static <T> T setValueByMap(Map<String, String> map, Class<T> cls) throws Exception {
         if (map == null) throw new NullPointerException("输入参数Map为空");
         Map<String, String> fieldDesc = new HashMap<>();
         T t = cls.newInstance();

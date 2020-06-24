@@ -415,10 +415,15 @@ public class FileUtil {
         return sublist;
     }
 
-    public void createFile(String filename, String write_code)
+    public void createFile(String filename, String write_code, boolean append)
             throws FileNotFoundException, UnsupportedEncodingException {
         File writeFile = new File(filename);
-        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile), write_code));
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile, append), write_code));
+    }
+
+    public void createFile(String filename, String write_code)
+            throws FileNotFoundException, UnsupportedEncodingException {
+        createFile(filename, write_code, false);
     }
 
     public void write(String str) {

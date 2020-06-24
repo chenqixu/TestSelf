@@ -2,10 +2,15 @@ package com.cqx.common.utils.file;
 
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
+import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.common.utils.thread.ThreadTool;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FileUtilTest {
 
@@ -65,5 +70,39 @@ public class FileUtilTest {
         } finally {
             fileUtil.closeRead();
         }
+    }
+
+    @Test
+    public void createFile() throws FileNotFoundException, UnsupportedEncodingException {
+        //多个同时写
+        ThreadTool threadTool = new ThreadTool();
+        final AtomicInteger atomicInteger = new AtomicInteger();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                FileUtil fileUtil = new FileUtil();
+                String filename = "d:/tmp/logs/test.log";
+                int cnt = 0;
+                int ai = atomicInteger.getAndIncrement();
+                try {
+                    // open file
+                    fileUtil.createFile(filename, "UTF-8", true);
+                    while (cnt < 1000) {
+                        fileUtil.write(String.format("[%s]你好1234567890\r\n", ai));
+                        cnt++;
+                        SleepUtil.sleepMilliSecond(5);
+                    }
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                } finally {
+                    // close
+                    fileUtil.closeWrite();
+                }
+            }
+        };
+        threadTool.addTask(runnable);
+        threadTool.addTask(runnable);
+        threadTool.addTask(runnable);
+        threadTool.startTask();
     }
 }
