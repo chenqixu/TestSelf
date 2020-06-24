@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -124,4 +125,20 @@ public class TimeUtil {
         return simpleDateFormat.format(new Date());
     }
 
+    /**
+     * 时间偏移操作
+     *
+     * @param type
+     * @param devtiation
+     * @param format
+     * @return
+     */
+    public static String devtiation(int type, int devtiation, String format) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(type, -1 * devtiation);
+        Date add = calendar.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(add);
+    }
 }
