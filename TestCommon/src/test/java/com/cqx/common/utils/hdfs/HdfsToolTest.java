@@ -32,6 +32,7 @@ public class HdfsToolTest {
 
     @Test
     public void createFile() throws Exception {
+        //欧元测试
         try (OutputStream os = hdfsTool.createFile("/cqx/data/ouyuan")) {
 //            os.write("€".getBytes(StandardCharsets.UTF_8));
             os.write("\u20AC".getBytes(StandardCharsets.UTF_8));

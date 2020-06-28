@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 public class MyFileReaderTest {
 
@@ -78,5 +79,30 @@ public class MyFileReaderTest {
         } finally {
             if (fileMangerCenter != null) fileMangerCenter.close();
         }
+    }
+
+    @Test
+    public void readOuYuan() throws Exception {
+        String name = "d:\\tmp\\data\\hblog\\zrr.dat";//sun.nio.cs.ext.MS936
+        FileMangerCenter fileMangerCenter = null;
+
+        for (Charset charset : Charset.availableCharsets().values()) {
+            try {
+                fileMangerCenter = new FileMangerCenter(name);
+                fileMangerCenter.initReader(charset);
+                String msg = fileMangerCenter.readByte();
+                logger.info("{}，{}：{}", charset, charset.getClass().getName(), msg);
+            } finally {
+                if (fileMangerCenter != null) fileMangerCenter.close();
+            }
+        }
+
+//        Set names = Charset.availableCharsets().keySet();
+//        for (Iterator iter = names.iterator(); iter.hasNext(); ) {
+//            String charsetName = (String) iter.next();
+//            if (Charset.isSupported(charsetName)) {
+//                System.out.println(charsetName);
+//            }
+//        }
     }
 }

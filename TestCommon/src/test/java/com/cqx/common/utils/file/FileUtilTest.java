@@ -105,4 +105,42 @@ public class FileUtilTest {
         threadTool.addTask(runnable);
         threadTool.startTask();
     }
+
+    @Test
+    public void readOuYuanFile() throws Exception {
+        try {
+            fileUtil.setReader("d:\\tmp\\data\\hblog\\zrr.dat", "x-mswin-936");
+            fileUtil.read(new FileResult() {
+                int cnt = 0;
+
+                @Override
+                public void run(String content) throws IOException {
+                    cnt++;
+                    if (cnt < 10) logger.info("{}：{}", "zrr.dat", content);
+                }
+            });
+        } finally {
+            fileUtil.closeRead();
+        }
+//        fileUtil.createFile("d:\\tmp\\data\\hblog\\zrr.dat1", "GB18030");
+//        try {
+//            fileUtil.write("€12345你好" + "\r\n");
+//        } finally {
+//            fileUtil.closeWrite();
+//        }
+//        try {
+//            fileUtil.setReader("d:\\tmp\\data\\hblog\\zrr.dat1", "GB18030");
+//            fileUtil.read(new FileResult() {
+//                int cnt = 0;
+//
+//                @Override
+//                public void run(String content) throws IOException {
+//                    cnt++;
+//                    if (cnt < 10) logger.info("{}：{}", "zrr.dat1", content);
+//                }
+//            });
+//        } finally {
+//            fileUtil.closeRead();
+//        }
+    }
 }

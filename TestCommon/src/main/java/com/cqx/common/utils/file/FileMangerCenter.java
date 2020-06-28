@@ -4,6 +4,7 @@ import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class FileMangerCenter {
     private BufferedReader reader;
     private String lineSplit = "\n";
     private int lineNum;
+    private Charset readCharset = StandardCharsets.UTF_8;
 
     public FileMangerCenter(String fileName) {
         this.fileName = fileName;
@@ -45,8 +47,13 @@ public class FileMangerCenter {
     }
 
     public void initReader() throws IOException {
+        initReader(readCharset);
+    }
+
+    public void initReader(Charset code) throws IOException {
         File file = new File(fileName);
-        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), code));
+        this.readCharset = code;
     }
 
     public void writeSingle(String msg) throws IOException {
@@ -126,6 +133,7 @@ public class FileMangerCenter {
         if (flag) {
             char[] new_cache = new char[num];
             System.arraycopy(cache, 0, new_cache, 0, num);
+//            return new String(String.valueOf(new_cache).getBytes(), this.readCharset);
             return String.valueOf(new_cache);
         } else return null;
     }
