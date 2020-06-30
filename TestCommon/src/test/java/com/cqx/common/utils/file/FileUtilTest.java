@@ -108,20 +108,66 @@ public class FileUtilTest {
 
     @Test
     public void readOuYuanFile() throws Exception {
+//        try {
+//            fileUtil.setReader("d:\\tmp\\data\\hblog\\zrr.dat", "x-mswin-936");
+//            fileUtil.read(new FileResult() {
+//                int cnt = 0;
+//
+//                @Override
+//                public void run(String content) throws IOException {
+//                    cnt++;
+//                    if (cnt < 10) logger.info("{}：{}", "zrr.dat", content);
+//                }
+//            });
+//        } finally {
+//            fileUtil.closeRead();
+//        }
+
         try {
-            fileUtil.setReader("d:\\tmp\\data\\hblog\\zrr.dat", "x-mswin-936");
+            fileUtil.setReader("D:\\tmp\\data\\P9963520200618000001.AVL", "GBK");
             fileUtil.read(new FileResult() {
                 int cnt = 0;
 
                 @Override
                 public void run(String content) throws IOException {
                     cnt++;
-                    if (cnt < 10) logger.info("{}：{}", "zrr.dat", content);
+                    if (cnt < 10) logger.info("{}，{}", content.length(), content);
                 }
             });
         } finally {
             fileUtil.closeRead();
         }
+
+        try {
+            fileUtil.setReader("D:\\tmp\\data\\P9963520200618000002.AVL", "UTF-8");
+            fileUtil.read(new FileResult() {
+                int cnt = 0;
+
+                @Override
+                public void run(String content) throws IOException {
+                    cnt++;
+                    if (cnt < 10) logger.info("{}，{}", content.length(), content);
+                }
+            });
+        } finally {
+            fileUtil.closeRead();
+        }
+
+        try {
+            fileUtil.setReader("D:\\tmp\\data\\P9963520200618000003.AVL", "GBK");
+            fileUtil.read(new FileResult() {
+                int cnt = 0;
+
+                @Override
+                public void run(String content) throws IOException {
+                    cnt++;
+                    if (cnt < 10) logger.info("{}，{}", content.length(), content);
+                }
+            });
+        } finally {
+            fileUtil.closeRead();
+        }
+
 //        fileUtil.createFile("d:\\tmp\\data\\hblog\\zrr.dat1", "GB18030");
 //        try {
 //            fileUtil.write("€12345你好" + "\r\n");

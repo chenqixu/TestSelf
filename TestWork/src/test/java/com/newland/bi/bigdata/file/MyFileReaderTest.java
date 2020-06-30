@@ -90,7 +90,7 @@ public class MyFileReaderTest {
             try {
                 fileMangerCenter = new FileMangerCenter(name);
                 fileMangerCenter.initReader(charset);
-                String msg = fileMangerCenter.readByte();
+                String msg = fileMangerCenter.readLine();
                 logger.info("{}，{}：{}", charset, charset.getClass().getName(), msg);
             } finally {
                 if (fileMangerCenter != null) fileMangerCenter.close();
