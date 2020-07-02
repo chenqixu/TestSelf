@@ -90,15 +90,39 @@ public class JobBuilder {
     /**
      * 创建任务
      *
-     * @param jobClass
-     * @param jarName
+     * @param jobClass 运行任务的主类
+     * @return
+     * @throws IOException
+     */
+    public JobBuilder buildJob(Class jobClass) throws IOException {
+        return buildJob(jobClass, jobClass.getName(), null);
+    }
+
+    /**
+     * 创建任务
+     *
+     * @param jobClass 运行任务的主类
+     * @param jarName  如果是window系统，需要设置jar，测试了linux不需要
      * @return
      * @throws IOException
      */
     public JobBuilder buildJob(Class jobClass, String jarName) throws IOException {
+        return buildJob(jobClass, jobClass.getName(), jarName);
+    }
+
+    /**
+     * 创建任务
+     *
+     * @param jobClass 运行任务的主类
+     * @param jobName  任务名称
+     * @param jarName  如果是window系统，需要设置jar，测试了linux不需要
+     * @return
+     * @throws IOException
+     */
+    public JobBuilder buildJob(Class jobClass, String jobName, String jarName) throws IOException {
         if (configuration != null && jobClass != null) {
             //创建任务
-            job = Job.getInstance(configuration, jobClass.getName());
+            job = Job.getInstance(configuration, jobName);
             job.setJarByClass(jobClass);
             //如果是window系统，需要设置jar，测试了linux不需要
             if (hdfsTool.isWindow() && jarName != null && jarName.length() > 0)

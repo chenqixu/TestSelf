@@ -1,18 +1,8 @@
 package org.apache.hadoop.io.nativeio;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.google.common.annotations.VisibleForTesting;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
@@ -21,14 +11,17 @@ import org.apache.hadoop.fs.HardLink;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.SecureIOUtils.AlreadyExistsException;
 import org.apache.hadoop.util.NativeCodeLoader;
-import org.apache.hadoop.util.Shell;
 import org.apache.hadoop.util.PerformanceAdvisory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.apache.hadoop.util.Shell;
 import sun.misc.Unsafe;
 
-import com.google.common.annotations.VisibleForTesting;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * JNI wrappers for various native IO-related calls not available in Java.
@@ -126,7 +119,7 @@ public class NativeIO {
             public void posixFadviseIfPossible(String identifier,
                                                FileDescriptor fd, long offset, long len, int flags)
                     throws NativeIOException {
-                NativeIO.POSIX.posixFadviseIfPossible(identifier, fd, offset,
+                POSIX.posixFadviseIfPossible(identifier, fd, offset,
                         len, flags);
             }
 
@@ -723,15 +716,15 @@ public class NativeIO {
             // shares delete permission on the file opened, and set it to the
             // given offset.
             //
-            FileDescriptor fd = NativeIO.Windows.createFile(
+            FileDescriptor fd = Windows.createFile(
                     f.getAbsolutePath(),
-                    NativeIO.Windows.GENERIC_READ,
-                    NativeIO.Windows.FILE_SHARE_READ |
-                            NativeIO.Windows.FILE_SHARE_WRITE |
-                            NativeIO.Windows.FILE_SHARE_DELETE,
-                    NativeIO.Windows.OPEN_EXISTING);
+                    Windows.GENERIC_READ,
+                    Windows.FILE_SHARE_READ |
+                            Windows.FILE_SHARE_WRITE |
+                            Windows.FILE_SHARE_DELETE,
+                    Windows.OPEN_EXISTING);
             if (seekOffset > 0)
-                NativeIO.Windows.setFilePointer(fd, seekOffset, NativeIO.Windows.FILE_BEGIN);
+                Windows.setFilePointer(fd, seekOffset, Windows.FILE_BEGIN);
             return new FileInputStream(fd);
         }
     }
@@ -749,9 +742,9 @@ public class NativeIO {
         if (!Shell.WINDOWS) {
             // Use the native wrapper around open(2)
             try {
-                FileDescriptor fd = NativeIO.POSIX.open(f.getAbsolutePath(),
-                        NativeIO.POSIX.O_WRONLY | NativeIO.POSIX.O_CREAT
-                                | NativeIO.POSIX.O_EXCL, permissions);
+                FileDescriptor fd = POSIX.open(f.getAbsolutePath(),
+                        POSIX.O_WRONLY | POSIX.O_CREAT
+                                | POSIX.O_EXCL, permissions);
                 return new FileOutputStream(fd);
             } catch (NativeIOException nioe) {
                 if (nioe.getErrno() == Errno.EEXIST) {
@@ -762,13 +755,13 @@ public class NativeIO {
         } else {
             // Use the Windows native APIs to create equivalent FileOutputStream
             try {
-                FileDescriptor fd = NativeIO.Windows.createFile(f.getCanonicalPath(),
-                        NativeIO.Windows.GENERIC_WRITE,
-                        NativeIO.Windows.FILE_SHARE_DELETE
-                                | NativeIO.Windows.FILE_SHARE_READ
-                                | NativeIO.Windows.FILE_SHARE_WRITE,
-                        NativeIO.Windows.CREATE_NEW);
-                NativeIO.POSIX.chmod(f.getCanonicalPath(), permissions);
+                FileDescriptor fd = Windows.createFile(f.getCanonicalPath(),
+                        Windows.GENERIC_WRITE,
+                        Windows.FILE_SHARE_DELETE
+                                | Windows.FILE_SHARE_READ
+                                | Windows.FILE_SHARE_WRITE,
+                        Windows.CREATE_NEW);
+                POSIX.chmod(f.getCanonicalPath(), permissions);
                 return new FileOutputStream(fd);
             } catch (NativeIOException nioe) {
                 if (nioe.getErrorCode() == 80) {
