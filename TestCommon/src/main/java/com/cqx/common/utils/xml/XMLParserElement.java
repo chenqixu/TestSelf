@@ -84,6 +84,19 @@ public class XMLParserElement {
         return sb.toString();
     }
 
+    /**
+     * 通过ID获取对应属性的内容
+     *
+     * @param id
+     * @return
+     */
+    public String getAttributeValueByID(String id) {
+        for (XMLParserAttribute xmlParserAttribute : this.attributeList) {
+            if (xmlParserAttribute.getAttributeName().equals(id)) return xmlParserAttribute.getAttributeValue();
+        }
+        return null;
+    }
+
     public String getElementName() {
         return elementName;
     }

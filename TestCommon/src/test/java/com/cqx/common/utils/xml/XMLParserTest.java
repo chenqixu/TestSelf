@@ -5,7 +5,9 @@ import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class XMLParserTest {
 
@@ -19,13 +21,27 @@ public class XMLParserTest {
 
     @Test
     public void xmlParser() throws Exception {
+        Map<String, Map<String, String>> params = new HashMap<>();
         xmlParser.setFileName("d:\\Work\\ETL\\天空\\组件脚本调用\\101169491131\\node297342823.xml");
         xmlParser.init();
         List<XMLParserElement> actionList = xmlParser.parseRootChildElement("action");
         List<XMLParserElement> dogList = xmlParser.getChildElement(actionList, "dog");
         for (XMLParserElement xmlParserElement : dogList) {
-            logger.info("xml：{}", xmlParserElement.toXml());
+            String id = xmlParserElement.getAttributeValueByID("id");
+            logger.info("id：{}，xml：{}", id, xmlParserElement.toXml());
+            Map<String, String> param = new HashMap<>();
+            XMLParser x = new XMLParser();
+            x.setXmlData(xmlParserElement.toXml());
+            x.init();
+            List<XMLParserElement> componentList = x.parseRootChildElement("component");
+            List<XMLParserElement> paramList = x.getChildElement(componentList, "param");
+            for (XMLParserElement xe : paramList) {
+                logger.info("param.put(\"{}\", \"{}\");", xe.getAttributeName(), xe.getElementText());
+                param.put(xe.getAttributeName(), xe.getElementText());
+            }
+            params.put(id, param);
         }
+        logger.info("input_data：{}", params.get("node1498383198742").get("input_data"));
     }
 
     @Test

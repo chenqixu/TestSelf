@@ -24,70 +24,78 @@
 			<scope>system</scope>
 			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
 		</dependency>
-		<!-- hadoop -->
+
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpcore</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>com.cqx</groupId>
+			<artifactId>TestCommon</artifactId>
+			<version>1.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-annotations</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-auth</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<version>${hadoop.version}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-mapreduce-client-core</artifactId>
-			<version>${hadoop.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>*</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-mapreduce-client-hs</artifactId>
-			<version>${hadoop.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>*</artifactId>
-					<groupId>*</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
+		<!--&lt;!&ndash; hadoop &ndash;&gt;-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-common</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<scope>provided</scope>-->
+			<!--<optional>true</optional>-->
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<groupId>org.apache.httpcomponents</groupId>-->
+					<!--<artifactId>httpcore</artifactId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-client</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<scope>provided</scope>-->
+			<!--<optional>true</optional>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-annotations</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<scope>provided</scope>-->
+			<!--<optional>true</optional>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-auth</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<scope>provided</scope>-->
+			<!--<optional>true</optional>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-hdfs</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<scope>provided</scope>-->
+			<!--<optional>true</optional>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-mapreduce-client-core</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<artifactId>*</artifactId>-->
+					<!--<groupId>*</groupId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.hadoop</groupId>-->
+			<!--<artifactId>hadoop-mapreduce-client-hs</artifactId>-->
+			<!--<version>${hadoop.version}</version>-->
+			<!--<exclusions>-->
+				<!--<exclusion>-->
+					<!--<artifactId>*</artifactId>-->
+					<!--<groupId>*</groupId>-->
+				<!--</exclusion>-->
+			<!--</exclusions>-->
+		<!--</dependency>-->
+
 		<!--
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
