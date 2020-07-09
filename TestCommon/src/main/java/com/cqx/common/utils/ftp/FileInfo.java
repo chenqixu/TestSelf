@@ -70,6 +70,9 @@ public class FileInfo {
     }
 
     public void setSource_path(String source_path) {
+        if (!source_path.endsWith("/")) {
+            source_path = source_path + "/";
+        }
         this.source_path = source_path;
     }
 

@@ -8,7 +8,7 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -16,15 +16,10 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 public class SftpUtil {
-
     //sftp channel
     public static final String SFTP_CHANNEL = "sftp";
     //日志记录器
     private static final Logger logger = LoggerFactory.getLogger(SftpUtil.class);
-    //数据源文件是否使用正则表达式匹配,只用于只采集数据文件的情况
-    public static boolean ifUseRegex = false;
-    //数据源文件正则表达式,只用于只采集数据文件的情况
-    public static String dataSourceFileRegex;
 
     /**
      * @return SftpConnection sftp连接实体类
@@ -92,9 +87,16 @@ public class SftpUtil {
      * @author:xixg
      * @date:2014-02-13
      */
-    public static List<FileInfo> listFtpFiles(List<FileInfo> fileList, SftpConnection sftpConnection, String remoteFilePath, String currFilterSpecificFileName) {
+    public static List<FileInfo> listFtpFiles(List<FileInfo> fileList, SftpConnection sftpConnection,
+                                              String remoteFilePath, SftpFileFilter sftpFileFilter) {
         if (sftpConnection != null) {
             try {
+                //判断目录是否存在
+                boolean isDirExist = isDirExist(sftpConnection, remoteFilePath);
+                if (!isDirExist) {//目录不存在
+                    logger.warn("目录不存在：{}", remoteFilePath);
+                    return fileList;
+                }
                 ChannelSftp channelSftp = sftpConnection.getChannelSftp();
                 //改变SFTP的工作目录
                 channelSftp.cd(remoteFilePath);
@@ -109,8 +111,9 @@ public class SftpUtil {
                     String fileName = lsEntry.getFilename();
                     SftpATTRS sftpATTRS = lsEntry.getAttrs();
                     //过滤出符合要求的文件名
-                    if (filterFileName(fileName, currFilterSpecificFileName)) {
+                    if (filterFileName(fileName, sftpFileFilter)) {
                         FileInfo fileInfo = new FileInfo();
+                        //文件名
                         fileInfo.setFile_name(fileName);
                         //文件时间
                         int A_TIME = sftpATTRS.getATime();
@@ -118,11 +121,14 @@ public class SftpUtil {
                         if (_A_TIME.length() == 10) {
                             _A_TIME = _A_TIME + "000";
                         }
+                        //创建时间
                         fileInfo.setSource_file_createTime(Long.valueOf(_A_TIME));
                         //文件路径
-                        fileInfo.setCheck_file_path(remoteFilePath);
+                        fileInfo.setSource_path(remoteFilePath);
                         //源主机
                         fileInfo.setSource_machine(sftpConnection.getSshSession().getHost());
+                        //文件大小
+                        fileInfo.setFile_size(sftpATTRS.getSize());
                         fileList.add(fileInfo);
                     }
                 }
@@ -134,20 +140,20 @@ public class SftpUtil {
     }
 
     /**
-     * @param fileName        文件名
-     * @param fileNameInclude 文件包含关键字
+     * @param fileName       文件名
+     * @param sftpFileFilter SFTP文件过滤器
      * @return boolean 过滤后是否符合要求
      * @description: 过滤出SFTP服务器上指定目录下的指定文件名列表
      * @author:xixg
      * @date:2014-02-13
      */
-    public static boolean filterFileName(String fileName, String fileNameInclude) {
+    public static boolean filterFileName(String fileName, SftpFileFilter sftpFileFilter) {
         boolean returnFlag = true;
         try {
             //是否需要正则匹配
-            if (ifUseRegex) {
+            if (sftpFileFilter.isIfUseRegex()) {
                 //数据源文件正则表达式,只用于只采集数据文件的情况
-                if (!Pattern.matches(dataSourceFileRegex, fileName))
+                if (!Pattern.matches(sftpFileFilter.getDataSourceFileRegex(), fileName))
                     return false;
             }
 //            //是否排除指定文件名的文件
@@ -198,19 +204,57 @@ public class SftpUtil {
      * @param file_path
      * @return
      */
-    public static InputStream ftpFileDownload(SftpConnection sftpConnection, String file_path) {
+    public static InputStream ftpFileDownload(SftpConnection sftpConnection, String file_path, String file_name) {
         InputStream inputStream = null;
         if (sftpConnection != null) {
             ChannelSftp channelSftp = sftpConnection.getChannelSftp();
             try {
-                //改变SFTP的工作目录
-//                channelSftp.cd(file_path);
-                inputStream = channelSftp.get(file_path);
+                //获取文件
+                inputStream = channelSftp.get(file_path + file_name);
             } catch (SftpException e) {
                 e.printStackTrace();
             }
         }
         return inputStream;
+    }
+
+    /**
+     * 文件下载到本地
+     *
+     * @param sftpConnection
+     * @param sftp_file_path
+     * @param file_name
+     * @param save_file_path
+     * @throws IOException
+     */
+    public static void ftpFileDownload(SftpConnection sftpConnection, String sftp_file_path,
+                                       String file_name, String save_file_path) throws IOException {
+        TimeCostUtil timeCostUtil = new TimeCostUtil();
+        timeCostUtil.start();
+        //判断路径是否存在，不存在则创建
+        File filep = new File(save_file_path);
+        if (!filep.exists() || !filep.isDirectory()) {
+            boolean mkdirs_result = filep.mkdirs();
+            logger.info("{} 路径不存在，需要创建，result：{}", save_file_path, mkdirs_result);
+        }
+        File file = new File(save_file_path + file_name);
+        //本地文件如果存在就删除
+        if (file.exists()) {
+            boolean delete_result = file.delete();
+            logger.info("delete：{}，result：{}", file, delete_result);
+        }
+        try (OutputStream outputStream = new FileOutputStream(file); InputStream inputStream = ftpFileDownload(sftpConnection, sftp_file_path, file_name)) {
+            //设置SFTP下载缓冲区
+            byte[] buffer = new byte[1048576];
+            int c;
+            while ((c = inputStream.read(buffer)) != -1) {
+                //本地流写文件
+                outputStream.write(buffer, 0, c);
+                outputStream.flush();
+            }
+        }
+        timeCostUtil.stop();
+        logger.info("download，file：{}，size：{}，cost：{}", sftp_file_path + file_name, file.length(), timeCostUtil.getCost());
     }
 
     /**

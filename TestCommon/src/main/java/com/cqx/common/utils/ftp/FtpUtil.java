@@ -187,7 +187,6 @@ public class FtpUtil {
         logger.info("download，file：{}，size：{}，cost：{}", ftp_file_path + file_name, file.length(), timeCostUtil.getCost());
     }
 
-
     /**
      * 转移文件
      *
