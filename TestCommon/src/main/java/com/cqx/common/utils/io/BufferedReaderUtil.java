@@ -1,10 +1,12 @@
 package com.cqx.common.utils.io;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -13,10 +15,19 @@ import java.util.zip.ZipInputStream;
  * @author chenqixu
  */
 public class BufferedReaderUtil {
-
+    private static final Logger logger = LoggerFactory.getLogger(BufferedReaderUtil.class);
     private BufferedReader reader;
     private String charSet;
     private String fileName;
+    private ZipInputStream zis;
+
+    public BufferedReaderUtil(String fileName) throws IOException {
+        this(new FileInputStream(fileName), fileName);
+    }
+
+    public BufferedReaderUtil(String fileName, String charSet) throws IOException {
+        this(new FileInputStream(fileName), fileName, charSet);
+    }
 
     public BufferedReaderUtil(InputStream inputStream, String fileName) throws IOException {
         this(inputStream, fileName, null);
@@ -30,7 +41,12 @@ public class BufferedReaderUtil {
             this.charSet = "UTF-8";
         }
         if (fileName.endsWith(".zip")) {
-            reader = new BufferedReader(new InputStreamReader(new ZipInputStream(inputStream), this.charSet));
+            zis = new ZipInputStream(inputStream, Charset.forName(this.charSet));
+            reader = new BufferedReader(new InputStreamReader(zis, this.charSet));
+            //读第一个文件
+            ZipEntry zipEntry = zis.getNextEntry();
+            String zipEntryName = zipEntry.getName();
+            logger.info("fileName：{}，读取第一个文件：{}", fileName, zipEntryName);
         } else if (fileName.endsWith(".tar.gz")) {
             throw new UnsupportedOperationException("不支持.tar.gz格式！");
         } else if (fileName.endsWith(".gz")) {
@@ -38,6 +54,20 @@ public class BufferedReaderUtil {
         } else {
             reader = new BufferedReader(new InputStreamReader(inputStream, this.charSet));
         }
+    }
+
+    public boolean nextFile() throws IOException {
+        boolean result = false;
+        if (fileName.endsWith(".zip") && zis != null) {
+            //读下一个文件
+            ZipEntry zipEntry = zis.getNextEntry();
+            if (zipEntry != null) {
+                String zipEntryName = zipEntry.getName();
+                result = true;
+                logger.info("fileName：{}，读取下一个文件：{}", fileName, zipEntryName);
+            }
+        }
+        return result;
     }
 
     public String readLine(int cnt) throws IOException {
@@ -59,7 +89,14 @@ public class BufferedReaderUtil {
         return result.toString();
     }
 
-    public String readLine() throws IOException {
+    public String readLineSimple() throws IOException {
         return readLine(2);
+    }
+
+    public String readLine() throws IOException {
+        if (reader != null) {
+            return reader.readLine();
+        }
+        return null;
     }
 }

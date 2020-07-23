@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -227,9 +228,24 @@ public class KafkaProducerUtilTest {
     }
 
     @Test
-    public void sendOgg() {
+    public void sendOgg() throws UnsupportedEncodingException {
         topic = "ogg_to_kafka";
-        byte[] value = "test".getBytes();
-        kafkaProducerUtil.send(topic, value);
+//        byte[] value = "test".getBytes();
+        genericRecordUtil = new GenericRecordUtil();
+        genericRecordUtil.addTopic(topic);
+        String key = "17859626986";
+        Map<String, String> valueMap = new HashMap<>();
+        valueMap.put("id", "1");
+        valueMap.put("name", new String("你好abc123".getBytes("GBK"), "GBK"));
+        valueMap.put("sex", "false");
+        byte[] value = genericRecordUtil.genericRecord(topic, valueMap);
+        kafkaProducerUtil.send(topic, key, value);
+
+        valueMap = new HashMap<>();
+        valueMap.put("id", "1");
+        valueMap.put("name", new String("你好abc123".getBytes("UTF-8"), "UTF-8"));
+        valueMap.put("sex", "false");
+        value = genericRecordUtil.genericRecord(topic, valueMap);
+        kafkaProducerUtil.send(topic, key, value);
     }
 }

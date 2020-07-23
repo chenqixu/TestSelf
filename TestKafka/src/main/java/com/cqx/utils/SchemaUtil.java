@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class SchemaUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(SchemaUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(SchemaUtil.class);
     private static Map<String, String> schemaMap = new HashMap<>();
 
     static {
@@ -52,6 +52,17 @@ public class SchemaUtil {
         schemaMap.put("nmc_tb_lte_http_test", paramValStr);
         paramValStr = "{\"namespace\": \"com.newland\",\"type\": \"record\",\"name\": \"DEL_HTTP_SESSION_OUT\",\"fields\":[{ \"name\": \"city\", \"type\": [\"string\", \"null\"] },{ \"name\": \"imsi\", \"type\": [\"string\", \"null\"] },{ \"name\": \"imei\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"msisdn\", \"type\": [\"string\", \"null\"] },{ \"name\": \"lac\", \"type\": [\"string\", \"null\"] },{ \"name\": \"cid\", \"type\": [\"string\", \"null\"] },{ \"name\": \"start_time\", \"type\": [\"string\", \"null\"] },{ \"name\": \"apply_classify\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"apply_name\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"service_name\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"uri\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"web_classify\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"web_name\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"search_keyword\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"host\",  \"type\": [\"string\", \"null\"] },{ \"name\": \"rat\",  \"type\": [\"string\", \"null\"] }]}";
         schemaMap.put("nmc_tb_gn_http_test", paramValStr);
+        paramValStr = "{\n" +
+                "\"namespace\": \"com.newland\",\n" +
+                "\"type\": \"record\",\n" +
+                "\"name\": \"ogg\",\n" +
+                "\"fields\":[\n" +
+                "{\"name\": \"id\", \"type\": [\"int\"]},\n" +
+                "{\"name\": \"name\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"sex\", \"type\": [\"boolean\"]}\n" +
+                "]\n" +
+                "}";
+        schemaMap.put("ogg_to_kafka", paramValStr);
     }
 
     private String urlStr;
@@ -63,15 +74,19 @@ public class SchemaUtil {
         this.urlStr = urlStr;
     }
 
-    public static void addSchema(String topic, String schemaStr) {
+    public boolean isLocal() {
+        return !(urlStr != null && urlStr.length() > 0);
+    }
+
+    public void addSchema(String topic, String schemaStr) {
         schemaMap.put(topic, schemaStr);
     }
 
-    public static String getSchemaValueByTopic(String topic) {
+    public String getSchemaValueByTopic(String topic) {
         return schemaMap.get(topic);
     }
 
-    public static Schema getSchemaByTopic(String topic) {
+    public Schema getSchemaByTopic(String topic) {
         return new Schema.Parser().parse(getSchemaValueByTopic(topic));
     }
 

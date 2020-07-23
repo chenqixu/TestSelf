@@ -19,10 +19,39 @@ public class RecordConvertor {
     private final DatumReader<GenericRecord> reader;
     private final DatumWriter<GenericRecord> writer;
 
-    /**
-     * @param schema
-     */
     public RecordConvertor(Schema schema) {
+        reader = new SpecificDatumReader<>(schema);
+        writer = new SpecificDatumWriter<>(schema);
+    }
+
+    public RecordConvertor(SchemaUtil schemaUtil, String topic) {
+        Schema schema;
+        if (schemaUtil.isLocal()) {
+            schema = schemaUtil.getSchemaByTopic(topic);
+        } else {
+            schema = schemaUtil.getSchemaByUrlTopic(topic);
+        }
+        reader = new SpecificDatumReader<>(schema);
+        writer = new SpecificDatumWriter<>(schema);
+    }
+
+    public RecordConvertor(String topic) {
+        this("", topic);
+    }
+
+    public RecordConvertor(String schemaUrl, String topic) {
+        SchemaUtil schemaUtil;
+        if (schemaUrl != null && schemaUrl.length() > 0) {
+            schemaUtil = new SchemaUtil(schemaUrl);
+        } else {
+            schemaUtil = new SchemaUtil();
+        }
+        Schema schema;
+        if (schemaUtil.isLocal()) {
+            schema = schemaUtil.getSchemaByTopic(topic);
+        } else {
+            schema = schemaUtil.getSchemaByUrlTopic(topic);
+        }
         reader = new SpecificDatumReader<>(schema);
         writer = new SpecificDatumWriter<>(schema);
     }

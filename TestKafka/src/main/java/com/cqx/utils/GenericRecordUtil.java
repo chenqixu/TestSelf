@@ -18,18 +18,27 @@ public class GenericRecordUtil {
     private Map<String, Schema> schemaMap = new HashMap<>();
     private Map<String, Map<String, Schema.Type>> schemaFieldMap = new HashMap<>();
     private Map<String, RecordConvertor> recordConvertorMap = new HashMap<>();
-    private String schemaUrl;
     private SchemaUtil schemaUtil;
 
+    public GenericRecordUtil() {
+        this(null);
+    }
+
     public GenericRecordUtil(String schemaUrl) {
-        this.schemaUrl = schemaUrl;
-        // 初始化schema工具类
-        schemaUtil = new SchemaUtil(this.schemaUrl);
+        if (schemaUrl != null && schemaUrl.length() > 0) {
+            this.schemaUtil = new SchemaUtil(schemaUrl);
+        } else {
+            this.schemaUtil = new SchemaUtil();
+        }
     }
 
     public void addTopic(String topic) {
-        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
-//        Schema schema = schemaUtil.getSchemaByTopic(topic);
+        Schema schema;
+        if (schemaUtil.isLocal()) {
+            schema = schemaUtil.getSchemaByTopic(topic);
+        } else {
+            schema = schemaUtil.getSchemaByUrlTopic(topic);
+        }
         schemaMap.put(topic, schema);
         recordConvertorMap.put(topic, new RecordConvertor(schema));
         // 获取字段类型，进行映射，防止不规范写法
@@ -100,6 +109,27 @@ public class GenericRecordUtil {
                             obj = 0L;
                         } else {
                             obj = Long.valueOf(value);
+                        }
+                        break;
+                    case FLOAT:
+                        if (value == null || value.length() == 0) {
+                            obj = 0F;
+                        } else {
+                            obj = Float.valueOf(value);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (value == null || value.length() == 0) {
+                            obj = 0D;
+                        } else {
+                            obj = Double.valueOf(value);
+                        }
+                        break;
+                    case BOOLEAN:
+                        if (value == null || value.length() == 0) {
+                            obj = false;
+                        } else {
+                            obj = Boolean.valueOf(value);
                         }
                         break;
                     default:

@@ -248,6 +248,23 @@
             <version>1.2.58</version>
         </dependency>
 
+        <!-- oracle -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0.2</version>
+            <!-- <artifactId>ojdbc6</artifactId> -->
+            <!-- <version>11.2.0.4.0</version> -->
+            <!-- <artifactId>ojdbc14</artifactId> -->
+            <!-- <version>10.2.0.5.0</version> -->
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>

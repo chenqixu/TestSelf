@@ -22,6 +22,9 @@ public class FtpAndCheckTest {
             ftpAndCheck.splitPath("/bi/aigl/xdcopy/H04308,/bi/aigl/dmbasscopy/H04308,/bi/aigl/cbassdata/H04308",
                     "Interface_Channelplayback_%00HH",
                     "d:\\tmp\\data\\gejie\\");
+            ftpAndCheck.splitPath("/bi/aigs/xdcopy/A04406",
+                    "D_W_PHOME-R2.002_%00DD_1.1_01.dat",
+                    "d:\\tmp\\data\\gejie\\");
         } finally {
             ftpAndCheck.close();
         }

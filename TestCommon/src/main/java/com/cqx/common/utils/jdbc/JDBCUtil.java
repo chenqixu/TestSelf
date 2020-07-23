@@ -1034,6 +1034,113 @@ public class JDBCUtil {
         return success_cnt;
     }
 
+    /**
+     * 批量执行更新，可以自动抛掉异常数据并重试（每次一行）
+     *
+     * @param sql
+     * @param tList
+     * @param beanCls
+     * @param fields
+     * @param <T>
+     * @return
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     */
+    public <T> int executeBatchRetry(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        int commit_cnt = 0;
+        int success_cnt = 0;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        String[] fields_arr = fields.split(",", -1);
+        try {
+            conn = getConnection();
+            assert conn != null;
+            conn.setAutoCommit(false);// 关闭自动提交
+            pstmt = conn.prepareStatement(sql);// 预编译SQL
+            // 获取javabean属性，源端
+            BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            LinkedHashMap<String, BatchBean> methodLinkedHashMap = new LinkedHashMap<>();
+            for (String str : fields_arr) {
+                String name = str.replace(":", "").toUpperCase();
+                for (PropertyDescriptor property : propertyDescriptors) {
+                    String key = property.getName().toUpperCase();
+                    if (name.equals(key)) {
+                        Method getter = property.getReadMethod();// Java中提供了用来访问某个属性的
+                        String propertyName = property.getPropertyType().getName();
+                        methodLinkedHashMap.put(key, new BatchBean(propertyName, getter));
+                        break;
+                    }
+                }
+            }
+            // 循环查询结果
+            Iterator<T> iterator = tList.iterator();
+            while (iterator.hasNext()) {
+                T t = iterator.next();
+                int i = 1;
+                for (Map.Entry<String, BatchBean> entry : methodLinkedHashMap.entrySet()) {
+                    Object fieldValue = entry.getValue().getMethod().invoke(t);
+                    switch (entry.getValue().getName()) {
+                        case "java.lang.String":
+                            pstmt.setString(i, (String) fieldValue);
+                            break;
+                        case "java.sql.Timestamp":
+                            pstmt.setTimestamp(i, (Timestamp) fieldValue);
+                            break;
+                        case "java.lang.Long":
+                        case "long":
+                            pstmt.setBigDecimal(i, BigDecimal.valueOf((Long) fieldValue));
+                            break;
+                        case "java.sql.Time":
+                            pstmt.setTime(i, (Time) fieldValue);
+                            break;
+                        case "java.lang.Integer":
+                        case "int":
+                            pstmt.setInt(i, (Integer) fieldValue);
+                            break;
+                        default:
+                            pstmt.setObject(i, fieldValue);
+                            break;
+                    }
+                    i++;
+                }
+                pstmt.addBatch();
+                commit_cnt++;
+                // 2000条提交一次
+                if (commit_cnt % 2000 == 0) {
+                    pstmt.executeBatch();
+                    conn.commit();
+                }
+                success_cnt++;
+            }
+            // 剩余数据提交
+            pstmt.executeBatch();
+            conn.commit();
+        } catch (BatchUpdateException e) {
+            //回滚
+            if (conn != null) conn.rollback();
+            logger.warn("BatchUpdateException：{}", e.getMessage());
+            //获取更新的个数
+            int[] updateCounts = e.getUpdateCounts();
+            //先尝试抛掉异常的一行数据
+            logger.warn("remove data index：{}，error data：{}", updateCounts.length, tList.get(updateCounts.length));
+            tList.remove(updateCounts.length);
+            //抛掉一行后继续重试
+            executeBatchRetry(sql, tList, beanCls, fields);
+        } catch (Exception e) {
+            //回滚
+            if (conn != null) conn.rollback();
+            logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            throw e;
+        } finally {
+            closePstmt(pstmt);
+            closeConn(conn);
+        }
+        return success_cnt;
+    }
+
     private void closeResultSet(ResultSet rs) {
         if (rs != null) {
             try {
@@ -1047,6 +1154,7 @@ public class JDBCUtil {
     private void closeStm(Statement stm) {
         if (stm != null)
             try {
+                logger.debug("closeStm：{}", stm);
                 stm.close();
             } catch (SQLException e) {
                 logger.error("JDBCUtilException：关闭Statement异常，" + e.getMessage(), e);
@@ -1054,17 +1162,19 @@ public class JDBCUtil {
     }
 
     private void closePstmt(PreparedStatement pstmt) {
-        try {
-            if (pstmt != null)
+        if (pstmt != null)
+            try {
+                logger.debug("closePstmt：{}", pstmt);
                 pstmt.close();
-        } catch (SQLException e) {
-            logger.error("JDBCUtilException：关闭PreparedStatement异常，" + e.getMessage(), e);
-        }
+            } catch (SQLException e) {
+                logger.error("JDBCUtilException：关闭PreparedStatement异常，" + e.getMessage(), e);
+            }
     }
 
     private void closeConn(Connection conn) {
         if (conn != null)
             try {
+                logger.debug("closeConn：{}", conn);
                 conn.close();
             } catch (SQLException e) {
                 logger.error("JDBCUtilException：关闭Connection异常，" + e.getMessage(), e);

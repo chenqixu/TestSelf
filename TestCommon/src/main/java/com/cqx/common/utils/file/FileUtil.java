@@ -426,6 +426,11 @@ public class FileUtil {
         createFile(filename, write_code, false);
     }
 
+    public void newline() {
+        if (isWindow()) write("\r\n");
+        else write("\n");
+    }
+
     public void write(String str) {
         try {
             if (writer != null) {
@@ -491,6 +496,15 @@ public class FileUtil {
 
     public void setReader(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
         setReader(fileName, "UTF-8");
+    }
+
+    public boolean isWindow() {
+        String systemType = System.getProperty("os.name");
+        if (systemType.toUpperCase().startsWith("WINDOWS")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     class ReaderThread extends Monitor {

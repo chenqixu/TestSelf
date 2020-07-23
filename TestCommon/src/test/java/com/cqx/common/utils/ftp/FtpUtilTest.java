@@ -41,7 +41,7 @@ public class FtpUtilTest {
 
             InputStream inputStream = FtpUtil.ftpFileDownload(ftpClient, fileInfo.getSource_path(), fileInfo.getFile_name());
             BufferedReaderUtil bufferedReaderUtil = new BufferedReaderUtil(inputStream, fileInfo.getFile_name());
-            String read = bufferedReaderUtil.readLine();
+            String read = bufferedReaderUtil.readLineSimple();
             logger.info("read：{}", read);
 
 //            int down_cnt = 0;

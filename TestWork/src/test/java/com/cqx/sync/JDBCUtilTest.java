@@ -3,6 +3,7 @@ package com.cqx.sync;
 import com.cqx.common.utils.jdbc.*;
 import com.cqx.common.utils.xml.XMLParser;
 import com.cqx.common.utils.xml.XMLParserElement;
+import com.cqx.sync.bean.CqxTest1;
 import com.cqx.sync.bean.ParamKey;
 import com.cqx.sync.bean.RsmgrCluster;
 import com.cqx.sync.bean.SyncConf;
@@ -130,6 +131,22 @@ public class JDBCUtilTest {
         syncConf.setSYNC_TIME(new java.sql.Timestamp(new Date().getTime()));
         beans.add(syncConf);
         jdbcUtil.executeBatch(sql, beans, SyncConf.class, fields);
+    }
+
+    @Test
+    public void executeBatchException() throws Exception {
+        String fields = ":id";
+        String sql = "insert into cqx_test1(id) values(" + fields + ")";
+        List<CqxTest1> beans = new ArrayList<>();
+        beans.add(new CqxTest1("10"));
+        beans.add(new CqxTest1("11"));
+        beans.add(new CqxTest1("12"));
+        beans.add(new CqxTest1("14"));
+        beans.add(new CqxTest1("123"));
+        beans.add(new CqxTest1("13"));
+        jdbcUtil.executeBatch(sql, beans, CqxTest1.class, fields);
+//        beans.remove(1);
+//        logger.info("{}", beans);
     }
 
     @Test

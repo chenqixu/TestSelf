@@ -102,8 +102,10 @@ public class FtpAndCheck {
 
     public FtpAndCheckBean ruleTool(String rule_value) {
         String old_rule = rule_value;
+        FtpAndCheckBean ftpAndCheckBean = new FtpAndCheckBean();
+        ftpAndCheckBean.setOld_rule(old_rule);
         List<Rule> rules = new ArrayList<>();
-        TimeRule timeRule = new TimeRule();
+        TimeRule timeRule = new TimeRule(ftpAndCheckBean);
         rules.add(new SpotRule());
         rules.add(timeRule);
         rules.add(new ZeroRule());
@@ -111,8 +113,7 @@ public class FtpAndCheck {
         for (Rule rule : rules) {
             rule_value = rule.replace(rule_value);
         }
-        FtpAndCheckBean ftpAndCheckBean = timeRule.getFtpAndCheckBean();
-        ftpAndCheckBean.setOld_rule(old_rule);
+        ftpAndCheckBean = timeRule.getFtpAndCheckBean();
         ftpAndCheckBean.setNew_rule(rule_value);
         logger.info("ruleTool：{}", ftpAndCheckBean);
         return ftpAndCheckBean;
@@ -178,12 +179,18 @@ public class FtpAndCheck {
      * 比如：把%00DD替换成[0-9]{8}
      */
     class TimeRule implements Rule {
-        FtpAndCheckBean ftpAndCheckBean = new FtpAndCheckBean();
+        FtpAndCheckBean ftpAndCheckBean;
+
+        TimeRule(FtpAndCheckBean ftpAndCheckBean) {
+            this.ftpAndCheckBean = ftpAndCheckBean;
+        }
 
         @Override
         public String replace(String value) {
             //定位到%
             int index = value.indexOf("%");
+            //使用旧规则定位到%
+            int old_index = ftpAndCheckBean.getOld_rule().indexOf("%");
             if (index >= 0) {
                 String front = value.substring(0, index);
                 String behind = value.substring(index + 5);
@@ -209,8 +216,8 @@ public class FtpAndCheck {
                         len = 8;
                         break;
                 }
-                ftpAndCheckBean.setDate_begin(index);
-                ftpAndCheckBean.setDate_end(index + len);
+                ftpAndCheckBean.setDate_begin(old_index);
+                ftpAndCheckBean.setDate_end(old_index + len);
                 replaceStr = String.format(replaceStr, len);
                 value = front + replaceStr + behind;
                 logger.info("timeRuleStr：{}，{}，front：{}，behind：{}，value：{}", timeRuleStr, time, front, behind, value);

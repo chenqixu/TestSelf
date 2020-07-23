@@ -15,6 +15,6 @@ public class SchemaUtilTest {
     @Test
     public void getSchemaByTopic() {
         String topic = "nmc_tb_gn_http_test";
-        System.out.println(SchemaUtil.getSchemaByTopic(topic));
+        System.out.println(new SchemaUtil().getSchemaByTopic(topic));
     }
 }

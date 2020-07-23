@@ -1,8 +1,6 @@
 package com.cqx.utils;
 
-import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
-import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
 import org.junit.Before;
@@ -21,7 +19,6 @@ public class KafkaConsumerUtilTest {
     private String topic = "nmc_tb_lte_http_test";
     private String conf = path + "consumer.properties";
     private String schemaUrl = "http://10.1.8.203:18061/SchemaService/getSchema?t=";
-    private SchemaUtil schemaUtil;
 
     @Before
     public void setUp() throws Exception {
@@ -35,8 +32,7 @@ public class KafkaConsumerUtilTest {
     @Test
     public void poll() throws Exception {
         String topic = "nmc_tb_lte_http_test";
-        Schema schema = SchemaUtil.getSchemaByTopic(topic);
-        recordConvertor = new RecordConvertor(schema);
+        recordConvertor = new RecordConvertor(topic);
 //        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
@@ -50,9 +46,7 @@ public class KafkaConsumerUtilTest {
     @Test
     public void pollS1mme() throws Exception {
         String topic = "nmc_tb_lte_s1mme";
-        schemaUtil = new SchemaUtil(schemaUrl);
-        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
-        recordConvertor = new RecordConvertor(schema);
+        recordConvertor = new RecordConvertor(schemaUrl, topic);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
         //只消费一次
@@ -71,9 +65,7 @@ public class KafkaConsumerUtilTest {
     @Test
     public void pollMcCdr() throws Exception {
         String topic = "nmc_tb_mc_cdr";
-        schemaUtil = new SchemaUtil(schemaUrl);
-        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
-        recordConvertor = new RecordConvertor(schema);
+        recordConvertor = new RecordConvertor(schemaUrl, topic);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
         //只消费一次
@@ -98,20 +90,21 @@ public class KafkaConsumerUtilTest {
 //        logger.info("{}", schemaStr);
 //        SchemaUtil.addSchema(topic, schemaStr);
 //        Schema schema = SchemaUtil.getSchemaByTopic(topic);
-        schemaUtil = new SchemaUtil(schemaUrl);
-        Schema schema = schemaUtil.getSchemaByUrlTopic(topic);
-        recordConvertor = new RecordConvertor(schema);
+        recordConvertor = new RecordConvertor(topic);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
         int consumerNum = 0;
         TimeCostUtil<Integer> timeCostUtil = new TimeCostUtil<>(consumerNum);
-        long limitTime = 300000;
+        long limitTime = 3000;
         while (true) {
             List<byte[]> list = kafkaConsumerUtil.poll(2000);
             for (byte[] bytes : list) {
 //                logger.info("Record：{}", new String(bytes));
                 GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-                logger.info("genericRecord：{}", genericRecord);
+                int id = (int) genericRecord.get("id");
+                byte[] names = genericRecord.get("name").toString().getBytes("UTF-8");
+                String name = genericRecord.get("name").toString();
+                logger.info("genericRecord：{}，id：{}，name：{}，{}", genericRecord, id, new String(names, "UTF-8"), name);
                 consumerNum++;
             }
             //limitTime秒检测一次，检测limitTime秒内没有变化就退出循环
