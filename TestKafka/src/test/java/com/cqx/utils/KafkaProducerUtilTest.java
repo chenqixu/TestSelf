@@ -22,7 +22,7 @@ public class KafkaProducerUtilTest {
     private KafkaProducerUtil<String, byte[]> kafkaProducerUtil;
     private GenericRecordUtil genericRecordUtil;
     private String topic = "nmc_tb_lte_http";
-    private String schemaUrl = "http://10.1.8.203:18061/SchemaService/getSchema?t=";
+    private String schemaUrl = "http://10.1.8.203:19090/nl-edc-cct-sys-ms-dev/SchemaService/getSchema?t=";
     private String conf = path + "producer.properties";
 
     @Before
@@ -184,7 +184,8 @@ public class KafkaProducerUtilTest {
             valueMap.put("SPCKIND", "1");
 //            logger.info("valueMap：{}", valueMap);
             byte[] value = genericRecordUtil.genericRecord(topic, valueMap);
-            kafkaProducerUtil.send(topic, key, value);
+            kafkaProducerUtil.send(topic, key, value);//无回调
+//            kafkaProducerUtil.sendCallBack(topic, key, value);//有回调，较久
             logger.info("send，topic：{}，key：{}，value：{}", topic, key, value);
         }
     }

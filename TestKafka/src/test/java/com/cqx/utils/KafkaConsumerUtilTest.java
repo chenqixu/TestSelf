@@ -18,7 +18,7 @@ public class KafkaConsumerUtilTest {
     private RecordConvertor recordConvertor;
     private String topic = "nmc_tb_lte_http_test";
     private String conf = path + "consumer.properties";
-    private String schemaUrl = "http://10.1.8.203:18061/SchemaService/getSchema?t=";
+    private String schemaUrl = "http://10.1.8.203:19090/nl-edc-cct-sys-ms-dev/SchemaService/getSchema?t=";
 
     @Before
     public void setUp() throws Exception {
