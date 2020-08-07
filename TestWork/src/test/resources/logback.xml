@@ -57,8 +57,8 @@
 		</encoder>
 	</appender> -->
 
-	<root level="info">
+	<root level="INFO">
 		<appender-ref ref="stdout" />
-		<appender-ref ref="A1" />
+		<!--<appender-ref ref="A1" />-->
 	</root>
 </configuration>

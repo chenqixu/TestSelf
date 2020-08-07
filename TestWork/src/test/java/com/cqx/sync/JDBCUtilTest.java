@@ -8,6 +8,7 @@ import com.cqx.sync.bean.ParamKey;
 import com.cqx.sync.bean.RsmgrCluster;
 import com.cqx.sync.bean.SyncConf;
 import com.newland.bi.bigdata.compress.ZipUtils;
+import com.newland.bi.bigdata.time.TimeCostUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class JDBCUtilTest {
 
@@ -133,20 +135,30 @@ public class JDBCUtilTest {
         jdbcUtil.executeBatch(sql, beans, SyncConf.class, fields);
     }
 
+    /**
+     * select * from cqx_test1;
+     * drop table cqx_test1;
+     * create table cqx_test1(id varchar2(200));
+     *
+     * @throws Exception
+     */
     @Test
     public void executeBatchException() throws Exception {
         String fields = ":id";
         String sql = "insert into cqx_test1(id) values(" + fields + ")";
         List<CqxTest1> beans = new ArrayList<>();
-        beans.add(new CqxTest1("10"));
-        beans.add(new CqxTest1("11"));
-        beans.add(new CqxTest1("12"));
-        beans.add(new CqxTest1("14"));
-        beans.add(new CqxTest1("123"));
-        beans.add(new CqxTest1("13"));
-        jdbcUtil.executeBatch(sql, beans, CqxTest1.class, fields);
-//        beans.remove(1);
-//        logger.info("{}", beans);
+        Random random = new Random();
+        for (int i = 0; i < 2001; i++) {
+            int v = random.nextInt(200);
+            beans.add(new CqxTest1(v + ""));
+        }
+//        jdbcUtil.setBatchNum(10);
+        TimeCostUtil timeCostUtil = new TimeCostUtil();
+        timeCostUtil.start();
+//        jdbcUtil.executeBatch(sql, beans, CqxTest1.class, fields);
+        jdbcUtil.executeBatchRetry(sql, beans, CqxTest1.class, fields);
+        timeCostUtil.stop();
+        logger.info("cost：{}", timeCostUtil.getCost());
     }
 
     @Test

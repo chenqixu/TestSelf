@@ -23,11 +23,12 @@ import java.util.*;
  */
 public class JDBCUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
     private DataSource dataSource;
     private DBBean dbBean;
     private List<String> keyList = new ArrayList<>();
     private List<String> endList = new ArrayList<>();
+    private int batchNum = 2000;
 
     public JDBCUtil(DBBean dbBean) {
         this.dbBean = dbBean;
@@ -806,7 +807,7 @@ public class JDBCUtil {
                 pstmt.addBatch();
                 commit_cnt++;
                 // 2000条提交一次
-                if (commit_cnt % 2000 == 0) {
+                if (commit_cnt % getBatchNum() == 0) {
                     pstmt.executeBatch();
                     conn.commit();
                 }
@@ -921,7 +922,7 @@ public class JDBCUtil {
                 pstmt.addBatch();
                 commit_cnt++;
                 // 2000条提交一次
-                if (commit_cnt % 2000 == 0) {
+                if (commit_cnt % getBatchNum() == 0) {
                     pstmt.executeBatch();
                     conn.commit();
                 }
@@ -955,8 +956,9 @@ public class JDBCUtil {
      * @return 结果
      */
     public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
-        int commit_cnt = 0;
+        int add_cnt = 0;
         int success_cnt = 0;
+        int batch_cnt = 0;
         Connection conn = null;
         PreparedStatement pstmt = null;
         String[] fields_arr = fields.split(",", -1);
@@ -1011,17 +1013,23 @@ public class JDBCUtil {
                     i++;
                 }
                 pstmt.addBatch();
-                commit_cnt++;
+                add_cnt++;
                 // 2000条提交一次
-                if (commit_cnt % 2000 == 0) {
+                if (add_cnt % getBatchNum() == 0) {
+                    batch_cnt++;
                     pstmt.executeBatch();
                     conn.commit();
+                    success_cnt = add_cnt;
                 }
-                success_cnt++;
             }
             // 剩余数据提交
-            pstmt.executeBatch();
-            conn.commit();
+            if (add_cnt > success_cnt) {
+                batch_cnt++;
+                pstmt.executeBatch();
+                conn.commit();
+                success_cnt = add_cnt;
+            }
+            logger.debug("add_cnt：{}，success_cnt：{}，batch_cnt：{}", add_cnt, success_cnt, batch_cnt);
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             if (conn != null)
@@ -1042,39 +1050,62 @@ public class JDBCUtil {
      * @param beanCls
      * @param fields
      * @param <T>
-     * @return
      * @throws SQLException
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws InvocationTargetException
      */
-    public <T> int executeBatchRetry(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
-        int commit_cnt = 0;
+    public <T> void executeBatchRetry(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         int success_cnt = 0;
+        int batch_cnt = 0;
+        // 获取javabean属性，源端
+        BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        LinkedHashMap<String, BatchBean> methodLinkedHashMap = new LinkedHashMap<>();
+        for (String str : fields.split(",", -1)) {
+            String name = str.replace(":", "").toUpperCase();
+            for (PropertyDescriptor property : propertyDescriptors) {
+                String key = property.getName().toUpperCase();
+                if (name.equals(key)) {
+                    Method getter = property.getReadMethod();// Java中提供了用来访问某个属性的
+                    String propertyName = property.getPropertyType().getName();
+                    methodLinkedHashMap.put(key, new BatchBean(propertyName, getter));
+                    break;
+                }
+            }
+        }
+        // 循环查询结果
+        Iterator<T> iterator = tList.iterator();
+        List<T> executeBatchList = new ArrayList<>();
+        while (iterator.hasNext()) {
+            T t = iterator.next();
+            executeBatchList.add(t);
+            // 2000条提交一次
+            if (executeBatchList.size() % getBatchNum() == 0) {
+                int[] ret = executeBatch(sql, executeBatchList, methodLinkedHashMap);
+                executeBatchList.clear();
+                batch_cnt++;
+                success_cnt += ret.length;
+            }
+        }
+        // 剩余数据提交
+        if (executeBatchList.size() > 0) {
+            int[] ret = executeBatch(sql, executeBatchList, methodLinkedHashMap);
+            batch_cnt++;
+            success_cnt += ret.length;
+        }
+        logger.info("batch_cnt：{}，success_cnt：{}", batch_cnt, success_cnt);
+    }
+
+    private <T> int[] executeBatch(String sql, List<T> tList, LinkedHashMap<String, BatchBean> methodLinkedHashMap) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        String[] fields_arr = fields.split(",", -1);
+        int[] result = {0};
         try {
             conn = getConnection();
             assert conn != null;
             conn.setAutoCommit(false);// 关闭自动提交
             pstmt = conn.prepareStatement(sql);// 预编译SQL
-            // 获取javabean属性，源端
-            BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
-            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            LinkedHashMap<String, BatchBean> methodLinkedHashMap = new LinkedHashMap<>();
-            for (String str : fields_arr) {
-                String name = str.replace(":", "").toUpperCase();
-                for (PropertyDescriptor property : propertyDescriptors) {
-                    String key = property.getName().toUpperCase();
-                    if (name.equals(key)) {
-                        Method getter = property.getReadMethod();// Java中提供了用来访问某个属性的
-                        String propertyName = property.getPropertyType().getName();
-                        methodLinkedHashMap.put(key, new BatchBean(propertyName, getter));
-                        break;
-                    }
-                }
-            }
             // 循环查询结果
             Iterator<T> iterator = tList.iterator();
             while (iterator.hasNext()) {
@@ -1107,28 +1138,24 @@ public class JDBCUtil {
                     i++;
                 }
                 pstmt.addBatch();
-                commit_cnt++;
-                // 2000条提交一次
-                if (commit_cnt % 2000 == 0) {
-                    pstmt.executeBatch();
-                    conn.commit();
-                }
-                success_cnt++;
             }
-            // 剩余数据提交
-            pstmt.executeBatch();
+            result = pstmt.executeBatch();
             conn.commit();
         } catch (BatchUpdateException e) {
-            //回滚
-            if (conn != null) conn.rollback();
+            //关闭资源
+            closePstmt(pstmt);
+            closeConn(conn);
             logger.warn("BatchUpdateException：{}", e.getMessage());
             //获取更新的个数
             int[] updateCounts = e.getUpdateCounts();
-            //先尝试抛掉异常的一行数据
-            logger.warn("remove data index：{}，error data：{}", updateCounts.length, tList.get(updateCounts.length));
+            T errObj = tList.get(updateCounts.length);
             tList.remove(updateCounts.length);
+            int remaining_size = tList.size();
+            //先尝试抛掉异常的一行数据
+            logger.warn("updateCounts：{}，error data：{}，remaining_size：{}", updateCounts.length, errObj, remaining_size);
             //抛掉一行后继续重试
-            executeBatchRetry(sql, tList, beanCls, fields);
+            if (remaining_size > 0)
+                executeBatch(sql, tList, methodLinkedHashMap);
         } catch (Exception e) {
             //回滚
             if (conn != null) conn.rollback();
@@ -1138,7 +1165,7 @@ public class JDBCUtil {
             closePstmt(pstmt);
             closeConn(conn);
         }
-        return success_cnt;
+        return result;
     }
 
     private void closeResultSet(ResultSet rs) {
@@ -1204,4 +1231,11 @@ public class JDBCUtil {
         close();
     }
 
+    public int getBatchNum() {
+        return batchNum;
+    }
+
+    public void setBatchNum(int batchNum) {
+        this.batchNum = batchNum;
+    }
 }
