@@ -155,6 +155,23 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 文件拷贝
+     *
+     * @param inputFile
+     * @param outputFile
+     * @throws IOException
+     */
+    public static void copyFile(String inputFile, String outputFile) throws IOException {
+        if (isExists(inputFile)) {
+            List<String> fileList = new ArrayList<>();
+            fileList.add(inputFile);
+            mergeFile(fileList, outputFile);
+        } else {
+            logger.warn("File {} is not found , please check !", inputFile);
+        }
+    }
+
     public static void closeStream(Closeable stream) {
         if (stream != null) {
             try {

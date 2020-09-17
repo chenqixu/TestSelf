@@ -35,6 +35,15 @@ public class ParamUtil {
         }
     }
 
+    /**
+     * Map转Bean
+     *
+     * @param map
+     * @param cls
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
     public static <T> T setValueByMap(Map<String, String> map, Class<T> cls) throws Exception {
         if (map == null) throw new NullPointerException("输入参数Map为空");
         Map<String, String> fieldDesc = new HashMap<>();
@@ -75,5 +84,35 @@ public class ParamUtil {
             }
         }
         return t;
+    }
+
+    /**
+     * Bean转Map
+     *
+     * @param cls
+     * @param bean
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public static <T> Map<String, String> beanToMap(Class<T> cls, Object bean) throws Exception {
+        Map<String, String> map = new HashMap<>();
+        BeanInfo beanInfo = Introspector.getBeanInfo(cls);
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        for (Field field : cls.getDeclaredFields()) {
+            BeanDesc beanDesc = field.getAnnotation(BeanDesc.class);
+            if (beanDesc != null) {
+                map.put(field.getName(), "");
+            }
+        }
+        for (PropertyDescriptor property : propertyDescriptors) {
+            String key = property.getName();
+            Method getter = property.getReadMethod();
+            if (!key.equals(CLASS)) {
+                Object value = getter.invoke(bean);
+                if (map.get(key) != null && value != null) map.put(key, value.toString());
+            }
+        }
+        return map;
     }
 }

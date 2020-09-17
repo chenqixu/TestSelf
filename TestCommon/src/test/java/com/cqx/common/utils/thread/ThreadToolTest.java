@@ -20,11 +20,57 @@ public class ThreadToolTest {
 
     @Test
     public void startTask() {
-        ThreadTool threadTool = new ThreadTool(3);
+//        ThreadTool threadTool = new ThreadTool(3);
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(10);
+//            }
+//        });
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(1);
+//            }
+//        });
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(2);
+//            }
+//        });
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(3);
+//            }
+//        });
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(4);
+//            }
+//        });
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(2);
+//            }
+//        });
+//        threadTool.addTask(new Runnable() {
+//            @Override
+//            public void run() {
+//                sleep(4);
+//            }
+//        });
+//        threadTool.startTask();
+
+
+        ThreadTool threadTool = new ThreadTool(40);
         threadTool.addTask(new Runnable() {
             @Override
             public void run() {
-                sleep(10);
+                sleep(4);
             }
         });
         threadTool.addTask(new Runnable() {
@@ -43,24 +89,6 @@ public class ThreadToolTest {
             @Override
             public void run() {
                 sleep(3);
-            }
-        });
-        threadTool.addTask(new Runnable() {
-            @Override
-            public void run() {
-                sleep(4);
-            }
-        });
-        threadTool.addTask(new Runnable() {
-            @Override
-            public void run() {
-                sleep(2);
-            }
-        });
-        threadTool.addTask(new Runnable() {
-            @Override
-            public void run() {
-                sleep(4);
             }
         });
         threadTool.startTask();

@@ -31,6 +31,17 @@ public class HttpsUtilTest {
     }
 
     @Test
+    public void hanzi() {
+        String url = "https://hanyu.baidu.com/zici/s?wd=聚";//聚
+        Object indexObj = httpsUtil.httpRequest(new RestParam(
+                url,
+                "GET", null, "https", "", "",
+                "", "",
+                "", ""), "string", null);
+        System.out.println(indexObj);
+    }
+
+    @Test
     public void imgDownload() {
         String image_url = "http://3nlg.lzsysj.com/uploads/allimg/160424/xcb1g5pppl457.jpg";
         String image_urlIShttpOrhttps = "http";

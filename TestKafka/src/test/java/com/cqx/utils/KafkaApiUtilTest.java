@@ -60,4 +60,10 @@ public class KafkaApiUtilTest {
     public void createTopics() {
         kafkaApiUtil.createTopics(brokerUrl, "test123_topic");
     }
+
+    @Test
+    public void getPartition() {
+        byte[] key = "13509323824".getBytes();
+        System.out.println(String.format("get %s", kafkaApiUtil.getPartition(key, 18)));
+    }
 }

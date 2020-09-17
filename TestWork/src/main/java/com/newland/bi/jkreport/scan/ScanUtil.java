@@ -77,7 +77,7 @@ public class ScanUtil {
                 } else if (param.startsWith("type")) {
                     hdfsLSBean.setType(value);
                 } else if (param.startsWith("content")) {
-                    hdfsLSBean.setContent(value);
+                    hdfsLSBean.setContent(path);
                 }
             }
             logger.info("path：{}，{}", path, hdfsLSBean.toString());

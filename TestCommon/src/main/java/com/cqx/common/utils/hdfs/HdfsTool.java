@@ -101,6 +101,18 @@ public class HdfsTool {
         }
     }
 
+    /**
+     * 创建一个空文件
+     *
+     * @param path
+     * @throws Exception
+     */
+    public void touch(String path) throws Exception {
+        try (OutputStream os = createFile(path)) {
+            logger.info("touch：{}", path);
+        }
+    }
+
     public OutputStream createFile(String path) throws Exception {
         return createFile(fs, path);
     }
@@ -404,6 +416,29 @@ public class HdfsTool {
 //            return fs.deleteOnExit(new Path(path));
         }
         return false;
+    }
+
+    /**
+     * 重命名文件
+     *
+     * @param fs
+     * @param old_path
+     * @param new_path
+     * @return
+     * @throws IOException
+     */
+    public boolean rename(FileSystem fs, String old_path, String new_path) throws IOException {
+        if (fs != null) {
+            logger.info("rename，old_path：{}，new_path：{}", old_path, new_path);
+            Path src = new Path(old_path);
+            Path dest = new Path(new_path);
+            return fs.rename(src, dest);
+        }
+        return false;
+    }
+
+    public boolean rename(String old_path, String new_path) throws IOException {
+        return rename(fs, old_path, new_path);
     }
 
 }

@@ -1,14 +1,26 @@
 package com.cqx.common.bean.javabean;
 
+import com.cqx.common.annotation.BeanDesc;
+
 /**
  * Task
  *
  * @author chenqixu
  */
-public class Task {
+public class Task implements ITask {
+    @BeanDesc(value = "任务id")
     private int task_id;
+    @BeanDesc(value = "任务名称")
     private String task_name;
+    @BeanDesc(value = "任务状态")
     private int task_status;
+
+    public Task() {
+    }
+
+    public Task(int task_id) {
+        this.task_id = task_id;
+    }
 
     public int getTask_id() {
         return task_id;

@@ -22,20 +22,25 @@ public class TimeHelper {
      * 补0
      *
      * @param date
+     * @param len
      * @return
      */
-    public static String supplementZero(String date) {
+    public static String supplementZero(String date, int len) {
         StringBuffer sb = null;
         if (date != null && date.trim().length() > 0 && !date.contains(":")) {
             sb = new StringBuffer(date);
             int datalen = date.length();
-            if (datalen < 14) {
-                for (int i = datalen; i < 14; i++) {
+            if (datalen < len) {
+                for (int i = datalen; i < len; i++) {
                     sb.append("0");
                 }
             }
         }
         return sb != null ? sb.toString() : null;
+    }
+
+    public static String supplementZero(String date) {
+        return supplementZero(date, 14);
     }
 
     /**
@@ -108,5 +113,39 @@ public class TimeHelper {
     public static void timestampToDate(long value) {
         Date date = new Date(value);
         logger.info("timestampToDate：{}", ymdhmsFormat.format(date));
+    }
+
+    /**
+     * 时间比较
+     *
+     * <pre>
+     * 	time1小于time2 -1
+     * 	time1等于time2 0
+     * 	time1大于time2 1
+     * </pre>
+     *
+     * @param time1
+     * @param time2
+     * @param format
+     * @return 文件周期
+     */
+    public static int timeComparison(String time1, String time2, String format) {
+        if (time1 != null && time2 != null) {
+            int len = format.length();
+            // 先补0，再比较
+            String _time1 = supplementZero(time1, len);
+            String _time2 = supplementZero(time2, len);
+            // 如果SimpleDateFormat是全局变量，高并发情况下必须同步
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+            try {
+                long l1 = simpleDateFormat.parse(_time1).getTime();
+                long l2 = simpleDateFormat.parse(_time2).getTime();
+                return (l1 - l2 > 0) ? 1 : (l1 - l2 < 0 ? -1 : 0);
+            } catch (ParseException e) {
+                logger.error("★★★ 时间比较异常，时间1 {}，时间2 {}", time1, time2);
+                logger.error("★★★ 具体错误信息：" + e.getMessage(), e);
+            }
+        }
+        return 2;
     }
 }

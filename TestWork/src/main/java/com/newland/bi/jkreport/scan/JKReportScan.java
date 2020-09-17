@@ -36,10 +36,7 @@ public class JKReportScan {
         scanUtil.scan(hdfsTool, hdfsLSResult);
         hdfsLSResult.sourceToType();
         hdfsLSResult.typeToDate();
-//        hdfsLSResult.sourceToDate();
         hdfsLSResult.exclusion();
-//        logger.info("TypeDateMap：{}", hdfsLSResult.getTypeDateMap());
-        logger.info("DateMap：{}", hdfsLSResult.getDateMap());
         logger.info("mergeMap：{}", hdfsLSResult.mergeMap());
     }
 

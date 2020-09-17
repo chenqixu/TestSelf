@@ -115,4 +115,13 @@ public class HdfsToolTest {
         threadTool.addTask(runnable);
         threadTool.startTask();
     }
+
+    @Test
+    public void touch() throws Exception {
+//        hdfsTool.lsPath("/cqx/data/*");
+//        hdfsTool.touch("/cqx/data/a.complete");
+//        hdfsTool.delete("/cqx/data/a.complete");
+//        hdfsTool.rename("/cqx/data/a.complete", "/cqx/data/b.complete");
+        hdfsTool.delete("/cqx/data/b.complete");
+    }
 }

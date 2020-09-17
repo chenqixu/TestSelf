@@ -4,7 +4,6 @@ import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
@@ -105,7 +104,7 @@ public class HttpUtil {
     }
 
     private void doSend(String url, String data, String data_code, Class<?> httpRequest,
-                       Map<String, String> headerMap, IHttpEntityDeal iHttpEntityDeal) {
+                        Map<String, String> headerMap, IHttpEntityDeal iHttpEntityDeal) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         HttpRequestBase httpRequestBase = null;
@@ -153,8 +152,6 @@ public class HttpUtil {
             HttpEntity entity = response.getEntity();
             // 通过公共接口对entity进行处理
             iHttpEntityDeal.deal(entity);
-        } catch (ClientProtocolException e) {
-            logger.error(e.getMessage(), e);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         } finally {

@@ -7,11 +7,12 @@ import com.cqx.common.utils.system.TimeUtil;
  *
  * @author chenqixu
  */
-public class HdfsLSBean implements Comparable<HdfsLSBean> {
+public class HdfsLSBean implements Comparable<HdfsLSBean>, HdfsLSResult.FastFailureTask {
     private String date;
     private String type = "default";
     private String content;
     private String dateFormat = "yyyyMMddHHmm";
+    private HdfsLSCheck hdfsLSCheck;
 
     public HdfsLSBean() {
     }
@@ -24,6 +25,10 @@ public class HdfsLSBean implements Comparable<HdfsLSBean> {
 
     public HdfsLSBean(String date, String content) {
         this("default", date, content);
+    }
+
+    public void check() {
+        if (hdfsLSCheck != null) hdfsLSCheck.check();
     }
 
     public String toString() {
@@ -66,5 +71,18 @@ public class HdfsLSBean implements Comparable<HdfsLSBean> {
 
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
+    }
+
+    public HdfsLSCheck getHdfsLSCheck() {
+        return hdfsLSCheck;
+    }
+
+    public void setHdfsLSCheck(HdfsLSCheck hdfsLSCheck) {
+        this.hdfsLSCheck = hdfsLSCheck;
+    }
+
+    @Override
+    public String getTaskName() {
+        return getContent();
     }
 }

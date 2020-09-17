@@ -26,8 +26,8 @@ public class JKReportScanTest {
         String scan_path = "hdfs://master75/user/bdoc/20/services/hdfs/17/yz/bigdata/if_upload_hb_netlog/[date:yyyyMMddHHmm]/[type]/[content]";
 //        scan_path = "hdfs://master75/user/bdoc/20/services/hdfs/17/yz/bigdata/if_upload_hb_netlog/[date:yyyyMMddHHmm]/nat/[content]";
         jkReportScan.scan(scan_path);
-        java.sql.Timestamp.valueOf("");
-        java.sql.Date.valueOf("");
-        java.sql.Time.valueOf("");
+//        java.sql.Timestamp.valueOf("");
+//        java.sql.Date.valueOf("");
+//        java.sql.Time.valueOf("");
     }
 }

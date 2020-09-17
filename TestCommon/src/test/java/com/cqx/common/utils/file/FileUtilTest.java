@@ -189,4 +189,10 @@ public class FileUtilTest {
 //            fileUtil.closeRead();
 //        }
     }
+
+    @Test
+    public void copyFile() throws IOException {
+        FileUtil.copyFile("d:\\tmp\\data\\dpi\\dpi_s1mme\\streambackup\\LTE_S1MME_028470736002_20190603110100.txt",
+                "d:\\tmp\\data\\dpi\\dpi_s1mme\\streaminput\\LTE_S1MME_028470736002_20190603110100.txt");
+    }
 }

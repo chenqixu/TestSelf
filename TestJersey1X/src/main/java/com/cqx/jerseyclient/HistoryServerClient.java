@@ -89,7 +89,7 @@ public class HistoryServerClient {
 	}
 	
 	public void jobs() {
-		Jobs textEntity = ClientFactory.getInstance().call(JOBS,
+		Jobs textEntity = ClientFactory.getInstance().get(JOBS,
 				MediaType.APPLICATION_XML, Jobs.class);
 		if(textEntity != null && textEntity.getJob() != null )
 			for(Jobs.Job jb : textEntity.getJob()) {
@@ -101,7 +101,7 @@ public class HistoryServerClient {
 	public void jobinfo(String jobid) {
 		if(jobIdCheck(jobid)) {
 			String url = JOBINFO.replace("{jobid}", jobid);
-			Job textEntity = ClientFactory.getInstance().call(url,
+			Job textEntity = ClientFactory.getInstance().get(url,
     				MediaType.APPLICATION_XML, Job.class);
 			System.out.println("[state]"+textEntity.getState());
 			System.out.println("[diagnostics]"+textEntity.getDiagnostics());
@@ -112,7 +112,7 @@ public class HistoryServerClient {
 		String result = null;
 		if(jobIdCheck(jobid)) {
 			String url = JOBATTEMPTS.replace("{jobid}", jobid);
-    		JobAttempts textEntity = ClientFactory.getInstance().call(url,
+    		JobAttempts textEntity = ClientFactory.getInstance().get(url,
     				MediaType.APPLICATION_XML, JobAttempts.class);
     		for(JobAttempts.JobAttempt ja : textEntity.getJobAttempt()) {
     			result = ja.getLogsLink();
@@ -140,7 +140,7 @@ public class HistoryServerClient {
 //			} catch (IOException e1) {
 //				e1.printStackTrace();
 //			}
-			Document doc = Jsoup.parse(ClientFactory.getInstance().call(url), BASE_URL);
+			Document doc = Jsoup.parse(ClientFactory.getInstance().get(url), BASE_URL);
 			Elements es = doc.select("a");
 			for(Element e : es) {
 				String e_url = e.attr("abs:href");
@@ -156,7 +156,7 @@ public class HistoryServerClient {
 	public String parserHtmlGetErrLog(String url) {
 		StringBuffer sb = new StringBuffer();
 		if(StringUtils.isNotBlank(url)){
-			Document doc = Jsoup.parse(ClientFactory.getInstance().call(url));
+			Document doc = Jsoup.parse(ClientFactory.getInstance().get(url));
 			Elements es = doc.select("pre");
 			for(Element e : es) {
 				sb.append(e.text());

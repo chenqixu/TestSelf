@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * HdfsLSResult
@@ -13,9 +14,9 @@ import java.util.*;
 public class HdfsLSResult {
     private static final Logger logger = LoggerFactory.getLogger(HdfsLSResult.class);
     private List<HdfsLSBean> sourceList;
-    private Map<String, List<HdfsLSBean>> dateMap;
     private Map<String, List<HdfsLSBean>> typeMap;
     private Map<String, Map<String, List<HdfsLSBean>>> typeDateMap;
+    private Map<String, Map<String, HdfsLSCheck>> typeDateCheckMap;
     private String exclusionKey;
     private String filterKey;
 
@@ -23,29 +24,36 @@ public class HdfsLSResult {
         clean();
     }
 
+    /**
+     * 设置单个文件处理完成标志
+     *
+     * @param exclusionKey
+     */
     public void setExclusionKey(String exclusionKey) {
         this.exclusionKey = exclusionKey;
     }
 
+    /**
+     * 设置周期处理完成标志
+     *
+     * @param filterKey
+     */
     public void setFilterKey(String filterKey) {
         this.filterKey = filterKey;
     }
 
+    /**
+     * 增加要处理的数据源
+     *
+     * @param hdfsLSBean
+     */
     public void addSource(HdfsLSBean hdfsLSBean) {
         sourceList.add(hdfsLSBean);
     }
 
-    public void sourceToDate() {
-        for (HdfsLSBean hdfsLSBean : sourceList) {
-            List<HdfsLSBean> typeList = dateMap.get(hdfsLSBean.getDate());
-            if (typeList == null) {
-                typeList = new ArrayList<>();
-                dateMap.put(hdfsLSBean.getDate(), typeList);
-            }
-            typeList.add(hdfsLSBean);
-        }
-    }
-
+    /**
+     * 按类型分组
+     */
     public void sourceToType() {
         for (HdfsLSBean hdfsLSBean : sourceList) {
             List<HdfsLSBean> typeList = typeMap.get(hdfsLSBean.getType());
@@ -55,9 +63,16 @@ public class HdfsLSResult {
             }
             typeList.add(hdfsLSBean);
         }
+        for (Map.Entry<String, List<HdfsLSBean>> entry : typeMap.entrySet()) {
+            logger.info("key：{}，value.size：{}", entry.getKey(), entry.getValue().size());
+        }
     }
 
+    /**
+     * 按时间分组
+     */
     public void typeToDate() {
+        //按类型循环
         for (Map.Entry<String, List<HdfsLSBean>> entry : typeMap.entrySet()) {
             String key = entry.getKey();
             List<HdfsLSBean> value = entry.getValue();
@@ -66,6 +81,7 @@ public class HdfsLSResult {
                 dateMap = new HashMap<>();
                 typeDateMap.put(key, dateMap);
             }
+            //同类型下进行时间分组
             for (HdfsLSBean hdfsLSBean : value) {
                 List<HdfsLSBean> dateList = dateMap.get(hdfsLSBean.getDate());
                 if (dateList == null) {
@@ -77,24 +93,26 @@ public class HdfsLSResult {
         }
     }
 
+    /**
+     * 排除不能处理的文件
+     */
     public void exclusion() {
-        if (dateMap.size() > 0) {//按时间分
+        for (Map<String, List<HdfsLSBean>> entry : typeDateMap.values()) {
             //筛选出exclusionKey和filterKey
-            //这里有个缺陷，不同类型可能有的有.ok，有的没有，这里会被算在一起
-            exclusion(dateMap.entrySet().iterator());
-        } else if (typeDateMap.size() > 0) {//按类型时间分
-            for (Map<String, List<HdfsLSBean>> entry : typeDateMap.values()) {
-                //筛选出exclusionKey和filterKey
-                exclusion(entry.entrySet().iterator());
-            }
+            exclusion(entry.entrySet().iterator());
         }
     }
 
+    /**
+     * 排除不能处理的文件
+     *
+     * @param entryIterator
+     */
     private void exclusion(Iterator<Map.Entry<String, List<HdfsLSBean>>> entryIterator) {
         while (entryIterator.hasNext()) {
             Map.Entry<String, List<HdfsLSBean>> entryDate = entryIterator.next();
             String key = entryDate.getKey();
-            logger.info("key：{}", key);
+            logger.info("key：{}，value：{}", key, entryDate.getValue());
             boolean isExclusion = false;
             boolean isFilter = false;
             Iterator<HdfsLSBean> hdfsLSBeanIterator = entryDate.getValue().iterator();
@@ -114,12 +132,43 @@ public class HdfsLSResult {
         }
     }
 
-    public Map<String, Map<String, List<HdfsLSBean>>> getTypeDateMap() {
-        return typeDateMap;
+    /**
+     * 给剩余要处理的文件增加检查项
+     */
+    public void addCheck() {
+        //按类型循环
+        for (Map.Entry<String, Map<String, List<HdfsLSBean>>> type_entry : getTypeDateMap().entrySet()) {
+            String type_key = type_entry.getKey();
+            Map<String, List<HdfsLSBean>> type_value = type_entry.getValue();
+            //取出某个类型的时间关系
+            Map<String, HdfsLSCheck> dateCheck = typeDateCheckMap.get(type_key);
+            if (dateCheck == null) {
+                dateCheck = new HashMap<>();
+                typeDateCheckMap.put(type_key, dateCheck);
+            }
+            //按时间循环
+            for (Map.Entry<String, List<HdfsLSBean>> cycle_entry : type_value.entrySet()) {
+                String cycle_key = cycle_entry.getKey();
+                List<HdfsLSBean> cycle_value = cycle_entry.getValue();
+                //取出某个类型某个时间的关系
+                HdfsLSCheck hdfsLSCheck = dateCheck.get(cycle_key);
+                if (hdfsLSCheck == null) {
+                    hdfsLSCheck = new HdfsLSCheck(type_key, cycle_key);
+                    dateCheck.put(cycle_key, hdfsLSCheck);
+                }
+                //循环时间下的所有对象
+                for (HdfsLSBean hdfsLSBean : cycle_value) {
+                    //计数
+                    hdfsLSCheck.increment();
+                    //设置触发对象
+                    hdfsLSBean.setHdfsLSCheck(hdfsLSCheck);
+                }
+            }
+        }
     }
 
-    public Map<String, List<HdfsLSBean>> getDateMap() {
-        return dateMap;
+    public Map<String, Map<String, List<HdfsLSBean>>> getTypeDateMap() {
+        return typeDateMap;
     }
 
     public Map<String, List<HdfsLSBean>> mergeMap() {
@@ -130,10 +179,25 @@ public class HdfsLSResult {
         return resultMap;
     }
 
+    public int addQueue(BlockingQueue<FastFailureTask> scanQueue, String dataForamt) {
+        int cnt = 0;
+        //按时间排序
+        for (HdfsLSTimeSortBean hdfsLSTimeSortBean : HdfsLSTimeSortBean.mapToListAndSort(mergeMap(), dataForamt)) {
+            //加入扫描队列
+            scanQueue.addAll(hdfsLSTimeSortBean.getHdfsLSBeanList());
+            cnt = cnt + hdfsLSTimeSortBean.getHdfsLSBeanList().size();
+        }
+        return cnt;
+    }
+
     public void clean() {
         sourceList = new ArrayList<>();
-        dateMap = new HashMap<>();
         typeMap = new HashMap<>();
         typeDateMap = new HashMap<>();
+        typeDateCheckMap = new HashMap<>();
+    }
+
+    public interface FastFailureTask {
+        String getTaskName();
     }
 }

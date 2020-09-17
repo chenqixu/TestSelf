@@ -6,6 +6,7 @@ import kafka.utils.ZkUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.security.JaasUtils;
+import org.apache.kafka.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,5 +156,16 @@ public class KafkaApiUtil {
         newTopicList.add(newTopic);
         adminClient.createTopics(newTopicList);
         adminClient.close();
+    }
+
+    /**
+     * 根据key和分区数计算出当前分区
+     *
+     * @param key
+     * @param numPartitions
+     * @return
+     */
+    public int getPartition(byte[] key, int numPartitions) {
+        return Utils.abs(Utils.murmur2(key)) % numPartitions;
     }
 }
