@@ -23,6 +23,8 @@ import java.net.*;
 public class HttpsUtil {
     private static final MyLogger logger = MyLoggerFactory.getLogger(HttpsUtil.class);
 
+    // TODO: 2020/9/21 缺文件发送，可参考https://www.cnblogs.com/huadoumi/p/4772719.html
+
     /**
      * 发起http/https请求并获取结果
      */
