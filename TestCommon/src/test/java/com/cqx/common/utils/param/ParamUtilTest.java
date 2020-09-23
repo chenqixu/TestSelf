@@ -6,6 +6,7 @@ import com.cqx.common.bean.javabean.Task;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 public class ParamUtilTest {
 
@@ -34,5 +35,12 @@ public class ParamUtilTest {
         //接口
         ITask iTask = new OtherTask();
         System.out.println(((OtherTask) iTask).getOther());
+    }
+
+    @Test
+    public void classPrint() throws Exception {
+        Task task = new Task();
+        Map<String, String> map = ParamUtil.beanToMap(Task.class, task);
+        ParamUtil.setValueByMap(map, Task.class);
     }
 }

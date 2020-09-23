@@ -300,22 +300,43 @@ public class HdfsTool {
     }
 
     /**
+     * ls遍历文件路径，默认不走通配符模式
+     *
+     * @param fs
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public List<FileStatus> ls(FileSystem fs, String path) throws IOException {
+        return ls(fs, path, false);
+    }
+
+    /**
      * ls遍历文件路径
      *
      * @param fs
      * @param path
+     * @param wildcard 是否支持通配符
      * @throws IOException
      */
-    public List<FileStatus> ls(FileSystem fs, String path) throws IOException {
+    public List<FileStatus> ls(FileSystem fs, String path, boolean wildcard) throws IOException {
         List<FileStatus> fileList = new ArrayList<>();
         if (fs != null) {
             logger.info("ls：{}", path);
-            //listStatus 不支持通配符
-            //globStatus 支持通配符
-            for (FileStatus fileStatus : fs.globStatus(new Path(path))) {
-                fileList.add(fileStatus);
-                logger.info("{} {} {} {} {} {}", fileStatus.getPermission(), fileStatus.getOwner(),
-                        fileStatus.getGroup(), fileStatus.isDirectory(), fileStatus.getLen(), fileStatus.getPath());
+            if (wildcard) {
+                //globStatus 支持通配符
+                for (FileStatus fileStatus : fs.globStatus(new Path(path))) {
+                    fileList.add(fileStatus);
+                    logger.info("{} {} {} {} {} {}", fileStatus.getPermission(), fileStatus.getOwner(),
+                            fileStatus.getGroup(), fileStatus.isDirectory(), fileStatus.getLen(), fileStatus.getPath());
+                }
+            } else {
+                //listStatus 不支持通配符
+                for (FileStatus fileStatus : fs.listStatus(new Path(path))) {
+                    fileList.add(fileStatus);
+                    logger.info("{} {} {} {} {} {}", fileStatus.getPermission(), fileStatus.getOwner(),
+                            fileStatus.getGroup(), fileStatus.isDirectory(), fileStatus.getLen(), fileStatus.getPath());
+                }
             }
         }
         return fileList;

@@ -14,6 +14,8 @@ public class Task implements ITask {
     private String task_name;
     @BeanDesc(value = "任务状态")
     private int task_status;
+    @BeanDesc(value = "任务是否结束")
+    private boolean is_complete;
 
     public Task() {
     }
@@ -44,5 +46,13 @@ public class Task implements ITask {
 
     public void setTask_status(int task_status) {
         this.task_status = task_status;
+    }
+
+    public boolean getIs_complete() {
+        return is_complete;
+    }
+
+    public void setIs_complete(boolean is_complete) {
+        this.is_complete = is_complete;
     }
 }

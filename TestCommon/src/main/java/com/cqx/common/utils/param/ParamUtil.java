@@ -75,11 +75,20 @@ public class ParamUtil {
                     case "java.lang.Long":
                         key_value = Long.valueOf(key_value.toString());
                         break;
+                    case "boolean":
+                    case "java.lang.Boolean":
+                        key_value = Boolean.valueOf(key_value.toString());
+                        break;
                 }
                 setter.invoke(t, key_value);
                 if (t instanceof BaseBean) {
-                    String desc = fieldDesc.get(key);
-                    if (desc != null) ((BaseBean) t).setBeanDesc(desc, key_value.toString());
+                    try {
+                        String desc = fieldDesc.get(key);
+                        if (desc != null) ((BaseBean) t).setBeanDesc(desc, key_value.toString());
+                    } catch (Exception e) {
+                        throw new Exception(String.format("参数解析异常，key：%s，value：%s，异常信息：%s",
+                                key, key_value, e.getMessage()), e);
+                    }
                 }
             }
         }

@@ -265,6 +265,13 @@
             </exclusions>
         </dependency>
 
+        <!-- rocksdb -->
+        <dependency>
+            <groupId>org.rocksdb</groupId>
+            <artifactId>rocksdbjni</artifactId>
+            <version>6.10.2</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
