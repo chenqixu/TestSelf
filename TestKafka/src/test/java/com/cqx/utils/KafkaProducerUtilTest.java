@@ -1,6 +1,7 @@
 package com.cqx.utils;
 
 import com.cqx.bean.KafkaTuple;
+import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class KafkaProducerUtilTest {
 
-    private static Logger logger = LoggerFactory.getLogger(KafkaProducerUtilTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaProducerUtilTest.class);
     private final String path = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestKafka\\src\\test\\resources\\";
     private KafkaProducerUtil<String, byte[]> kafkaProducerUtil;
     private GenericRecordUtil genericRecordUtil;
@@ -248,5 +249,22 @@ public class KafkaProducerUtilTest {
         valueMap.put("sex", "false");
         value = genericRecordUtil.genericRecord(topic, valueMap);
         kafkaProducerUtil.send(topic, key, value);
+    }
+
+    @Test
+    public void genericRecordTest() throws Exception {
+        topic = "ogg_to_kafka";
+        genericRecordUtil = new GenericRecordUtil();
+        genericRecordUtil.addTopic(topic);
+        Map<String, String> valueMap = new HashMap<>();
+        valueMap.put("id", "1");
+        valueMap.put("name", new String("你好abc123".getBytes("GBK"), "GBK"));
+//        valueMap.put("sex", "false");
+        byte[] value = genericRecordUtil.genericRecord(topic, valueMap);
+        logger.info("{}", value);
+
+        RecordConvertor recordConvertor = new RecordConvertor("new_ogg_to_kafka", true);
+        GenericRecord genericRecord = recordConvertor.binaryToRecord(value);
+        logger.info("{}", genericRecord);
     }
 }

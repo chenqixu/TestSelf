@@ -1,6 +1,7 @@
 package com.cqx.utils;
 
 import org.apache.avro.Schema;
+import org.apache.avro.generic.CompatibleDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
@@ -16,8 +17,8 @@ import java.io.IOException;
  */
 public class RecordConvertor {
 
-    private final DatumReader<GenericRecord> reader;
-    private final DatumWriter<GenericRecord> writer;
+    private DatumReader<GenericRecord> reader;
+    private DatumWriter<GenericRecord> writer;
 
     public RecordConvertor(Schema schema) {
         reader = new SpecificDatumReader<>(schema);
@@ -36,10 +37,18 @@ public class RecordConvertor {
     }
 
     public RecordConvertor(String topic) {
-        this("", topic);
+        this("", topic, false);
+    }
+
+    public RecordConvertor(String topic, boolean isIgnore) {
+        this("", topic, isIgnore);
     }
 
     public RecordConvertor(String schemaUrl, String topic) {
+        this(schemaUrl, topic, false);
+    }
+
+    public RecordConvertor(String schemaUrl, String topic, boolean isIgnore) {
         SchemaUtil schemaUtil;
         if (schemaUrl != null && schemaUrl.length() > 0) {
             schemaUtil = new SchemaUtil(schemaUrl);
@@ -52,8 +61,17 @@ public class RecordConvertor {
         } else {
             schema = schemaUtil.getSchemaByUrlTopic(topic);
         }
-        reader = new SpecificDatumReader<>(schema);
+        newReader(schema, isIgnore);
         writer = new SpecificDatumWriter<>(schema);
+    }
+
+    private void newReader(Schema schema) {
+        newReader(schema, false);
+    }
+
+    private void newReader(Schema schema, boolean isIgnore) {
+        if (isIgnore) reader = new CompatibleDatumReader<>(schema);
+        else reader = new SpecificDatumReader<>(schema);
     }
 
     public GenericRecord binaryToRecord(byte[] msgByte) {

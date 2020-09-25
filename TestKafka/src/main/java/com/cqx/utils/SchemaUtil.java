@@ -58,11 +58,22 @@ public class SchemaUtil {
                 "\"name\": \"ogg\",\n" +
                 "\"fields\":[\n" +
                 "{\"name\": \"id\", \"type\": [\"int\"]},\n" +
-                "{\"name\": \"name\", \"type\": [\"string\"]},\n" +
-                "{\"name\": \"sex\", \"type\": [\"boolean\"]}\n" +
+                "{\"name\": \"name\", \"type\": [\"string\"]}\n" +
+//                "{\"name\": \"sex\", \"type\": [\"boolean\", \"null\"]}\n" +
                 "]\n" +
                 "}";
         schemaMap.put("ogg_to_kafka", paramValStr);
+        paramValStr = "{\n" +
+                "\"namespace\": \"com.newland\",\n" +
+                "\"type\": \"record\",\n" +
+                "\"name\": \"ogg\",\n" +
+                "\"fields\":[\n" +
+                "{\"name\": \"id\", \"type\": [\"int\"]},\n" +
+                "{\"name\": \"name\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"sex123\", \"type\": [\"null\", \"string\"], \"default\":\"null\"}\n" +
+                "]\n" +
+                "}";
+        schemaMap.put("new_ogg_to_kafka", paramValStr);
     }
 
     private String urlStr;
