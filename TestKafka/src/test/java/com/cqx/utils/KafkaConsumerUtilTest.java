@@ -31,15 +31,19 @@ public class KafkaConsumerUtilTest {
 
     @Test
     public void poll() throws Exception {
-        String topic = "nmc_tb_lte_http_test";
-        recordConvertor = new RecordConvertor(topic);
-//        kafkaConsumerUtil = new KafkaConsumerUtil<>(conf);
+        String topic = "nmc_tb_lte_http";
+        recordConvertor = new RecordConvertor(schemaUrl, topic);
         kafkaConsumerUtil = new KafkaConsumerUtil<>(conf, "admin", "admin");
         kafkaConsumerUtil.subscribe(topic);
-        List<byte[]> list = kafkaConsumerUtil.poll(1000);
-        for (byte[] bytes : list) {
-            GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
-            logger.info("genericRecord：{}", genericRecord);
+        int cnt = 0;
+        while (cnt < 50) {
+            List<byte[]> list = kafkaConsumerUtil.poll(1000);
+            for (byte[] bytes : list) {
+                GenericRecord genericRecord = recordConvertor.binaryToRecord(bytes);
+                logger.info("genericRecord：{}", genericRecord);
+            }
+            cnt++;
+            SleepUtils.sleepMilliSecond(500);
         }
     }
 

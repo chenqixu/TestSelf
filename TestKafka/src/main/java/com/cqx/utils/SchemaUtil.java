@@ -58,8 +58,8 @@ public class SchemaUtil {
                 "\"name\": \"ogg\",\n" +
                 "\"fields\":[\n" +
                 "{\"name\": \"id\", \"type\": [\"int\"]},\n" +
-                "{\"name\": \"name\", \"type\": [\"string\"]}\n" +
-//                "{\"name\": \"sex\", \"type\": [\"boolean\", \"null\"]}\n" +
+                "{\"name\": \"name\", \"type\": [\"string\"]},\n" +
+                "{\"name\": \"sex\", \"type\": [\"boolean\", \"null\"]}\n" +
                 "]\n" +
                 "}";
         schemaMap.put("ogg_to_kafka", paramValStr);
@@ -69,8 +69,8 @@ public class SchemaUtil {
                 "\"name\": \"ogg\",\n" +
                 "\"fields\":[\n" +
                 "{\"name\": \"id\", \"type\": [\"int\"]},\n" +
-                "{\"name\": \"name\", \"type\": [\"string\"]},\n" +
-                "{\"name\": \"sex123\", \"type\": [\"null\", \"string\"], \"default\":\"null\"}\n" +
+                "{\"name\": \"name\", \"type\": [\"int\"]}\n" +
+//                "{\"name\": \"sex123\", \"type\": [\"null\", \"string\"], \"default\":\"null\"}\n" +
                 "]\n" +
                 "}";
         schemaMap.put("new_ogg_to_kafka", paramValStr);
