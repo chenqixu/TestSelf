@@ -111,6 +111,17 @@ public class TimeUtil {
     }
 
     /**
+     * 获取当前时间，格式yyyyMMddHHmmss
+     *
+     * @return
+     */
+    public static String getNow(String format) {
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(now);
+    }
+
+    /**
      * 时间戳转时间
      *
      * @param value

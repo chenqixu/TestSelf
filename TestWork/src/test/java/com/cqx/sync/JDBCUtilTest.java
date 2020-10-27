@@ -3,10 +3,7 @@ package com.cqx.sync;
 import com.cqx.common.utils.jdbc.*;
 import com.cqx.common.utils.xml.XMLParser;
 import com.cqx.common.utils.xml.XMLParserElement;
-import com.cqx.sync.bean.CqxTest1;
-import com.cqx.sync.bean.ParamKey;
-import com.cqx.sync.bean.RsmgrCluster;
-import com.cqx.sync.bean.SyncConf;
+import com.cqx.sync.bean.*;
 import com.newland.bi.bigdata.compress.ZipUtils;
 import com.newland.bi.bigdata.time.TimeCostUtil;
 import org.junit.After;
@@ -41,6 +38,11 @@ public class JDBCUtilTest {
                 srcdbBean.setTns("jdbc:mysql://127.0.0.1:3306/jutap?useUnicode=true");
                 srcdbBean.setUser_name("udap");
                 srcdbBean.setPass_word("udap");
+                break;
+            case "flink":
+                srcdbBean.setTns("jdbc:mysql://10.1.8.200:3306/flink?useUnicode=true");
+                srcdbBean.setUser_name("flink");
+                srcdbBean.setPass_word("flink");
                 break;
         }
         return srcdbBean;
@@ -79,9 +81,10 @@ public class JDBCUtilTest {
     public void setUp() throws Exception {
         DBBean srcdbBean;
 //        srcdbBean = oracleConfig("jutap_tenant");
-        srcdbBean = oracleConfig("jutap");
+//        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
 //        srcdbBean = mysqlConfig("local");
+        srcdbBean = mysqlConfig("flink");
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
@@ -133,6 +136,19 @@ public class JDBCUtilTest {
         syncConf.setSYNC_TIME(new java.sql.Timestamp(new Date().getTime()));
         beans.add(syncConf);
         jdbcUtil.executeBatch(sql, beans, SyncConf.class, fields);
+    }
+
+    @Test
+    public void executeBatchFlink() throws Exception {
+        String fields = ":sum_time,:parallelism,:sum_cnt";
+        String sql = "insert into mc_throughput(sum_time,parallelism,sum_cnt) values(?,?,?)";
+        List<ThroughputBean> beans = new ArrayList<>();
+        ThroughputBean throughputBean = new ThroughputBean();
+        throughputBean.setParallelism(1);
+        throughputBean.setSum_cnt(1000L);
+        logger.info("throughputBean : {}", throughputBean.getSum_time());
+        beans.add(throughputBean);
+        jdbcUtil.executeBatch(sql, beans, ThroughputBean.class, fields);
     }
 
     /**
