@@ -272,14 +272,24 @@ public class TimeTest {
 ////		System.out.println(getNowGMTDate("8", "+"));
 //		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 
-        System.out.println(getNow());
-        System.out.println(supplementZero(""));
-        System.out.println(supplementZero(null));
-        System.out.println(supplementZero("20181114 01:01"));
-        System.out.println(supplementZero("20181114"));
-        System.out.println(supplementZero("2018111401"));
-        System.out.println(supplementZero("201811140101"));
-        System.out.println(supplementZero("20181114010101"));
+//        System.out.println(getNow());
+//        System.out.println(supplementZero(""));
+//        System.out.println(supplementZero(null));
+//        System.out.println(supplementZero("20181114 01:01"));
+//        System.out.println(supplementZero("20181114"));
+//        System.out.println(supplementZero("2018111401"));
+//        System.out.println(supplementZero("201811140101"));
+//        System.out.println(supplementZero("20181114010101"));
+
+        String times = "20190529170928740";
+        Date d = new Date(1559120968740L);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        System.out.println(simpleDateFormat.format(d));
+        System.out.println(simpleDateFormat1.format(d));
+        System.out.println(simpleDateFormat.parse(times));
+        System.out.println(simpleDateFormat1.format(simpleDateFormat1.parse(times)));
+        //结论，毫秒没办法用秒来格式化，时间会有问题
     }
 
     /**
