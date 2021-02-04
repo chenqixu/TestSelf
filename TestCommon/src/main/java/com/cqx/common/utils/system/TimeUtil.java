@@ -1,10 +1,14 @@
 package com.cqx.common.utils.system;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,8 +18,33 @@ import java.util.Date;
  * @author chenqixu
  */
 public class TimeUtil {
-
     private static final Logger logger = LoggerFactory.getLogger(TimeUtil.class);
+    /**
+     * 支持的格式如下：<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMMddHHmmss"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy-MM-dd HH:mm:ss"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMMdd'T'HHmmss"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy-MM-dd'T'HH:mm:ss"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy-MM-dd'T'HH:mm:ss.SSS"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy/MM/dd HH:mm:ss"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMMddHHmm"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMMdd HH:mm:ss"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy-MM-dd HH:mm"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMMddHH"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMMdd"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy-MM-dd"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy/MM/dd"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyyMM"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy-MM"<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;"yyyy/MM"
+     */
+    private static final String[] defaultPattern = new String[]{
+            "yyyyMMddHHmmss", "yyyy-MM-dd HH:mm:ss",
+            "yyyyMMdd'T'HHmmss", "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss.SSS",
+            "yyyy/MM/dd HH:mm:ss", "yyyyMMddHHmm",
+            "yyyyMMdd HH:mm:ss", "yyyy-MM-dd HH:mm",
+            "yyyyMMddHH", "yyyyMMdd", "yyyy-MM-dd", "yyyy/MM/dd", "yyyyMM", "yyyy-MM", "yyyy/MM"
+    };
     private static SimpleDateFormat ymdhmsFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
@@ -151,5 +180,77 @@ public class TimeUtil {
         Date add = calendar.getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         return simpleDateFormat.format(add);
+    }
+
+    /**
+     * 把字符串时间格式化成long（时间戳），支持多种格式<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;不在支持的格式内可能会有异常值
+     *
+     * @param time 时间字符串
+     * @return
+     * @throws ParseException
+     * @see TimeUtil#defaultPattern
+     */
+    public static long getTime(String time) throws ParseException {
+        return DateUtils.parseDate(time, defaultPattern).getTime();
+    }
+
+    /**
+     * 仅适用于JDK8以上的版本，计算微秒，在秒的基础上*1000*1000
+     *
+     * @param time
+     * @return
+     */
+    public static long formatTimeByJDK8(String time) {
+        LocalDateTime ldt = LocalDateTime.parse(time);
+        long second = ldt.toEpochSecond(ZoneOffset.of("+8"));
+        long microSecond = ldt.toInstant(ZoneOffset.of("+8")).getLong(ChronoField.MICRO_OF_SECOND);
+        return (second * 1000 * 1000 + microSecond);
+    }
+
+    /**
+     * 把字符串时间根据传入的foramt格式化成long（时间戳）
+     *
+     * @param time   时间字符串
+     * @param format 格式化
+     * @return
+     * @throws ParseException
+     */
+    public static long formatTime(String time, String format) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.parse(time).getTime();
+    }
+
+    /**
+     * 把字符串时间根据yyyy-MM-dd HH:mm:ss格式化成long（时间戳）
+     *
+     * @param time 时间字符串
+     * @return
+     * @throws ParseException
+     */
+    public static long formatTime(String time) throws ParseException {
+        return formatTime(time, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    /**
+     * 把传入的时间戳根据传入的foramt格式化成字符串时间
+     *
+     * @param time   时间戳
+     * @param format 格式化
+     * @return
+     */
+    public static String formatTime(long time, String format) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(new Date(time));
+    }
+
+    /**
+     * 把传入的时间戳根据yyyy-MM-dd HH:mm:ss格式化成字符串时间
+     *
+     * @param time 时间戳
+     * @return
+     */
+    public static String formatTime(long time) {
+        return formatTime(time, "yyyy-MM-dd HH:mm:ss");
     }
 }

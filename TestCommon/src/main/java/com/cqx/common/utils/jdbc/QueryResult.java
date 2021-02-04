@@ -1,7 +1,19 @@
 package com.cqx.common.utils.jdbc;
 
 /**
- * QueryResult
+ * QueryResult<br>
+ * &nbsp;&nbsp;ColumnName：名称<br>
+ * &nbsp;&nbsp;ColumnLabel：标签<br>
+ * &nbsp;&nbsp;ColumnType：类型<br>
+ * &nbsp;&nbsp;ColumnClassName：java类型名称<br>
+ * &nbsp;&nbsp;ColumnTypeName：类型名称<br>
+ * &nbsp;&nbsp;value：值<br>
+ * &nbsp;&nbsp;ColumnDisplaySize：显示大小<br>
+ * &nbsp;&nbsp;Precision：精度<br>
+ * &nbsp;&nbsp;Scale：比例<br>
+ * &nbsp;&nbsp;SchemaName：模式名称<br>
+ * &nbsp;&nbsp;CatalogName：目录名称<br>
+ * &nbsp;&nbsp;REMARKS：备注<br>
  *
  * @author chenqixu
  */

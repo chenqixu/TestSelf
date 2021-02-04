@@ -1,0 +1,23 @@
+dbbeans:
+  - name: gsdbBean
+    user_name: frtbase
+    pass_word: frtbase
+    tns:
+      - "jdbc:gsdb://10.1.8.148:22581/gsdb"
+    driver: fjlz.gsdb.jdbc.GsdbDriver
+    validation_query: select 1 from dual
+  - name: mysqlBean
+    user_name: "suyan"
+    pass_word: "suyan"
+    tns: "jdbc:mysql://10.1.8.200:3306/suyan_perf?useUnicode=true"
+    dbType: "MYSQL"
+  - name: adbBean
+    user_name: "sentry"
+    pass_word: "sentry"
+    tns: "jdbc:postgresql://10.1.8.206:5432/sentry"
+    dbType: "POSTGRESQL"
+  - name: localmysqlBean
+    user_name: "udap"
+    pass_word: "udap"
+    tns: "jdbc:mysql://127.0.0.1:3306/utap?useUnicode=true"
+    dbType: "MYSQL"

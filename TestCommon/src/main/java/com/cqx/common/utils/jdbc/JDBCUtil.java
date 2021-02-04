@@ -1,5 +1,6 @@
 package com.cqx.common.utils.jdbc;
 
+import com.cqx.common.utils.system.ArraysUtil;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,29 +22,26 @@ import java.util.*;
  *
  * @author chenqixu
  */
-public class JDBCUtil {
-
+public class JDBCUtil implements IJDBCUtil {
     private static final Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
+    private final String insert = "insert into %s(%s) values(%s)";
+    private final String update = "update %s set %s where %s";
+    private final String delete = "delete from %s where %s";
     private DataSource dataSource;
     private DBBean dbBean;
     private List<String> keyList = new ArrayList<>();
     private List<String> endList = new ArrayList<>();
     private int batchNum = 2000;
+    private boolean isThrow = true;//是否抛出异常，默认抛出
 
     public JDBCUtil(DBBean dbBean) {
         this.dbBean = dbBean;
         //关键字初始化
-        keyList.add(")");
-        keyList.add("%");
-        keyList.add(",");
-        keyList.add(" ");
-        //关键字初始化
-        endList.add("'");
+        keysInit();
         //数据库初始化
         if (dbBean.isPool()) {
             try {
-                dataSource = setupDataSource(dbBean.getDbType().getDriver(),
-                        dbBean.getUser_name(), dbBean.getPass_word(), dbBean.getTns());
+                dataSource = setupDataSource(dbBean);
             } catch (Exception e) {
                 logger.error("连接池初始化失败。" + e.getMessage(), e);
             }
@@ -58,33 +56,94 @@ public class JDBCUtil {
         }
     }
 
+    private void keysInit() {
+        //关键字初始化
+        keyList.add(")");
+        keyList.add("%");
+        keyList.add(",");
+        keyList.add(" ");
+        //关键字初始化
+        endList.add("'");
+    }
+
+    private DataSource setupDataSource(DBBean dbBean) {
+        return setupDataSource(dbBean.getDbType().getDriver(),
+                dbBean.getUser_name(), dbBean.getPass_word(), dbBean.getTns(),
+                5, 2, 3, 5000,
+                dbBean.getDbType().getValidation_query(),
+                false, true, false, false,
+                60000, 300000);
+    }
+
+    private DataSource setupDataSource(DBBean dbBean, int MaxActive, int MinIdle, int MaxIdle) {
+        return setupDataSource(dbBean.getDbType().getDriver(),
+                dbBean.getUser_name(), dbBean.getPass_word(), dbBean.getTns(),
+                MaxActive, MinIdle, MaxIdle, 5000L,
+                dbBean.getDbType().getValidation_query(),
+                false, true, false, false,
+                60000L, 300000L);
+    }
+
     /**
      * 创建数据源
      *
-     * @param driver   驱动
-     * @param username 用户名
-     * @param password 密码
-     * @param url      tns
-     * @return 数据源
+     * @param driver
+     * @param username
+     * @param password
+     * @param url
+     * @param MaxActive
+     * @param MinIdle
+     * @param MaxIdle
+     * @param validation_query
+     * @param MaxWait
+     * @param TestOnBorrow
+     * @param TestWhileIdle
+     * @param TestOnReturn
+     * @param PoolPreparedStatements
+     * @param TimeBetweenEvictionRunsMillis
+     * @param MinEvictableIdleTimeMillis
+     * @return
      */
     private DataSource setupDataSource(String driver, String username,
-                                       String password, String url) {
+                                       String password, String url, int MaxActive, int MinIdle, int MaxIdle,
+                                       long MaxWait, String validation_query, boolean TestOnBorrow,
+                                       boolean TestWhileIdle, boolean TestOnReturn, boolean PoolPreparedStatements,
+                                       long TimeBetweenEvictionRunsMillis, long MinEvictableIdleTimeMillis) {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(driver);
-        ds.setUsername(username);
-        ds.setPassword(password);
         ds.setUrl(url);
+        if (username != null && username.trim().length() > 0) {
+            ds.setUsername(username);
+        }
+        if (password != null && password.trim().length() > 0) {
+            ds.setPassword(password);
+        }
         // 最大活动连接
-        ds.setMaxActive(5);
+        ds.setMaxActive(MaxActive);//5
         // 最小空闲连接
-        ds.setMinIdle(2);
+        ds.setMinIdle(MinIdle);//2
         // 最大空闲连接
-        ds.setMaxIdle(3);
-//		ds.setValidationQuery("select 1 from dual");
-//		ds.setValidationQueryTimeout(1000);
-//		ds.setTestOnBorrow(false);
-//		ds.setTestWhileIdle(true);
-//		ds.setTimeBetweenEvictionRunsMillis(15000);
+        ds.setMaxIdle(MaxIdle);//3
+        // 获取连接时最大等待时间，单位毫秒
+        ds.setMaxWait(MaxWait);//5000
+        if (validation_query != null && validation_query.trim().length() > 0) {
+            // 设置验证sql，在连接空闲的时候会做
+            ds.setValidationQuery(validation_query);//select 1 from dual
+            // 连接验证的查询超时时间，单位毫秒
+//            ds.setValidationQueryTimeout(ValidationQueryTimeout);//1000
+            // 连接借出时是否做验证
+            ds.setTestOnBorrow(TestOnBorrow);//false
+            // 连接在空闲的时候是否做验证
+            ds.setTestWhileIdle(TestWhileIdle);//true
+            // 连接回收的时候是否做验证
+            ds.setTestOnReturn(TestOnReturn);//false
+        }
+        // 是否缓存preparedStatement，支持游标的数据库有性能提升
+        ds.setPoolPreparedStatements(PoolPreparedStatements);//false
+        // 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        ds.setTimeBetweenEvictionRunsMillis(TimeBetweenEvictionRunsMillis);//60000
+        // 配置一个连接在池中最小生存的时间，单位是毫秒
+        ds.setMinEvictableIdleTimeMillis(MinEvictableIdleTimeMillis);//300000
         return ds;
     }
 
@@ -94,7 +153,7 @@ public class JDBCUtil {
      * @return 数据库连接
      * @throws SQLException SQL异常
      */
-    private Connection getConnection() throws SQLException {
+    protected Connection getConnection() throws SQLException {
         if (dbBean.isPool()) {//走连接池
             if (dataSource != null) {
                 return dataSource.getConnection();
@@ -147,31 +206,8 @@ public class JDBCUtil {
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
             ResultSetMetaData rsMeta = rs.getMetaData();
-            for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-                int column = i + 1;
-                String ColumnName = rsMeta.getColumnName(column);
-                String ColumnLabel = rsMeta.getColumnLabel(column);
-                int ColumnType = rsMeta.getColumnType(column);
-                String ColumnClassName = rsMeta.getColumnClassName(column);
-                String ColumnTypeName = rsMeta.getColumnTypeName(column);
-                int ColumnDisplaySize = rsMeta.getColumnDisplaySize(column);
-                int Precision = rsMeta.getPrecision(column);
-                int Scale = rsMeta.getScale(column);
-                String SchemaName = rsMeta.getSchemaName(column);
-                String CatalogName = rsMeta.getCatalogName(column);
-                QueryResult queryResult = new QueryResult();
-                queryResult.setColumnName(ColumnName);
-                queryResult.setColumnLabel(ColumnLabel);
-                queryResult.setColumnType(ColumnType);
-                queryResult.setColumnClassName(ColumnClassName);
-                queryResult.setColumnTypeName(ColumnTypeName);
-                queryResult.setColumnDisplaySize(ColumnDisplaySize);
-                queryResult.setPrecision(Precision);
-                queryResult.setScale(Scale);
-                queryResult.setSchemaName(SchemaName);
-                queryResult.setCatalogName(CatalogName);
-                queryResultList.add(queryResult);
-            }
+            //查询结果设置到List<QueryResult>中
+            queryResultList = buildQueryResult(rsMeta, null);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
@@ -270,19 +306,46 @@ public class JDBCUtil {
     }
 
     /**
-     * 执行sql查询语句，返回结果
+     * 执行sql查询语句，使用回调接口
      *
-     * @param sql     sql
-     * @param beanCls 结果类
-     * @param <T>     结果类
-     * @return List<T>
+     * @param sql
+     * @param iCallBack
+     * @throws SQLException
      */
-    public <T> List<T> executeQuery(String sql, Class<T> beanCls) {
+    public void executeQuery(String sql, ICallBack iCallBack) throws SQLException {
         ResultSet rs = null;
-        T t;
-        List<T> tList = new ArrayList<>();
         Connection conn = null;
         Statement stm = null;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            stm = conn.createStatement();
+            rs = stm.executeQuery(sql);
+            while (rs.next()) {
+                iCallBack.call(rs);
+            }
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            if (isThrow()) throw e;
+        } finally {
+            closeResultSet(rs);
+            closeStm(stm);
+            closeConn(conn);
+        }
+    }
+
+    /**
+     * 执行sql查询语句，使用回调接口，带Bean
+     *
+     * @param sql
+     * @param iBeanCallBack
+     * @throws SQLException
+     */
+    public <T> void executeQuery(String sql, Class<T> beanCls, IBeanCallBack<T> iBeanCallBack) throws Exception {
+        ResultSet rs = null;
+        Connection conn = null;
+        Statement stm = null;
+        T t;
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
@@ -292,31 +355,50 @@ public class JDBCUtil {
             rs = stm.executeQuery(sql);
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
-                t = beanCls.newInstance();
-                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-                    String ColumnLabel = rsMeta.getColumnLabel(i + 1);
-                    Object value = rs.getObject(i + 1);
-                    for (PropertyDescriptor property : propertyDescriptors) {
-                        String key = property.getName();
-                        if (ColumnLabel.contains(key)) {
-                            Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
-                            // getter/setter方法
-                            setter.invoke(t, value);
-                            break;
-                        }
-                    }
-                }
-                tList.add(t);
+                //查询结果设置到java bean中
+                t = queryResultSet(rsMeta, propertyDescriptors, rs, beanCls);
+                iBeanCallBack.call(t);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            tList = null;
+            logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            if (isThrow()) throw e;
         } finally {
             closeResultSet(rs);
             closeStm(stm);
             closeConn(conn);
         }
-        return tList;
+    }
+
+    /**
+     * 执行sql查询语句，使用回调接口，带QueryResult
+     *
+     * @param sql
+     * @param iQueryResultCallBack
+     * @throws Exception
+     */
+    public void executeQuery(String sql, IQueryResultCallBack iQueryResultCallBack) throws Exception {
+        ResultSet rs = null;
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            stm = conn.createStatement();
+            rs = stm.executeQuery(sql);
+            ResultSetMetaData rsMeta = rs.getMetaData();
+            while (rs.next()) {
+                //查询结果设置到List<QueryResult>中
+                List<QueryResult> queryResults = buildQueryResult(rsMeta, rs);
+                iQueryResultCallBack.call(queryResults);
+            }
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            if (isThrow()) throw e;
+        } finally {
+            closeResultSet(rs);
+            closeStm(stm);
+            closeConn(conn);
+        }
     }
 
     /**
@@ -337,39 +419,53 @@ public class JDBCUtil {
             rs = stm.executeQuery(sql);
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
-                List<QueryResult> queryResults = new ArrayList<>();
-                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-                    int column = i + 1;
-                    String ColumnName = rsMeta.getColumnName(column);
-                    String ColumnLabel = rsMeta.getColumnLabel(column);
-                    int ColumnType = rsMeta.getColumnType(column);
-                    String ColumnClassName = rsMeta.getColumnClassName(column);
-                    String ColumnTypeName = rsMeta.getColumnTypeName(column);
-                    int ColumnDisplaySize = rsMeta.getColumnDisplaySize(column);
-                    int Precision = rsMeta.getPrecision(column);
-                    int Scale = rsMeta.getScale(column);
-                    String SchemaName = rsMeta.getSchemaName(column);
-                    String CatalogName = rsMeta.getCatalogName(column);
-                    Object value = rs.getObject(column);
-                    QueryResult queryResult = new QueryResult();
-                    queryResult.setColumnName(ColumnName);
-                    queryResult.setColumnLabel(ColumnLabel);
-                    queryResult.setColumnType(ColumnType);
-                    queryResult.setColumnClassName(ColumnClassName);
-                    queryResult.setColumnTypeName(ColumnTypeName);
-                    queryResult.setColumnDisplaySize(ColumnDisplaySize);
-                    queryResult.setPrecision(Precision);
-                    queryResult.setScale(Scale);
-                    queryResult.setSchemaName(SchemaName);
-                    queryResult.setCatalogName(CatalogName);
-                    queryResult.setValue(value);
-                    queryResults.add(queryResult);
-                }
+                //查询结果设置到List<QueryResult>中
+                List<QueryResult> queryResults = buildQueryResult(rsMeta, rs);
                 tList.add(queryResults);
             }
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
-            throw e;
+            tList = null;
+            if (isThrow()) throw e;
+        } finally {
+            closeResultSet(rs);
+            closeStm(stm);
+            closeConn(conn);
+        }
+        return tList;
+    }
+
+    /**
+     * 执行sql查询语句，返回结果
+     *
+     * @param sql     sql
+     * @param beanCls 结果类
+     * @param <T>     结果类
+     * @return List<T>
+     */
+    public <T> List<T> executeQuery(String sql, Class<T> beanCls) throws Exception {
+        ResultSet rs = null;
+        T t;
+        List<T> tList = new ArrayList<>();
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
+            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+            conn = getConnection();
+            assert conn != null;
+            stm = conn.createStatement();
+            rs = stm.executeQuery(sql);
+            ResultSetMetaData rsMeta = rs.getMetaData();
+            while (rs.next()) {
+                //查询结果设置到java bean中
+                t = queryResultSet(rsMeta, propertyDescriptors, rs, beanCls);
+                tList.add(t);
+            }
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            tList = null;
+            if (isThrow()) throw e;
         } finally {
             closeResultSet(rs);
             closeStm(stm);
@@ -387,7 +483,7 @@ public class JDBCUtil {
      * @param <T>       结果类
      * @return List<T>
      */
-    public <T> List<T> executeQuery(String sql, Class<T> beanCls, List<Object> paramList) {
+    public <T> List<T> executeQuery(String sql, Class<T> beanCls, List<Object> paramList) throws Exception {
         ResultSet rs = null;
         T t;
         List<T> tList = new ArrayList<>();
@@ -406,91 +502,20 @@ public class JDBCUtil {
             rs = pstmt.executeQuery();//注意，上面已经绑定变量了，这里不需要再传sql
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
-                t = beanCls.newInstance();
-                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-                    String ColumnLabel = rsMeta.getColumnLabel(i + 1).toUpperCase();
-                    Object value = rs.getObject(i + 1);
-                    for (PropertyDescriptor property : propertyDescriptors) {
-                        String key = property.getName().toUpperCase();
-                        if (ColumnLabel.equals(key)) {
-                            Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
-                            String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
-                            // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
-                            if (propertyName.equals("int")) {
-                                if (value == null) {
-                                    setter.invoke(t, 0);
-                                } else {
-                                    setter.invoke(t, Integer.valueOf(value.toString()));
-                                }
-                            } else if (propertyName.equals("long")) {
-                                if (value == null) {
-                                    setter.invoke(t, 0);
-                                } else {
-                                    setter.invoke(t, Long.valueOf(value.toString()));
-                                }
-                            } else if (propertyName.equals("java.lang.Long")) {
-                                if (value == null) {
-                                    setter.invoke(t, 0L);
-                                } else {
-                                    setter.invoke(t, Long.valueOf(value.toString()));
-                                }
-                            } else if (propertyName.equals("java.sql.Date")) {
-                                if (value instanceof Timestamp) {
-                                    setter.invoke(t, new Date(((Timestamp) value).getTime()));
-                                }
-                            } else {
-                                setter.invoke(t, value);
-                            }
-                            break;
-                        }
-                    }
-                }
+                //查询结果设置到java bean中
+                t = queryResultSet(rsMeta, propertyDescriptors, rs, beanCls);
                 tList.add(t);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             tList = null;
+            if (isThrow()) throw e;
         } finally {
             closeResultSet(rs);
             closePstmt(pstmt);
             closeConn(conn);
         }
         return tList;
-    }
-
-    /**
-     * 找到空格、括号等等就返回
-     *
-     * @param param 内容
-     * @param key   关键字
-     * @param i     关键字List下标
-     * @return 结果
-     */
-    public String getParam(String param, String key, int i) {
-        if (param != null && param.length() > 0) {
-            int index = param.indexOf(key);
-            if (index > 0) {
-                return param.substring(0, index);
-            } else {
-                i++;
-                if (keyList.size() > i) return getParam(param, keyList.get(i), i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 判断结尾字符是否异常
-     *
-     * @param param 内容
-     * @return 结果
-     */
-    public boolean paramEndWith(String param) {
-        if (param == null) return false;
-        for (String endStr : endList) {
-            if (param.trim().endsWith(endStr)) return false;
-        }
-        return true;
     }
 
     /**
@@ -502,7 +527,7 @@ public class JDBCUtil {
      * @param <T>         结果类
      * @return List<T>
      */
-    public <T> List<T> executeQuery(String sql, Object paramObject, Class<T> beanCls) {
+    public <T> List<T> executeQuery(String sql, Object paramObject, Class<T> beanCls) throws Exception {
         ResultSet rs = null;
         T t;
         List<T> tList = new ArrayList<>();
@@ -548,39 +573,8 @@ public class JDBCUtil {
                         Method getter = property.getReadMethod();// Java中提供了用来访问某个属性的
                         Object value = getter.invoke(paramObject);
                         // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
-                        if (propertyName.equals("int")) {
-                            if (value == null) {
-                                pstmt.setInt(parameterIndex, 0);
-                            } else {
-                                pstmt.setInt(parameterIndex, (Integer) value);
-                            }
-                        } else if (propertyName.equals("long") || propertyName.equals("java.lang.Long")) {
-                            if (value == null) {
-                                pstmt.setLong(parameterIndex, 0L);
-                            } else {
-                                pstmt.setLong(parameterIndex, (Long) value);
-                            }
-                        } else if (propertyName.equals("java.sql.Timestamp")) {
-                            if (value == null) {
-                                pstmt.setTimestamp(parameterIndex, null);
-                            } else {
-                                pstmt.setTimestamp(parameterIndex, (Timestamp) value);
-                            }
-                        } else if (propertyName.equals("java.sql.Date")) {
-                            if (value == null) {
-                                pstmt.setDate(parameterIndex, null);
-                            } else {
-                                pstmt.setDate(parameterIndex, (Date) value);
-                            }
-                        } else if (propertyName.equals("java.lang.String")) {
-                            if (value == null) {
-                                pstmt.setString(parameterIndex, null);
-                            } else {
-                                pstmt.setString(parameterIndex, (String) value);
-                            }
-                        } else {
-                            pstmt.setObject(parameterIndex, value);
-                        }
+                        // 设置参数
+                        pstmtSetValue(pstmt, propertyName, parameterIndex, value);
                         break;
                     }
                 }
@@ -588,131 +582,20 @@ public class JDBCUtil {
             rs = pstmt.executeQuery();
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
-                t = beanCls.newInstance();
-                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-                    String ColumnLabel = rsMeta.getColumnLabel(i + 1).toUpperCase();
-                    Object value = rs.getObject(i + 1);
-                    for (PropertyDescriptor property : propertyDescriptors) {
-                        String key = property.getName().toUpperCase();
-                        if (ColumnLabel.equals(key)) {
-                            Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
-                            String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
-                            // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
-                            if (propertyName.equals("int")) {
-                                if (value == null) {
-                                    setter.invoke(t, 0);
-                                } else {
-                                    setter.invoke(t, Integer.valueOf(value.toString()));
-                                }
-                            } else if (propertyName.equals("long")) {
-                                if (value == null) {
-                                    setter.invoke(t, 0);
-                                } else {
-                                    setter.invoke(t, Long.valueOf(value.toString()));
-                                }
-                            } else if (propertyName.equals("java.lang.Long")) {
-                                if (value == null) {
-                                    setter.invoke(t, 0L);
-                                } else {
-                                    setter.invoke(t, Long.valueOf(value.toString()));
-                                }
-                            } else if (propertyName.equals("java.sql.Date")) {
-                                if (value instanceof Timestamp) {
-                                    setter.invoke(t, new Date(((Timestamp) value).getTime()));
-                                }
-                            } else {
-                                setter.invoke(t, value);
-                            }
-                            break;
-                        }
-                    }
-                }
+                //查询结果设置到java bean中
+                t = queryResultSet(rsMeta, propertyDescriptors, rs, beanCls);
                 tList.add(t);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             tList = null;
+            if (isThrow()) throw e;
         } finally {
             closeResultSet(rs);
             closePstmt(pstmt);
             closeConn(conn);
         }
         return tList;
-    }
-
-    /**
-     * 执行sql查询语句，返回结果
-     *
-     * @param sql
-     * @return ResultSet
-     */
-    public <T> List<T> executeQuery(String sql, Class<T> beanCls, Map<String, ?> paramMap) {
-        return null;
-//        ResultSet rs;
-//        T t;
-//        List<T> tList = new ArrayList<>();
-//        Connection conn = null;
-//        try {
-//            BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
-//            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-//            conn = getConnection();
-//            pstmt = conn.prepareStatement(sql);
-//            for (int i = 1; i <= paramList.size(); i++) {
-//                Object queryParam = paramList.get(i);
-//                pstmt.setObject(i, queryParam);
-//            }
-//            rs = pstmt.executeQuery(sql);
-//            ResultSetMetaData rsMeta = rs.getMetaData();
-//            while (rs.next()) {
-//                t = beanCls.newInstance();
-//                for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-//                    String ColumnLabel = rsMeta.getColumnLabel(i + 1).toUpperCase();
-//                    Object value = rs.getObject(i + 1);
-//                    for (PropertyDescriptor property : propertyDescriptors) {
-//                        String key = property.getName().toUpperCase();
-//                        if (ColumnLabel.equals(key)) {
-//                            Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
-//                            String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
-//                            // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
-//                            if (propertyName.equals("int")) {
-//                                if (value == null) {
-//                                    setter.invoke(t, 0);
-//                                } else {
-//                                    setter.invoke(t, Integer.valueOf(value.toString()));
-//                                }
-//                            } else if (propertyName.equals("long")) {
-//                                if (value == null) {
-//                                    setter.invoke(t, 0);
-//                                } else {
-//                                    setter.invoke(t, Long.valueOf(value.toString()));
-//                                }
-//                            } else if (propertyName.equals("java.lang.Long")) {
-//                                if (value == null) {
-//                                    setter.invoke(t, 0L);
-//                                } else {
-//                                    setter.invoke(t, Long.valueOf(value.toString()));
-//                                }
-//                            } else if (propertyName.equals("java.sql.Date")) {
-//                                if (value instanceof Timestamp) {
-//                                    setter.invoke(t, new Date(((Timestamp) value).getTime()));
-//                                }
-//                            } else {
-//                                setter.invoke(t, value);
-//                            }
-//                            break;
-//                        }
-//                    }
-//                }
-//                tList.add(t);
-//            }
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            tList = null;
-//        } finally {
-//            closeStm();
-//            closeConn(conn);
-//        }
-//        return tList;
     }
 
     /**
@@ -723,7 +606,7 @@ public class JDBCUtil {
      * @throws SQLException
      */
     public int executeUpdate(String sql) throws SQLException {
-        int ret;
+        int result;
         Connection conn = null;
         Statement stm = null;
         try {
@@ -731,32 +614,379 @@ public class JDBCUtil {
             assert conn != null;
             conn.setAutoCommit(false);
             stm = conn.createStatement();
-            ret = stm.executeUpdate(sql);
+            result = stm.executeUpdate(sql);
             conn.commit();
         } catch (SQLException e) {
             logger.error("JDBCUtilException：executeUpdate异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
-            if (conn != null)
-                conn.rollback();
-            throw e;
+            result = -1;
+            if (conn != null) conn.rollback();
+            if (isThrow()) throw e;
         } finally {
             closeStm(stm);
             closeConn(conn);
         }
-        return ret;
+        return result;
     }
 
     /**
-     * 执行更新语句，返回执行结果
+     * 批量执行更新语句，返回执行结果
+     *
+     * @param sqls
+     * @return
+     * @throws SQLException
+     */
+    public List<Integer> executeBatch(List<String> sqls) throws SQLException {
+        int add_cnt = 0;
+        int success_cnt = 0;
+        int batch_cnt = 0;
+        int commit_cnt = 0;
+        List<Integer> retList = new ArrayList<>();
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            conn.setAutoCommit(false);
+            stm = conn.createStatement();
+            for (String sql : sqls) {
+                stm.addBatch(sql);
+                add_cnt++;
+                // x条提交一次
+                if (add_cnt > 0 && (add_cnt % getBatchNum() == 0)) {
+                    batch_cnt++;
+                    int[] rets = stm.executeBatch();
+                    conn.commit();
+                    success_cnt += getSuccess(rets);
+                    commit_cnt = add_cnt;
+                    for (int ret : rets) retList.add(ret);
+                }
+            }
+            // 剩余数据提交
+            if (add_cnt > commit_cnt) {
+                batch_cnt++;
+                int[] rets = stm.executeBatch();
+                conn.commit();
+                success_cnt += getSuccess(rets);
+                commit_cnt = add_cnt;
+                for (int ret : rets) retList.add(ret);
+            }
+            logger.debug("add_cnt：{}，success_cnt：{}，batch_cnt：{}", add_cnt, success_cnt, batch_cnt);
+        } catch (SQLException e) {
+            logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sqls, e);
+            retList.add(-1);
+            if (conn != null) conn.rollback();
+            if (isThrow()) throw e;
+        } finally {
+            closeStm(stm);
+            closeConn(conn);
+        }
+        return retList;
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL
+     *
+     * @param op_type            操作类型：i、u、d
+     * @param queryResults       操作数据
+     * @param table              操作表
+     * @param fields             更新字段（需要剔除pk）
+     * @param fields_type        更新字段类型
+     * @param pks                pk字段
+     * @param pks_type           pk字段类型
+     * @param ismissing          字段是否有值（ogg特殊）
+     * @param insert_fields      插入字段
+     * @param insert_fields_type 插入字段类型
+     * @return
+     * @throws SQLException
+     */
+    private String buildBatchSQL(String op_type, List<QueryResult> queryResults,
+                                 String table, String[] fields, String[] fields_type,
+                                 String[] pks, String[] pks_type, boolean ismissing,
+                                 String insert_fields, String[] insert_fields_type) throws SQLException {
+        String sql = "";
+        if (op_type == null || op_type.trim().length() == 0) throw new NullPointerException("op_type为空！");
+        op_type = op_type.toLowerCase();
+        switch (op_type) {
+            case "i":
+                //数据检查
+                if (queryResults.size() != (fields.length + pks.length))
+                    throw new SQLException("数据长度和(fields+pks)长度不一致！");
+                StringBuilder insert_values = new StringBuilder();
+                for (int i = 0; i < queryResults.size(); i++) {
+                    QueryResult queryResult = queryResults.get(i);
+                    String field_type = insert_fields_type[i];
+                    insert_values.append(stmtSetValue(field_type, queryResult.getValue()));
+                    if (i < queryResults.size() - 1) {
+                        insert_values.append(",");
+                    }
+                }
+                sql = String.format(insert, table, insert_fields, insert_values.toString());
+                break;
+            case "u":
+                StringBuilder update_set_values = new StringBuilder();
+                StringBuilder update_where_values = new StringBuilder();
+                //字段缺失
+                if (ismissing) {
+                    //========================================
+                    //ismissing只针对set字段
+                    //pk可能为null，但目前观察不会有ismissing的情况
+                    //List<QueryResult>可能的顺序为
+                    //- field1_ismissing
+                    //- field1
+                    //- field2_ismissing
+                    //- field2
+                    //- pk1
+                    //- pk2
+                    //========================================
+                    //数据检查
+                    if (queryResults.size() != (fields.length + fields.length + pks.length))
+                        throw new SQLException("数据长度和(fields+fields_ismissing+pks)的长度不一致！");
+                    //处理set
+                    for (int i = 0; i < fields.length; i++) {
+                        int ismissing_location = i * 2;
+                        int real_location = ismissing_location + 1;
+                        QueryResult queryResult = queryResults.get(real_location);
+                        String field = fields[i];
+                        String field_type = fields_type[i];
+                        QueryResult queryResultIsmissing = queryResults.get(ismissing_location);
+                        if (queryResultIsmissing == null || queryResultIsmissing.getValue() == null)
+                            logger.warn("{} {} {}", field, ismissing_location, queryResultIsmissing);
+                        boolean field_ismissing = Boolean.valueOf(queryResultIsmissing.getValue().toString());
+                        if (!field_ismissing) {
+                            update_set_values
+                                    .append(field)
+                                    .append("=")
+                                    .append(stmtSetValue(field_type, queryResult.getValue()));
+                            update_set_values.append(",");
+                        }
+                    }
+                    if (update_set_values.length() > 0)
+                        update_set_values.delete(update_set_values.length() - 1, update_set_values.length());
+                } else {
+                    //数据检查
+                    if (queryResults.size() != (fields.length + pks.length))
+                        throw new SQLException("数据长度和(fields+pks)的长度不一致！");
+                    //处理set
+                    for (int i = 0; i < fields.length; i++) {
+                        QueryResult queryResult = queryResults.get(i);
+                        String field = fields[i];
+                        String field_type = fields_type[i];
+                        update_set_values
+                                .append(field)
+                                .append("=")
+                                .append(stmtSetValue(field_type, queryResult.getValue()));
+                        if (i < fields.length - 1) {
+                            update_set_values.append(",");
+                        }
+                    }
+                }
+                //处理where
+                for (int i = 0; i < pks.length; i++) {
+                    QueryResult queryResult;
+                    if (ismissing) {
+                        queryResult = queryResults.get(fields.length * 2 + i);
+                    } else {
+                        queryResult = queryResults.get(fields.length + i);
+                    }
+                    String pk = pks[i];
+                    String pk_type = pks_type[i];
+                    Object field_value = queryResult.getValue();
+                    if (field_value != null) {
+                        update_where_values
+                                .append(pk)
+                                .append("=")
+                                .append(stmtSetValue(pk_type, field_value));
+                        update_where_values.append(" and ");
+                    }
+                }
+                if (update_where_values.length() > 0) {
+                    update_where_values.delete(update_where_values.length() - 5, update_where_values.length());
+                } else if (update_where_values.length() == 0) {
+                    //todo pkMissing
+//                    if (pkMissing != null) pkMissing.mark();
+                    logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
+                            op_type, Arrays.asList(pks), queryResults);
+                    break;
+                }
+                sql = String.format(update, table, update_set_values.toString(), update_where_values.toString());
+                break;
+            case "d":
+                //数据检查
+                if (queryResults.size() != (pks.length))
+                    throw new SQLException("数据长度和pks的长度不一致！");
+                StringBuilder delete_values = new StringBuilder();
+                //处理where
+                for (int i = 0; i < pks.length; i++) {
+                    QueryResult queryResult = queryResults.get(i);
+                    String pk = pks[i];
+                    String pk_type = pks_type[i];
+                    Object field_value = queryResult.getValue();
+                    if (field_value != null) {
+                        delete_values
+                                .append(pk)
+                                .append("=")
+                                .append(stmtSetValue(pk_type, field_value));
+                        delete_values.append(" and ");
+                    }
+                }
+                if (delete_values.length() > 0) {
+                    delete_values.delete(delete_values.length() - 5, delete_values.length());
+                } else if (delete_values.length() == 0) {
+                    //todo pkMissing
+//                    if (pkMissing != null) pkMissing.mark();
+                    logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
+                            op_type, Arrays.asList(pks), queryResults);
+                    break;
+                }
+                sql = String.format(delete, table, delete_values.toString());
+                break;
+            default:
+                throw new SQLException("不支持的op_type！【" + op_type + "】");
+        }
+        logger.debug("buildBatchSQL：{}", sql);
+        return sql;
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL，最后批量执行
+     *
+     * @param iQueryResultBeanList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @return
+     * @throws SQLException
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     */
+    public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
+                                      String[] fields, String[] fields_type,
+                                      String[] pks, String[] pks_type) throws SQLException {
+        return executeBatch(iQueryResultBeanList, table, fields, fields_type, pks, pks_type, false);
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL，最后批量执行
+     *
+     * @param iQueryResultBeanList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @param ismissing
+     * @return
+     * @throws SQLException
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     */
+    public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
+                                      String[] fields, String[] fields_type,
+                                      String[] pks, String[] pks_type, boolean ismissing) throws SQLException {
+        List<String> sqlList = new ArrayList<>();
+
+        //检查
+        if (table == null || table.trim().length() == 0) throw new NullPointerException("table为空！");
+        if (fields == null || fields.length == 0) throw new NullPointerException("fields为空！");
+        if (fields_type == null || fields_type.length == 0) throw new NullPointerException("fields_type为空！");
+        if (fields.length != fields_type.length) throw new SQLException("fields长度和fields_type不一致！");
+        if (pks == null || pks.length == 0) throw new NullPointerException("pks为空！");
+        if (pks_type == null || pks_type.length == 0) throw new NullPointerException("pks_type为空！");
+        if (pks.length != pks_type.length) throw new SQLException("pks长度和pks_type不一致！");
+
+        //插入的字段、字段类型由 field+pks 组成
+        String[] insert_fields_type = ArraysUtil.arrayCopy(fields_type, pks_type);
+        String insert_fields = ArraysUtil.arrayToStr(ArraysUtil.arrayCopy(fields, pks), ",");
+        //具体处理
+        for (IQueryResultBean iQueryResultBean : iQueryResultBeanList) {
+            String op_type = iQueryResultBean.getOp_type();
+            List<QueryResult> queryResults = iQueryResultBean.getQueryResults();
+            //构造SQL
+            String sql = buildBatchSQL(op_type, queryResults, table, fields,
+                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type);
+            if (sql != null && sql.length() > 0) sqlList.add(sql);
+        }
+        return executeBatch(sqlList);
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL，最后批量执行
+     *
+     * @param op_types
+     * @param tList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @return
+     * @throws SQLException
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     */
+    public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
+                                      String table, String[] fields, String[] fields_type,
+                                      String[] pks, String[] pks_type) throws SQLException {
+        return executeBatch(op_types, tList, table, fields, fields_type, pks, pks_type, false);
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL，最后批量执行
+     *
+     * @param op_types
+     * @param tList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @param ismissing
+     * @return
+     * @throws SQLException
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     */
+    public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
+                                      String table, String[] fields, String[] fields_type,
+                                      String[] pks, String[] pks_type, boolean ismissing) throws SQLException {
+        List<String> sqlList = new ArrayList<>();
+
+        //检查
+        if (op_types.size() != tList.size()) throw new SQLException("op_types长度和tList长度不一致！");
+        if (table == null || table.trim().length() == 0) throw new NullPointerException("table为空！");
+        if (fields == null || fields.length == 0) throw new NullPointerException("fields为空！");
+        if (fields_type == null || fields_type.length == 0) throw new NullPointerException("fields_type为空！");
+        if (fields.length != fields_type.length) throw new SQLException("fields长度和fields_type不一致！");
+        if (pks == null || pks.length == 0) throw new NullPointerException("pks为空！");
+        if (pks_type == null || pks_type.length == 0) throw new NullPointerException("pks_type为空！");
+        if (pks.length != pks_type.length) throw new SQLException("pks长度和pks_type不一致！");
+
+        //插入的字段、字段类型由 field+pks 组成
+        String[] insert_fields_type = ArraysUtil.arrayCopy(fields_type, pks_type);
+        String insert_fields = ArraysUtil.arrayToStr(ArraysUtil.arrayCopy(fields, pks), ",");
+        //具体处理
+        for (int op_type_index = 0; op_type_index < op_types.size(); op_type_index++) {
+            String op_type = op_types.get(op_type_index);
+            List<QueryResult> queryResults = tList.get(op_type_index);
+            //构造SQL
+            String sql = buildBatchSQL(op_type, queryResults, table, fields,
+                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type);
+            if (sql != null && sql.length() > 0) sqlList.add(sql);
+        }
+        return executeBatch(sqlList);
+    }
+
+    /**
+     * 执行更新语句，返回成功记录数，小于0表示失败
      *
      * @param sql
      * @param tList
      * @param dstFieldsType
      * @return
      */
-    public int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType) throws SQLException {
-        int ret;
-        int commit_cnt = 0;
+    public int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType) throws Exception {
+        int add_cnt = 0;
         int success_cnt = 0;
+        int batch_cnt = 0;
+        int commit_cnt = 0;
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
@@ -772,62 +1002,39 @@ public class JDBCUtil {
                     Object fieldValue = queryResult.getValue();
                     String srcFieldType = queryResult.getColumnClassName();
                     int parameterIndex = i + 1;
-                    // 目标字段类型
-                    switch (dstFieldType) {
-                        case "java.lang.String":
-                            pstmt.setString(parameterIndex, (String) fieldValue);
-                            break;
-                        case "java.sql.Timestamp":
-                            pstmt.setTimestamp(parameterIndex, (Timestamp) fieldValue);
-                            break;
-                        case "java.math.BigDecimal":
-                            if (!srcFieldType.equals(dstFieldType)) {
-                                if (srcFieldType.equals("java.lang.Integer")) {
-                                    pstmt.setBigDecimal(parameterIndex, BigDecimal.valueOf((Integer) fieldValue));
-                                } else if (srcFieldType.equals("java.lang.Long")) {
-                                    pstmt.setBigDecimal(parameterIndex, BigDecimal.valueOf((Long) fieldValue));
-                                } else {
-                                    throw new Exception("无法转换的类型，srcFieldType：" + srcFieldType + "，dstFieldType：" + dstFieldType);
-                                }
-                            } else {
-                                pstmt.setBigDecimal(parameterIndex, (BigDecimal) fieldValue);
-                            }
-                            break;
-                        case "java.sql.Time":
-                            pstmt.setTime(parameterIndex, (Time) fieldValue);
-                            break;
-                        case "java.lang.Integer":
-                            pstmt.setInt(parameterIndex, (Integer) fieldValue);
-                            break;
-                        default:
-                            pstmt.setObject(parameterIndex, fieldValue);
-                            break;
-                    }
+                    // 设置参数
+                    pstmtSetValue(pstmt, dstFieldType, srcFieldType, parameterIndex, fieldValue);
                 }
                 pstmt.addBatch();
-                commit_cnt++;
-                // 2000条提交一次
-                if (commit_cnt % getBatchNum() == 0) {
-                    pstmt.executeBatch();
+                add_cnt++;
+                // x条提交一次
+                if (add_cnt > 0 && (add_cnt % getBatchNum() == 0)) {
+                    batch_cnt++;
+                    int[] ret = pstmt.executeBatch();
                     conn.commit();
+                    success_cnt += getSuccess(ret);
+                    commit_cnt = add_cnt;
                 }
-                success_cnt++;
             }
             // 剩余数据提交
-            pstmt.executeBatch();
-            conn.commit();
-            ret = 0;
-            logger.info("成功记录数：{}", success_cnt);
+            if (add_cnt > commit_cnt) {
+                batch_cnt++;
+                int[] ret = pstmt.executeBatch();
+                conn.commit();
+                success_cnt += getSuccess(ret);
+                commit_cnt = add_cnt;
+            }
+            logger.debug("add_cnt：{}，success_cnt：{}，batch_cnt：{}", add_cnt, success_cnt, batch_cnt);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            ret = -1;
-            if (conn != null)
-                conn.rollback();
+            logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            success_cnt = -1;
+            if (conn != null) conn.rollback();
+            if (isThrow()) throw e;
         } finally {
             closePstmt(pstmt);
             closeConn(conn);
         }
-        return ret;
+        return success_cnt;
     }
 
     /**
@@ -887,36 +1094,8 @@ public class JDBCUtil {
                     Class<?> srcFieldType = batchBean.getSrccls();
                     Class<?> dstFieldType = batchBean.getDstcls();
                     Object fieldValue = batchBean.getMethod().invoke(t);
-                    switch (dstFieldType.getName()) {
-                        case "java.lang.String":
-                            pstmt.setString(i, (String) fieldValue);
-                            break;
-                        case "java.sql.Timestamp":
-                            pstmt.setTimestamp(i, (Timestamp) fieldValue);
-                            break;
-                        case "java.math.BigDecimal":
-                            if (!srcFieldType.getName().equals(dstFieldType.getName())) {
-                                if (srcFieldType.getName().equals("java.lang.Integer")) {
-                                    pstmt.setBigDecimal(i, BigDecimal.valueOf((Integer) fieldValue));
-                                } else if (srcFieldType.getName().equals("java.lang.Long")) {
-                                    pstmt.setBigDecimal(i, BigDecimal.valueOf((Long) fieldValue));
-                                } else {
-                                    throw new Exception("无法转换的类型，srcFieldType：" + srcFieldType.getName() + "，dstFieldType：" + dstFieldType.getName());
-                                }
-                            } else {
-                                pstmt.setBigDecimal(i, (BigDecimal) fieldValue);
-                            }
-                            break;
-                        case "java.sql.Time":
-                            pstmt.setTime(i, (Time) fieldValue);
-                            break;
-                        case "java.lang.Integer":
-                            pstmt.setInt(i, (Integer) fieldValue);
-                            break;
-                        default:
-                            pstmt.setObject(i, fieldValue);
-                            break;
-                    }
+                    // 设置参数
+                    pstmtSetValue(pstmt, dstFieldType.getName(), srcFieldType.getName(), i, fieldValue);
                     i++;
                 }
                 pstmt.addBatch();
@@ -956,9 +1135,15 @@ public class JDBCUtil {
      * @return 结果
      */
     public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        return executeBatch(sql, tList, beanCls, fields, false).get(0);
+    }
+
+    public <T> List<Integer> executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields, boolean hasRet) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         int add_cnt = 0;
         int success_cnt = 0;
         int batch_cnt = 0;
+        int commit_cnt = 0;
+        List<Integer> retList = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
         String[] fields_arr = fields.split(",", -1);
@@ -988,58 +1173,42 @@ public class JDBCUtil {
                 int i = 1;
                 for (Map.Entry<String, BatchBean> entry : methodLinkedHashMap.entrySet()) {
                     Object fieldValue = entry.getValue().getMethod().invoke(t);
-                    switch (entry.getValue().getName()) {
-                        case "java.lang.String":
-                            pstmt.setString(i, (String) fieldValue);
-                            break;
-                        case "java.sql.Timestamp":
-                            pstmt.setTimestamp(i, (Timestamp) fieldValue);
-                            break;
-                        case "java.lang.Long":
-                        case "long":
-                            pstmt.setBigDecimal(i, BigDecimal.valueOf((Long) fieldValue));
-                            break;
-                        case "java.sql.Time":
-                            pstmt.setTime(i, (Time) fieldValue);
-                            break;
-                        case "java.lang.Integer":
-                        case "int":
-                            pstmt.setInt(i, (Integer) fieldValue);
-                            break;
-                        default:
-                            pstmt.setObject(i, fieldValue);
-                            break;
-                    }
+                    // 设置参数
+                    pstmtSetValue(pstmt, entry.getValue().getName(), i, fieldValue);
                     i++;
                 }
                 pstmt.addBatch();
                 add_cnt++;
-                // 2000条提交一次
-                if (add_cnt % getBatchNum() == 0) {
+                // x条提交一次
+                if (add_cnt > 0 && (add_cnt % getBatchNum() == 0)) {
                     batch_cnt++;
-                    pstmt.executeBatch();
+                    int[] ret = pstmt.executeBatch();
                     conn.commit();
-                    success_cnt = add_cnt;
+                    success_cnt += getSuccess(ret);
+                    commit_cnt = add_cnt;
+                    if (hasRet) for (int r : ret) retList.add(r);
                 }
             }
             // 剩余数据提交
-            if (add_cnt > success_cnt) {
+            if (add_cnt > commit_cnt) {
                 batch_cnt++;
-                pstmt.executeBatch();
+                int[] ret = pstmt.executeBatch();
                 conn.commit();
-                success_cnt = add_cnt;
+                success_cnt += getSuccess(ret);
+                commit_cnt = add_cnt;
+                if (hasRet) for (int r : ret) retList.add(r);
             }
+            if (!hasRet) retList.add(success_cnt);
             logger.debug("add_cnt：{}，success_cnt：{}，batch_cnt：{}", add_cnt, success_cnt, batch_cnt);
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
-            if (conn != null)
-                conn.rollback();
-            throw e;
+            if (conn != null) conn.rollback();
+            if (isThrow()) throw e;
         } finally {
             closePstmt(pstmt);
             closeConn(conn);
         }
-        return success_cnt;
+        return retList;
     }
 
     /**
@@ -1113,28 +1282,8 @@ public class JDBCUtil {
                 int i = 1;
                 for (Map.Entry<String, BatchBean> entry : methodLinkedHashMap.entrySet()) {
                     Object fieldValue = entry.getValue().getMethod().invoke(t);
-                    switch (entry.getValue().getName()) {
-                        case "java.lang.String":
-                            pstmt.setString(i, (String) fieldValue);
-                            break;
-                        case "java.sql.Timestamp":
-                            pstmt.setTimestamp(i, (Timestamp) fieldValue);
-                            break;
-                        case "java.lang.Long":
-                        case "long":
-                            pstmt.setBigDecimal(i, BigDecimal.valueOf((Long) fieldValue));
-                            break;
-                        case "java.sql.Time":
-                            pstmt.setTime(i, (Time) fieldValue);
-                            break;
-                        case "java.lang.Integer":
-                        case "int":
-                            pstmt.setInt(i, (Integer) fieldValue);
-                            break;
-                        default:
-                            pstmt.setObject(i, fieldValue);
-                            break;
-                    }
+                    // 设置参数
+                    pstmtSetValue(pstmt, entry.getValue().getName(), i, fieldValue);
                     i++;
                 }
                 pstmt.addBatch();
@@ -1160,7 +1309,7 @@ public class JDBCUtil {
             //回滚
             if (conn != null) conn.rollback();
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
-            throw e;
+            if (isThrow()) throw e;
         } finally {
             closePstmt(pstmt);
             closeConn(conn);
@@ -1237,5 +1386,342 @@ public class JDBCUtil {
 
     public void setBatchNum(int batchNum) {
         this.batchNum = batchNum;
+    }
+
+    public boolean isThrow() {
+        return isThrow;
+    }
+
+    public void setThrow(boolean aThrow) {
+        isThrow = aThrow;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public DBBean getDbBean() {
+        return dbBean;
+    }
+
+    /**
+     * 根据字段类型拼接
+     *
+     * @param dstFieldType 字段类型
+     * @param fieldValue   字段值
+     * @return
+     */
+    private String stmtSetValue(String dstFieldType, Object fieldValue) {
+        String result;
+        // 判断目标字段类型
+        switch (dstFieldType) {
+            case "java.lang.String":
+                if (fieldValue == null) result = "" + fieldValue;
+                else result = "'" + fieldValue.toString() + "'";
+                break;
+            case "java.lang.Integer":
+            case "int":
+                result = "" + fieldValue;
+                break;
+            case "java.lang.Long":
+            case "long":
+                result = "" + fieldValue;
+                break;
+            case "java.math.BigDecimal":
+                result = "" + fieldValue;
+                break;
+            case "java.lang.Boolean":
+            case "boolean":
+                result = "" + fieldValue;
+                break;
+            case "java.sql.Timestamp":
+                if (fieldValue == null) result = "" + fieldValue;
+                else result = "'" + fieldValue.toString() + "'";
+                break;
+            case "java.sql.Time":
+                if (fieldValue == null) result = "" + fieldValue;
+                else result = "'" + fieldValue.toString() + "'";
+                break;
+            case "java.sql.Date":
+                if (fieldValue == null) result = "" + fieldValue;
+                else result = "'" + fieldValue.toString() + "'";
+                break;
+            case "java.util.Date":
+                if (fieldValue == null) result = "" + fieldValue;
+                else result = "'" + fieldValue.toString() + "'";
+                break;
+            default:
+                result = "" + fieldValue;
+                break;
+        }
+        return result;
+    }
+
+    /**
+     * 根据字段类型判断，进行值转换并设置到PreparedStatement中
+     *
+     * @param pstmt
+     * @param dstFieldType
+     * @param parameterIndex
+     * @param fieldValue
+     * @throws SQLException
+     */
+    private void pstmtSetValue(PreparedStatement pstmt, String dstFieldType, int parameterIndex,
+                               Object fieldValue) throws SQLException {
+        pstmtSetValue(pstmt, dstFieldType, null, parameterIndex, fieldValue);
+    }
+
+    /**
+     * 根据字段类型判断，进行值转换并设置到PreparedStatement中
+     *
+     * @param pstmt
+     * @param dstFieldType
+     * @param srcFieldType
+     * @param parameterIndex
+     * @param fieldValue
+     * @throws SQLException
+     */
+    private void pstmtSetValue(PreparedStatement pstmt, String dstFieldType, String srcFieldType,
+                               int parameterIndex, Object fieldValue) throws SQLException {
+        // 判断目标字段类型
+        switch (dstFieldType) {
+            case "java.lang.String":
+                pstmt.setString(parameterIndex, (String) fieldValue);
+                break;
+            case "java.lang.Integer":
+            case "int":
+                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue))
+                    pstmt.setInt(parameterIndex, (Integer) fieldValue);
+                break;
+            case "java.lang.Long":
+            case "long":
+                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue))
+                    pstmt.setBigDecimal(parameterIndex, BigDecimal.valueOf((Long) fieldValue));
+                break;
+            case "java.math.BigDecimal":
+                if (srcFieldType != null && !srcFieldType.equals(dstFieldType)) {
+                    if (srcFieldType.equals("java.lang.Integer") || srcFieldType.equals("int")) {
+                        if (!ifNullSet(pstmt, parameterIndex, srcFieldType, fieldValue))
+                            pstmt.setBigDecimal(parameterIndex, BigDecimal.valueOf((Integer) fieldValue));
+                    } else if (srcFieldType.equals("java.lang.Long") || srcFieldType.equals("long")) {
+                        if (!ifNullSet(pstmt, parameterIndex, srcFieldType, fieldValue))
+                            pstmt.setBigDecimal(parameterIndex, BigDecimal.valueOf((Long) fieldValue));
+                    } else {
+                        throw new SQLException("无法转换的类型，srcFieldType：" + srcFieldType + "，dstFieldType：" + dstFieldType);
+                    }
+                } else {
+                    if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue))
+                        pstmt.setBigDecimal(parameterIndex, (BigDecimal) fieldValue);
+                }
+                break;
+            case "java.sql.Timestamp":
+                pstmt.setTimestamp(parameterIndex, (Timestamp) fieldValue);
+                break;
+            case "java.sql.Time":
+                pstmt.setTime(parameterIndex, (Time) fieldValue);
+                break;
+            case "java.sql.Date":
+                pstmt.setDate(parameterIndex, (Date) fieldValue);
+                break;
+            case "java.util.Date":
+                pstmt.setDate(parameterIndex, fieldValue == null ? null : new Date(((java.util.Date) fieldValue).getTime()));
+                break;
+            default:
+                pstmt.setObject(parameterIndex, fieldValue);
+                break;
+        }
+    }
+
+    /**
+     * 如果为空就设置Object，并返回true，否则返回false
+     *
+     * @param pstmt
+     * @param parameterIndex
+     * @param fieldValue
+     * @return
+     * @throws SQLException
+     */
+    private boolean ifNullSet(PreparedStatement pstmt, int parameterIndex, String dstFieldType, Object fieldValue) throws SQLException {
+        if (fieldValue == null) {
+            // 判断目标字段类型
+            switch (dstFieldType) {
+                case "java.lang.String":
+                    pstmt.setNull(parameterIndex, Types.VARCHAR);
+                    break;
+                case "java.lang.Integer":
+                case "int":
+                    pstmt.setNull(parameterIndex, Types.INTEGER);
+                    break;
+                case "java.lang.Long":
+                case "long":
+                    pstmt.setNull(parameterIndex, Types.DECIMAL);
+                    break;
+                case "java.math.BigDecimal":
+                    pstmt.setNull(parameterIndex, Types.DECIMAL);
+                    break;
+                case "java.sql.Timestamp":
+                    pstmt.setNull(parameterIndex, Types.TIMESTAMP);
+                    break;
+                case "java.sql.Time":
+                    pstmt.setNull(parameterIndex, Types.TIME);
+                    break;
+                case "java.sql.Date":
+                case "java.util.Date":
+                    pstmt.setNull(parameterIndex, Types.DATE);
+                    break;
+                default:
+                    pstmt.setObject(parameterIndex, fieldValue);
+                    break;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 查询结果设置到java bean中
+     *
+     * @param rsMeta
+     * @param propertyDescriptors
+     * @param rs
+     * @param beanCls
+     * @param <T>
+     * @return
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     */
+    private <T> T queryResultSet(ResultSetMetaData rsMeta, PropertyDescriptor[] propertyDescriptors,
+                                 ResultSet rs, Class<T> beanCls) throws SQLException, IllegalAccessException,
+            InstantiationException, InvocationTargetException {
+        T t = beanCls.newInstance();
+        for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
+            String ColumnLabel = rsMeta.getColumnLabel(i + 1).toUpperCase();
+            Object value = rs.getObject(i + 1);
+            for (PropertyDescriptor property : propertyDescriptors) {
+                String key = property.getName().toUpperCase();
+                if (ColumnLabel.equals(key)) {
+                    Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
+                    String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
+                    // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
+                    if (propertyName.equals("int")) {
+                        if (value == null) {
+                            setter.invoke(t, 0);
+                        } else {
+                            setter.invoke(t, Integer.valueOf(value.toString()));
+                        }
+                    } else if (propertyName.equals("long")) {
+                        if (value == null) {
+                            setter.invoke(t, 0);
+                        } else {
+                            setter.invoke(t, Long.valueOf(value.toString()));
+                        }
+                    } else if (propertyName.equals("java.lang.Long")) {
+                        if (value == null) {
+                            setter.invoke(t, 0L);
+                        } else {
+                            setter.invoke(t, Long.valueOf(value.toString()));
+                        }
+                    } else if (propertyName.equals("java.sql.Date")) {
+                        if (value instanceof Timestamp) {
+                            setter.invoke(t, new Date(((Timestamp) value).getTime()));
+                        }
+                    } else {
+                        setter.invoke(t, value);
+                    }
+                    break;
+                }
+            }
+        }
+        return t;
+    }
+
+    /**
+     * 查询结果设置到List<QueryResult>中
+     *
+     * @param rsMeta
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
+    public List<QueryResult> buildQueryResult(ResultSetMetaData rsMeta, ResultSet rs) throws SQLException {
+        List<QueryResult> queryResults = new ArrayList<>();
+        for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
+            int column = i + 1;
+            String ColumnName = rsMeta.getColumnName(column);
+            String ColumnLabel = rsMeta.getColumnLabel(column);
+            int ColumnType = rsMeta.getColumnType(column);
+            String ColumnClassName = rsMeta.getColumnClassName(column);
+            String ColumnTypeName = rsMeta.getColumnTypeName(column);
+            int ColumnDisplaySize = rsMeta.getColumnDisplaySize(column);
+            int Precision = rsMeta.getPrecision(column);
+            int Scale = rsMeta.getScale(column);
+            String SchemaName = rsMeta.getSchemaName(column);
+            String CatalogName = rsMeta.getCatalogName(column);
+            Object value = null;
+            if (rs != null) {
+                value = rs.getObject(column);
+            }
+            QueryResult queryResult = new QueryResult();
+            queryResult.setColumnName(ColumnName);
+            queryResult.setColumnLabel(ColumnLabel);
+            queryResult.setColumnType(ColumnType);
+            queryResult.setColumnClassName(ColumnClassName);
+            queryResult.setColumnTypeName(ColumnTypeName);
+            queryResult.setColumnDisplaySize(ColumnDisplaySize);
+            queryResult.setPrecision(Precision);
+            queryResult.setScale(Scale);
+            queryResult.setSchemaName(SchemaName);
+            queryResult.setCatalogName(CatalogName);
+            if (rs != null) {
+                queryResult.setValue(value);
+            }
+            queryResults.add(queryResult);
+        }
+        return queryResults;
+    }
+
+    private int getSuccess(int[] ret) {
+        int rets = 0;
+        for (int r : ret) {
+            rets += r;
+        }
+        return rets;
+    }
+
+    /**
+     * 找到空格、括号等等就返回
+     *
+     * @param param 内容
+     * @param key   关键字
+     * @param i     关键字List下标
+     * @return 结果
+     */
+    public String getParam(String param, String key, int i) {
+        if (param != null && param.length() > 0) {
+            int index = param.indexOf(key);
+            if (index > 0) {
+                return param.substring(0, index);
+            } else {
+                i++;
+                if (keyList.size() > i) return getParam(param, keyList.get(i), i);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 判断结尾字符是否异常
+     *
+     * @param param 内容
+     * @return 结果
+     */
+    public boolean paramEndWith(String param) {
+        if (param == null) return false;
+        for (String endStr : endList) {
+            if (param.trim().endsWith(endStr)) return false;
+        }
+        return true;
     }
 }
