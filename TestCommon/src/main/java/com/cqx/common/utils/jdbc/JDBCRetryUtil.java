@@ -22,8 +22,13 @@ public class JDBCRetryUtil extends JDBCUtil {
     private AtomicBoolean lock = new AtomicBoolean(true);
     private ICallBackReturnProxy iCallBackReturnProxy;
 
+    /**
+     * 默认间隔10分钟，允许累加10次错误
+     *
+     * @param dbBean
+     */
     public JDBCRetryUtil(DBBean dbBean) {
-        this(dbBean, 10000, 3);
+        this(dbBean, 10 * 60 * 1000L, 10L);
     }
 
     public JDBCRetryUtil(DBBean dbBean, long checkTimeInterval, long evaluationCnt) {
@@ -67,23 +72,23 @@ public class JDBCRetryUtil extends JDBCUtil {
     private boolean checkAndReset() {
         //检查时间初始化
         firstSet();
+        //保证同时只有一个线程操作
+        if (lock.getAndSet(false)) {
+            //判断 (当前时间 - 上次检查时间) 是否大于等于 检查时间间隔
+            boolean flag = System.currentTimeMillis() - checkTime >= checkTimeInterval;
+            if (flag) {
+                //重置检查时间
+                setCurrentTime();
+                //重置错误计数
+                errorCnt.set(0L);
+                logger.info("Reset errorCnt");
+            }
+            lock.set(true);
+        }
         //错误计数 大于等于 允许的错误次数
         if (errorCnt.get() >= evaluationCnt) {
             //跳过执行
             logger.warn("Skip execute，because errorCnt：{}", errorCnt.get());
-            //保证同时只有一个线程操作
-            if (lock.getAndSet(false)) {
-                //判断 (当前时间 - 上次检查时间) 是否大于等于 检查时间间隔
-                boolean flag = System.currentTimeMillis() - checkTime >= checkTimeInterval;
-                if (flag) {
-                    //重置检查时间
-                    setCurrentTime();
-                    //重置错误计数
-                    errorCnt.set(0L);
-                    logger.info("Reset errorCnt");
-                }
-                lock.set(true);
-            }
             return false;
         }
         return true;

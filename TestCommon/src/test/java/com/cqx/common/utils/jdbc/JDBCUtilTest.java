@@ -24,7 +24,7 @@ public class JDBCUtilTest extends TestBase {
         Map params = getParam("jdbc.yaml");
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
         DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
-        jdbcUtil = new JDBCRetryUtil(dbBean);
+        jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
     }
 
     @After
