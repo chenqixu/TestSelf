@@ -73,6 +73,25 @@ public class JDBCUtilTest {
                 srcdbBean.setUser_name("jutap_tenant");
                 srcdbBean.setPass_word("jutap");
                 break;
+            case "frtbase_dblink":
+                srcdbBean.setTns("jdbc:oracle:thin:@10.1.8.204:1521/orapri");
+                srcdbBean.setUser_name("zyh");
+                srcdbBean.setPass_word("zyh");
+                break;
+        }
+        return srcdbBean;
+    }
+
+    private DBBean postgresqlConfig(String type) {
+        DBBean srcdbBean = new DBBean();
+        srcdbBean.setPool(false);
+        srcdbBean.setDbType(DBType.POSTGRESQL);
+        switch (type) {
+            case "dev":
+                srcdbBean.setTns("jdbc:postgresql://10.1.8.206:5432/sentry");
+                srcdbBean.setUser_name("sentry");
+                srcdbBean.setPass_word("sentry");
+                break;
         }
         return srcdbBean;
     }
@@ -81,10 +100,12 @@ public class JDBCUtilTest {
     public void setUp() throws Exception {
         DBBean srcdbBean;
 //        srcdbBean = oracleConfig("jutap_tenant");
+//        srcdbBean = oracleConfig("frtbase_dblink");
 //        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
 //        srcdbBean = mysqlConfig("local");
-        srcdbBean = mysqlConfig("flink");
+//        srcdbBean = mysqlConfig("flink");
+        srcdbBean = postgresqlConfig("dev");
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
@@ -287,6 +308,24 @@ public class JDBCUtilTest {
         for (List<QueryResult> queryResults : jdbcUtil.executeQuery("select * from cqx_test1")) {
             for (QueryResult queryResult : queryResults) {
                 logger.info("查询 {}", queryResult);
+            }
+        }
+    }
+
+    @Test
+    public void getDblinkTableMetaData() throws SQLException {
+        //元数据
+        for (QueryResult queryResult : jdbcUtil.getTableMetaData("FRTBASE.LOCATE_MART_ROTATE_TAB@to_frtbase")) {
+            logger.info("元数据 {}", queryResult);
+        }
+    }
+
+    @Test
+    public void selectPostgresql() throws Exception {
+        List<List<QueryResult>> qs = jdbcUtil.executeQuery("select * from rec_mkt_mutual_relation limit 1");
+        for (List<QueryResult> q : qs) {
+            for (QueryResult qr : q) {
+                logger.info("{}", qr);
             }
         }
     }

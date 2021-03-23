@@ -31,7 +31,7 @@ import java.util.jar.JarInputStream;
  */
 public class ClasspathPackageScanner {
 
-    private Logger logger = LoggerFactory.getLogger(ClasspathPackageScanner.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClasspathPackageScanner.class);
     private String basePackage;
     private ClassLoader cl;
 
@@ -51,7 +51,7 @@ public class ClasspathPackageScanner {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         ClasspathPackageScanner scan = new ClasspathPackageScanner(
                 "com.newland.bi.bigdata.bean.javabean"
 //                "com.cqx.common.bean.javabean"
@@ -70,6 +70,35 @@ public class ClasspathPackageScanner {
     public List<String> getFullyQualifiedClassNameList() throws IOException {
         logger.info("开始扫描包{}下的所有类", basePackage);
         return doScan(basePackage, new ArrayList<String>());
+    }
+
+    /**
+     * 扫描jar包，未完成
+     *
+     * @param filePath
+     * @param basePackage
+     * @param nameList
+     * @return
+     * @throws IOException
+     */
+    private List<String> doScanJar(String filePath, String basePackage, List<String> nameList) throws IOException {
+        String splashPath = StringUtil.dotToSplash(basePackage);
+        List<String> names = null; // contains the name of the class file. e.g., Apple.class will be stored as "Apple"
+        if (isJarFile(filePath)) {// 先判断是否是jar包，如果是jar包，通过JarInputStream产生的JarEntity去递归查询所有类
+            if (logger.isDebugEnabled()) {
+                logger.debug("{} 是一个JAR包", filePath);
+            }
+            names = readFromJarFile(filePath, splashPath);
+        }
+
+        for (String name : names) {
+            if (isClassFile(name)) {
+                nameList.add(toFullyQualifiedName(name, basePackage));
+            } else {
+                doScanJar(filePath, basePackage + "." + name, nameList);
+            }
+        }
+        return nameList;
     }
 
     /**
@@ -207,6 +236,77 @@ public class ClasspathPackageScanner {
                 }
                 System.out.println();
             } catch (ClassNotFoundException | IntrospectionException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println();
+    }
+
+    /**
+     * 打印导入
+     *
+     * @param nameList
+     */
+    private void printImport(List<String> nameList) {
+        for (String name : nameList) {
+            if (!name.contains("$")) System.out.println(String.format("import %s;", name));
+        }
+    }
+
+    /**
+     * 打印所有方法
+     *
+     * @param cls
+     */
+    private void printAllMethod(Class cls) {
+        String simpleName = cls.getSimpleName().toLowerCase();
+        System.out.println("@Test");
+        System.out.println(String.format("public void %sTest() {", simpleName));
+        System.out.println("try {");
+        System.out.println(String.format("%s %s = new %s();", cls.getSimpleName(), simpleName, cls.getSimpleName()));
+        for (Method m : cls.getDeclaredMethods()) {
+            String methodName = m.getName();
+            Class<?>[] parameterTypes = m.getParameterTypes();
+            StringBuilder sb = new StringBuilder();
+            for (Class param : parameterTypes) {
+                String parameterTypeName = param.getName().toLowerCase();
+                if (parameterTypeName.contains("int")) {
+                    sb.append("1,");
+                } else if (parameterTypeName.contains("long")) {
+                    sb.append("1L,");
+                } else if (parameterTypeName.contains("boolean")) {
+                    sb.append("false,");
+                } else {
+                    sb.append("null,");
+                }
+            }
+            if (sb.length() > 0) {
+                sb.delete(sb.length() - 1, sb.length());
+                System.out.println(String.format("%s.%s(%s);", simpleName, methodName, sb.toString()));
+            } else {
+                System.out.println(String.format("%s.%s();", simpleName, methodName));
+            }
+        }
+        System.out.println("} catch (Exception e) {}");
+        System.out.println("}");
+    }
+
+    /**
+     * 打印所有方法
+     *
+     * @param nameList
+     */
+    private void printAllMethod(List<String> nameList) {
+        System.out.println("// printMethod");
+        for (String n : nameList) {
+            try {
+                if (!n.contains("$")) {
+                    System.out.println("// " + n);
+                    Class cls = Class.forName(n);
+                    printAllMethod(cls);
+                }
+                System.out.println();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

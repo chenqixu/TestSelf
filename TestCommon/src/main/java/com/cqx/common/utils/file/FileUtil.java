@@ -29,6 +29,7 @@ public class FileUtil {
     private static final String fileSparator = File.separator;
     private BufferedWriter writer;
     private BufferedReader reader;
+    private OutputStream outputStream;
 
     public static File[] listFiles(String filePath) {
         File file = new File(filePath);
@@ -443,6 +444,40 @@ public class FileUtil {
         createFile(filename, write_code, false);
     }
 
+    public void createOutputStreamFile(String filename, boolean append) throws FileNotFoundException {
+        File writeFile = new File(filename);
+        outputStream = new FileOutputStream(writeFile, append);
+    }
+
+    public void createOutputStreamFile(String filename) throws FileNotFoundException {
+        createOutputStreamFile(filename, false);
+    }
+
+    public void os_write(byte[] bytes) {
+        if (outputStream != null) {
+            try {
+                outputStream.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void os_write(byte[] bytes, int off, int len) {
+        if (outputStream != null) {
+            try {
+                outputStream.write(bytes, off, len);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void os_newline() {
+        if (isWindow()) os_write("\r\n".getBytes());
+        else os_write("\n".getBytes());
+    }
+
     public void newline() {
         if (isWindow()) write("\r\n");
         else write("\n");
@@ -488,6 +523,23 @@ public class FileUtil {
             if (writer != null) {
                 try {
                     writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void closeOutputStream() {
+        try {
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

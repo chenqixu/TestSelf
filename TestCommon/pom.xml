@@ -16,6 +16,7 @@
         <hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.19</slf4j.version>
+        <jedis.version>2.9.0</jedis.version>
         <JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>
     </properties>
 
@@ -92,6 +93,17 @@
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
             <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -217,6 +229,10 @@
                 <exclusion>
                     <artifactId>zookeeper</artifactId>
                     <groupId>org.apache.zookeeper</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>asm</groupId>
                 </exclusion>
             </exclusions>
             <!--<scope>provided</scope>-->
@@ -397,6 +413,13 @@
             <version>6.10.2</version>
         </dependency>
 
+        <!-- lmdb -->
+        <dependency>
+            <groupId>org.lmdbjava</groupId>
+            <artifactId>lmdbjava</artifactId>
+            <version>0.6.3</version>
+        </dependency>
+
         <!-- calcite -->
         <dependency>
             <groupId>org.apache.calcite</groupId>
@@ -439,6 +462,30 @@
                     <artifactId>jsr305</artifactId>
                     <groupId>com.google.code.findbugs</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>httpclient</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>httpcore</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>snakeyaml</artifactId>
+                    <groupId>org.yaml</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-pool2</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -447,6 +494,15 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.11</version>
+        </dependency>
+
+        <!-- memory -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
         <!-- test -->

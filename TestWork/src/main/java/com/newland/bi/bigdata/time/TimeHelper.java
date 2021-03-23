@@ -13,10 +13,35 @@ import java.util.Date;
  * @author chenqixu
  */
 public class TimeHelper {
-
     protected static final Logger logger = LoggerFactory.getLogger(TimeHelper.class);
     protected static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHH");
     protected static SimpleDateFormat ymdhmsFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @param format
+     * @return
+     * @throws ParseException
+     */
+    public static Date strToDate(String date, String format) throws ParseException {
+        return new SimpleDateFormat(format).parse(date);
+    }
+
+    /**
+     * 时间格式化并加上指定时间戳
+     *
+     * @param date
+     * @param format
+     * @param addValue
+     * @return
+     * @throws ParseException
+     */
+    public static String strAddLong(String date, String format, long addValue) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return simpleDateFormat.format(simpleDateFormat.parse(date).getTime() + addValue);
+    }
 
     /**
      * 补0

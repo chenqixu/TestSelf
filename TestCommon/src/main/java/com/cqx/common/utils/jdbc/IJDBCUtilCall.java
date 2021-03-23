@@ -11,22 +11,27 @@ import java.util.List;
  */
 public interface IJDBCUtilCall {
 
-    interface ICallBack {
-        void call(ResultSet rs) throws SQLException;
-    }
-
-    interface IBeanCallBack<T> {
-        void call(T t) throws Exception;
-    }
-
-    interface IQueryResultCallBack {
-        void call(List<QueryResult> queryResults) throws Exception;
-    }
-
     interface IQueryResultBean {
         String getOp_type();
 
         List<QueryResult> getQueryResults();
+    }
+
+    abstract class IQueryResultCallBack extends ICallBackClose {
+        public abstract void call(List<QueryResult> queryResults) throws Exception;
+    }
+
+    abstract class IBeanCallBack<T> extends ICallBackClose {
+        public abstract void call(T t) throws Exception;
+    }
+
+    abstract class ICallBack extends ICallBackClose {
+        public abstract void call(ResultSet rs) throws SQLException;
+    }
+
+    class ICallBackClose {
+        public void close() {
+        }
     }
 
     class ICallBackReturn {

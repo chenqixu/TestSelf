@@ -73,10 +73,15 @@ public class MemoryTest {
         long total = run.totalMemory();
         long free = run.freeMemory();
         long usable = max - total + free;
-        System.out.println("最大内存 = " + max);
-        System.out.println("已分配内存 = " + total);
-        System.out.println("已分配内存中的剩余空间 = " + free);
-        System.out.println("最大可用内存 = " + usable);
+        System.out.println("最大内存 = " + printFormat(max));
+        System.out.println("已分配内存 = " + printFormat(total));
+        System.out.println("已分配内存中的剩余空间 = " + printFormat(free));
+        System.out.println("最大可用内存 = " + printFormat(usable));
+    }
+
+    public static String printFormat(long val) {
+        return String.format("%s byte , %s kb, %s mb, %s gb",
+                val, val / 1024, val / 1024 / 1024, val / 1024 / 1024 / 1024);
     }
 
     /**

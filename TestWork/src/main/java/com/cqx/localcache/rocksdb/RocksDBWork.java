@@ -1,12 +1,11 @@
 package com.cqx.localcache.rocksdb;
 
-import com.cqx.common.utils.rocksdb.RocksDBUtil;
+import com.cqx.common.utils.localcache.rocksdb.RocksDBUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import org.rocksdb.RocksDBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Random;
 import java.util.TimerTask;
 
 /**
@@ -52,25 +51,35 @@ public class RocksDBWork {
         public void run() {
             logger.info("start producter.");
             RocksDBUtil rocksDBUtil = null;
-            Random random = new Random();
+//            Random random = new Random();
             try {
                 rocksDBUtil = new RocksDBUtil(dbFilePath, dbName);
-//                int cnt = 0;
-//                while (cnt < 30) {
-//                    cnt++;
-//                    rocksDBUtil.putValue(String.valueOf(System.currentTimeMillis()) + random.nextInt(1000), "123456");
-//                        SleepUtil.sleepMilliSecond(100);
-                rocksDBUtil.putValue("460023805718803", "15080572052");
-                rocksDBUtil.putValue("460023805718804", "15080585378");
-                rocksDBUtil.putValue("460023805718805", "15080565979");
-                rocksDBUtil.putValue("460023805718807", "15080556024");
-                rocksDBUtil.putValue("460023805718808", "15080567869");
-                rocksDBUtil.putValue("460023805718809", "15080576236");
-                rocksDBUtil.putValue("460023805718811", "15080582583");
-                rocksDBUtil.putValue("460023805718814", "15080591978");
-                rocksDBUtil.putValue("460023805718815", "15080556930");
-                rocksDBUtil.putValue("460023805718817", "15080557322");
-//                }
+                int cnt = 0;
+                int max = 100;
+                String lastkey = rocksDBUtil.getLastKey();
+                if (lastkey != null) {
+                    cnt = Integer.valueOf(lastkey);
+                    max += cnt;
+                }
+                logger.info("cnt：{}，max：{}", cnt, max);
+                while (cnt < max) {
+                    cnt++;
+                    rocksDBUtil.putValue(String.valueOf(cnt), "123456");
+                    SleepUtil.sleepMilliSecond(100);
+//                rocksDBUtil.putValue("460023805718803", "15080572052");
+//                rocksDBUtil.putValue("460023805718804", "15080585378");
+//                rocksDBUtil.putValue("460023805718805", "15080565979");
+//                rocksDBUtil.putValue("460023805718807", "15080556024");
+//                rocksDBUtil.putValue("460023805718808", "15080567869");
+//                rocksDBUtil.putValue("460023805718809", "15080576236");
+//                rocksDBUtil.putValue("460023805718811", "15080582583");
+//                rocksDBUtil.putValue("460023805718814", "15080591978");
+//                rocksDBUtil.putValue("460023805718815", "15080556930");
+//                rocksDBUtil.putValue("460023805718817", "15080557322");
+                    if (cnt % 10 == 0) {
+                        logger.info("producter getCount：{}", rocksDBUtil.getCount());
+                    }
+                }
                 rocksDBUtil.flush();
             } catch (RocksDBException e) {
                 e.printStackTrace();
@@ -98,10 +107,13 @@ public class RocksDBWork {
             try {
                 rocksDBUtil = new RocksDBUtil(dbFilePath, dbName, true);
                 int cnt = 0;
-                while (cnt < 10) {
+                while (cnt < 250) {
                     cnt++;
-                    logger.info("getCount {}", rocksDBUtil.getCount());
-                    SleepUtil.sleepMilliSecond(500);
+                    SleepUtil.sleepMilliSecond(100);
+                    if (cnt % 50 == 0) {
+                        rocksDBUtil = new RocksDBUtil(dbFilePath, dbName, true);
+                        logger.info("Consumer getCount：{}", rocksDBUtil.getCount());
+                    }
                 }
             } catch (RocksDBException e) {
                 e.printStackTrace();

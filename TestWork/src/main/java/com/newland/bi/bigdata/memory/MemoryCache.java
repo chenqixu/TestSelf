@@ -1,6 +1,6 @@
 package com.newland.bi.bigdata.memory;
 
-import com.newland.bi.bigdata.redis.RedisClient;
+import com.cqx.common.utils.redis.RedisClient;
 
 import java.util.Map;
 import java.util.Timer;

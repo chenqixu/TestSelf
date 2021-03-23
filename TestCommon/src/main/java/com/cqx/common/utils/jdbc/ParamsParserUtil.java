@@ -28,7 +28,7 @@ public class ParamsParserUtil {
     /**
      * 初始化
      */
-    public void init() {
+    private void init() {
         // 解析dbbeans
         dbBeanList = DBBean.parser(param.get(DBBEANS));
         // dbbeans映射进map

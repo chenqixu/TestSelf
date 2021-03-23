@@ -324,6 +324,8 @@ public class JDBCUtil implements IJDBCUtil {
             while (rs.next()) {
                 iCallBack.call(rs);
             }
+            //关闭
+            iCallBack.close();
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             if (isThrow()) throw e;
@@ -359,6 +361,8 @@ public class JDBCUtil implements IJDBCUtil {
                 t = queryResultSet(rsMeta, propertyDescriptors, rs, beanCls);
                 iBeanCallBack.call(t);
             }
+            //关闭
+            iBeanCallBack.close();
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             if (isThrow()) throw e;
@@ -391,6 +395,8 @@ public class JDBCUtil implements IJDBCUtil {
                 List<QueryResult> queryResults = buildQueryResult(rsMeta, rs);
                 iQueryResultCallBack.call(queryResults);
             }
+            //关闭
+            iQueryResultCallBack.close();
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeQuery异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             if (isThrow()) throw e;
@@ -1115,8 +1121,7 @@ public class JDBCUtil implements IJDBCUtil {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ret = -1;
-            if (conn != null)
-                conn.rollback();
+            if (conn != null) conn.rollback();
         } finally {
             closePstmt(pstmt);
             closeConn(conn);
