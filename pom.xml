@@ -45,5 +45,6 @@
         <module>TestPool</module>
         <module>TestCommon</module>
         <module>TestGBKCode</module>
+        <module>TestCalcite</module>
     </modules>
 </project>
