@@ -1,9 +1,11 @@
 package com.cqx.utils;
 
+import org.apache.kafka.clients.admin.TopicListing;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileInputStream;
+import java.util.Collection;
 import java.util.Properties;
 
 public class KafkaApiUtilTest {
@@ -17,7 +19,7 @@ public class KafkaApiUtilTest {
     @Before
     public void setUp() throws Exception {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(path + "common.properties"));
+        properties.load(new FileInputStream(path + "single.properties"));
         zookeeper_ip_port = properties.getProperty("zookeeper_ip_port");
         zookeeper_path = properties.getProperty("zookeeper_path");
         kafkaApiUtil = KafkaApiUtil.builder()
@@ -65,5 +67,16 @@ public class KafkaApiUtilTest {
     public void getPartition() {
         byte[] key = "13509323824".getBytes();
         System.out.println(String.format("get %s", kafkaApiUtil.getPartition(key, 18)));
+    }
+
+    @Test
+    public void deleteAllTopic() {
+        Collection<TopicListing> topicListings = kafkaApiUtil.listTopic(brokerUrl, path + "single.properties");
+        for (TopicListing listing : topicListings) {
+            String name = listing.name();
+            if (name.startsWith("59")) {
+                kafkaApiUtil.deleteTopicByName(name);
+            }
+        }
     }
 }

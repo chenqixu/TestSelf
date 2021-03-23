@@ -30,10 +30,12 @@ public class CompatibleDatumReader<D> extends GenericDatumReader<D> {
             Object oldDatum = (old != null) ? getData().getField(r, name, pos, state) : null;
             try {
                 getData().setField(r, name, pos, read(oldDatum, f.schema(), in), state);
-            } catch (EOFException e) {
-                //如果没有更多的数据可读,说明read schema和write schema并不一致
-                //这种情况直接忽略不一致字段
+            } catch (IOException e) {
                 continue;
+//            } catch (EOFException e) {
+//                //如果没有更多的数据可读,说明read schema和write schema并不一致
+//                //这种情况直接忽略不一致字段
+//                continue;
             }
         }
         return r;

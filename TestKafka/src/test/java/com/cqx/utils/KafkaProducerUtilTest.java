@@ -1,6 +1,8 @@
 package com.cqx.utils;
 
 import com.cqx.bean.KafkaTuple;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
 import org.junit.Before;
@@ -9,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -266,5 +265,60 @@ public class KafkaProducerUtilTest {
         RecordConvertor recordConvertor = new RecordConvertor("new_ogg_to_kafka", true);
         GenericRecord genericRecord = recordConvertor.binaryToRecord(value);
         logger.info("{}", genericRecord);
+    }
+
+    @Test
+    public void test() {
+        byte2GenericRecord(toByte());
+    }
+
+    /**
+     * 简单数据对象
+     *
+     * @return
+     */
+    private byte[] toByte() {
+        String schemaStr = "{\n" +
+                "    \"type\":\"record\",\"name\":\"BookBean\",\n" +
+                "    \"fields\":[\n" +
+                "            {\"name\":\"bookName\",\"type\":[\"string\", \"null\"]},\n" +
+                "            {\"name\":\"price\",\"type\":[\"double\", \"null\"]},\n" +
+                //"            {\"name\":\"page\",\"type\": [\"int\", \"null\"]},\n" +
+                "            {\"name\":\"remark\",\"type\":[\"string\", \"null\"]}\n" +
+                "            ]\n" +
+                "}";
+        Schema.Parser parser = new Schema.Parser();
+        Schema schema = parser.parse(schemaStr);
+        RecordConvertorIgnore recordConvertor = new RecordConvertorIgnore(schema);
+        GenericRecord genericRecord = new GenericData.Record(schema);
+        genericRecord.put("bookName", "书名");
+        genericRecord.put("price", 12.9);
+        //genericRecord.put("page",12);
+        genericRecord.put("remark", "备注");
+        byte[] res = recordConvertor.recordToBinary(genericRecord);
+        System.out.println(recordConvertor.binaryToRecord(res));
+        return res;
+    }
+
+    private void byte2GenericRecord(byte[] bytes) {
+        String schemaStr = "{\n" +
+                "    \"type\":\"record\",\"name\":\"BookBean\",\n" +
+                "    \"fields\":[\n" +
+                "            {\"name\":\"bookName\",\"type\":[\"string\", \"null\"]},\n" +
+                "            {\"name\":\"price\",\"type\":[\"double\",\"null\"]},\n" +
+                "            {\"name\":\"page\",\"type\": [\"int\", \"null\"]},\n" +
+                "            {\"name\":\"remark\",\"type\":[\"string\", \"null\"]}\n" +
+                "            ]\n" +
+                "}";
+        Schema.Parser parser = new Schema.Parser();
+        Schema schema = parser.parse(schemaStr);
+        RecordConvertorIgnore recordConvertor = new RecordConvertorIgnore(schema);
+        GenericRecord genericRecord1 = recordConvertor.binaryToRecord(bytes);
+
+        List<Schema.Field> fields = schema.getFields();
+        for (int i = 0; i < fields.size(); i++) {
+            Schema.Field field = fields.get(i);
+            System.out.println(field.name() + "   " + genericRecord1.get(i));
+        }
     }
 }

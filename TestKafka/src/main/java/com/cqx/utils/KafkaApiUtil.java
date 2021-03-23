@@ -23,9 +23,8 @@ import java.util.concurrent.ExecutionException;
  * @author chenqixu
  */
 public class KafkaApiUtil {
-
     public static final String zookeeper_param = "--zookeeper";
-    private static Logger logger = LoggerFactory.getLogger(KafkaApiUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaApiUtil.class);
     private String zookeeper_ip_port;
     private String zookeeper_path;
     private String[] options = null;
@@ -83,7 +82,13 @@ public class KafkaApiUtil {
         TopicCommand.main(options);
     }
 
+    /**
+     * 删除话题
+     *
+     * @param topic_name
+     */
     public void deleteTopicByName(String topic_name) {
+        logger.info("deleteTopicByName：{}", topic_name);
         check();
         ZkUtils zkUtils = ZkUtils.apply(zookeeper_ip_port, 30000, 30000, JaasUtils.isZkSecurityEnabled());
         AdminUtils.deleteTopic(zkUtils, topic_name);
@@ -115,7 +120,14 @@ public class KafkaApiUtil {
         return this;
     }
 
-    public void listTopic(String brokerUrl, String propertiesFile) {
+    /**
+     * 查询所有话题
+     *
+     * @param brokerUrl
+     * @param propertiesFile
+     * @return
+     */
+    public Collection<TopicListing> listTopic(String brokerUrl, String propertiesFile) {
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(propertiesFile));
@@ -138,13 +150,14 @@ public class KafkaApiUtil {
         Collection<TopicListing> list = null;
         try {
             list = result.listings().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        System.out.println(list);
         adminClient.close();
+        for (TopicListing listing : list) {
+            logger.info("listTopic：{}", listing.name());
+        }
+        return list;
     }
 
     public void createTopics(String brokerUrl, String topic_name) {
