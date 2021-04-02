@@ -9,6 +9,7 @@ public enum DBType {
     MYSQL("com.mysql.jdbc.Driver", "select 1"),
     ORACLE("oracle.jdbc.driver.OracleDriver", "select 1 from dual"),
     POSTGRESQL("org.postgresql.Driver", "select 1"),
+    DERBY("org.apache.derby.jdbc.EmbeddedDriver", "values 1"),
     OTHER("", ""),
     ;
 

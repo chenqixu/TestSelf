@@ -1,5 +1,6 @@
 package com.cqx.common.utils.jdbc;
 
+import java.io.Closeable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * @author chenqixu
  */
-public interface IJDBCUtilCall {
+public interface IJDBCUtilCall extends Closeable {
 
     interface IQueryResultBean {
         String getOp_type();

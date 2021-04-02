@@ -160,10 +160,16 @@ public class JDBCUtil implements IJDBCUtil {
             }
         } else {//不走连接池
             Properties props = new Properties();
-            props.put("user", dbBean.getUser_name());
-            props.put("password", dbBean.getPass_word());
-            props.put("remarksReporting", "true");
-            return DriverManager.getConnection(dbBean.getTns(), props);
+            //没有用户名
+            if (dbBean.getUser_name() == null || dbBean.getUser_name().trim().length() == 0) {
+                return DriverManager.getConnection(dbBean.getTns());
+            } else {
+                //有用户名
+                props.put("user", dbBean.getUser_name());
+                props.put("password", dbBean.getPass_word());
+                props.put("remarksReporting", "true");
+                return DriverManager.getConnection(dbBean.getTns(), props);
+            }
         }
         return null;
     }
