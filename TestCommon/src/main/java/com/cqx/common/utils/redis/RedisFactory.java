@@ -1,5 +1,9 @@
 package com.cqx.common.utils.redis;
 
+import com.cqx.common.utils.redis.client.ClusterRedisClient;
+import com.cqx.common.utils.redis.client.RedisClient;
+import com.cqx.common.utils.redis.client.SinaleRedisClient;
+
 public class RedisFactory {
 	public static final int SINGLE_MODE_TYPE = 0;
 	public static final int CLUSTER_MODE_TYPE = 1;	

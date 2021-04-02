@@ -1,7 +1,7 @@
 package com.cqx.common.utils.redis.impl;
 
 import com.cqx.common.exception.other.RedisSqlParserException;
-import com.cqx.common.utils.redis.RedisClient;
+import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.RedisResultSet;
 import com.cqx.common.utils.redis.bean.RedisSqlParserBean;
 

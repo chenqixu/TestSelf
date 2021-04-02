@@ -1,6 +1,6 @@
 package com.newland.bi.bigdata.redis;
 
-import com.cqx.common.utils.redis.RedisClient;
+import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.RedisFactory;
 import com.cqx.common.utils.redis.RedisSqlParser;
 import org.junit.Before;

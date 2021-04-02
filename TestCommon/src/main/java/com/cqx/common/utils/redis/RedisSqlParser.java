@@ -1,5 +1,6 @@
 package com.cqx.common.utils.redis;
 
+import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.impl.RedisPolicy;
 
 import java.sql.SQLException;

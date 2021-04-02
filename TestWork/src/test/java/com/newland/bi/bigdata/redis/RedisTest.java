@@ -6,7 +6,7 @@ import com.cqx.annotation.MyTest.Test;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 
-import com.cqx.common.utils.redis.RedisClient;
+import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.RedisFactory;
 import com.newland.bi.bigdata.utils.OtherUtils;
 import redis.clients.jedis.ScanResult;

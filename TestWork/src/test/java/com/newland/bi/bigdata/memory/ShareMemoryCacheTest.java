@@ -1,7 +1,7 @@
 package com.newland.bi.bigdata.memory;
 
 import com.cqx.common.utils.file.MemoryCacheMode;
-import com.cqx.common.utils.redis.RedisClient;
+import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.RedisFactory;
 import com.cqx.common.utils.string.StringUtil;
 import com.newland.bi.bigdata.metric.MetricsUtil;

@@ -1,18 +1,36 @@
-package com.cqx.common.utils.redis;
+package com.cqx.common.utils.redis.client;
 
+import com.cqx.common.utils.redis.RedisFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class SinaleRedisClient implements RedisClient {
+public class SinaleRedisClient extends RedisClient {
+    private static final Logger logger = LoggerFactory.getLogger(SinaleRedisClient.class);
     private Jedis jedis;
-    private Pipeline pipe;
 
     public SinaleRedisClient(RedisFactory.Builder builder) {
         jedis = new Jedis(builder.getIp(), builder.getPort());
+    }
+
+    public Set<String> keys(String pattern) {
+        return jedis.keys(pattern);
+    }
+
+    public String type(String key) {
+        return jedis.type(key);
+    }
+
+    public void flushDB() {
+        jedis.flushDB();
     }
 
     @Override
@@ -86,21 +104,55 @@ public class SinaleRedisClient implements RedisClient {
         jedis.close();
     }
 
-    class SinaleRedisPipeline implements RedisPipeline {
+    @Override
+    protected RedisPipeline generatePipeline(int commit_num, int get_cache_num) {
+        return new SinaleRedisPipeline(commit_num, get_cache_num);
+    }
 
-        @Override
-        public void open() {
-            pipe = jedis.pipelined();
+    class SinaleRedisPipeline extends RedisPipeline {
+        Pipeline pipe;
+
+        public SinaleRedisPipeline(int commit_num, int get_cache_num) {
+            super(commit_num, get_cache_num);
         }
 
         @Override
-        public void set(String key, String value) {
-            pipe.set(key, value);
+        protected void open() {
+            pipe = jedis.pipelined();
         }
 
         @Override
         public void sync() {
             pipe.sync();
+        }
+
+        @Override
+        protected List<Object> syncAndReturnAll() {
+            return pipe.syncAndReturnAll();
+        }
+
+        @Override
+        protected void set_inside(String key, String value) {
+            pipe.set(key, value);
+        }
+
+        @Override
+        protected void del_inside(String key) {
+            pipe.del(key);
+        }
+
+        @Override
+        protected void request_inside(String key) {
+            pipe.get(key);
+        }
+
+        @Override
+        protected void releasePipeline() {
+            try {
+                pipe.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 }
