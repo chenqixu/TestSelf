@@ -12,10 +12,12 @@ import java.util.List;
 public class SlotNumAndHostAndPort {
     private HostAndPort hostAndPort;
     private List<Integer> slotNums;
+    private String nodeKey;
 
     public SlotNumAndHostAndPort(List<Integer> slotNums, HostAndPort hostAndPort) {
         this.slotNums = slotNums;
         this.hostAndPort = hostAndPort;
+        this.nodeKey = hostAndPort.getHost() + ":" + hostAndPort.getPort();
     }
 
     public HostAndPort getHostAndPort() {
@@ -32,5 +34,9 @@ public class SlotNumAndHostAndPort {
 
     public void setSlotNums(List<Integer> slotNums) {
         this.slotNums = slotNums;
+    }
+
+    public String getNodeKey() {
+        return nodeKey;
     }
 }

@@ -67,7 +67,7 @@ public class JDBCRetryUtil extends JDBCUtil {
      * <li>假：正常执行</li>
      * </ul>
      *
-     * @return
+     * @return 真：执行；假：不执行
      */
     private boolean checkAndReset() {
         //检查时间初始化

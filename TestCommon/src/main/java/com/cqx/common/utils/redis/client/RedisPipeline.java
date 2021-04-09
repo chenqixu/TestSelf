@@ -75,7 +75,7 @@ public abstract class RedisPipeline implements Closeable {
     private void autoCommit(String key) {
         PipelineCount pipelineCount = getPipelineCount(key);
         if (pipelineCount.incrementAndGet() % commit_num == 0) {
-            commit();
+            commit(max_attempts);
             pipelineCount.clear();
         }
     }
@@ -95,7 +95,6 @@ public abstract class RedisPipeline implements Closeable {
      * 刷数据到getCache
      */
     private void flushGetCache(int attempts) {
-        logger.warn("flushGetCache.attempts：{}", attempts);
         try {
             for (Object obj : syncAndReturnAll()) {
                 //达到队列上限会抛数据
@@ -117,20 +116,38 @@ public abstract class RedisPipeline implements Closeable {
                 throw connException;
             }
             //递归，直到没有JedisConnectionException异常，或者
-            logger.warn("递归，{}", attempts);
             flushGetCache(attempts - 1);
         }
     }
 
-    public void commit() {
-        sync();
+    public void commit(int attempts) {
+        try {
+            sync();
+        } catch (JedisConnectionException connException) {
+            logger.warn("attempts：{}，connException：{}", attempts, connException.getMessage());
+            //连接异常，可能是master节点挂了，需要重新分配
+
+            if (attempts <= 1) {
+                //release current connection before recursion
+                logger.warn("attempts：{}，releasePipeline……", attempts);
+                releasePipeline();
+
+                //We need this because if node is not reachable anymore - we need to finally initiate slots renewing,
+                //or we can stuck with cluster state without one node in opposite case.
+                logger.warn("attempts：{}，renewCache……", attempts);
+                renewCache();
+                throw connException;
+            }
+            //递归，直到没有JedisConnectionException异常，或者
+            commit(attempts - 1);
+        }
     }
 
     protected abstract void releasePipeline();
 
     @Override
     public void close() {
-        sync();
+        commit(max_attempts);
     }
 
     private PipelineCount getPipelineCount(String key) {

@@ -4,6 +4,7 @@
  "fields": [
      {"name": "name", "type": "string", "default": ""},
      {"name": "favorite_number",  "type": "int", "default": -1},
-     {"name": "favorite_color", "type": "string", "default": ""}
+     {"name": "favorite_color", "type": "string", "default": ""},
+     {"name": "id", "type": ["long", "null"]}
  ]
 }

@@ -4,9 +4,11 @@ import com.cqx.common.utils.redis.RedisFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClusterRedisClient extends RedisClient {
     private static final Logger logger = LoggerFactory.getLogger(ClusterRedisClient.class);
@@ -143,7 +145,7 @@ public class ClusterRedisClient extends RedisClient {
         try {
             cluster.close();
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            logger.error("close异常：" + e.getMessage(), e);
         }
     }
 
@@ -155,24 +157,31 @@ public class ClusterRedisClient extends RedisClient {
 
     class ClusterRedisPipeline extends RedisPipeline {
         Map<String, Pipeline> pipelinePool = new HashMap<>();
+        AtomicInteger syncCount = new AtomicInteger(0);
+        AtomicInteger syncAndReturnCount = new AtomicInteger(0);
 
         public ClusterRedisPipeline(int commit_num, int get_cache_num) {
             super(commit_num, get_cache_num);
         }
 
         private Pipeline getPipeline(String key) {
-            int slot = cluster.getSlot(key);
-            String node = cluster.getNodeBySlot(slot);
-            Pipeline pipeline = pipelinePool.get(node);
-            if (pipeline == null) {
-                Jedis jedis = cluster.getConnectionFromSlot(slot);
-                if (jedis != null) {
-                    pipeline = jedis.pipelined();
-                    pipelinePool.put(node, pipeline);
-                    logger.debug("pipelinePool.put：{}", node);
-                } else throw new NullPointerException("slot : " + slot + ", node：" + node + "，jedis is null !");
-            }
-            return pipeline;
+            return cluster.callBack(new MyJedisCluster.MyJedisClusterCallBack<Pipeline>() {
+                @Override
+                public Pipeline call() {
+                    int slot = cluster.getSlot(key);
+                    String node = cluster.getNodeBySlot(slot);
+                    Pipeline pipeline = pipelinePool.get(node);
+                    if (pipeline == null) {
+                        Jedis jedis = cluster.getConnectionFromSlot(slot);
+                        if (jedis != null) {
+                            pipeline = jedis.pipelined();
+                            pipelinePool.put(node, pipeline);
+                            logger.debug("pipelinePool.put：{}", node);
+                        } else throw new NullPointerException("slot : " + slot + ", node：" + node + "，jedis is null !");
+                    }
+                    return pipeline;
+                }
+            });
         }
 
         @Override
@@ -186,17 +195,33 @@ public class ClusterRedisClient extends RedisClient {
         }
 
         @Override
-        protected void sync() {
+        protected void sync() throws JedisConnectionException {
+            syncCount.set(0);
+            int i = 0;
             for (Pipeline pipeline : pipelinePool.values()) {
-                pipeline.sync();
+                i++;
+                try {
+                    pipeline.sync();
+                } catch (JedisConnectionException connectionException) {
+                    syncCount.set(i);
+                    throw connectionException;
+                }
             }
         }
 
         @Override
-        protected List<Object> syncAndReturnAll() {
+        protected List<Object> syncAndReturnAll() throws JedisConnectionException {
+            syncAndReturnCount.set(0);
             List<Object> objectList = new ArrayList<>();
+            int i = 0;
             for (Pipeline pipeline : pipelinePool.values()) {
-                objectList.addAll(pipeline.syncAndReturnAll());
+                i++;
+                try {
+                    objectList.addAll(pipeline.syncAndReturnAll());
+                } catch (JedisConnectionException connectionException) {
+                    syncAndReturnCount.set(i);
+                    throw connectionException;
+                }
             }
             return objectList;
         }
@@ -218,11 +243,21 @@ public class ClusterRedisClient extends RedisClient {
 
         @Override
         protected void releasePipeline() {
+            int sarc = syncAndReturnCount.get();
+            int sc = syncCount.get();
+            logger.debug("releasePipeline.count sarc：{}，sc：{}", sarc, sc);
+            int i = 0;
             for (Pipeline pipeline : pipelinePool.values()) {
-                try {
-                    pipeline.close();
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                i++;
+                if ((sarc > 0 && i == sarc) || (sc > 0 && i == sc)) {
+                    //跳过异常的pipeline
+                    logger.warn("skip.pipeline.close：{}", i);
+                } else {
+                    try {
+                        pipeline.close();
+                    } catch (Exception e) {
+                        logger.error("releasePipeline异常：" + e.getMessage(), e);
+                    }
                 }
             }
             pipelinePool.clear();

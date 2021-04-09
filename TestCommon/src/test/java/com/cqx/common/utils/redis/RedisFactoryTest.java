@@ -9,9 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class RedisFactoryTest {
@@ -20,6 +20,7 @@ public class RedisFactoryTest {
     private int num = 1000;
     private int add = 1;
     private boolean isShowResult = true;
+    private Cluster cluster;
 
     @Before
     public void setUp() throws Exception {
@@ -38,6 +39,20 @@ public class RedisFactoryTest {
     }
 
     @Test
+    public void ping() {
+        try (Jedis jedis = new Jedis("10.1.8.200", 10009)) {
+            TimeCostUtil tc = new TimeCostUtil();
+            tc.start();
+            for (int i = 0; i < 1; i++)
+                jedis.ping();
+            logger.info("cost：{}", tc.stopAndGet());
+        }
+        String _ci = "";
+        Long ci = ((_ci == null || _ci.length() == 0) ? null : Long.valueOf(_ci));
+        logger.info("ci：{}", ci);
+    }
+
+    @Test
     public void linkedTest() {
         //测试
         LinkedBlockingQueue<Integer> getCache = new LinkedBlockingQueue<>(2);
@@ -48,6 +63,13 @@ public class RedisFactoryTest {
         List<Object> copy = new ArrayList<>(getCache);
         getCache.clear();
         logger.info("getCache：{}，copy：{}", getCache, copy);
+
+        Map<String, Integer> pipelinePool = new HashMap<>();
+        for (int i = 1; i < 10; i++) pipelinePool.put("" + i, i);
+        for (int j = 0; j < 5; j++)
+            for (int i : pipelinePool.values()) {
+                logger.info("{} {}", j, i);
+            }
     }
 
     @Test
@@ -60,7 +82,7 @@ public class RedisFactoryTest {
         logger.info("cost：{}", costUtil.stopAndGet());
         isShowResult = false;//查询结果不显示
         //查询
-        redisQuery();
+//        redisQuery();
     }
 
     @Test
@@ -72,7 +94,7 @@ public class RedisFactoryTest {
         }
         logger.info("cost：{}", costUtil.stopAndGet());
         //查询
-        redisQuery();
+//        redisQuery();
     }
 
     @Test
@@ -123,10 +145,10 @@ public class RedisFactoryTest {
         List<Object> objectList;
         TimeCostUtil costUtil = new TimeCostUtil();
         costUtil.start();
-        try (RedisPipeline redisPipeline = redisClient.openPipeline(500, 100)) {
+        try (RedisPipeline redisPipeline = redisClient.openPipeline(500, 2000)) {
             while (add <= num) {
                 redisPipeline.request(add + "");
-                if (add % 49 == 0) {
+                if (add % 499 == 0) {
                     objectList = redisPipeline.get();
                     logger.info("add：{}，size：{}，objectList：{}", add, objectList.size(), objectList);
                 }
@@ -150,7 +172,7 @@ public class RedisFactoryTest {
         logger.info("cost：{}", costUtil.stopAndGet());
         isShowResult = false;//查询结果不显示
         //查询
-        redisQuery();
+//        redisQuery();
     }
 
     @Test
@@ -164,7 +186,7 @@ public class RedisFactoryTest {
         }
         logger.info("cost：{}", costUtil.stopAndGet());
         //查询
-        redisQuery();
+//        redisQuery();
     }
 
     @Test
@@ -177,11 +199,15 @@ public class RedisFactoryTest {
         int max = 5;
         for (int i = 0; i < max; i++) {
             try {
+                pipelineSet();
+                add = 1;
+//                pipelineDel();
+//                add = 1;
                 pipelineGet();
 //                get();
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
                 logger.warn("===error , sleep 2");
+//                logger.error(e.getMessage(), e);
                 SleepUtil.sleepSecond(2);
             }
             if (i != (max - 1)) {
@@ -189,6 +215,135 @@ public class RedisFactoryTest {
                 SleepUtil.sleepSecond(3);
             }
             add = 1;
+        }
+    }
+
+    @Test
+    public void testRecursion() {
+        cluster = new Cluster();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("timer.schedule 4000，dead 1");
+                cluster.dead(1);
+            }
+        }, 4000);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("timer.schedule 8000，resurrection 1");
+                cluster.resurrection(1);
+            }
+        }, 8000);
+        for (int i = 0; i < 5; i++) {
+            List<Slot> dis = discover();
+            logger.info("dis：{}", dis);
+            SleepUtil.sleepSecond(3);
+        }
+    }
+
+    private List<Slot> discover() {
+        //轮询缓存，ping不通过的移除
+        //重新获取集群
+        //先测试下集群是否都能ping
+        //直到都能ping通
+        //已经在缓存的跳过，不在缓存的加入
+        List<Slot> cache = new ArrayList<>(getSlots());
+        boolean cachePing = testPing(cache, true);
+        if (!cachePing) {
+            List<Slot> slots = getSlots();
+            while (!testPing(slots, false)) {
+                slots = getSlots();
+                SleepUtil.sleepMilliSecond(500);
+            }
+
+            for (Slot newSlot : slots) {
+                if (!cache.contains(newSlot)) {
+                    logger.info("cache add：{}", newSlot);
+                    cache.add(newSlot);
+                }
+            }
+        }
+        return cache;
+    }
+
+    private boolean testPing(List<Slot> src, boolean isRemove) {
+        logger.info("testPing：{}", src);
+        for (Iterator<Slot> it = src.iterator(); it.hasNext(); ) {
+            Slot old = it.next();
+            if (!old.ping().equals("PONG")) {
+                if (isRemove) {
+                    //从缓存移除
+                    logger.info("remove：{}", old);
+                    it.remove();
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<Slot> getSlots() {
+        return cluster.getSlots();
+    }
+
+    class Cluster {
+        volatile List<Slot> cluster = new ArrayList<>();
+
+        Cluster() {
+            Slot s1 = new Slot(1);
+            Slot s2 = new Slot(2);
+            Slot s3 = new Slot(3);
+            cluster.add(s1);
+            cluster.add(s2);
+            cluster.add(s3);
+        }
+
+        List<Slot> getSlots() {
+            return cluster;
+        }
+
+        void dead(int i) {
+            cluster.get(i).setStatus("DEAD");
+        }
+
+        void resurrection(int i) {
+            cluster.get(i).setStatus("PONG");
+        }
+
+        int size() {
+            return cluster.size();
+        }
+    }
+
+    class Slot {
+        int port;
+        String status = "PONG";
+
+        Slot(int port) {
+            this.port = port;
+        }
+
+        @Override
+        public String toString() {
+            return getPort() + "，" + ping();
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String ping() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
     }
 }

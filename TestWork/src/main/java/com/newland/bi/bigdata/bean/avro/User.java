@@ -7,12 +7,13 @@ package com.newland.bi.bigdata.bean.avro;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class User extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 6200387938178034553L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"com.newland.bi.bigdata.bean.avro\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"default\":\"\"},{\"name\":\"favorite_number\",\"type\":\"int\",\"default\":-1},{\"name\":\"favorite_color\",\"type\":\"string\",\"default\":\"\"}]}");
+  private static final long serialVersionUID = -8292389482813912302L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"User\",\"namespace\":\"com.newland.bi.bigdata.bean.avro\",\"fields\":[{\"name\":\"name\",\"type\":\"string\",\"default\":\"\"},{\"name\":\"favorite_number\",\"type\":\"int\",\"default\":-1},{\"name\":\"favorite_color\",\"type\":\"string\",\"default\":\"\"},{\"name\":\"id\",\"type\":[\"long\",\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   @Deprecated public java.lang.CharSequence name;
   @Deprecated public int favorite_number;
   @Deprecated public java.lang.CharSequence favorite_color;
+  @Deprecated public java.lang.Long id;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -24,10 +25,11 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
   /**
    * All-args constructor.
    */
-  public User(java.lang.CharSequence name, java.lang.Integer favorite_number, java.lang.CharSequence favorite_color) {
+  public User(java.lang.CharSequence name, java.lang.Integer favorite_number, java.lang.CharSequence favorite_color, java.lang.Long id) {
     this.name = name;
     this.favorite_number = favorite_number;
     this.favorite_color = favorite_color;
+    this.id = id;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -37,6 +39,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
     case 0: return name;
     case 1: return favorite_number;
     case 2: return favorite_color;
+    case 3: return id;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -47,6 +50,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
     case 0: name = (java.lang.CharSequence)value$; break;
     case 1: favorite_number = (java.lang.Integer)value$; break;
     case 2: favorite_color = (java.lang.CharSequence)value$; break;
+    case 3: id = (java.lang.Long)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -97,6 +101,21 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
   }
 
   /**
+   * Gets the value of the 'id' field.
+   */
+  public java.lang.Long getId() {
+    return id;
+  }
+
+  /**
+   * Sets the value of the 'id' field.
+   * @param value the value to set.
+   */
+  public void setId(java.lang.Long value) {
+    this.id = value;
+  }
+
+  /**
    * Creates a new User RecordBuilder.
    * @return A new User RecordBuilder
    */
@@ -131,6 +150,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
     private java.lang.CharSequence name;
     private int favorite_number;
     private java.lang.CharSequence favorite_color;
+    private java.lang.Long id;
 
     /** Creates a new Builder */
     private Builder() {
@@ -155,6 +175,10 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
         this.favorite_color = data().deepCopy(fields()[2].schema(), other.favorite_color);
         fieldSetFlags()[2] = true;
       }
+      if (isValidValue(fields()[3], other.id)) {
+        this.id = data().deepCopy(fields()[3].schema(), other.id);
+        fieldSetFlags()[3] = true;
+      }
     }
     
     /**
@@ -174,6 +198,10 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       if (isValidValue(fields()[2], other.favorite_color)) {
         this.favorite_color = data().deepCopy(fields()[2].schema(), other.favorite_color);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.id)) {
+        this.id = data().deepCopy(fields()[3].schema(), other.id);
+        fieldSetFlags()[3] = true;
       }
     }
 
@@ -293,6 +321,45 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
       return this;
     }
 
+    /**
+      * Gets the value of the 'id' field.
+      * @return The value.
+      */
+    public java.lang.Long getId() {
+      return id;
+    }
+
+    /**
+      * Sets the value of the 'id' field.
+      * @param value The value of 'id'.
+      * @return This builder.
+      */
+    public com.newland.bi.bigdata.bean.avro.User.Builder setId(java.lang.Long value) {
+      validate(fields()[3], value);
+      this.id = value;
+      fieldSetFlags()[3] = true;
+      return this; 
+    }
+
+    /**
+      * Checks whether the 'id' field has been set.
+      * @return True if the 'id' field has been set, false otherwise.
+      */
+    public boolean hasId() {
+      return fieldSetFlags()[3];
+    }
+
+
+    /**
+      * Clears the value of the 'id' field.
+      * @return This builder.
+      */
+    public com.newland.bi.bigdata.bean.avro.User.Builder clearId() {
+      id = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
     @Override
     public User build() {
       try {
@@ -300,6 +367,7 @@ public class User extends org.apache.avro.specific.SpecificRecordBase implements
         record.name = fieldSetFlags()[0] ? this.name : (java.lang.CharSequence) defaultValue(fields()[0]);
         record.favorite_number = fieldSetFlags()[1] ? this.favorite_number : (java.lang.Integer) defaultValue(fields()[1]);
         record.favorite_color = fieldSetFlags()[2] ? this.favorite_color : (java.lang.CharSequence) defaultValue(fields()[2]);
+        record.id = fieldSetFlags()[3] ? this.id : (java.lang.Long) defaultValue(fields()[3]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

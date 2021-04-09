@@ -1,5 +1,6 @@
 package com.cqx.common.utils.redis.client;
 
+import com.cqx.common.utils.list.TwoWayHashMap;
 import com.cqx.common.utils.redis.bean.SlotNumAndHostAndPort;
 import com.cqx.common.utils.system.SleepUtil;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -9,10 +10,14 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.util.JedisClusterCRC16;
 import redis.clients.util.SafeEncoder;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * MyJedisCluster
@@ -23,7 +28,9 @@ public class MyJedisCluster extends JedisCluster {
     private static final Logger logger = LoggerFactory.getLogger(MyJedisCluster.class);
     private static final int MASTER_NODE_INDEX = 2;
     private final Map<String, Jedis> nodes = new HashMap<>();
-    private final Map<Integer, String> slotsNode = new HashMap<>();
+    private final TwoWayHashMap<Integer, String> slotsNode = new TwoWayHashMap<>();
+    private AtomicBoolean first = new AtomicBoolean(true);
+    private Lock w = new ReentrantLock();
 
     public MyJedisCluster(Set<HostAndPort> nodes) {
         super(nodes);
@@ -35,28 +42,81 @@ public class MyJedisCluster extends JedisCluster {
         renewCache();
     }
 
-    public void renewCache() {
-        //循环所有节点
-        for (JedisPool jedisPool : getClusterNodes().values()) {
-            Jedis jedis = jedisPool.getResource();
+    /**
+     * 回调，由于有进行自动重分配，所以要加锁
+     *
+     * @param myJedisClusterCallBack
+     * @param <T>
+     * @return
+     */
+    public <T> T callBack(MyJedisClusterCallBack<T> myJedisClusterCallBack) {
+        T t = null;
+        if (w.tryLock()) {
             try {
-                if (renewCache(jedis)) return;
-            } catch (Exception e) {
-                //null
+                t = myJedisClusterCallBack.call();
+            } finally {
+                w.unlock();
             }
+        } else {
+            logger.warn("callBack没有获取到锁");
+        }
+        return t;
+    }
+
+    /**
+     * 分配slot到cluster
+     */
+    public void renewCache() {
+        if (w.tryLock()) {
+            try {
+                //第一次，从getClusterNodes获取
+                if (first.getAndSet(false)) {
+                    for (JedisPool jedisPool : getClusterNodes().values()) {
+                        //注意，这里是取一个，用一个，释放一个，如果都取出来，就会有连接无法释放
+                        Jedis jedis = jedisPool.getResource();
+                        try {
+                            if (renewCache(jedis)) return;
+                        } catch (Exception e) {
+                            logger.error("renewCache异常：" + e.getMessage(), e);
+                        }
+                    }
+                } else {//后面都从缓存nodes获取，所以要维护好nodes
+                    for (Jedis jedis : nodes.values()) {
+                        try {
+                            //先重置一下，再renew
+                            //renewCache异常：Cannot use Jedis when in Pipeline. Please use Pipeline or reset jedis state
+                            jedis.resetState();
+                            if (renewCache(jedis)) return;
+                        } catch (Exception e) {
+                            logger.error("renewCache异常：" + e.getMessage(), e);
+                        }
+                    }
+                }
+            } finally {
+                w.unlock();
+            }
+        } else {
+            logger.warn("renewCache没有获取到锁");
         }
         throw new RuntimeException("没有可用的redis连接：" + nodes + "，请联系管理员！");
     }
 
+    /**
+     * 分配slot到cluster
+     *
+     * @param jedis
+     * @return
+     */
     public boolean renewCache(Jedis jedis) {
         try {
             //发送ping命令，检查Jedis是否存活
             String ping = jedis.ping();
             //存活返回PONG
             if ("PONG".equalsIgnoreCase(ping)) {
-                logger.debug("jedis：{}:{}，ping：{}", jedis.getClient().getHost(), jedis.getClient().getPort(), ping);
+                logger.info("jedis：{}:{}，ping：{}，尝试分配", jedis.getClient().getHost(), jedis.getClient().getPort(), ping);
                 //发现Cluster的Slots，并进行分配
                 discoverClusterSlots(jedis);
+                logger.info("jedis：{}:{}，分配成功", jedis.getClient().getHost(), jedis.getClient().getPort());
                 return true;
             }
         } finally {
@@ -74,6 +134,16 @@ public class MyJedisCluster extends JedisCluster {
      */
     private String getNodeKey(HostAndPort hnp) {
         return hnp.getHost() + ":" + hnp.getPort();
+    }
+
+    /**
+     * 拼接成 host:port
+     *
+     * @param jedis
+     * @return
+     */
+    private String getNodeKey(Jedis jedis) {
+        return jedis.getClient().getHost() + ":" + jedis.getClient().getPort();
     }
 
     /**
@@ -124,49 +194,66 @@ public class MyJedisCluster extends JedisCluster {
      * @param jedis
      */
     private void discoverClusterSlots(Jedis jedis) {
-        //待分配列表
-        List<SlotNumAndHostAndPort> waitDistributionList = getWaitDistributionList(jedis);
-        //从待分配列表进行分配操作
-        for (SlotNumAndHostAndPort slotNumAndHostAndPort : waitDistributionList) {
-            //分配槽位到主节点
-            assignSlotsToNode(slotNumAndHostAndPort.getSlotNums(),
-                    slotNumAndHostAndPort.getHostAndPort());
+        boolean cachePing = true;
+        if (nodes.size() > 0) {
+            //轮询缓存，ping不通过的移除，移除nodes和slotsNode
+            cachePing = testPing(nodes.values(), true);
+        }
+        //(nodes.size() > 0 && !cachePing)
+        //Cluster的Slots已经分配过了，但是可能有一台或几台服务端异常，需要重新拉取
+        //nodes.size() == 0
+        //Cluster的Slots未分配
+        if ((nodes.size() > 0 && !cachePing) || nodes.size() == 0) {
+            //获取集群
+            SlotNumAndHostAndPortPool slotNumAndHostAndPortPool = getClusterSlots(jedis);
+            List<Jedis> jedisList = slotNumAndHostAndPortPool.getJedisList();
+            //测试集群是否全部可用
+            while (!testPing(jedisList, false)) {
+                //重新获取集群
+                slotNumAndHostAndPortPool = getClusterSlots(jedis);
+                jedisList = slotNumAndHostAndPortPool.getJedisList();
+                SleepUtil.sleepMilliSecond(500);
+            }
+
+            //从待分配列表进行分配操作
+            for (SlotNumAndHostAndPort waitSlot : slotNumAndHostAndPortPool.getWaitDistributionList()) {
+                //分配槽位到主节点
+                assignSlotsToNode(waitSlot.getSlotNums(), waitSlot.getHostAndPort());
+            }
         }
     }
 
     /**
-     * 获取待分配列表
+     * 获取最新集群信息
      *
      * @param jedis
      * @return
      */
-    private List<SlotNumAndHostAndPort> getWaitDistributionList(Jedis jedis) {
+    private SlotNumAndHostAndPortPool getClusterSlots(Jedis jedis) {
+        //待分配列表
+        List<SlotNumAndHostAndPort> waitDistributionList = new ArrayList<>();
         //发送cluster slots命令，获取槽位和ip关系
         //1：起始槽位
         //2：结束槽位
         //3：主节点
         //4：从节点
         List<Object> slots = jedis.clusterSlots();
-        //重置
-        reset();
-        //待分配列表
-        List<SlotNumAndHostAndPort> waitDistributionList = new ArrayList<>();
         //循环
         for (Object slotInfoObj : slots) {
             List<Object> slotInfo = (List<Object>) slotInfoObj;
             logger.debug("slotInfo.size()：{}，slotInfo：{}", slotInfo.size(), getSlotInfo(slotInfo));
-            //没有从节点，进入下一个循环
+            //没有主节点，进入下一个循环
             if (slotInfo.size() <= MASTER_NODE_INDEX) {
                 continue;
             }
-            //根据起始槽位和结束槽位生成所有槽位列表
-            List<Integer> slotNums = getAssignedSlotArray(slotInfo);
             //获取主节点的ip端口等信息
             List<Object> hostInfos = (List<Object>) slotInfo.get(MASTER_NODE_INDEX);
             //没有获取到主节点的ip端口信息，进入下一个循环
             if (hostInfos.isEmpty()) {
                 continue;
             }
+            //根据起始槽位和结束槽位生成所有槽位列表
+            List<Integer> slotNums = getAssignedSlotArray(slotInfo);
             //此时，我们只需使用主节点，丢弃从节点信息
             /**
              * at this time, we just use master, discard slave information
@@ -174,21 +261,51 @@ public class MyJedisCluster extends JedisCluster {
              */
             //获取主节点的ip和端口
             HostAndPort targetNode = generateHostAndPort(hostInfos);
-
-            //判断主机是否可用
-            Jedis tmp = new Jedis(targetNode.getHost(), targetNode.getPort());
-            String ping = tmp.ping();
-            if (!"PONG".equalsIgnoreCase(ping)) {
-                //主机不可用，需要重新发送cluster slots命令，获取槽位和ip关系
-                logger.warn("主机不可用，需要重新发送cluster slots命令，获取槽位和ip关系，sleep 5……");
-                SleepUtil.sleepSecond(5);
-                return getWaitDistributionList(jedis);
-            }
-
             //添加到待分配列表
             waitDistributionList.add(new SlotNumAndHostAndPort(slotNums, targetNode));
         }
-        return waitDistributionList;
+        return new SlotNumAndHostAndPortPool(waitDistributionList);
+    }
+
+    /**
+     * 测试集群所有Master节点是否都ok
+     *
+     * @param src
+     * @param isRemove
+     * @return
+     */
+    private boolean testPing(Collection<Jedis> src, boolean isRemove) {
+        for (Iterator<Jedis> it = src.iterator(); it.hasNext(); ) {
+            Jedis old = it.next();
+            try {
+                old.resetState();
+                if (!old.ping().equals("PONG")) {
+                    if (isRemove) {
+                        logger.warn("{}：remove：{}", uuid("retry-testPing"), old);
+                        //从slotsNode移除
+                        slotsNode.keysRemove(getNodeKey(old));
+                        //从nodes移除
+                        it.remove();
+                    }
+                    logger.warn("{}：false，size：{}", uuid("retry-testPing"), src.size());
+                    return false;
+                }
+            } catch (JedisConnectionException connectionException) {
+                if (isRemove) {
+                    logger.warn("{}：Exception.remove：{}", uuid("retry-testPing"), old);
+                    //从slotsNode移除
+                    slotsNode.keysRemove(getNodeKey(old));
+                    //从nodes移除
+                    it.remove();
+                }
+                logger.warn("{}：false，size：{}", uuid("retry-testPing"), src.size());
+                return false;
+            } finally {
+                releaseConnection(old);
+            }
+        }
+        logger.info("{}：true，size：{}", uuid("retry-testPing"), src.size());
+        return true;
     }
 
     /**
@@ -284,10 +401,37 @@ public class MyJedisCluster extends JedisCluster {
      * 释放所有Jedis
      */
     public void reset() {
-        for (Map.Entry<String, Jedis> entry : nodes.entrySet()) {
-            releaseConnection(entry.getValue());
-        }
+        for (Jedis jedis : nodes.values()) releaseConnection(jedis);
         nodes.clear();
         slotsNode.clear();
+    }
+
+    private String uuid(String tag) {
+        return "【" + tag + "-" + UUID.randomUUID().toString() + "】";
+    }
+
+    interface MyJedisClusterCallBack<T> {
+        T call();
+    }
+
+    class SlotNumAndHostAndPortPool {
+        private List<SlotNumAndHostAndPort> slotNumAndHostAndPorts;
+        private List<Jedis> jedisList = new ArrayList<>();
+
+        SlotNumAndHostAndPortPool(List<SlotNumAndHostAndPort> slotNumAndHostAndPorts) {
+            this.slotNumAndHostAndPorts = slotNumAndHostAndPorts;
+            for (SlotNumAndHostAndPort slotNumAndHostAndPort : slotNumAndHostAndPorts) {
+                this.jedisList.add(new Jedis(slotNumAndHostAndPort.getHostAndPort().getHost(),
+                        slotNumAndHostAndPort.getHostAndPort().getPort()));
+            }
+        }
+
+        List<Jedis> getJedisList() {
+            return jedisList;
+        }
+
+        List<SlotNumAndHostAndPort> getWaitDistributionList() {
+            return slotNumAndHostAndPorts;
+        }
     }
 }
