@@ -58,10 +58,10 @@ public abstract class RedisPipeline implements Closeable {
         autoCommit("del");
     }
 
-    protected abstract void request_inside(String key);
+    protected abstract void request_get_inside(String key);
 
-    public void request(String key) {
-        request_inside(key);
+    public void request_get(String key) {
+        request_get_inside(key);
         autoCommitAndGet(false);
     }
 
@@ -70,6 +70,27 @@ public abstract class RedisPipeline implements Closeable {
         List<Object> copy = new ArrayList<>(getCache);
         getCache.clear();
         return copy;
+    }
+
+    protected abstract void hset_inside(String key, String field, String value);
+
+    public void hset(String key, String field, String value) {
+        hset_inside(key, field, value);
+        autoCommit("hset");
+    }
+
+    protected abstract void hdel_inside(String key, String field);
+
+    public void hdel(String key, String field) {
+        hdel_inside(key, field);
+        autoCommit("hdel");
+    }
+
+    protected abstract void request_hget_inside(String key, String field);
+
+    public void request_hget(String key, String field) {
+        request_hget_inside(key, field);
+        autoCommitAndGet(false);
     }
 
     private void autoCommit(String key) {
@@ -120,7 +141,19 @@ public abstract class RedisPipeline implements Closeable {
         }
     }
 
-    public void commit(int attempts) {
+    /**
+     * 同步
+     */
+    public void commit() {
+        commit(max_attempts);
+    }
+
+    /**
+     * 同步
+     *
+     * @param attempts
+     */
+    private void commit(int attempts) {
         try {
             sync();
         } catch (JedisConnectionException connException) {

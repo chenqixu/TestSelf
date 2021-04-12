@@ -142,8 +142,23 @@ public class SinaleRedisClient extends RedisClient {
         }
 
         @Override
-        protected void request_inside(String key) {
+        protected void request_get_inside(String key) {
             pipe.get(key);
+        }
+
+        @Override
+        protected void hset_inside(String key, String field, String value) {
+            pipe.hset(key, field, value);
+        }
+
+        @Override
+        protected void hdel_inside(String key, String field) {
+            pipe.hdel(key, field);
+        }
+
+        @Override
+        protected void request_hget_inside(String key, String field) {
+            pipe.hget(key, field);
         }
 
         @Override

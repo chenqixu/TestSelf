@@ -147,7 +147,7 @@ public class RedisFactoryTest {
         costUtil.start();
         try (RedisPipeline redisPipeline = redisClient.openPipeline(500, 2000)) {
             while (add <= num) {
-                redisPipeline.request(add + "");
+                redisPipeline.request_get(add + "");
                 if (add % 499 == 0) {
                     objectList = redisPipeline.get();
                     logger.info("add：{}，size：{}，objectList：{}", add, objectList.size(), objectList);
@@ -187,6 +187,50 @@ public class RedisFactoryTest {
         logger.info("cost：{}", costUtil.stopAndGet());
         //查询
 //        redisQuery();
+    }
+
+    @Test
+    public void pipelineHSet() {
+        TimeCostUtil costUtil = new TimeCostUtil();
+        costUtil.start();
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            while (add <= num) {
+                redisPipeline.hset("pipelineHSet", add + "", add++ + "");
+            }
+        }
+        logger.info("cost：{}", costUtil.stopAndGet());
+    }
+
+    @Test
+    public void pipelineHGet() {
+        List<Object> objectList;
+        TimeCostUtil costUtil = new TimeCostUtil();
+        costUtil.start();
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            while (add <= num) {
+                redisPipeline.request_hget("pipelineHSet", add + "");
+                if (add % 100 == 0) {
+                    objectList = redisPipeline.get();
+                    logger.info("add：{}，size：{}，objectList：{}", add, objectList.size(), objectList);
+                }
+                add++;
+            }
+            objectList = redisPipeline.get();
+            logger.info("size：{}，objectList：{}", objectList.size(), objectList);
+        }
+        logger.info("cost：{}", costUtil.stopAndGet());
+    }
+
+    @Test
+    public void pipelienHDel() {
+        TimeCostUtil costUtil = new TimeCostUtil();
+        costUtil.start();
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            while (add <= num) {
+                redisPipeline.hdel("pipelineHSet", add++ + "");
+            }
+        }
+        logger.info("cost：{}", costUtil.stopAndGet());
     }
 
     @Test
