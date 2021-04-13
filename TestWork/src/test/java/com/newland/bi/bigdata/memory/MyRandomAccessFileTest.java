@@ -1,16 +1,20 @@
 package com.newland.bi.bigdata.memory;
 
-import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.file.RAFFileMangerCenter;
+import com.cqx.common.utils.file.RafDB;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
+import com.cqx.common.utils.string.StringUtil;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.common.utils.system.TimeCostUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MyRandomAccessFileTest {
@@ -23,7 +27,7 @@ public class MyRandomAccessFileTest {
 
     @Before
     public void setUp() throws Exception {
-        FileUtil.del(sm);
+//        FileUtil.del(sm);
 //        myRandomAccessFile = new MyRandomAccessFile(sm);
 //        myRandomAccessFile.setLock(true);
     }
@@ -194,5 +198,96 @@ public class MyRandomAccessFileTest {
         RAFFileMangerCenter rafFileMangerCenter = new RAFFileMangerCenter(sm);
         rafFileMangerCenter.setHeader_pos(random_header_pos[0]);
         rafFileMangerCenter.read();
+    }
+
+    @Test
+    public void map() throws Exception {
+        //设置个数
+        int count = 11;
+        //设置输入
+        Integer[] input_array = new Integer[count];
+        Random random = new Random();
+        int link_begin = count + 1;
+        for (int i = 0; i < count; i++) {
+            input_array[i] = random.nextInt(9999);
+            int index = input_array[i] % count;
+            String real_index = StringUtil.fillZero(index, 2);
+            String data = StringUtil.fillZero(input_array[i], 4);
+            String link_index = "00";
+            //先读再写
+            String read = myRandomAccessFile.read(index * 8 + 1, 8);
+            logger.info("value：{}，index：{}，read：{}", input_array[i], index, read);
+            if (read != null && read.trim().length() > 0) {
+                String find_link = read.substring(7, 2);
+                //查找链表
+                logger.info("查找链表：{}", find_link);
+                if (!find_link.equals("00")) {
+
+                } else {
+                    real_index = StringUtil.fillZero(link_begin, 2);
+                    myRandomAccessFile.write(link_begin * 8 + 1, real_index + data + link_index);
+                }
+            } else {
+                myRandomAccessFile.write(index * 8 + 1, real_index + data + link_index);
+            }
+        }
+        //格式
+        //前面是count个槽，正常使用
+        //mod的位置+数据+链表位置
+        //01000000
+        //02111100
+        //链表从count+1个槽后开始
+        //写之前先读，如果有数据，就要写链表，要一直查找到链表的最后一个
+
+    }
+
+    @Test
+    public void readAndWrite() throws Exception {
+        int content_len = 11;
+        int index = 99999;
+        TimeCostUtil tc = new TimeCostUtil();
+        tc.start();
+        //写
+        for (int i = 0; i < index; i++) {
+            String real_index = StringUtil.fillZero(i, content_len);
+            myRandomAccessFile.write(real_index);
+        }
+        logger.info("write cost：{}", tc.stopAndGet());
+        tc.start();
+        //读
+        for (int i = 0; i < content_len * index; i = i + content_len) {
+            String read = myRandomAccessFile.read(i, content_len);
+//            logger.info("pos：{}，read：{}", i, read);
+        }
+        logger.info("read cost：{}", tc.stopAndGet());
+    }
+
+    @Test
+    public void rafDBTest() throws Exception {
+        int max_cnt = 99999;
+        List<Integer> keyList = new ArrayList<>();
+        TimeCostUtil tc = new TimeCostUtil();
+//        try (RafDB rafDB = new RafDB(sm, true)) {
+//            rafDB.init(max_cnt, 6, 10);
+//            Random random = new Random();
+//            tc.start();
+//            for (int i = 0; i < max_cnt; i++) {
+//                int r = random.nextInt(max_cnt);
+//                rafDB.put(r, "v_" + r);
+//                keyList.add(r);
+//            }
+//            logger.info("write cost：{}", tc.stopAndGet());
+//
+//            tc.start();
+//            for (int key : keyList) {
+//                rafDB.get(key);
+//            }
+//            logger.info("read cost：{}", tc.stopAndGet());
+//        }
+        try (RafDB rafDB = new RafDB(sm)) {
+            rafDB.init(max_cnt, 6, 10);
+            String val = rafDB.get(11111);
+            logger.info("get：{}", val);
+        }
     }
 }

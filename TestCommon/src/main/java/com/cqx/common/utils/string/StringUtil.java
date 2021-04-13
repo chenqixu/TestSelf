@@ -60,6 +60,47 @@ public class StringUtil {
     }
 
     /**
+     * 补0
+     *
+     * @param value 需要补0的字符串
+     * @param len   总位数
+     * @return
+     */
+    public static String fillZero(long value, int len) {
+        String result = String.valueOf(value);
+        if (result != null && result.length() < len) {
+            int surplus = len - result.length();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < surplus; i++) {
+                sb.append("0");
+            }
+            sb.append(result);
+            return sb.toString();
+        }
+        return result;
+    }
+
+    /**
+     * 补空格
+     *
+     * @param value
+     * @param len
+     * @return
+     */
+    public static String fillSpace(String value, int len) {
+        if (value != null && value.length() < len) {
+            int surplus = len - value.length();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < surplus; i++) {
+                sb.append(" ");
+            }
+            sb.append(value);
+            return sb.toString();
+        }
+        return value;
+    }
+
+    /**
      * 获取一组补0的顺序数字
      *
      * @param begin
