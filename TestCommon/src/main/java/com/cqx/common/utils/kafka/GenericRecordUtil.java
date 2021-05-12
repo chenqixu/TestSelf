@@ -1,11 +1,14 @@
 package com.cqx.common.utils.kafka;
 
+import com.cqx.common.bean.kafka.AvroRecord;
+import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,7 @@ public class GenericRecordUtil {
 
     private static Logger logger = LoggerFactory.getLogger(GenericRecordUtil.class);
     private Map<String, Schema> schemaMap = new HashMap<>();
+    private Map<String, AvroRecord> avroRecordMap = new HashMap<>();
     private Map<String, Map<String, Schema.Type>> schemaFieldMap = new HashMap<>();
     private Map<String, RecordConvertor> recordConvertorMap = new HashMap<>();
     private String schemaUrl;
@@ -35,50 +39,62 @@ public class GenericRecordUtil {
         logger.info("addTopic，topic：{}，schema：{}", topic, schema);
         schemaMap.put(topic, schema);
         recordConvertorMap.put(topic, new RecordConvertor(schema));
-        // 获取字段类型，进行映射，防止不规范写法
-        Map<String, Schema.Type> _schemaFieldMap = new HashMap<>();
-        // 获取字段
-        for (Schema.Field field : schema.getFields()) {
-            // 字段名称
-            String name = field.name();
-            /**
-             * 字段类型
-             * RECORD, ENUM, ARRAY, MAP, UNION, FIXED, STRING, BYTES,
-             * INT, LONG, FLOAT, DOUBLE, BOOLEAN, NULL;
-             */
-            Schema.Type type = field.schema().getType();
-            // 仅处理有字段名称的数据
-            if (name != null && name.length() > 0) {
-                // 判断字段类型
-                switch (type) {
-                    // 组合类型需要映射出真正的类型
-                    case UNION:
-                        // 获取组合类型中的所有类型
-                        List<Schema> types = field.schema().getTypes();
-                        // 循环判断
-                        for (Schema schema1 : types) {
-                            Schema.Type type1 = schema1.getType();
-                            if (type1.equals(Schema.Type.INT) ||
-                                    type1.equals(Schema.Type.STRING) ||
-                                    type1.equals(Schema.Type.LONG) ||
-                                    type1.equals(Schema.Type.FLOAT) ||
-                                    type1.equals(Schema.Type.DOUBLE) ||
-                                    type1.equals(Schema.Type.BOOLEAN)
-                            ) {
-                                _schemaFieldMap.put(name, type1);
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        _schemaFieldMap.put(name, type);
-                        break;
-                }
-            }
-        }
-        schemaFieldMap.put(topic, _schemaFieldMap);
+        AvroRecord avroRecord = dealSchema(schema, null);
+        avroRecordMap.put(topic, avroRecord);
+//        // 获取字段类型，进行映射，防止不规范写法
+//        Map<String, Schema.Type> _schemaFieldMap = new HashMap<>();
+//        // 获取字段
+//        for (Schema.Field field : schema.getFields()) {
+//            // 字段名称
+//            String name = field.name();
+//            /**
+//             * 字段类型
+//             * RECORD, ENUM, ARRAY, MAP, UNION, FIXED, STRING, BYTES,
+//             * INT, LONG, FLOAT, DOUBLE, BOOLEAN, NULL;
+//             */
+//            Schema.Type type = field.schema().getType();
+//            // 仅处理有字段名称的数据
+//            if (name != null && name.length() > 0) {
+//                // 判断字段类型
+//                switch (type) {
+//                    // 组合类型需要映射出真正的类型
+//                    case UNION:
+//                        // 获取组合类型中的所有类型
+//                        List<Schema> types = field.schema().getTypes();
+//                        // 循环判断
+//                        for (Schema schema1 : types) {
+//                            Schema.Type type1 = schema1.getType();
+//                            if (type1.equals(Schema.Type.INT) ||
+//                                    type1.equals(Schema.Type.STRING) ||
+//                                    type1.equals(Schema.Type.LONG) ||
+//                                    type1.equals(Schema.Type.FLOAT) ||
+//                                    type1.equals(Schema.Type.DOUBLE) ||
+//                                    type1.equals(Schema.Type.BOOLEAN)
+//                            ) {
+//                                _schemaFieldMap.put(name, type1);
+//                                break;
+//                            } else if (type1.equals(Schema.Type.RECORD)) {
+//                                logger.info("{} is RECORD", name);
+//                                break;
+//                            }
+//                        }
+//                        break;
+//                    default:
+//                        _schemaFieldMap.put(name, type);
+//                        break;
+//                }
+//            }
+//        }
+//        schemaFieldMap.put(topic, _schemaFieldMap);
     }
 
+    /**
+     * 通过解析Map，生成一条Record
+     *
+     * @param topic
+     * @param values
+     * @return
+     */
     public byte[] genericRecord(String topic, Map<String, String> values) {
         Schema schema = schemaMap.get(topic);
         RecordConvertor recordConvertor = recordConvertorMap.get(topic);
@@ -197,7 +213,7 @@ public class GenericRecordUtil {
     }
 
     /**
-     * 随机产生一条数据
+     * 随机产生一条数据，可以自行调整
      *
      * @param topic
      * @param param
@@ -248,5 +264,175 @@ public class GenericRecordUtil {
         }
         logger.info("genericRandomRecord：{}", genericRecord);
         return recordConvertor.recordToBinary(genericRecord);
+    }
+
+    /**
+     * 解析AvroRecord，产生GenericRecord
+     *
+     * @param avroRecord
+     * @param father
+     * @param isRoot
+     */
+    private void genericByAvroRecord(AvroRecord avroRecord, GenericRecord father, boolean isRoot) {
+        if (avroRecord.hasChild()) {
+            logger.info("getSchema：{}", avroRecord.getSchema());
+            GenericRecord realUse = father;
+            if (!isRoot) {
+                realUse = new GenericData.Record(avroRecord.getSchema());
+                father.put(avroRecord.getName(), realUse);
+            }
+            for (AvroRecord child : avroRecord.getChilds()) {
+                genericByAvroRecord(child, realUse, false);
+            }
+        } else {
+            Schema.Type type = avroRecord.getType();
+            Object obj;
+            switch (type) {
+                case INT:
+                    obj = 0;
+                    break;
+                case FLOAT:
+                    obj = (float) 0;
+                    break;
+                case DOUBLE:
+                    obj = (double) 0;
+                    break;
+                case LONG:
+                    obj = (long) 0;
+                    break;
+                case BOOLEAN:
+                    obj = false;
+                    break;
+                case STRING:
+                    obj = "";
+                    break;
+                case ARRAY:
+                    obj = new ArrayList<String>();
+                    break;
+                case MAP:
+                    obj = new HashMap<String, String>();
+                    break;
+                case BYTES:
+                case UNION:
+                case ENUM:
+                case NULL:
+                case FIXED:
+                case RECORD:
+                default:
+                    throw new AvroRuntimeException("不支持的类型：" + type);
+            }
+            father.put(avroRecord.getName(), obj);
+            logger.info("father.put {} , {}，type：{}", avroRecord.getName(), obj, type);
+        }
+    }
+
+    /**
+     * 通过解析出来的AvroRecord树产生一条数据
+     *
+     * @param topic
+     * @return
+     */
+    public byte[] genericRandomRecordByAvroRecord(String topic) {
+        Schema schema = schemaMap.get(topic);
+        AvroRecord avroRecord = avroRecordMap.get(topic);
+        RecordConvertor recordConvertor = recordConvertorMap.get(topic);
+        GenericRecord genericRecord = new GenericData.Record(schema);
+        genericByAvroRecord(avroRecord, genericRecord, true);
+        logger.info("genericRandomRecord：{}", genericRecord);
+        return recordConvertor.recordToBinary(genericRecord);
+    }
+
+    /**
+     * 字段处理
+     *
+     * @param field
+     * @param father
+     */
+    private void dealField(Schema.Field field, AvroRecord father) {
+        String field_name = field.name();
+        Schema.Type field_type = field.schema().getType();
+        // 仅处理有字段名称的数据
+        if (field_name != null && field_name.length() > 0) {
+            switch (field_type) {
+                // 组合类型需要映射出真正的类型
+                case UNION:
+                    logger.info("组合类型需要映射出真正的类型field field.name：{}，field.type：{}，field：{}", field_name, field_type, field);
+                    // 获取组合类型中的所有类型
+                    List<Schema> types = field.schema().getTypes();
+                    // 循环判断
+                    for (Schema _field_schema : types) {
+                        Schema.Type _file_type = _field_schema.getType();
+                        switch (_file_type) {
+                            case RECORD:
+                                logger.info("RECORD类型，需要递归解析，schema：{}", _field_schema);
+                                AvroRecord record = new AvroRecord(field_name, _file_type, _field_schema);
+                                father.addChild(record);
+                                //需要递归解析
+                                dealSchema(_field_schema, record);
+                                break;
+                            //常见类型
+                            case INT:
+                            case STRING:
+                            case LONG:
+                            case FLOAT:
+                            case DOUBLE:
+                            case BOOLEAN:
+                            case MAP:
+                            case ARRAY:
+                                logger.info("常见类型，field_name：{}，_file_type：{}", field_name, _file_type);
+                                father.addChild(new AvroRecord(field_name, _file_type));
+                                break;
+                            default:
+                                logger.info("非RECORD也非常见类型，field_name：{}，_file_type：{}，不处理", field_name, _file_type);
+                                break;
+                        }
+                    }
+                    break;
+                //常见类型
+                case INT:
+                case STRING:
+                case LONG:
+                case FLOAT:
+                case DOUBLE:
+                case BOOLEAN:
+                case MAP:
+                case ARRAY:
+                    father.addChild(new AvroRecord(field_name, field_type));
+                    logger.info("常见类型，field_name：{}，field_type：{}", field_name, field_type);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Schema处理
+     *
+     * @param schema
+     * @param father
+     * @return
+     */
+    private AvroRecord dealSchema(Schema schema, AvroRecord father) {
+        String name = schema.getName();
+        Schema.Type type = schema.getType();
+        if (father == null) {
+            father = new AvroRecord(name, type, schema);
+        }
+        switch (type) {
+            case RECORD:
+                List<Schema.Field> fields = schema.getFields();
+                logger.info("schema name：{}，type：{}，RECORD类型，fields：{}", name, type, fields);
+                if (fields != null && fields.size() > 0) {
+                    for (Schema.Field field : fields) {
+                        dealField(field, father);
+                    }
+                }
+                break;
+            default:
+                logger.info("schema name：{}，type：{}，非RECORD类型", name, type);
+                break;
+        }
+        return father;
     }
 }

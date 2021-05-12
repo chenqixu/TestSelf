@@ -99,6 +99,14 @@ public class SinaleRedisClient extends RedisClient {
         return jedis.hscan(key, cursor, params);
     }
 
+    public List<String> mget(String... keys) {
+        return jedis.mget(keys);
+    }
+
+    public List<String> hmget(String key, String... fields) {
+        return jedis.hmget(key, fields);
+    }
+
     @Override
     public void close() {
         jedis.close();

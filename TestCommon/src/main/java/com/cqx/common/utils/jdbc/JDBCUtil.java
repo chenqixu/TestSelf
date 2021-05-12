@@ -35,17 +35,40 @@ public class JDBCUtil implements IJDBCUtil {
     private boolean isThrow = true;//是否抛出异常，默认抛出
 
     public JDBCUtil(DBBean dbBean) {
+        this(dbBean, -1, -1, -1);
+    }
+
+    public JDBCUtil(DBBean dbBean, int MaxActive, int MinIdle, int MaxIdle) {
         this.dbBean = dbBean;
-        //关键字初始化
+        init(MaxActive, MinIdle, MaxIdle);
+    }
+
+    /**
+     * 初始化
+     *
+     * @param MaxActive
+     * @param MinIdle
+     * @param MaxIdle
+     */
+    private void init(int MaxActive, int MinIdle, int MaxIdle) {
+        // 关键字初始化
         keysInit();
-        //数据库初始化
-        if (dbBean.isPool()) {
+        // 校验
+        if (MaxActive > 0 && MinIdle > 0 && MaxIdle > 0 && !dbBean.isPool()) {
+            throw new NullPointerException("这个构造方法必须走连接池，请检查！");
+        }
+        // 数据库初始化
+        if (dbBean.isPool()) {// 是连接池
             try {
-                dataSource = setupDataSource(dbBean);
+                if (MaxActive > 0 && MinIdle > 0 && MaxIdle > 0) {
+                    dataSource = setupDataSource(dbBean, MaxActive, MinIdle, MaxIdle);
+                } else {
+                    dataSource = setupDataSource(dbBean);
+                }
             } catch (Exception e) {
                 logger.error("连接池初始化失败。" + e.getMessage(), e);
             }
-        } else {
+        } else {// 非连接池
             try {
                 String DriverClassName = dbBean.getDbType().getDriver();
                 Class.forName(DriverClassName);
@@ -168,6 +191,8 @@ public class JDBCUtil implements IJDBCUtil {
                 props.put("user", dbBean.getUser_name());
                 props.put("password", dbBean.getPass_word());
                 props.put("remarksReporting", "true");
+                //seconds – the login time limit in seconds; zero means there is no limit
+                DriverManager.setLoginTimeout(15);
                 return DriverManager.getConnection(dbBean.getTns(), props);
             }
         }
@@ -233,7 +258,7 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
-     * 通过表名构造表对象
+     * 通过字段、表名构造表对象
      *
      * @param fields     字段
      * @param table_name 表名
@@ -241,6 +266,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException           SQL异常
      * @throws ClassNotFoundException 类找不到
      */
+    @Override
     public BeanUtil generateBeanByTabeNameAndFields(String fields, String table_name) throws SQLException, ClassNotFoundException {
         ResultSet rs = null;
         BeanUtil beanUtil;
@@ -280,6 +306,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException           SQL异常
      * @throws ClassNotFoundException 类找不到
      */
+    @Override
     public BeanUtil generateBeanByTabeName(String table_name) throws SQLException, ClassNotFoundException {
         ResultSet rs = null;
         BeanUtil beanUtil;
@@ -318,6 +345,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param iCallBack
      * @throws SQLException
      */
+    @Override
     public void executeQuery(String sql, ICallBack iCallBack) throws SQLException {
         ResultSet rs = null;
         Connection conn = null;
@@ -328,6 +356,7 @@ public class JDBCUtil implements IJDBCUtil {
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
             while (rs.next()) {
+                //回调
                 iCallBack.call(rs);
             }
             //关闭
@@ -349,6 +378,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param iBeanCallBack
      * @throws SQLException
      */
+    @Override
     public <T> void executeQuery(String sql, Class<T> beanCls, IBeanCallBack<T> iBeanCallBack) throws Exception {
         ResultSet rs = null;
         Connection conn = null;
@@ -386,6 +416,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param iQueryResultCallBack
      * @throws Exception
      */
+    @Override
     public void executeQuery(String sql, IQueryResultCallBack iQueryResultCallBack) throws Exception {
         ResultSet rs = null;
         Connection conn = null;
@@ -419,6 +450,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param sql sql
      * @return List<List < QueryResult>
      */
+    @Override
     public List<List<QueryResult>> executeQuery(String sql) throws SQLException {
         ResultSet rs = null;
         List<List<QueryResult>> tList = new ArrayList<>();
@@ -455,6 +487,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param <T>     结果类
      * @return List<T>
      */
+    @Override
     public <T> List<T> executeQuery(String sql, Class<T> beanCls) throws Exception {
         ResultSet rs = null;
         T t;
@@ -495,6 +528,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param <T>       结果类
      * @return List<T>
      */
+    @Override
     public <T> List<T> executeQuery(String sql, Class<T> beanCls, List<Object> paramList) throws Exception {
         ResultSet rs = null;
         T t;
@@ -539,6 +573,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param <T>         结果类
      * @return List<T>
      */
+    @Override
     public <T> List<T> executeQuery(String sql, Object paramObject, Class<T> beanCls) throws Exception {
         ResultSet rs = null;
         T t;
@@ -617,6 +652,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @return
      * @throws SQLException
      */
+    @Override
     public int executeUpdate(String sql) throws SQLException {
         int result;
         Connection conn = null;
@@ -641,12 +677,45 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
+     * 更新，可以设置是否自动提交
+     *
+     * @param sql
+     * @param autoCommit
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public int executeUpdate(String sql, boolean autoCommit) throws SQLException {
+        int result;
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            if (!autoCommit) conn.setAutoCommit(false);
+            stm = conn.createStatement();
+            result = stm.executeUpdate(sql);
+            if (!autoCommit) conn.commit();
+        } catch (SQLException e) {
+            logger.error("JDBCUtilException：executeUpdate异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            result = -1;
+            if (conn != null && !autoCommit) conn.rollback();
+            if (isThrow()) throw e;
+        } finally {
+            closeStm(stm);
+            closeConn(conn);
+        }
+        return result;
+    }
+
+    /**
      * 批量执行更新语句，返回执行结果
      *
      * @param sqls
      * @return
      * @throws SQLException
      */
+    @Override
     public List<Integer> executeBatch(List<String> sqls) throws SQLException {
         int add_cnt = 0;
         int success_cnt = 0;
@@ -872,6 +941,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException
      * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
      */
+    @Override
     public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
                                       String[] fields, String[] fields_type,
                                       String[] pks, String[] pks_type) throws SQLException {
@@ -892,6 +962,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException
      * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
      */
+    @Override
     public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
                                       String[] fields, String[] fields_type,
                                       String[] pks, String[] pks_type, boolean ismissing) throws SQLException {
@@ -935,6 +1006,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException
      * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
      */
+    @Override
     public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
                                       String table, String[] fields, String[] fields_type,
                                       String[] pks, String[] pks_type) throws SQLException {
@@ -956,6 +1028,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException
      * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
      */
+    @Override
     public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
                                       String table, String[] fields, String[] fields_type,
                                       String[] pks, String[] pks_type, boolean ismissing) throws SQLException {
@@ -994,6 +1067,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param dstFieldsType
      * @return
      */
+    @Override
     public int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType) throws Exception {
         int add_cnt = 0;
         int success_cnt = 0;
@@ -1060,6 +1134,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param <T>
      * @return 结果
      */
+    @Override
     public <T> int executeBatch(String sql, List<T> tList, Class<T> srcBeanCls, Class<T> dstBeanCls, LinkedHashMap<String, Object> dstFieldsMap) throws SQLException {
         int ret;
         int commit_cnt = 0;
@@ -1145,10 +1220,27 @@ public class JDBCUtil implements IJDBCUtil {
      * @param <T>     内容javabean
      * @return 结果
      */
+    @Override
     public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         return executeBatch(sql, tList, beanCls, fields, false).get(0);
     }
 
+    /**
+     * 批量执行，返回全部的执行结果
+     *
+     * @param sql
+     * @param tList
+     * @param beanCls
+     * @param fields
+     * @param hasRet
+     * @param <T>
+     * @return
+     * @throws SQLException
+     * @throws IllegalAccessException
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     */
+    @Override
     public <T> List<Integer> executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields, boolean hasRet) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
         int add_cnt = 0;
         int success_cnt = 0;
@@ -1368,18 +1460,21 @@ public class JDBCUtil implements IJDBCUtil {
             }
     }
 
-    private void closeDataSource() {
+    @Override
+    public void closeDataSource() {
         if (dataSource != null) {
             logger.info("关闭连接池：{}", dataSource);
             BasicDataSource bdataSource = (BasicDataSource) dataSource;
             try {
                 bdataSource.close();
+                dataSource = null;
             } catch (SQLException e) {
                 logger.error("JDBCUtilException：关闭连接池异常，" + e.getMessage(), e);
             }
         }
     }
 
+    @Override
     public void close() {
         if (dbBean.isPool()) {
             closeDataSource();
@@ -1395,6 +1490,7 @@ public class JDBCUtil implements IJDBCUtil {
         return batchNum;
     }
 
+    @Override
     public void setBatchNum(int batchNum) {
         this.batchNum = batchNum;
     }
@@ -1403,14 +1499,17 @@ public class JDBCUtil implements IJDBCUtil {
         return isThrow;
     }
 
+    @Override
     public void setThrow(boolean aThrow) {
         isThrow = aThrow;
     }
 
+    @Override
     public DataSource getDataSource() {
         return dataSource;
     }
 
+    @Override
     public DBBean getDbBean() {
         return dbBean;
     }
@@ -1428,7 +1527,7 @@ public class JDBCUtil implements IJDBCUtil {
         switch (dstFieldType) {
             case "java.lang.String":
                 if (fieldValue == null) result = "" + fieldValue;
-                else result = "'" + fieldValue.toString() + "'";
+                else result = "'" + fieldValue.toString().replaceAll("'", "''") + "'";
                 break;
             case "java.lang.Integer":
             case "int":
@@ -1497,7 +1596,21 @@ public class JDBCUtil implements IJDBCUtil {
         // 判断目标字段类型
         switch (dstFieldType) {
             case "java.lang.String":
-                pstmt.setString(parameterIndex, (String) fieldValue);
+                //如果源字段类型有值，并且和目标字段的类型不一致
+                //可以处理int和long转String
+                if (srcFieldType != null && !srcFieldType.equals(dstFieldType)) {
+                    if (srcFieldType.equals("java.lang.Integer") || srcFieldType.equals("int")) {
+                        if (!ifNullSet(pstmt, parameterIndex, srcFieldType, fieldValue))
+                            pstmt.setString(parameterIndex, String.valueOf(fieldValue));
+                    } else if (srcFieldType.equals("java.lang.Long") || srcFieldType.equals("long")) {
+                        if (!ifNullSet(pstmt, parameterIndex, srcFieldType, fieldValue))
+                            pstmt.setString(parameterIndex, String.valueOf(fieldValue));
+                    } else {
+                        throw new SQLException("无法转换的类型，srcFieldType：" + srcFieldType + "，dstFieldType：" + dstFieldType);
+                    }
+                } else {
+                    pstmt.setString(parameterIndex, (String) fieldValue);
+                }
                 break;
             case "java.lang.Integer":
             case "int":
@@ -1734,5 +1847,19 @@ public class JDBCUtil implements IJDBCUtil {
             if (param.trim().endsWith(endStr)) return false;
         }
         return true;
+    }
+
+    @Override
+    public void getConnection(IConnCallBack iConnCallBack) throws Exception {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            iConnCallBack.call(conn);
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：getConnection异常，" + e.getMessage(), e);
+            if (isThrow()) throw e;
+        } finally {
+            closeConn(conn);
+        }
     }
 }

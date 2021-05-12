@@ -8,7 +8,7 @@ param:
   kafkaconf.sasl.mechanism: "PLAIN"
   kafkaconf.group.id: "test"
 #  kafkaconf.group.id: "REALTIME_LOCATION_J_ALTIBASE"
-  kafkaconf.enable.auto.commit: "false"
+#  kafkaconf.enable.auto.commit: "false"
   #  kafkaconf.newland.consumer.mode: "fromBeginning"
   #  kafkaconf.newland.consumer.mode: "fromTime"
   #  kafkaconf.newland.consumer.fromTime: "2021-04-06 16:00:00"

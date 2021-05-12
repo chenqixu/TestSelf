@@ -50,6 +50,16 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public List<String> mget(String... keys) {
+        return cluster.mget(keys);
+    }
+
+    @Override
+    public List<String> hmget(String key, String... fields) {
+        return cluster.hmget(key, fields);
+    }
+
+    @Override
     public Set<String> keys(String pattern) {
         Set<String> result = new HashSet<>();
         for (Map.Entry<String, JedisPool> entry : cluster.getClusterNodes().entrySet()) {

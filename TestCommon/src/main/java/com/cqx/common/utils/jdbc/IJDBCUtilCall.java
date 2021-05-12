@@ -1,6 +1,7 @@
 package com.cqx.common.utils.jdbc;
 
 import java.io.Closeable;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,16 +19,20 @@ public interface IJDBCUtilCall extends Closeable {
         List<QueryResult> getQueryResults();
     }
 
-    abstract class IQueryResultCallBack extends ICallBackClose {
-        public abstract void call(List<QueryResult> queryResults) throws Exception;
+    abstract class ICallBack extends ICallBackClose {
+        public abstract void call(ResultSet rs) throws SQLException;
     }
 
     abstract class IBeanCallBack<T> extends ICallBackClose {
         public abstract void call(T t) throws Exception;
     }
 
-    abstract class ICallBack extends ICallBackClose {
-        public abstract void call(ResultSet rs) throws SQLException;
+    abstract class IQueryResultCallBack extends ICallBackClose {
+        public abstract void call(List<QueryResult> queryResults) throws Exception;
+    }
+
+    abstract class IConnCallBack {
+        public abstract void call(Connection conn) throws Exception;
     }
 
     class ICallBackClose {

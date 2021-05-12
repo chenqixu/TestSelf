@@ -3,6 +3,7 @@ package com.cqx.common.utils.redis.client;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +43,10 @@ public abstract class RedisClient {
     public abstract ScanResult<Map.Entry<String, String>> hscan(String key, String cursor);
 
     public abstract ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, ScanParams params);
+
+    public abstract List<String> mget(String... keys);
+
+    public abstract List<String> hmget(String key, String... fields);
 
     public abstract void close();
 

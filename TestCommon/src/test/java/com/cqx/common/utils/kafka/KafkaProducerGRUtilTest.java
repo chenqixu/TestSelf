@@ -19,4 +19,13 @@ public class KafkaProducerGRUtilTest extends TestBase {
             kafkaProducerGRUtil.sendRandom();//随机产生数据
         }
     }
+
+    @Test
+    public void sendUSER_PRODUCT() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
+            kafkaProducerGRUtil.sendRandom();//随机产生数据
+        }
+    }
 }

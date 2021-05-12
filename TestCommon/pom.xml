@@ -173,6 +173,10 @@
                     <artifactId>slf4j-log4j12</artifactId>
                     <groupId>org.slf4j</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>httpclient</artifactId>
+                    <groupId>org.apache.httpcomponents</groupId>
+                </exclusion>
             </exclusions>
             <!--<scope>provided</scope>-->
             <!--<optional>true</optional>-->
@@ -546,6 +550,30 @@
             </exclusions>
         </dependency>
 
+        <!-- http -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
@@ -613,6 +641,9 @@
                             <tasks>
                                 <copy overwrite="true"
                                       tofile="${project.parent.build.directory}/${project.artifactId}-${project.version}.jar"
+                                      file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
+                                <copy overwrite="true"
+                                      tofile="D:/Document/Workspaces/Git/TestJStorm/target/${project.artifactId}-${project.version}.jar"
                                       file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
                             </tasks>
                         </configuration>

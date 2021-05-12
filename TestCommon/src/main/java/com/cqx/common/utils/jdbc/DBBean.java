@@ -38,7 +38,9 @@ public class DBBean {
         setPass_word((String) param.get("pass_word"));
         // tns：如果是List需要随机取一个，如果是String就直接Set
         Object tns = param.get("tns");
-        if (tns.getClass().equals(java.util.ArrayList.class)) {
+        String tnsClassName = tns.getClass().getName();
+        if ("java.util.ArrayList".equals(tnsClassName) ||
+                "org.json.simple.JSONArray".equals(tnsClassName)) {
             List<String> tnsList = (List<String>) param.get("tns");
             Random random = new Random();
             setTns(tnsList.get(random.nextInt(tnsList.size())));

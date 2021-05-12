@@ -22,6 +22,27 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     List<QueryResult> getTableMetaData(String tableName) throws SQLException;
 
     /**
+     * 通过字段、表名构造表对象
+     *
+     * @param fields
+     * @param table_name
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    BeanUtil generateBeanByTabeNameAndFields(String fields, String table_name) throws SQLException, ClassNotFoundException;
+
+    /**
+     * 通过表名构造表对象
+     *
+     * @param table_name
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    BeanUtil generateBeanByTabeName(String table_name) throws SQLException, ClassNotFoundException;
+
+    /**
      * 根据sql查询，查询结果进行回调处理，用的是ResultSet
      *
      * @param sql
@@ -109,6 +130,16 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @throws SQLException
      */
     int executeUpdate(String sql) throws SQLException;
+
+    /**
+     * 更新，可以设置是否自动提交
+     *
+     * @param sql
+     * @param autoCommit
+     * @return
+     * @throws SQLException
+     */
+    int executeUpdate(String sql, boolean autoCommit) throws SQLException;
 
     /**
      * 批量执行sql
@@ -251,6 +282,11 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     <T> List<Integer> executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields, boolean hasRet) throws Exception;
 
     /**
+     * 关闭数据连接池
+     */
+    void closeDataSource();
+
+    /**
      * 关闭数据源
      */
     void close();
@@ -282,4 +318,12 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @return
      */
     DBBean getDbBean();
+
+    /**
+     * 获取连接，并进行回调操作
+     *
+     * @param iConnCallBack
+     * @throws Exception
+     */
+    void getConnection(IConnCallBack iConnCallBack) throws Exception;
 }

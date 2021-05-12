@@ -40,7 +40,7 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
      * 发送随机数据
      */
     public void sendRandom() {
-        send(topic, genericRecordUtil.genericRandomRecord(topic));
+        send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic));
     }
 
     /**

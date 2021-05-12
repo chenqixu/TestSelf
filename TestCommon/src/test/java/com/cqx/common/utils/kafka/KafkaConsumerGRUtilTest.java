@@ -27,4 +27,19 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             kafkaConsumerUtil.commitSync();
         }
     }
+
+    @Test
+    public void pollsUSER_PRODUCT() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        param.put("kafkaconf.enable.auto.commit", "false");//不进行自动提交
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            kafkaConsumerUtil.subscribe("USER_PRODUCT");//订阅
+            for (IKVList.Entry<String, GenericRecord> entry : kafkaConsumerUtil.pollsHasKey(1000L).entrySet()) {
+                Object value = entry.getValue();
+                logger.info("【key】{}，【value】{}，【value.class】{}",
+                        entry.getKey(), value, value != null ? value.getClass() : null);
+            }
+        }
+    }
 }
