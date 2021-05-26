@@ -1,11 +1,11 @@
 package com.newland.bi.bigdata.memory;
 
+import com.cqx.common.utils.file.BaseRandomAccessFile;
 import com.cqx.common.utils.file.MemoryCacheMode;
-import com.cqx.common.utils.file.MyRandomAccessFile;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
-import com.newland.bi.bigdata.metric.MetricsUtil;
 import com.cqx.common.utils.string.StringUtil;
+import com.newland.bi.bigdata.metric.MetricsUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +39,7 @@ public class ShareMemoryCache {
 
     private RafMap rafMap;
     private MemoryTest memoryTest;
-    private MyRandomAccessFile mydatafile;
+    private BaseRandomAccessFile mydatafile;
 
     private ShareMemoryCache() {
     }
@@ -78,7 +78,7 @@ public class ShareMemoryCache {
         memoryTest = MemoryTest.builder();
         if (StringUtil.isNotEmpty(datafilename)) {
             datafile = new RandomAccessFile(datafilename, MemoryCacheMode.READ_WRITE.getCode());
-            mydatafile = new MyRandomAccessFile(datafilename);
+            mydatafile = new BaseRandomAccessFile(datafilename);
         }
         if (StringUtil.isNotEmpty(idfilename))
             idfile = new RandomAccessFile(idfilename, MemoryCacheMode.READ_WRITE.getCode());
@@ -117,7 +117,7 @@ public class ShareMemoryCache {
         String result;
         int flag = getHashCodeDies(derviceID, dies);
         String newfilename = StringUtil.getEndsWithPath(path) + flag + ".txt";
-        MyRandomAccessFile newraf = rafMap.get(newfilename, true);
+        BaseRandomAccessFile newraf = rafMap.get(newfilename, true);
         result = newraf.getData();
         int derviceindex = result.indexOf(derviceID);
         int end = result.indexOf(";", derviceindex);
@@ -137,7 +137,7 @@ public class ShareMemoryCache {
         int length = msg.length();
         int flag = getHashCodeDies(derviceID, dies);
         String newfilename = StringUtil.getEndsWithPath(path) + flag + ".txt";
-        MyRandomAccessFile newraf = rafMap.get(newfilename);
+        BaseRandomAccessFile newraf = rafMap.get(newfilename);
         indexMsg = indexMsg + "," + mydatafile.getIndex() + "," + length + ";";
         // 写数据文件
         mydatafile.write(msg.getBytes(), length);

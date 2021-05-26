@@ -1,6 +1,6 @@
 package com.newland.bi.bigdata.memory;
 
-import com.cqx.common.utils.file.MyRandomAccessFile;
+import com.cqx.common.utils.file.BaseRandomAccessFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,36 +14,36 @@ import java.util.Map;
  */
 public class RafMap {
     // 索引文件引用缓存，不占资源
-    private Map<String, MyRandomAccessFile> idfileMap;
+    private Map<String, BaseRandomAccessFile> idfileMap;
 
     public RafMap() {
         idfileMap = new HashMap<>();
     }
 
-    public MyRandomAccessFile get(String key) throws FileNotFoundException {
-        MyRandomAccessFile myRandomAccessFile = idfileMap.get(key);
+    public BaseRandomAccessFile get(String key) throws FileNotFoundException {
+        BaseRandomAccessFile myRandomAccessFile = idfileMap.get(key);
         if (myRandomAccessFile == null) {
-            myRandomAccessFile = new MyRandomAccessFile(key);
+            myRandomAccessFile = new BaseRandomAccessFile(key);
             put(key, myRandomAccessFile);
         }
         return myRandomAccessFile;
     }
 
-    public MyRandomAccessFile get(String key, boolean isGetData) throws IOException {
-        MyRandomAccessFile myRandomAccessFile = idfileMap.get(key);
+    public BaseRandomAccessFile get(String key, boolean isGetData) throws IOException {
+        BaseRandomAccessFile myRandomAccessFile = idfileMap.get(key);
         if (myRandomAccessFile == null) {
-            myRandomAccessFile = new MyRandomAccessFile(key, isGetData);
+            myRandomAccessFile = new BaseRandomAccessFile(key, isGetData);
             put(key, myRandomAccessFile);
         }
         return myRandomAccessFile;
     }
 
-    public void put(String key, MyRandomAccessFile myRandomAccessFile) {
+    public void put(String key, BaseRandomAccessFile myRandomAccessFile) {
         idfileMap.put(key, myRandomAccessFile);
     }
 
     public void close() throws IOException {
-        for (MyRandomAccessFile myRandomAccessFile : idfileMap.values()) {
+        for (BaseRandomAccessFile myRandomAccessFile : idfileMap.values()) {
             myRandomAccessFile.close();
         }
     }
