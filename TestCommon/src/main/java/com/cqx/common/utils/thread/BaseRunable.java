@@ -24,7 +24,7 @@ public abstract class BaseRunable implements Runnable {
 
     @Override
     public void run() {
-        logger.info("{} start.", this);
+        logger.debug("{} start.", this);
         while (isStop()) {
             try {
                 exec();
@@ -37,7 +37,7 @@ public abstract class BaseRunable implements Runnable {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        logger.info("{} stop.", this);
+        logger.debug("{} stop.", this);
     }
 
     public abstract void exec() throws Exception;

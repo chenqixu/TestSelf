@@ -1,0 +1,23 @@
+syntax = "proto3";  //标识是protobuffer3  ，默认是2
+
+package com.newland.bi.bigdata.bean;
+option java_package = "com.newland.bi.bigdata.bean.protobuf";
+option java_multiple_files=true;
+option java_outer_classname = "DataBean";
+
+message DataBean  {
+    string pks=1;
+    string op_type=2;
+    string current_ts=3;
+    repeated queryResults=4;
+}
+
+message QueryResultETL {
+    string ColumnName=1;
+    string ColumnLabel=2;
+    int32 ColumnType=3;
+    string ColumnClassName=4;
+    string ColumnTypeName=5;
+    Object value=6;
+    string REMARKS=7;
+}

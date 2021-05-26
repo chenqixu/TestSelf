@@ -13,4 +13,6 @@ public interface IDataFilterBean extends Comparable<IDataFilterBean> {
     long getFormatSecond_time() throws ParseException;
 
     long getCurrent_ts_Micro();
+
+    String toJson();
 }

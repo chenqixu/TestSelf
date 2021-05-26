@@ -1,0 +1,32 @@
+syntax = "proto3";  //标识是protobuffer3  ，默认是2
+
+package com.newland.bi.bigdata.bean;
+option java_package = "com.newland.bi.bigdata.bean.protobuf";
+option java_multiple_files=true;
+option java_outer_classname = "PersonPB";
+
+message Person  {
+   sint64 id = 1;
+   int32 age = 2;
+   string name=3;
+   repeated float exam = 4;
+   bool  good =5;
+   bytes byt = 6;
+   double d = 7 ;
+   enum Level {
+      NORMAL= 0;
+      GOOD= 1;
+      BAD = 2;
+   }
+   Level level = 8;
+
+   map<string,list> map = 9;
+
+   message list{
+      repeated Person ele=1;
+   }
+}
+
+message Family{
+   repeated Person p =1;
+}

@@ -49,7 +49,7 @@ import java.io.IOException;
  */
 public class RafDB implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(RafDB.class);
-    private MyRandomAccessFile myRandomAccessFile;
+    private BaseRandomAccessFile randomAccessFile;
     private String NULL_VALUE;//空值判断
     private long max_cnt;//输入数据的总数，用于mod，决定了有2 * max_cnt的槽位进行数据装载
     private int key_len;//key数据的长度
@@ -64,8 +64,8 @@ public class RafDB implements Closeable {
 
     public RafDB(String db_file, boolean is_clean) throws FileNotFoundException {
         if (is_clean) FileUtil.del(db_file);
-        myRandomAccessFile = new MyRandomAccessFile(db_file);
-        myRandomAccessFile.setLock(true);
+        randomAccessFile = new BaseRandomAccessFile(db_file);
+        randomAccessFile.setLock(true);
     }
 
     public void init(long max_cnt, int key_len, int value_len) {
@@ -83,7 +83,7 @@ public class RafDB implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (myRandomAccessFile != null) myRandomAccessFile.close();
+        if (randomAccessFile != null) randomAccessFile.close();
     }
 
     /**
@@ -98,7 +98,7 @@ public class RafDB implements Closeable {
         //如果是02，就要从2*数据长度开始
         long pos = 0;
         if (mod > 1) pos = mod * single_len;
-        return myRandomAccessFile.read(pos, single_len);
+        return randomAccessFile.read(pos, single_len);
     }
 
     /**
@@ -113,7 +113,7 @@ public class RafDB implements Closeable {
         long header = Long.valueOf(rafDBData.getHeader());
         long pos = 0;
         if (header > 1) pos = header * single_len;
-        myRandomAccessFile.write(pos, rafDBData.getVal());
+        randomAccessFile.write(pos, rafDBData.getVal());
     }
 
     /**

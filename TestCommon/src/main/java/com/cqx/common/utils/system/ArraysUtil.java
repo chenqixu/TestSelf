@@ -27,6 +27,22 @@ public class ArraysUtil {
     }
 
     /**
+     * 数组相加，a1，a2变成一个新数组
+     *
+     * @param a1
+     * @param a2
+     * @return
+     */
+    public static byte[] arrayCopy(byte[] a1, byte[] a2) {
+        List<Byte> list = new ArrayList<>();
+        for (byte s : a1) list.add(s);
+        for (byte s : a2) list.add(s);
+        byte[] tmp = new byte[list.size()];
+        for (int i = 0; i < list.size(); i++) tmp[i] = list.get(i);
+        return tmp;
+    }
+
+    /**
      * 给数组内容加上前缀，返回一个新数组
      *
      * @param src

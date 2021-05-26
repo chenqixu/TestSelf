@@ -1,5 +1,8 @@
 package com.cqx.common.utils.file;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -8,11 +11,11 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 
 /**
- * MyRandomAccessFile
+ * BaseRandomAccessFile
  *
  * @author chenqixu
  */
-public class MyRandomAccessFile {
+public class BaseRandomAccessFile {
     private int index = 0;
     private RandomAccessFile randomAccessFile;
     //内容缓存，比较消耗内存
@@ -24,13 +27,13 @@ public class MyRandomAccessFile {
     //写入时候是否需要锁定
     private boolean isLock;
 
-    public MyRandomAccessFile(String filename) throws FileNotFoundException {
+    public BaseRandomAccessFile(String filename) throws FileNotFoundException {
         this.randomAccessFile = new RandomAccessFile(filename, MemoryCacheMode.READ_WRITE.getCode());
         this.fileChannel = this.randomAccessFile.getChannel();
         this.fileName = filename;
     }
 
-    public MyRandomAccessFile(String filename, boolean isGetData) throws IOException {
+    public BaseRandomAccessFile(String filename, boolean isGetData) throws IOException {
         this(filename);
         if (isGetData) {
             this.data = readAll();
@@ -60,18 +63,20 @@ public class MyRandomAccessFile {
                 if (fileLock != null) {
                     randomAccessFile.seek(pos);
                     randomAccessFile.write(b, 0, b.length);
+                    return true;
                 }
             } else {//没锁
                 randomAccessFile.seek(pos);
                 randomAccessFile.write(b, 0, b.length);
+                return true;
             }
         } catch (OverlappingFileLockException e) {
             //抢不到锁抛出的异常，不做处理
-            return false;
+//            return false;
         } finally {
             if (fileLock != null) fileLock.release();
         }
-        return true;
+        return false;
     }
 
     public boolean write(long pos, String msg) throws IOException {
@@ -83,6 +88,13 @@ public class MyRandomAccessFile {
         randomAccessFile.seek(pos);
         randomAccessFile.read(b, 0, len);
         return new String(b);
+    }
+
+    public byte[] readByte(long pos, int len) throws IOException {
+        byte[] b = new byte[len];
+        randomAccessFile.seek(pos);
+        randomAccessFile.read(b, 0, len);
+        return b;
     }
 
     private String readAll() throws IOException {
@@ -106,6 +118,10 @@ public class MyRandomAccessFile {
 
     public int getIndex() {
         return index;
+    }
+
+    public long length() throws IOException {
+        return randomAccessFile.length();
     }
 
     public String getData() {

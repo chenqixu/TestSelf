@@ -42,4 +42,19 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             }
         }
     }
+
+    @Test
+    public void pollNoScheam() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        logger.info("{}", param);
+        try (KafkaConsumerUtil<byte[], byte[]> kafkaConsumerUtil = new KafkaConsumerUtil<>(param)) {
+            String topic = "con1";
+            kafkaConsumerUtil.subscribe(topic);//订阅
+            for (int i = 0; i < 10; i++) {
+                for (byte[] value : kafkaConsumerUtil.poll(1000L)) {
+                    logger.info("【【value】{}，【value.class】{}", value, value != null ? value.getClass() : null);
+                }
+            }
+        }
+    }
 }

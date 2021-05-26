@@ -1,6 +1,6 @@
 package com.newland.bi.bigdata.memory;
 
-import com.cqx.common.utils.file.MyRandomAccessFile;
+import com.cqx.common.utils.file.BaseRandomAccessFile;
 import com.cqx.common.utils.file.RAFFileMangerCenter;
 import com.cqx.common.utils.file.RafDB;
 import com.cqx.common.utils.log.MyLogger;
@@ -22,7 +22,7 @@ public class MyRandomAccessFileTest {
     private static final MyLogger logger = MyLoggerFactory.getLogger(MyRandomAccessFileTest.class);
     private static final byte[] NULL_BYTE = new byte[3];
     private static final String NULL_VALUE = new String(NULL_BYTE);
-    private MyRandomAccessFile myRandomAccessFile;
+    private BaseRandomAccessFile myRandomAccessFile;
     private String sm = "d:\\tmp\\data\\mccdr\\r.sm";
 
     @Before

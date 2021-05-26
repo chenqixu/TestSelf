@@ -23,7 +23,8 @@ public class JDBCUtilTest extends TestBase {
     public void setUp() throws Exception {
         Map params = getParam("jdbc.yaml");
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
+        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
         jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
     }
 
@@ -110,5 +111,10 @@ public class JDBCUtilTest extends TestBase {
             queryTest2();
             SleepUtil.sleepMilliSecond(500);
         }
+    }
+
+    @Test
+    public void postgreSqlTest() {
+        jdbcUtil.executeQuery("select 1");
     }
 }

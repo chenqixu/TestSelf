@@ -21,3 +21,8 @@ dbbeans:
     pass_word: "udap"
     tns: "jdbc:mysql://127.0.0.1:3306/utap?useUnicode=true"
     dbType: "MYSQL"
+  - name: hadoopPostgreSql
+    user_name: "scm"
+    pass_word: "pLKPjp6H5S"
+    tns: "jdbc:postgresql://10.1.8.75:7432/scm"
+    dbType: "POSTGRESQL"

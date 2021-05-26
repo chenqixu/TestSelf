@@ -1,20 +1,27 @@
-package com.cqx.common.utils.serialize;
+package com.cqx.common.utils.serialize.impl;
+
+import com.cqx.common.utils.serialize.ISerialization;
 
 import java.io.*;
 
 /**
- * SerializationUtils
+ * java
  *
  * @author chenqixu
  */
-public class SerializationUtils {
+public class JavaSerializationImpl implements ISerialization<Object> {
+    private Class<Object> tClass;
 
-    public static byte[] serialize(Object object) {
+    @Override
+    public void setTClass(Class<Object> tClass) {
+        this.tClass = tClass;
+    }
+
+    public byte[] serialize(Object object) {
         if (object == null) {
             return null;
         } else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(object);
@@ -22,12 +29,11 @@ public class SerializationUtils {
             } catch (IOException var3) {
                 throw new IllegalArgumentException("Failed to serialize object of type: " + object.getClass(), var3);
             }
-
             return baos.toByteArray();
         }
     }
 
-    public static Object deserialize(byte[] bytes) {
+    public Object deserialize(byte[] bytes) {
         if (bytes == null) {
             return null;
         } else {

@@ -405,7 +405,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.58</version>
+            <version>1.2.75</version>
         </dependency>
 
         <!-- oracle -->
@@ -574,6 +574,45 @@
             </exclusions>
         </dependency>
 
+        <!-- postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!--<version>42.0.0</version>-->
+            <!--<version>9.2-1003-jdbc4</version>-->
+            <version>9.4.1212.jre7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- kryo -->
+        <dependency>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo</artifactId>
+            <version>2.21</version>
+        </dependency>
+        <dependency>
+            <groupId>de.javakaffee</groupId>
+            <artifactId>kryo-serializers</artifactId>
+            <version>0.45</version>
+        </dependency>
+
+        <!-- protobuf -->
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
@@ -639,9 +678,9 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <copy overwrite="true"
-                                      tofile="${project.parent.build.directory}/${project.artifactId}-${project.version}.jar"
-                                      file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
+                                <!--<copy overwrite="true"-->
+                                      <!--tofile="${project.parent.build.directory}/${project.artifactId}-${project.version}.jar"-->
+                                      <!--file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>-->
                                 <copy overwrite="true"
                                       tofile="D:/Document/Workspaces/Git/TestJStorm/target/${project.artifactId}-${project.version}.jar"
                                       file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>
