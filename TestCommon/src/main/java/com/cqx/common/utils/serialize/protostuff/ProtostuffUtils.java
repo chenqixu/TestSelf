@@ -46,9 +46,20 @@ public class ProtostuffUtils {
      * @param <T>
      * @return
      */
-    @SuppressWarnings("unchecked")
     public static <T> byte[] serialize(T obj) {
         Class<T> clazz = (Class<T>) obj.getClass();
+        return serialize(obj, clazz);
+    }
+
+    /**
+     * 序列化方法，把指定对象序列化成字节数组
+     *
+     * @param obj
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> byte[] serialize(T obj, Class<T> clazz) {
 //        Schema<T> schema = RuntimeSchema.getSchema(clazz);
         Schema<T> schema = getSchema(clazz);
         LinkedBuffer buffer = threadBuffer.get();

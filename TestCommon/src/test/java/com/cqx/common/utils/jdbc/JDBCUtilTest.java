@@ -24,7 +24,9 @@ public class JDBCUtilTest extends TestBase {
         Map params = getParam("jdbc.yaml");
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
+        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+        dbBean.setPool(false);
         jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
     }
 
@@ -97,6 +99,22 @@ public class JDBCUtilTest extends TestBase {
         logger.info("{} cost：{}", Thread.currentThread().getName(), exec.stopAndGet());
     }
 
+    @Test
+    public void executeBatchClob() throws Exception {
+        String sql = "update nmc_schema set avsc=? where schema_name=?";
+        QueryResultFactory qrf = QueryResultFactory.getInstance()
+                .buildQR("avsc", "java.sql.Clob", "123")
+                .buildQR("schema_name", "java.lang.String", "SCHEMA_USER_ADDITIONAL_INFO")
+                .toList();
+        int ret = jdbcUtil.executeBatch(sql, qrf.getData(), qrf.getDstFieldsType(), true);
+        logger.info("sql：{}，ret：{}", sql, ret);
+    }
+
+    @Test
+    public void postgreSqlTest() {
+        jdbcUtil.executeQuery("select 1");
+    }
+
     class ConcurrentQuery1 extends BaseRunableThread {
         @Override
         protected void runnableExec() throws Exception {
@@ -111,10 +129,5 @@ public class JDBCUtilTest extends TestBase {
             queryTest2();
             SleepUtil.sleepMilliSecond(500);
         }
-    }
-
-    @Test
-    public void postgreSqlTest() {
-        jdbcUtil.executeQuery("select 1");
     }
 }

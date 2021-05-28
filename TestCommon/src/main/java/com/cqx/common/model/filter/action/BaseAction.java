@@ -1,5 +1,7 @@
 package com.cqx.common.model.filter.action;
 
+import com.cqx.common.bean.model.IDataFilterBean;
+
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -9,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author chenqixu
  */
-public abstract class BaseAction implements IDataFilterAction {
+public abstract class BaseAction<T extends IDataFilterBean> implements IDataFilterAction<T> {
     ConcurrentSkipListMap<Long, String> dataUpdateTime = new ConcurrentSkipListMap<>(new MapKeyComparator());
     AtomicLong waterLine;
 
@@ -59,7 +61,7 @@ public abstract class BaseAction implements IDataFilterAction {
     }
 
     @Override
-    public List poll(long timeOut) {
+    public List<T> poll(long timeOut) {
         return null;
     }
 }

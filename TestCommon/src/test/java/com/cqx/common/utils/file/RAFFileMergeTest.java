@@ -1,11 +1,9 @@
 package com.cqx.common.utils.file;
 
 import com.cqx.common.bean.model.DataBean;
-import com.cqx.common.bean.model.IDataFilterBean;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.jdbc.QueryResultETL;
 import com.cqx.common.utils.serialize.ISerialization;
-import com.cqx.common.utils.serialize.impl.KryoSerializationImpl;
 import com.cqx.common.utils.serialize.impl.ProtoStuffSerializationImpl;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeUtil;
@@ -30,8 +28,8 @@ public class RAFFileMergeTest {
     private String read_name;
     private String write_name;
     private ISerialization<DataBean> iSerialization =
-//            new ProtoStuffSerializationImpl();
-            new KryoSerializationImpl();
+            new ProtoStuffSerializationImpl<>();
+//            new KryoSerializationImpl<>();
 
     @Before
     public void setUp() throws Exception {
@@ -40,10 +38,10 @@ public class RAFFileMergeTest {
         read_name = System.getProperty("read.name");
         write_name = System.getProperty("write.name");
         if (raf_path != null && read_name != null) {
-            rafFileMergeRead = new RAFFileMerge<>(iSerialization, raf_path, read_name, 200, true);
+            rafFileMergeRead = new RAFFileMerge<>(iSerialization, raf_path, read_name, 200, true, 2);
         }
-        if (raf_path != null && write_name != null) {
-            rafFileMergeWrite = new RAFFileMerge<>(iSerialization, raf_path, write_name, 1073741824);
+        if (raf_path != null && write_name != null) {// 1073741824
+            rafFileMergeWrite = new RAFFileMerge<>(iSerialization, raf_path, write_name, 10000, false, 2);
         }
         logger.warn("raf_path：{}，read_name：{}，write_name：{}", raf_path, read_name, write_name);
     }
@@ -90,6 +88,27 @@ public class RAFFileMergeTest {
     }
 
     @Test
+    public void mergeChangeFile() throws Exception {
+        ReadRunable readRunable = new ReadRunable();
+        Thread read = new Thread(readRunable);
+        read.start();
+        for (int j = 0; j < 50; j++) {
+            try (RAFFileMangerCenter<DataBean> raf = new RAFFileMangerCenter<>(
+                    iSerialization, raf_path + "sm" + j)) {
+                for (int i = 0; i < 10; i++) {
+                    // 写入对象
+                    raf.write(generator());
+                }
+                // 写入结束符
+                raf.writeEndTag();
+                rafFileMergeWrite.merge(raf, true);
+            }
+        }
+        readRunable.stop();
+        read.join();
+    }
+
+    @Test
     public void readEndTag() throws Exception {
         try (RAFFileMangerCenter raf = new RAFFileMangerCenter(raf_path + "sm")) {
             for (int i = 0; i < 10; i++) {
@@ -104,7 +123,7 @@ public class RAFFileMergeTest {
     @Test
     public void readKryo() throws Exception {
         try (RAFFileMangerCenter<DataBean> raf = new RAFFileMangerCenter<>(iSerialization,
-                raf_path + "sm0")) {
+                raf_path + "WriteMerge4")) {
             int num = 0;
             RAFBean rafBean;
             while ((rafBean = raf.readDeserialize()) != null) {
@@ -123,10 +142,10 @@ public class RAFFileMergeTest {
 
     @Test
     public void writeKryo() throws Exception {
-        try (RAFFileMangerCenter raf = new RAFFileMangerCenter<>(iSerialization,
+        try (RAFFileMangerCenter<DataBean> raf = new RAFFileMangerCenter<>(iSerialization,
                 raf_path + "sm0")) {
             for (int i = 0; i < 1; i++) {
-                IDataFilterBean dataBean = generator();
+                DataBean dataBean = generator();
                 raf.write(dataBean);
             }
             raf.writeEndTag();
@@ -168,22 +187,10 @@ public class RAFFileMergeTest {
         t2.join();
     }
 
-    private List<DataBean> poll(RAFFileMerge read, long timeOut) throws IOException {
-        List<byte[]> tmps = read != null ? read.read(timeOut) : null;
+    private List<DataBean> poll(RAFFileMerge<DataBean> read, long timeOut) throws IOException {
+        List<DataBean> tmps = read != null ? read.read(timeOut) : null;
         if (tmps != null && tmps.size() > 0) {
-            List<DataBean> results = new ArrayList<>();
-            for (byte[] tmp : tmps) results.add(iSerialization.deserialize(tmp));
-            return results;
-        }
-        return null;
-    }
-
-    private List<DataBean> pollString(RAFFileMerge read, long timeOut) {
-        List<byte[]> tmps = read != null ? read.read(timeOut) : null;
-        if (tmps != null && tmps.size() > 0) {
-            List<DataBean> results = new ArrayList<>();
-            for (byte[] tmp : tmps) results.add(DataBean.jsonToBean(new String(tmp)));
-            return results;
+            return tmps;
         }
         return null;
     }
@@ -214,11 +221,11 @@ public class RAFFileMergeTest {
 //        read.start();
 
         for (int i = 0; i < 100; i++) {
-            List<DataBean> contents = pollString(rafFileMergeRead, 5L);
+            List<DataBean> contents = poll(rafFileMergeRead, 5L);
 //            logger.info("====read：{}", contents != null ? contents.get(0) : null);
             logger.info("sm{}：{}", i, contents != null ? contents.size() : 0);
             if (contents != null)
-                try (RAFFileMangerCenter raf = new RAFFileMangerCenter(raf_path + "sm" + i)) {
+                try (RAFFileMangerCenter<DataBean> raf = new RAFFileMangerCenter<>(raf_path + "sm" + i)) {
                     for (DataBean dataBean : contents) {
 //                        for (QueryResultETL queryResultETL : dataBean.getQueryResults()) {
 //                            if ("insert_time".equals(queryResultETL.getColumnName())) {
@@ -281,5 +288,19 @@ public class RAFFileMergeTest {
                 crc32.getValue(), Long.toHexString(crc32.getValue()), end_crc32_b.length, b_l);
 
         logger.info("bytes eq：{}", Arrays.equals(end_byte, end_byte1));
+    }
+
+    class ReadRunable extends BaseRunable {
+
+        @Override
+        public void exec() throws Exception {
+            try {
+                List<DataBean> contents = rafFileMergeWrite.read(100L);
+                logger.info("contents.size：{}", contents.size());
+                SleepUtil.sleepMilliSecond(10L);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
     }
 }

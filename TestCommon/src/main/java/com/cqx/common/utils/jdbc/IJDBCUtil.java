@@ -241,6 +241,19 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType) throws Exception;
 
     /**
+     * 批量执行，返回结果(0:成功，-1:失败)<br>
+     * 支持对手工新建的QueryResult进行Clob处理
+     *
+     * @param sql
+     * @param tList
+     * @param dstFieldsType
+     * @param isClob
+     * @return
+     * @throws Exception
+     */
+    int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType, boolean isClob) throws Exception;
+
+    /**
      * 批量执行，有源端和目标端之分
      *
      * @param sql

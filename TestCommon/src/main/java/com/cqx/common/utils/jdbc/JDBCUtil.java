@@ -1,6 +1,8 @@
 package com.cqx.common.utils.jdbc;
 
+import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.system.ArraysUtil;
+import oracle.sql.CLOB;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,8 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -1069,6 +1073,11 @@ public class JDBCUtil implements IJDBCUtil {
      */
     @Override
     public int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType) throws Exception {
+        return executeBatch(sql, tList, dstFieldsType, false);
+    }
+
+    @Override
+    public int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType, boolean isClob) throws Exception {
         int add_cnt = 0;
         int success_cnt = 0;
         int batch_cnt = 0;
@@ -1079,6 +1088,19 @@ public class JDBCUtil implements IJDBCUtil {
             conn = getConnection();
             assert conn != null;
             conn.setAutoCommit(false);// 关闭自动提交
+            //---------------------------------------------------------------------
+            // 如果是Clob，需要处理
+            if (isClob) {
+                for (List<QueryResult> ts : tList) {
+                    for (QueryResult qr : ts) {
+                        if ("java.sql.Clob".equals(qr.getColumnClassName())) {
+                            String content = qr.getValue().toString();
+                            qr.setValue(buildClob(conn, content));
+                        }
+                    }
+                }
+            }
+            //---------------------------------------------------------------------
             pstmt = conn.prepareStatement(sql);// 预编译SQL
             // 循环查询结果
             for (List<QueryResult> queryResults : tList) {
@@ -1650,6 +1672,9 @@ public class JDBCUtil implements IJDBCUtil {
             case "java.util.Date":
                 pstmt.setDate(parameterIndex, fieldValue == null ? null : new Date(((java.util.Date) fieldValue).getTime()));
                 break;
+            case "java.sql.Clob":
+                pstmt.setClob(parameterIndex, (Clob) fieldValue);
+                break;
             default:
                 pstmt.setObject(parameterIndex, fieldValue);
                 break;
@@ -1861,5 +1886,13 @@ public class JDBCUtil implements IJDBCUtil {
         } finally {
             closeConn(conn);
         }
+    }
+
+    private Clob buildClob(Connection conn, String content) throws SQLException, IOException {
+        CLOB clob = CLOB.createTemporary(conn, false, CLOB.DURATION_SESSION);
+        clob.open(CLOB.MODE_READWRITE);
+        Writer wr = clob.getCharacterOutputStream();
+        FileUtil.copy(content, wr);
+        return clob;
     }
 }

@@ -32,6 +32,7 @@ public class DataFilterTest {
         param.put("filePath", "d:\\tmp\\data\\raffile\\");
         param.put("fileName", "BigMerge");
         param.put("singleFileMaxLength", 100000L);
+        param.put("data_filter_file_MaxNum", 2);
         dataFilter = new DataFilter<>((Map<String, ?>) param, new IDataFilterCall<DataBean>() {
             @Override
             public void call(List<DataBean> dataBeans) {
@@ -39,7 +40,7 @@ public class DataFilterTest {
                 for (DataBean dataBean : dataBeans) logger.info("{}", dataBean);
                 logger.info("【具体处理】完成");
             }
-        }, 5000, mode);
+        }, 5000, mode, DataBean.class);
     }
 
     @After

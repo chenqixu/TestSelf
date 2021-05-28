@@ -8,15 +8,15 @@ import com.cqx.common.utils.serialize.ISerialization;
  *
  * @author chenqixu
  */
-public class FastjsonSerializationImpl<T> implements ISerialization {
+public class FastjsonSerializationImpl<T> implements ISerialization<T> {
     private Class<T> tClass;
 
     @Override
-    public void setTClass(Class tClass) {
+    public void setTClass(Class<T> tClass) {
         this.tClass = tClass;
     }
 
-    public byte[] serialize(Object t) {
+    public byte[] serialize(T t) {
         if (t == null) {
             return null;
         } else {

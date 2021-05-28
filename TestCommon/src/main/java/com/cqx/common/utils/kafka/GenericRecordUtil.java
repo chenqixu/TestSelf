@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,8 +18,7 @@ import java.util.Map;
  * @author chenqixu
  */
 public class GenericRecordUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(GenericRecordUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenericRecordUtil.class);
     private Map<String, Schema> schemaMap = new HashMap<>();
     private Map<String, AvroRecord> avroRecordMap = new HashMap<>();
     private Map<String, Map<String, Schema.Type>> schemaFieldMap = new HashMap<>();
@@ -39,7 +37,7 @@ public class GenericRecordUtil {
         logger.info("addTopic，topic：{}，schema：{}", topic, schema);
         schemaMap.put(topic, schema);
         recordConvertorMap.put(topic, new RecordConvertor(schema));
-        AvroRecord avroRecord = dealSchema(schema, null);
+        AvroRecord avroRecord = schemaUtil.dealSchema(schema, null);
         avroRecordMap.put(topic, avroRecord);
 //        // 获取字段类型，进行映射，防止不规范写法
 //        Map<String, Schema.Type> _schemaFieldMap = new HashMap<>();
@@ -340,99 +338,5 @@ public class GenericRecordUtil {
         genericByAvroRecord(avroRecord, genericRecord, true);
         logger.info("genericRandomRecord：{}", genericRecord);
         return recordConvertor.recordToBinary(genericRecord);
-    }
-
-    /**
-     * 字段处理
-     *
-     * @param field
-     * @param father
-     */
-    private void dealField(Schema.Field field, AvroRecord father) {
-        String field_name = field.name();
-        Schema.Type field_type = field.schema().getType();
-        // 仅处理有字段名称的数据
-        if (field_name != null && field_name.length() > 0) {
-            switch (field_type) {
-                // 组合类型需要映射出真正的类型
-                case UNION:
-                    logger.info("组合类型需要映射出真正的类型field field.name：{}，field.type：{}，field：{}", field_name, field_type, field);
-                    // 获取组合类型中的所有类型
-                    List<Schema> types = field.schema().getTypes();
-                    // 循环判断
-                    for (Schema _field_schema : types) {
-                        Schema.Type _file_type = _field_schema.getType();
-                        switch (_file_type) {
-                            case RECORD:
-                                logger.info("RECORD类型，需要递归解析，schema：{}", _field_schema);
-                                AvroRecord record = new AvroRecord(field_name, _file_type, _field_schema);
-                                father.addChild(record);
-                                //需要递归解析
-                                dealSchema(_field_schema, record);
-                                break;
-                            //常见类型
-                            case INT:
-                            case STRING:
-                            case LONG:
-                            case FLOAT:
-                            case DOUBLE:
-                            case BOOLEAN:
-                            case MAP:
-                            case ARRAY:
-                                logger.info("常见类型，field_name：{}，_file_type：{}", field_name, _file_type);
-                                father.addChild(new AvroRecord(field_name, _file_type));
-                                break;
-                            default:
-                                logger.info("非RECORD也非常见类型，field_name：{}，_file_type：{}，不处理", field_name, _file_type);
-                                break;
-                        }
-                    }
-                    break;
-                //常见类型
-                case INT:
-                case STRING:
-                case LONG:
-                case FLOAT:
-                case DOUBLE:
-                case BOOLEAN:
-                case MAP:
-                case ARRAY:
-                    father.addChild(new AvroRecord(field_name, field_type));
-                    logger.info("常见类型，field_name：{}，field_type：{}", field_name, field_type);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Schema处理
-     *
-     * @param schema
-     * @param father
-     * @return
-     */
-    private AvroRecord dealSchema(Schema schema, AvroRecord father) {
-        String name = schema.getName();
-        Schema.Type type = schema.getType();
-        if (father == null) {
-            father = new AvroRecord(name, type, schema);
-        }
-        switch (type) {
-            case RECORD:
-                List<Schema.Field> fields = schema.getFields();
-                logger.info("schema name：{}，type：{}，RECORD类型，fields：{}", name, type, fields);
-                if (fields != null && fields.size() > 0) {
-                    for (Schema.Field field : fields) {
-                        dealField(field, father);
-                    }
-                }
-                break;
-            default:
-                logger.info("schema name：{}，type：{}，非RECORD类型", name, type);
-                break;
-        }
-        return father;
     }
 }

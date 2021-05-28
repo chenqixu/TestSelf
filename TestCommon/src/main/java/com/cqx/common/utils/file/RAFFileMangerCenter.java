@@ -17,8 +17,9 @@ import java.util.zip.CRC32;
 /**
  * RAFFileMangerCenter
  * <pre>
- *     结构：头部+具体内容+9
+ *     结构：头部+具体内容+8位校验码
  *     头部：具体内容的起始位置+具体内容的长度
+ *     8位校验码由具体内容进行CRC32处理生成
  * </pre>
  *
  * @author chenqixu
@@ -184,12 +185,12 @@ public class RAFFileMangerCenter<T> implements Closeable {
         if (msg != null) {// 有读到数据
             // 判断是否是结束符
             if (Arrays.equals(END_TAG_BYTES, msg)) {
-                rafBean = new RAFBean(null);
+                rafBean = new RAFBean<>(null);
                 rafBean.setEnd();
             } else {
                 // 反序列化
                 try {
-                    rafBean = new RAFBean(iSerialization.deserialize(msg));
+                    rafBean = new RAFBean<>(iSerialization.deserialize(msg));
                 } catch (Exception e) {
                     logger.warn("反序列化异常：{}", e.getMessage());
                     return null;

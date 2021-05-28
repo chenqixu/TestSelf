@@ -38,19 +38,19 @@ public class DataFilter<T extends IDataFilterBean> {
     // 处理动作
     private IDataFilterAction<T> iDataFilterAction;
 
-    public DataFilter(IDataFilterCall<T> iDataFilterCall) {
-        this(iDataFilterCall, 30000);
+    public DataFilter(IDataFilterCall<T> iDataFilterCall, Class<T> tClass) {
+        this(iDataFilterCall, 30000, tClass);
     }
 
-    public DataFilter(IDataFilterCall<T> iDataFilterCall, long timeOut) {
-        this(new HashMap<>(), iDataFilterCall, timeOut, DataFilterActionEnum.MEMORY_ACTION);
+    public DataFilter(IDataFilterCall<T> iDataFilterCall, long timeOut, Class<T> tClass) {
+        this(new HashMap<>(), iDataFilterCall, timeOut, DataFilterActionEnum.MEMORY_ACTION, tClass);
     }
 
-    public DataFilter(Map<String, ?> param, IDataFilterCall<T> iDataFilterCall, DataFilterActionEnum actionEnum) {
-        this(param, iDataFilterCall, 30000, actionEnum);
+    public DataFilter(Map<String, ?> param, IDataFilterCall<T> iDataFilterCall, DataFilterActionEnum actionEnum, Class<T> tClass) {
+        this(param, iDataFilterCall, 30000, actionEnum, tClass);
     }
 
-    public DataFilter(Map<String, ?> param, IDataFilterCall<T> iDataFilterCall, long timeOut, DataFilterActionEnum actionEnum) {
+    public DataFilter(Map<String, ?> param, IDataFilterCall<T> iDataFilterCall, long timeOut, DataFilterActionEnum actionEnum, Class<T> tClass) {
         this.timeOut = timeOut;
         runnable = new DealDataQueueRunnable();
         thread = new Thread(runnable);
@@ -65,7 +65,7 @@ public class DataFilter<T extends IDataFilterBean> {
             default:
                 break;
         }
-        iDataFilterAction.init(param, iDataFilterCall);
+        iDataFilterAction.init(param, iDataFilterCall, tClass);
         logger.info("【过滤器】过滤器启动……");
     }
 

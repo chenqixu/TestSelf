@@ -10,11 +10,11 @@ import java.io.IOException;
  *
  * @author chenqixu
  */
-public class KryoSerializationImpl<T> implements ISerialization {
+public class KryoSerializationImpl<T> implements ISerialization<T> {
     private Class<T> tClass;
 
     @Override
-    public void setTClass(Class tClass) {
+    public void setTClass(Class<T> tClass) {
         this.tClass = tClass;
     }
 

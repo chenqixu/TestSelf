@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author chenqixu
  */
 public class FileUtil {
-
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     private static final String valueSplit = "\\|";
     private static final int BUFF_SIZE = 4096;
@@ -153,6 +152,68 @@ public class FileUtil {
 
         for (int bytesRead = in.read(buf); bytesRead >= 0; bytesRead = in.read(buf)) {
             out.write(buf, 0, bytesRead);
+        }
+    }
+
+    //---------------------------------------------------------------------
+    // Copy methods for java.io.Reader / java.io.Writer
+    //---------------------------------------------------------------------
+
+    /**
+     * Copy the contents of the given Reader to the given Writer.
+     * Closes both when done.
+     *
+     * @param in  the Reader to copy from
+     * @param out the Writer to copy to
+     * @return the number of characters copied
+     * @throws IOException in case of I/O errors
+     */
+    public static int copy(Reader in, Writer out) throws IOException {
+        if (in == null ) throw new RuntimeException("No Reader specified");
+        if (out == null ) throw new RuntimeException("No Writer specified");
+
+        try {
+            int byteCount = 0;
+            char[] buffer = new char[BUFF_SIZE];
+            int bytesRead = -1;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+                byteCount += bytesRead;
+            }
+            out.flush();
+            return byteCount;
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ex) {
+            }
+            try {
+                out.close();
+            } catch (IOException ex) {
+            }
+        }
+    }
+
+    /**
+     * Copy the contents of the given String to the given output Writer.
+     * Closes the writer when done.
+     * @param in the String to copy from
+     * @param out the Writer to copy to
+     * @throws IOException in case of I/O errors
+     */
+    public static void copy(String in, Writer out) throws IOException {
+        if (in == null ) throw new RuntimeException("No input String specified");
+        if (out == null ) throw new RuntimeException("No Writer specified");
+
+        try {
+            out.write(in);
+        }
+        finally {
+            try {
+                out.close();
+            }
+            catch (IOException ex) {
+            }
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.List;
 public class RAFFileMerge<T extends Comparable<? super T>> implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(RAFFileMerge.class);
     private final Object atoLock = new Object();
-    private final int maxIndex = 5;
+    private final int maxIndex;
     private int index = 0;
     private String filePath;
     private String fileName;
@@ -35,12 +35,21 @@ public class RAFFileMerge<T extends Comparable<? super T>> implements Closeable 
         this(iSerialization, filePath, fileName, singleFileMaxLength, false);
     }
 
+    public RAFFileMerge(ISerialization<T> iSerialization, String filePath, String fileName, long singleFileMaxLength, int maxIndex) throws IOException {
+        this(iSerialization, filePath, fileName, singleFileMaxLength, false, maxIndex);
+    }
+
     public RAFFileMerge(ISerialization<T> iSerialization, String filePath, String fileName, long singleFileMaxLength, boolean isReadOnly) throws IOException {
+        this(iSerialization, filePath, fileName, singleFileMaxLength, isReadOnly, 5);
+    }
+
+    public RAFFileMerge(ISerialization<T> iSerialization, String filePath, String fileName, long singleFileMaxLength, boolean isReadOnly, int maxIndex) throws IOException {
         this.iSerialization = iSerialization;
         this.filePath = filePath;
         this.fileName = fileName;
         this.singleFileMaxLength = singleFileMaxLength;
         this.isReadOnly = isReadOnly;
+        this.maxIndex = maxIndex;
         // 生成第一个文件，并加入列表
         generateFile();
     }
@@ -77,8 +86,13 @@ public class RAFFileMerge<T extends Comparable<? super T>> implements Closeable 
             int ret = last.write(t);
             // 需要文件分割
             if (ret == 2) {
+                // 写入结束符
+                last.writeEndTag();
+                // 生成新文件
                 generateFile();
+                // 获取新文件
                 last = getLastFile();
+                // 继续写
                 last.write(t);
             }
         }
@@ -152,13 +166,30 @@ public class RAFFileMerge<T extends Comparable<? super T>> implements Closeable 
 
     private void generateFile() throws IOException {
         synchronized (atoLock) {
-            // 关闭上个文件
+            // 获取最后一个正在写入的大文件
             RAFFileMangerCenter<T> last = getLastFile();
+            // 关闭上个文件
             if (last != null) last.close();
             if (index > maxIndex) index = 0;
             String newFileName = filePath + fileName + index++;
+            // 如果新文件存在，则先删除
+            if (FileUtil.isExists(newFileName)) {
+                // 从列表移除这个名称的文件
+                for (RAFFileMangerCenter<T> file : fileList) {
+                    if (newFileName.equals(file.getFile_name())) {
+                        fileList.remove(file);
+                        break;
+                    }
+                }
+                // 删除
+                boolean isDel = FileUtil.del(newFileName);
+                logger.info("新文件{}存在，从列表移除并删除：{}", newFileName, isDel);
+                if (!isDel) {// 无法删除
+                    throw new NullPointerException(String.format("新文件%s无法删除，还在消费，说明积压了，请加大并发！", newFileName));
+                }
+            }
             fileList.add(new RAFFileMangerCenter<>(iSerialization, newFileName, singleFileMaxLength));
-            logger.info("新文件：{}", newFileName);
+            logger.info("生成新文件：{}", newFileName);
         }
     }
 

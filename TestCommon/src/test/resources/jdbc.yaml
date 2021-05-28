@@ -26,3 +26,8 @@ dbbeans:
     pass_word: "pLKPjp6H5S"
     tns: "jdbc:postgresql://10.1.8.75:7432/scm"
     dbType: "POSTGRESQL"
+  - name: oracle242Bean
+    user_name: "web"
+    pass_word: "T%vdNV#i$2"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"

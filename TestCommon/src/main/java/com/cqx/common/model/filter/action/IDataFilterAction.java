@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public interface IDataFilterAction<T extends IDataFilterBean> extends Closeable {
 
-    void init(Map<String, ?> param, IDataFilterCall<T> iDataFilterCall);
+    void init(Map<String, ?> param, IDataFilterCall<T> iDataFilterCall, Class<T> tClass);
 
     void put(T dataBean, long dataBean_seconds) throws Exception;
 
