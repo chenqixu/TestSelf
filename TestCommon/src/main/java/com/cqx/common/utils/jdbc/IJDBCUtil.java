@@ -189,6 +189,28 @@ public interface IJDBCUtil extends IJDBCUtilCall {
                                String[] pks, String[] pks_type, boolean ismissing) throws SQLException;
 
     /**
+     * 批量执行，op_type和QueryResult在一起<br>
+     * 仅适用于ogg，有对应的操作类型(i,u,d)<br>
+     * 根据操作类型、表名、字段、pks、QueryResult自行拼接sql后，批量执行<br>
+     * 有ismissing参数，表示字段缺失，不需要拼接入sql语句中<br>
+     * 支持写入合并
+     *
+     * @param iQueryResultBeanList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @param ismissing
+     * @param isMergeInto
+     * @return
+     * @throws SQLException
+     */
+    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
+                               String[] fields, String[] fields_type,
+                               String[] pks, String[] pks_type, boolean ismissing, boolean isMergeInto) throws SQLException;
+
+    /**
      * 批量执行，op_type和QueryResult是分开的<br>
      * 仅适用于ogg，有对应的操作类型(i,u,d)<br>
      * 根据操作类型、表名、字段、pks、QueryResult自行拼接sql后，批量执行
@@ -227,6 +249,29 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
                                String table, String[] fields, String[] fields_type,
                                String[] pks, String[] pks_type, boolean ismissing) throws SQLException;
+
+    /**
+     * 批量执行，op_type和QueryResult是分开的<br>
+     * 仅适用于ogg，有对应的操作类型(i,u,d)<br>
+     * 根据操作类型、表名、字段、pks、QueryResult自行拼接sql后，批量执行<br>
+     * 有ismissing参数，表示字段缺失，不需要拼接入sql语句中<br>
+     * 支持写入合并
+     *
+     * @param op_types
+     * @param tList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @param ismissing
+     * @param isMergeInfo
+     * @return
+     * @throws SQLException
+     */
+    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
+                               String table, String[] fields, String[] fields_type,
+                               String[] pks, String[] pks_type, boolean ismissing, boolean isMergeInfo) throws SQLException;
 
     /**
      * 批量执行，返回结果(0:成功，-1:失败)<br>

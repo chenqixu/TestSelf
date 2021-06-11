@@ -12,9 +12,9 @@ dbbeans:
     tns: "jdbc:mysql://10.1.8.200:3306/suyan_perf?useUnicode=true"
     dbType: "MYSQL"
   - name: adbBean
-    user_name: "sentry"
-    pass_word: "sentry"
-    tns: "jdbc:postgresql://10.1.8.206:5432/sentry"
+    user_name: "label_core"
+    pass_word: "admin"
+    tns: "jdbc:postgresql://10.1.8.206:5432/label_core"
     dbType: "POSTGRESQL"
   - name: localmysqlBean
     user_name: "udap"

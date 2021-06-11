@@ -169,8 +169,8 @@ public class FileUtil {
      * @throws IOException in case of I/O errors
      */
     public static int copy(Reader in, Writer out) throws IOException {
-        if (in == null ) throw new RuntimeException("No Reader specified");
-        if (out == null ) throw new RuntimeException("No Writer specified");
+        if (in == null ) throw new NullPointerException("No Reader specified");
+        if (out == null ) throw new NullPointerException("No Writer specified");
 
         try {
             int byteCount = 0;
@@ -202,8 +202,8 @@ public class FileUtil {
      * @throws IOException in case of I/O errors
      */
     public static void copy(String in, Writer out) throws IOException {
-        if (in == null ) throw new RuntimeException("No input String specified");
-        if (out == null ) throw new RuntimeException("No Writer specified");
+        if (in == null ) throw new NullPointerException("No input String specified");
+        if (out == null ) throw new NullPointerException("No Writer specified");
 
         try {
             out.write(in);

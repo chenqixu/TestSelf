@@ -1,0 +1,60 @@
+<assembly>
+    <id>all</id>
+    <formats>
+        <!-- zip,tar,tar.gz,tar.bz2,jar,dir,war -->
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <!-- 依赖包的输出路径 -->
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <!--<scope>provided</scope>-->
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+        </dependencySet>
+    </dependencySets>
+
+    <!-- 需要打包的文件 -->
+    <fileSets>
+        <!-- bin -->
+        <fileSet>
+            <directory>bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <filtered>true</filtered>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <fileMode>0744</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+        
+        <!-- jar -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!-- config -->
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+
+        <!-- logback -->
+        <fileSet>
+            <directory>src/main/resources/logback</directory>
+            <outputDirectory>logback</outputDirectory>
+            <includes>
+                <include>*.xml</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+</assembly>

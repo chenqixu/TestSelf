@@ -9,7 +9,6 @@ import java.util.List;
  * @author chenqixu
  */
 public class QueryResultFactory {
-    private static QueryResultFactory queryResultFactory = new QueryResultFactory();
     private List<List<QueryResult>> tList = new ArrayList<>();
     private List<QueryResult> queryResults = new ArrayList<>();
     private List<String> dstFieldsType = new ArrayList<>();
@@ -24,6 +23,7 @@ public class QueryResultFactory {
     public QueryResultFactory buildQR(String ColumnName, String ColumnClassName, Object value) {
         QueryResult qr = new QueryResult();
         qr.setColumnName(ColumnName);
+        qr.setColumnLabel(ColumnName);
         qr.setColumnClassName(ColumnClassName);
         qr.setValue(value);
         dstFieldsType.add(ColumnClassName);
@@ -33,6 +33,8 @@ public class QueryResultFactory {
 
     public QueryResultFactory toList() {
         tList.add(queryResults);
+        queryResults = new ArrayList<>();
+        dstFieldsType = new ArrayList<>();
         return this;
     }
 

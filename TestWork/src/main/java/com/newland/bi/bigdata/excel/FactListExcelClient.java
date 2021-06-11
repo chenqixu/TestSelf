@@ -3,9 +3,9 @@ package com.newland.bi.bigdata.excel;
 import java.io.IOException;
 import java.util.List;
 
+import com.cqx.common.utils.excel.ExcelSheetList;
+import com.cqx.common.utils.excel.ExcelUtils;
 import org.apache.commons.lang.StringUtils;
-
-import com.newland.bi.bigdata.bean.ExcelSheetList;
 
 public class FactListExcelClient {
 	public static final String TABLE_HEAD_TAG_D = "查询表结构说明(日)清单";

@@ -16,5 +16,7 @@ param:
   kafkaconf.newland.kafka_password: admin
   schema_url: "http://10.1.8.203:19090/nl-edc-cct-sys-ms-dev/SchemaService/getSchema?t="
   #  topic: NMC_TB_O_LOG_5G_N1N2_R_I_V1
-  topic: nmc_app_nl_loc_mix_v1
+#  topic: nmc_app_nl_loc_mix_v1
 #  topic: nmc_etl_hw_lte_s1mme_v1
+#  topic: BROADBAND_RESERVATION
+  topic: USER_ADDITIONAL_INFO

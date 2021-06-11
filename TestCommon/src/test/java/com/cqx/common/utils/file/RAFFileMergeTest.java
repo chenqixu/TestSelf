@@ -110,10 +110,12 @@ public class RAFFileMergeTest {
 
     @Test
     public void readEndTag() throws Exception {
-        try (RAFFileMangerCenter raf = new RAFFileMangerCenter(raf_path + "sm")) {
+        try (RAFFileMangerCenter<DataBean> raf = new RAFFileMangerCenter<>(iSerialization
+                , raf_path + "sm0")) {
             for (int i = 0; i < 10; i++) {
-                String msg = raf.read();
-                if (RAFFileMangerCenter.END_TAG.equals(msg)) {
+                RAFBean rafBean = raf.readDeserialize();
+                logger.info("msg：{}，isEnd：{}", rafBean.getT(), rafBean.isEnd());
+                if (rafBean.isEnd()) {
                     raf.seekToEndTag();
                 }
             }
@@ -234,7 +236,7 @@ public class RAFFileMergeTest {
 //                        }
 //                        raf.write(dataBean.toJson());
                         byte[] c = iSerialization.serialize(dataBean);
-                        logger.info("kryo：{}，json：{}", c.length, dataBean.toJson().length());
+//                        logger.info("kryo：{}，json：{}", c.length, dataBean.toJson().length());
                         raf.write(c);
                     }
                     rafFileMergeWrite.merge(raf, true);

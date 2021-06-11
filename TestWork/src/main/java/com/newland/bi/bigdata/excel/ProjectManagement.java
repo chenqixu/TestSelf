@@ -1,6 +1,7 @@
 package com.newland.bi.bigdata.excel;
 
-import com.newland.bi.bigdata.bean.ExcelSheetList;
+import com.cqx.common.utils.excel.ExcelSheetList;
+import com.cqx.common.utils.excel.ExcelUtils;
 import com.newland.bi.bigdata.bean.ProjectManagementBean;
 import com.newland.bi.bigdata.bean.StoryBean;
 import com.newland.bi.bigdata.bean.TaskBean;

@@ -1,12 +1,15 @@
 package com.newland.bi.bigdata.excel;
 
+import com.cqx.common.utils.excel.ExcelSheetList;
+import com.cqx.common.utils.excel.ExcelUtils;
+import com.cqx.common.utils.excel.ViewBean;
+import com.cqx.common.utils.excel.ViewSubBean;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import com.newland.bi.bigdata.bean.ExcelSheetList;
 
 /**
  * 海南上网查证，经分侧，ods层hive建表语句生成<br>

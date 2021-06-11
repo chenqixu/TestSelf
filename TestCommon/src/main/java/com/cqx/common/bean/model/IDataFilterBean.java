@@ -14,5 +14,5 @@ public interface IDataFilterBean extends Comparable<IDataFilterBean> {
 
     long getCurrent_ts_Micro();
 
-    String toJson();
+    String getDistKey();
 }

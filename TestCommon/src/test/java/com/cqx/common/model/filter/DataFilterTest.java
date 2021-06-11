@@ -49,7 +49,7 @@ public class DataFilterTest {
     }
 
     @Test
-    public void add() throws InterruptedException {
+    public void add() throws Exception {
         BaseRunable readBR = new BaseRunable() {
             @Override
             public void exec() throws Exception {
@@ -113,9 +113,9 @@ public class DataFilterTest {
         queryResult.setValue(new Timestamp(TimeUtil.getTime("2021-05-21 14:24:38")));
         queryResults.add(queryResult);
         DataBean dataBeanS = new DataBean("i", newTime, queryResults);
-        String json = dataBeanS.toJson();
-        System.out.println("json：" + json);
-        DataBean dataBean = DataBean.jsonToBean(json);
-        System.out.println("jsonToBean：" + dataBean);
+//        String json = dataBeanS.toJson();
+//        System.out.println("json：" + json);
+//        DataBean dataBean = DataBean.jsonToBean(json);
+//        System.out.println("jsonToBean：" + dataBean);
     }
 }

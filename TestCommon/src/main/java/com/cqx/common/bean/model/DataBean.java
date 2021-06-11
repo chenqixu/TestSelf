@@ -1,8 +1,7 @@
 package com.cqx.common.bean.model;
 
-import com.alibaba.fastjson.JSON;
+import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.jdbc.QueryResultETL;
-import com.cqx.common.utils.system.TimeUtil;
 
 import java.text.ParseException;
 import java.util.List;
@@ -17,58 +16,54 @@ public class DataBean implements IDataFilterBean {
     private String op_type;
     private String current_ts;
     private List<QueryResultETL> queryResults;
+    private long current_ts_Milli;
+    private long current_ts_Micro;
+    private long formatSecond_time;
+    private String formatSecond;
+    private String distKey;
 
-    public DataBean(String op_type, String current_ts, List<QueryResultETL> queryResults) {
-        this.op_type = op_type;
-        this.current_ts = current_ts;
-        this.queryResults = queryResults;
+    public DataBean(String op_type, String current_ts, List<QueryResultETL> queryResults) throws ParseException {
+        this(null, op_type, current_ts, queryResults);
     }
 
-    public DataBean(String pks, String op_type, String current_ts, List<QueryResultETL> queryResults) {
+    public DataBean(String pks, String op_type, String current_ts, List<QueryResultETL> queryResults) throws ParseException {
         this.pks = pks;
         this.op_type = op_type;
         this.current_ts = current_ts;
         this.queryResults = queryResults;
-    }
-
-    public static DataBean jsonToBean(String json) {
-        return JSON.parseObject(json, DataBean.class);
-    }
-
-    @Override
-    public String toJson() {
-        return JSON.toJSONString(this);
+        this.current_ts_Milli = Utils.getTime(current_ts.substring(0, current_ts.length() - 3));
+        this.current_ts_Micro = Utils.formatTimeByJDK8(current_ts);
+        this.formatSecond = Utils.formatTime(getCurrent_ts_Milli());
+        this.formatSecond_time = Utils.formatTime(getFormatSecond());
+        this.distKey = pks + op_type;
     }
 
     @Override
     public String toString() {
-        long formatSecond_time = 0L;
-        try {
-            formatSecond_time = getFormatSecond_time();
-        } catch (ParseException e) {
-            //
-        }
-        return "op_type：" + op_type + "，current_ts：" + current_ts + "，queryResults：" + queryResults
-                + "，formatSecond_time：" + formatSecond_time;
+        return "pks：" + getPks()
+                + "，op_type：" + getOp_type()
+                + "，current_ts：" + getCurrent_ts()
+                + "，queryResults：" + getQueryResults()
+                + "，formatSecond_time：" + getFormatSecond_time();
     }
 
     @Override
-    public String getFormatSecond() throws ParseException {
-        return TimeUtil.formatTime(getCurrent_ts_Milli());
+    public String getFormatSecond() {
+        return this.formatSecond;
     }
 
     @Override
-    public long getFormatSecond_time() throws ParseException {
-        return TimeUtil.formatTime(getFormatSecond());
+    public long getFormatSecond_time() {
+        return this.formatSecond_time;
     }
 
-    public long getCurrent_ts_Milli() throws ParseException {
-        return TimeUtil.getTime(current_ts.substring(0, current_ts.length() - 3));
+    private long getCurrent_ts_Milli() {
+        return this.current_ts_Milli;
     }
 
     @Override
     public long getCurrent_ts_Micro() {
-        return TimeUtil.formatTimeByJDK8(current_ts);
+        return this.current_ts_Micro;
     }
 
     @Override
@@ -94,5 +89,14 @@ public class DataBean implements IDataFilterBean {
 
     public void setCurrent_ts(String current_ts) {
         this.current_ts = current_ts;
+    }
+
+    @Override
+    public String getDistKey() {
+        return distKey;
+    }
+
+    public void setDistKey(String distKey) {
+        this.distKey = distKey;
     }
 }

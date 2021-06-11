@@ -204,8 +204,13 @@ public class RAFFileMangerCenter<T> implements Closeable {
         header_pos_next = 0;
     }
 
+    /**
+     * 回到结束标识<br>
+     * 本身长度是25，header是20，还要加上末尾的8位校验位<br>
+     * 所以是45+8
+     */
     public void seekToEndTag() {
-        header_pos_next = header_pos_next - 45;
+        header_pos_next = header_pos_next - 45 - 8;
     }
 
     /**

@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +27,8 @@ public class JDBCUtilTest extends TestBase {
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+        DBBean dbBean = paramsParserUtil.getBeanMap().get("adbBean");
         dbBean.setPool(false);
         jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
     }
@@ -113,6 +116,71 @@ public class JDBCUtilTest extends TestBase {
     @Test
     public void postgreSqlTest() {
         jdbcUtil.executeQuery("select 1");
+    }
+
+    @Test
+    public void postgresqlDeclareTest() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("do")
+                .append(" $$")
+                .append(" DECLARE")
+                .append("  hasval numeric;")
+                .append(" BEGIN")
+                .append(" select count(1) into hasval from rl_status where status=0;")
+                .append(" if hasval=0 THEN")
+                .append(" insert into rl_status(status) values(0);")
+                .append(" else")
+                .append(" update rl_status set status=hasval;")
+                .append(" end if;")
+                .append(" END;")
+                .append(" $$");
+        int ret = jdbcUtil.executeUpdate(sb.toString());
+        logger.info("ret：{}", ret);
+    }
+
+    @Test
+    public void executeBatchSqlsInsertTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<List<QueryResult>> list = QueryResultFactory.getInstance()
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toList()
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toList()
+                    .getData();
+
+            List<String> op_types = new ArrayList<>();
+            op_types.add("i");
+            op_types.add("i");
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(op_types, list, table, fields, fields_type, pks, pks_type, false, true);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
     }
 
     class ConcurrentQuery1 extends BaseRunableThread {
