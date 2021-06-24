@@ -16,16 +16,16 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 public class SftpUtil {
-    //sftp channel
-    public static final String SFTP_CHANNEL = "sftp";
     //日志记录器
     private static final Logger logger = LoggerFactory.getLogger(SftpUtil.class);
+    //sftp channel
+    private static final String SFTP_CHANNEL = "sftp";
 
     /**
-     * @return SftpConnection sftp连接实体类
-     * @description:公用方法,创建SFTP连接
-     * @author:xixg
-     * @date:2014-01-18
+     * 创建SFTP连接
+     *
+     * @param ftpParamCfg
+     * @return
      */
     public static SftpConnection getSftpConnection(FtpParamCfg ftpParamCfg) {
         SftpConnection sftpConnection = new SftpConnection();
@@ -43,6 +43,7 @@ public class SftpUtil {
             ChannelSftp channelSftp = (ChannelSftp) channel;
             sftpConnection.setChannelSftp(channelSftp);
             sftpConnection.setSshSession(sshSession);
+            logger.info("成功连接SFTP服务器.");
         } catch (Exception e) {
             logger.error("%%%%%失败连接SFTP服务器:" + ftpParamCfg.getHost() + ",端口号:" + ftpParamCfg.getPort() + ",SFTP用户名:"
                     + ftpParamCfg.getUser() + ",SFTP密码:" + ftpParamCfg.getPassword(), e);
@@ -58,10 +59,9 @@ public class SftpUtil {
     }
 
     /**
-     * @return void
-     * @description:公用方法,关闭SFTP连接
-     * @author:xixg
-     * @date:2014-01-18
+     * 关闭SFTP连接
+     *
+     * @param sftpConnection
      */
     public static void closeSftpConnection(SftpConnection sftpConnection) {
         if (sftpConnection != null) {
@@ -74,6 +74,7 @@ public class SftpUtil {
                 if (sshSession != null) {
                     sshSession.disconnect();
                 }
+                logger.debug("关闭SFTP连接成功.");
             } catch (Exception e) {
                 logger.error("%%%%%关闭SFTP连接出错!!!" + e.getMessage(), e);
             }
@@ -81,11 +82,13 @@ public class SftpUtil {
     }
 
     /**
+     * 列出FTP服务器上指定目录下的指定文件名列表
+     *
+     * @param fileList
+     * @param sftpConnection
      * @param remoteFilePath 远端文件路径
-     * @return List<String>
-     * @description: 列出FTP服务器上指定目录下的指定文件名列表
-     * @author:xixg
-     * @date:2014-02-13
+     * @param sftpFileFilter
+     * @return
      */
     public static List<FileInfo> listFtpFiles(List<FileInfo> fileList, SftpConnection sftpConnection,
                                               String remoteFilePath, SftpFileFilter sftpFileFilter) {
@@ -140,12 +143,11 @@ public class SftpUtil {
     }
 
     /**
+     * 过滤出SFTP服务器上指定目录下的指定文件名列表
+     *
      * @param fileName       文件名
      * @param sftpFileFilter SFTP文件过滤器
-     * @return boolean 过滤后是否符合要求
-     * @description: 过滤出SFTP服务器上指定目录下的指定文件名列表
-     * @author:xixg
-     * @date:2014-02-13
+     * @return
      */
     public static boolean filterFileName(String fileName, SftpFileFilter sftpFileFilter) {
         boolean returnFlag = true;
@@ -212,7 +214,7 @@ public class SftpUtil {
                 //获取文件
                 inputStream = channelSftp.get(file_path + file_name);
             } catch (SftpException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
         return inputStream;
@@ -272,7 +274,7 @@ public class SftpUtil {
             try {
                 channelSftp.put(local_file, remote_file, ChannelSftp.OVERWRITE);
             } catch (SftpException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
             timeCostUtil.stop();
             logger.info("local_file：{}，remote_file：{}，cost：{}", local_file, remote_file, timeCostUtil.getCost());

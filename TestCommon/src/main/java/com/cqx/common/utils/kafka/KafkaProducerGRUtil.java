@@ -1,5 +1,7 @@
 package com.cqx.common.utils.kafka;
 
+import com.cqx.common.bean.kafka.AvroLevelData;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -50,6 +52,10 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
      */
     public void sendRandom(Map<String, String> param) {
         send(topic, genericRecordUtil.genericRandomRecord(topic, param));
+    }
+
+    public void sendRandom(AvroLevelData avroLevelData) {
+        send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic, avroLevelData));
     }
 
     public void sends(String kafkaKey, Map<String, String> kafkaValue) {

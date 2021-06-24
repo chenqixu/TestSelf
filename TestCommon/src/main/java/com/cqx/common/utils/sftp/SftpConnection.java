@@ -3,7 +3,10 @@ package com.cqx.common.utils.sftp;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
 
-public class SftpConnection {
+import java.io.Closeable;
+import java.io.IOException;
+
+public class SftpConnection implements Closeable {
     //SSH的channel
     private ChannelSftp channelSftp;
     //SSH的Session
@@ -23,5 +26,10 @@ public class SftpConnection {
 
     public void setSshSession(Session sshSession) {
         this.sshSession = sshSession;
+    }
+
+    @Override
+    public void close() throws IOException {
+        SftpUtil.closeSftpConnection(this);
     }
 }

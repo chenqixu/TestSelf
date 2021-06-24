@@ -65,6 +65,7 @@ public class KafkaProducerUtil<K, V> implements Closeable {
         if (producer != null) producer.close();
     }
 
+    @Override
     public void close() {
         release();
     }

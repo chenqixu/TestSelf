@@ -5,6 +5,8 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.*;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,12 +17,13 @@ import java.io.IOException;
  * @author chenqixu
  */
 public class RecordConvertor {
-
-    final private DatumReader<GenericRecord> reader;
-    final private DatumWriter<GenericRecord> writer;
-
+    private static final Logger logger = LoggerFactory.getLogger(RecordConvertor.class);
+    private final DatumReader<GenericRecord> reader;
+    private final DatumWriter<GenericRecord> writer;
 
     /**
+     * 构造
+     *
      * @param schema
      */
     public RecordConvertor(Schema schema) {
@@ -28,27 +31,41 @@ public class RecordConvertor {
         writer = new SpecificDatumWriter<>(schema);
     }
 
+    /**
+     * byte数组转GenericRecord
+     *
+     * @param msgByte
+     * @return
+     */
     public GenericRecord binaryToRecord(byte[] msgByte) {
         Decoder decoder = DecoderFactory.get().binaryDecoder(msgByte, null);
         try {
             return reader.read(null, decoder);
         } catch (IOException e) {
-            //log.error("binary message convert to record fail !"+e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("binaryToRecord异常", e);
         }
-        return null;
     }
 
+    /**
+     * GenericRecord转byte数组
+     *
+     * @param record
+     * @return
+     */
     public byte[] recordToBinary(GenericRecord record) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(out, null);
         try {
             writer.write(record, encoder);
             encoder.flush();
-            out.close();
         } catch (IOException e) {
-            //log.error("record to binary message convert fail !"+e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("recordToBinary异常", e);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
         return out.toByteArray();
     }

@@ -1,19 +1,28 @@
 package com.cqx.sync;
 
+import com.cqx.common.utils.ftp.FtpParamCfg;
 import com.cqx.common.utils.jdbc.*;
+import com.cqx.common.utils.jdbc.lob.DefaultLobHandler;
+import com.cqx.common.utils.jdbc.lob.LobHandler;
+import com.cqx.common.utils.kafka.SchemaUtil;
+import com.cqx.common.utils.sftp.SftpConnection;
+import com.cqx.common.utils.sftp.SftpUtil;
 import com.cqx.common.utils.xml.XMLParser;
 import com.cqx.common.utils.xml.XMLParserElement;
 import com.cqx.sync.bean.*;
 import com.newland.bi.bigdata.compress.ZipUtils;
 import com.newland.bi.bigdata.time.TimeCostUtil;
+import org.apache.avro.Schema;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,6 +87,11 @@ public class JDBCUtilTest {
                 srcdbBean.setUser_name("zyh");
                 srcdbBean.setPass_word("zyh");
                 break;
+            case "web":
+                srcdbBean.setTns("jdbc:oracle:thin:@10.1.0.242:1521:ywxx");
+                srcdbBean.setUser_name("web");
+                srcdbBean.setPass_word("T%vdNV#i$2");
+                break;
         }
         return srcdbBean;
     }
@@ -103,9 +117,10 @@ public class JDBCUtilTest {
 //        srcdbBean = oracleConfig("frtbase_dblink");
 //        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
+        srcdbBean = oracleConfig("web");
 //        srcdbBean = mysqlConfig("local");
 //        srcdbBean = mysqlConfig("flink");
-        srcdbBean = postgresqlConfig("dev");
+//        srcdbBean = postgresqlConfig("dev");
         jdbcUtil = new JDBCUtil(srcdbBean);
     }
 
@@ -299,6 +314,27 @@ public class JDBCUtilTest {
     }
 
     @Test
+    public void queryClob() throws Exception {
+        final LobHandler lobHandler = new DefaultLobHandler();
+        jdbcUtil.executeQuery(
+                "select avsc from nmc_schema where schema_name='SCHEMA_USER_ADDITIONAL_INFO'"
+                , new IJDBCUtilCall.ICallBack() {
+                    @Override
+                    public void call(ResultSet rs) throws SQLException {
+                        SchemaUtil schemaUtil = new SchemaUtil(null);
+                        String db_avsc = lobHandler.getClobAsString(rs, 1);
+                        Schema db_schema = schemaUtil.getSchemaByString(db_avsc);
+                        logger.info("db_schema：{}", db_schema);
+                        String sftp_avsc = sftpGetAVSC();
+                        Schema sftp_schema = schemaUtil.getSchemaByString(sftp_avsc);
+                        logger.info("sftp_schema：{}", sftp_schema);
+                        logger.info("equals：{}", db_schema.equals(sftp_schema));
+                    }
+                }
+        );
+    }
+
+    @Test
     public void getTableMetaData() throws SQLException {
         //元数据
         for (QueryResult queryResult : jdbcUtil.getTableMetaData("cqx_test1")) {
@@ -328,5 +364,24 @@ public class JDBCUtilTest {
                 logger.info("{}", qr);
             }
         }
+    }
+
+    private String sftpGetAVSC() {
+        StringBuilder sb = new StringBuilder();
+        FtpParamCfg ftpParamCfg = new FtpParamCfg("10.1.8.203", 22, "edc_base", "fLyxp1s*");
+        try (SftpConnection sftpConnection = SftpUtil.getSftpConnection(ftpParamCfg)
+             ; InputStream inputStream = SftpUtil.ftpFileDownload(sftpConnection
+                , "/bi/user/cqx/data/avsc/"
+                , "FRTBASE.TB_SER_OGG_USER_ADDI_INFO.avsc")) {
+            //设置SFTP下载缓冲区
+            byte[] buffer = new byte[2048];
+            int c;
+            while ((c = inputStream.read(buffer)) != -1) {
+                sb.append(new String(buffer, 0, c));
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return sb.toString();
     }
 }

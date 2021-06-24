@@ -169,8 +169,8 @@ public class FileUtil {
      * @throws IOException in case of I/O errors
      */
     public static int copy(Reader in, Writer out) throws IOException {
-        if (in == null ) throw new NullPointerException("No Reader specified");
-        if (out == null ) throw new NullPointerException("No Writer specified");
+        if (in == null) throw new NullPointerException("No Reader specified");
+        if (out == null) throw new NullPointerException("No Writer specified");
 
         try {
             int byteCount = 0;
@@ -197,22 +197,21 @@ public class FileUtil {
     /**
      * Copy the contents of the given String to the given output Writer.
      * Closes the writer when done.
-     * @param in the String to copy from
+     *
+     * @param in  the String to copy from
      * @param out the Writer to copy to
      * @throws IOException in case of I/O errors
      */
     public static void copy(String in, Writer out) throws IOException {
-        if (in == null ) throw new NullPointerException("No input String specified");
-        if (out == null ) throw new NullPointerException("No Writer specified");
+        if (in == null) throw new NullPointerException("No input String specified");
+        if (out == null) throw new NullPointerException("No Writer specified");
 
         try {
             out.write(in);
-        }
-        finally {
+        } finally {
             try {
                 out.close();
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
             }
         }
     }
@@ -503,6 +502,11 @@ public class FileUtil {
     public void createFile(String filename, String write_code)
             throws FileNotFoundException, UnsupportedEncodingException {
         createFile(filename, write_code, false);
+    }
+
+    public void createFile(String filename)
+            throws FileNotFoundException, UnsupportedEncodingException {
+        createFile(filename, "UTF-8", false);
     }
 
     public void createOutputStreamFile(String filename, boolean append) throws FileNotFoundException {

@@ -9,17 +9,20 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 public class SftpUtilTest {
-
     private static final Logger logger = LoggerFactory.getLogger(SftpUtilTest.class);
     private SftpConnection sftpConnection;
+    private FtpParamCfg ftpParamCfg;
 
     @Before
     public void setUp() throws Exception {
-//        FtpParamCfg ftpParamCfg = new FtpParamCfg("192.168.230.128", 22, "hadoop", "hadoop");
-        FtpParamCfg ftpParamCfg = new FtpParamCfg("10.1.8.204", 22, "edc_base", "fLyxp1s*");
+//        ftpParamCfg = new FtpParamCfg("192.168.230.128", 22, "hadoop", "hadoop");
+        ftpParamCfg = new FtpParamCfg("10.1.8.203", 22, "edc_base", "fLyxp1s*");
+//        ftpParamCfg = new FtpParamCfg("10.1.8.204", 22, "edc_base", "fLyxp1s*");
         sftpConnection = SftpUtil.getSftpConnection(ftpParamCfg);
     }
 
@@ -104,5 +107,23 @@ public class SftpUtilTest {
         t2.start();
         SleepUtil.sleepMilliSecond(500);
         threadTool.startTask();
+    }
+
+    @Test
+    public void ftpFileDownload() {
+        StringBuilder sb = new StringBuilder();
+        try (InputStream inputStream = SftpUtil.ftpFileDownload(sftpConnection
+                , "/bi/user/cqx/data/avsc/"
+                , "FRTBASE.TB_SER_OGG_USER_ADDI_INFO.avsc")) {
+            //设置SFTP下载缓冲区
+            byte[] buffer = new byte[2048];
+            int c;
+            while ((c = inputStream.read(buffer)) != -1) {
+                sb.append(new String(buffer, 0, c));
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        logger.info("{}", sb.toString());
     }
 }

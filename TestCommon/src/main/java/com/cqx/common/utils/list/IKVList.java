@@ -21,6 +21,10 @@ public interface IKVList<K, V> {
 
     void remove(Entry entry);
 
+    List<K> keys();
+
+    List<V> values();
+
     interface Entry<K, V> {
         K getKey();
 

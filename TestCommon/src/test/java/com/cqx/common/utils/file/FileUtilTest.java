@@ -7,6 +7,7 @@ import com.cqx.common.utils.thread.ThreadTool;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -194,5 +195,10 @@ public class FileUtilTest {
     public void copyFile() throws IOException {
         FileUtil.copyFile("d:\\tmp\\data\\dpi\\dpi_s1mme\\streambackup\\LTE_S1MME_028470736002_20190603110100.txt",
                 "d:\\tmp\\data\\dpi\\dpi_s1mme\\streaminput\\LTE_S1MME_028470736002_20190603110100.txt");
+    }
+
+    @Test
+    public void printTest() {
+        logger.info("File.separator：{}", File.separator);
     }
 }

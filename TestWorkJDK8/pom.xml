@@ -313,5 +313,42 @@
             <artifactId>hive-shims</artifactId>
             <version>${hive.version}</version>
         </dependency>
+
+        <!-- ogg -->
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggkafka</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggdbutil</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggkafkaconnect</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggtrail</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggaddons</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggavro</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.goldengate</groupId>
+            <artifactId>ggutil</artifactId>
+            <version>12.3.2.1.1.005</version>
+        </dependency>
     </dependencies>
 </project>

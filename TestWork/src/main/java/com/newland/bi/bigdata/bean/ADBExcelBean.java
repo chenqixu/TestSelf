@@ -14,6 +14,7 @@ public class ADBExcelBean {
     private String ogg_topic;
     private String flat_topic;
     private String ogg_pks;
+    private String ogg_asvc_name;
     private List<String> fields = new ArrayList<>();
     private List<String> fields_type = new ArrayList<>();
 
@@ -88,5 +89,13 @@ public class ADBExcelBean {
         }
         if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
+    }
+
+    public String getOgg_asvc_name() {
+        return ogg_asvc_name;
+    }
+
+    public void setOgg_asvc_name(String ogg_asvc_name) {
+        this.ogg_asvc_name = ogg_asvc_name;
     }
 }

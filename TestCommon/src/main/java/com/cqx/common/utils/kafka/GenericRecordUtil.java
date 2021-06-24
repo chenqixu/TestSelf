@@ -1,5 +1,6 @@
 package com.cqx.common.utils.kafka;
 
+import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.bean.kafka.AvroRecord;
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
@@ -273,7 +274,7 @@ public class GenericRecordUtil {
      */
     private void genericByAvroRecord(AvroRecord avroRecord, GenericRecord father, boolean isRoot) {
         if (avroRecord.hasChild()) {
-            logger.info("getSchema：{}", avroRecord.getSchema());
+            logger.debug("getSchema：{}", avroRecord.getSchema());
             GenericRecord realUse = father;
             if (!isRoot) {
                 realUse = new GenericData.Record(avroRecord.getSchema());
@@ -320,7 +321,70 @@ public class GenericRecordUtil {
                     throw new AvroRuntimeException("不支持的类型：" + type);
             }
             father.put(avroRecord.getName(), obj);
-            logger.info("father.put {} , {}，type：{}", avroRecord.getName(), obj, type);
+            logger.debug("father.put {} , {}，type：{}", avroRecord.getName(), obj, type);
+        }
+    }
+
+    /**
+     * 从AvroRecord找到匹配的父级
+     *
+     * @param genericRecord
+     * @param avroRecord
+     * @param name
+     * @return
+     */
+    private GenericRecord findAvroRecord(GenericRecord genericRecord, AvroRecord avroRecord, String name) {
+        if (avroRecord.getName().equals(name)) {
+            // 返回父级本身
+            return genericRecord;
+        } else {
+            if (avroRecord.hasChild()) {
+                // 查找子级
+                for (AvroRecord child : avroRecord.getChilds()) {
+                    if (child.getName().equals(name)) {
+                        // 递归调用，如果是父级就返回本身，否则继续子级查找
+                        return findAvroRecord((GenericRecord) genericRecord.get(name), child, name);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 设置参数到GenericRecord
+     *
+     * @param genericRecord
+     * @param setValue
+     */
+    private void putGR(GenericRecord genericRecord, Map<String, Object> setValue) {
+        if (setValue != null) {
+            for (Map.Entry<String, Object> entry : setValue.entrySet()) {
+                genericRecord.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * 从AvroRecord找到匹配的父级，然后设置到对应的子级去
+     *
+     * @param genericRecord
+     * @param avroRecord
+     * @param avroLevelData
+     */
+    private void findAndSet(GenericRecord genericRecord, AvroRecord avroRecord, AvroLevelData avroLevelData) {
+        if (avroLevelData != null && avroLevelData.hasVal()) {
+            // 从AvroRecord找到匹配的父级
+            GenericRecord fatherGR = findAvroRecord(genericRecord, avroRecord, avroLevelData.getName());
+            // 设置参数
+            putGR(fatherGR, avroLevelData.getVal());
+            // 如果有子节点
+            if (avroLevelData.hasChild()) {
+                for (AvroLevelData entry : avroLevelData.getChildMap()) {
+                    // 递归
+                    findAndSet(genericRecord, avroRecord, entry);
+                }
+            }
         }
     }
 
@@ -330,13 +394,25 @@ public class GenericRecordUtil {
      * @param topic
      * @return
      */
-    public byte[] genericRandomRecordByAvroRecord(String topic) {
+    public byte[] genericRandomRecordByAvroRecord(String topic, AvroLevelData avroLevelData) {
         Schema schema = schemaMap.get(topic);
         AvroRecord avroRecord = avroRecordMap.get(topic);
         RecordConvertor recordConvertor = recordConvertorMap.get(topic);
         GenericRecord genericRecord = new GenericData.Record(schema);
         genericByAvroRecord(avroRecord, genericRecord, true);
+        // 从AvroRecord找到匹配的父级，然后设置到对应的子级去
+        findAndSet(genericRecord, avroRecord, avroLevelData);
         logger.info("genericRandomRecord：{}", genericRecord);
         return recordConvertor.recordToBinary(genericRecord);
+    }
+
+    /**
+     * 通过解析出来的AvroRecord树产生一条数据
+     *
+     * @param topic
+     * @return
+     */
+    public byte[] genericRandomRecordByAvroRecord(String topic) {
+        return genericRandomRecordByAvroRecord(topic, null);
     }
 }

@@ -23,6 +23,8 @@ public class KVListTest {
             logger.info("entry：{}", entry);
         }
         logger.info("{}", kvList.get(0));
+        logger.info("keys：{}", kvList.keys());
+        logger.info("values：{}", kvList.values());
     }
 
     @Test

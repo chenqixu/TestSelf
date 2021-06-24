@@ -18,6 +18,7 @@ public class KVList<K, V> implements Cloneable, Serializable, IKVList<K, V> {
      * @param k
      * @param v
      */
+    @Override
     public void put(K k, V v) {
         entrySet.add(new Entry<>(k, v));
     }
@@ -28,6 +29,7 @@ public class KVList<K, V> implements Cloneable, Serializable, IKVList<K, V> {
      * @param index
      * @return
      */
+    @Override
     public IKVList.Entry<K, V> get(int index) {
         return entrySet.get(index);
     }
@@ -37,6 +39,7 @@ public class KVList<K, V> implements Cloneable, Serializable, IKVList<K, V> {
      *
      * @return
      */
+    @Override
     public List<IKVList.Entry<K, V>> entrySet() {
         List<IKVList.Entry<K, V>> es;
         return (es = entrySet) == null ? (entrySet = new ArrayList<>()) : es;
@@ -47,6 +50,7 @@ public class KVList<K, V> implements Cloneable, Serializable, IKVList<K, V> {
      *
      * @return
      */
+    @Override
     public int size() {
         return entrySet.size();
     }
@@ -56,6 +60,7 @@ public class KVList<K, V> implements Cloneable, Serializable, IKVList<K, V> {
      *
      * @param index
      */
+    @Override
     public void remove(int index) {
         entrySet.remove(index);
     }
@@ -65,8 +70,37 @@ public class KVList<K, V> implements Cloneable, Serializable, IKVList<K, V> {
      *
      * @param entry
      */
+    @Override
     public void remove(IKVList.Entry entry) {
         entrySet.remove(entry);
+    }
+
+    /**
+     * 返回key的列表
+     *
+     * @return
+     */
+    @Override
+    public List<K> keys() {
+        List<K> keyList = new ArrayList<>();
+        for (IKVList.Entry<K, V> entry : entrySet()) {
+            keyList.add(entry.getKey());
+        }
+        return keyList;
+    }
+
+    /**
+     * 返回value的列表
+     *
+     * @return
+     */
+    @Override
+    public List<V> values() {
+        List<V> valueList = new ArrayList<>();
+        for (IKVList.Entry<K, V> entry : entrySet()) {
+            valueList.add(entry.getValue());
+        }
+        return valueList;
     }
 
     /**
