@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * IJDBCUtil
@@ -22,7 +23,61 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     List<QueryResult> getTableMetaData(String tableName) throws SQLException;
 
     /**
+     * 查询元数据
+     *
+     * @param tab_name
+     * @return
+     * @throws SQLException
+     */
+    LinkedHashMap<String, String> getDstTableMetaData(String tab_name) throws SQLException;
+
+    /**
+     * 获取字段类型
+     *
+     * @param metaMap
+     * @param fields_array
+     * @return
+     */
+    String[] getFieldsTypeAsArray(Map<String, String> metaMap, String[] fields_array);
+
+    /**
+     * 获取字段类型
+     *
+     * @param metaMap
+     * @param fields_array
+     * @return
+     */
+    List<String> getFieldsTypeAsList(Map<String, String> metaMap, String[] fields_array);
+
+    /**
+     * 通过表名获取默认字段类型
+     *
+     * @param tab_name
+     * @return
+     * @throws SQLException
+     */
+    String[] getDefaultFieldsTypeAsArray(String tab_name) throws SQLException;
+
+    /**
+     * 通过表名获取默认字段类型
+     *
+     * @param tab_name
+     * @return
+     * @throws SQLException
+     */
+    List<String> getDefaultFieldsTypeAsList(String tab_name) throws SQLException;
+
+    /**
      * 通过字段、表名构造表对象
+     * <p>
+     * <h3>可以使用以下方法进行替代</h3>
+     * <ul>
+     * <li>查询元数据 {@link IJDBCUtil#getDstTableMetaData}</li>
+     * <li>获取字段类型 {@link IJDBCUtil#getFieldsTypeAsArray}</li>
+     * <li>获取字段类型 {@link IJDBCUtil#getFieldsTypeAsList}</li>
+     * <li>通过表名获取默认字段类型 {@link IJDBCUtil#getDefaultFieldsTypeAsArray}</li>
+     * <li>通过表名获取默认字段类型 {@link IJDBCUtil#getDefaultFieldsTypeAsList}</li>
+     * </ul>
      *
      * @param fields
      * @param table_name
@@ -30,16 +85,27 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
+    @Deprecated
     BeanUtil generateBeanByTabeNameAndFields(String fields, String table_name) throws SQLException, ClassNotFoundException;
 
     /**
-     * 通过表名构造表对象
+     * 通过表名构造默认表对象
+     * <p>
+     * <h3>可以使用以下方法进行替代</h3>
+     * <ul>
+     * <li>查询元数据 {@link IJDBCUtil#getDstTableMetaData}</li>
+     * <li>获取字段类型 {@link IJDBCUtil#getFieldsTypeAsArray}</li>
+     * <li>获取字段类型 {@link IJDBCUtil#getFieldsTypeAsList}</li>
+     * <li>通过表名获取默认字段类型 {@link IJDBCUtil#getDefaultFieldsTypeAsArray}</li>
+     * <li>通过表名获取默认字段类型 {@link IJDBCUtil#getDefaultFieldsTypeAsList}</li>
+     * </ul>
      *
      * @param table_name
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
+    @Deprecated
     BeanUtil generateBeanByTabeName(String table_name) throws SQLException, ClassNotFoundException;
 
     /**
@@ -164,9 +230,8 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @return
      * @throws SQLException
      */
-    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
-                               String[] fields, String[] fields_type,
-                               String[] pks, String[] pks_type) throws SQLException;
+    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type) throws SQLException;
 
     /**
      * 批量执行，op_type和QueryResult在一起<br>
@@ -184,9 +249,8 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @return
      * @throws SQLException
      */
-    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
-                               String[] fields, String[] fields_type,
-                               String[] pks, String[] pks_type, boolean ismissing) throws SQLException;
+    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing) throws SQLException;
 
     /**
      * 批量执行，op_type和QueryResult在一起<br>
@@ -202,13 +266,13 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @param pks
      * @param pks_type
      * @param ismissing
-     * @param isMergeInto
+     * @param mergeEnum
      * @return
      * @throws SQLException
      */
-    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
-                               String[] fields, String[] fields_type,
-                               String[] pks, String[] pks_type, boolean ismissing, boolean isMergeInto) throws SQLException;
+    List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type
+            , boolean ismissing, MergeEnum mergeEnum) throws SQLException;
 
     /**
      * 批量执行，op_type和QueryResult是分开的<br>
@@ -225,9 +289,8 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @return
      * @throws SQLException
      */
-    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
-                               String table, String[] fields, String[] fields_type,
-                               String[] pks, String[] pks_type) throws SQLException;
+    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type) throws SQLException;
 
     /**
      * 批量执行，op_type和QueryResult是分开的<br>
@@ -246,9 +309,8 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @return
      * @throws SQLException
      */
-    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
-                               String table, String[] fields, String[] fields_type,
-                               String[] pks, String[] pks_type, boolean ismissing) throws SQLException;
+    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing) throws SQLException;
 
     /**
      * 批量执行，op_type和QueryResult是分开的<br>
@@ -265,13 +327,13 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @param pks
      * @param pks_type
      * @param ismissing
-     * @param isMergeInfo
+     * @param mergeEnum
      * @return
      * @throws SQLException
      */
-    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList,
-                               String table, String[] fields, String[] fields_type,
-                               String[] pks, String[] pks_type, boolean ismissing, boolean isMergeInfo) throws SQLException;
+    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type
+            , boolean ismissing, MergeEnum mergeEnum) throws SQLException;
 
     /**
      * 批量执行，返回结果(0:成功，-1:失败)<br>

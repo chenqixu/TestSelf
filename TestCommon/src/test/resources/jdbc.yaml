@@ -16,6 +16,11 @@ dbbeans:
     pass_word: "admin"
     tns: "jdbc:postgresql://10.1.8.206:5432/label_core"
     dbType: "POSTGRESQL"
+  - name: localAdbBean
+    user_name: "label_core"
+    pass_word: "admin"
+    tns: "jdbc:postgresql://192.168.230.128:5432/label_core"
+    dbType: "POSTGRESQL"
   - name: localmysqlBean
     user_name: "udap"
     pass_word: "udap"

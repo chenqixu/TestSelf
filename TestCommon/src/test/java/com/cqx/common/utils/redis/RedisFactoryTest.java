@@ -1,5 +1,6 @@
 package com.cqx.common.utils.redis;
 
+import com.cqx.common.bean.javabean.ErrorBean;
 import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.client.RedisPipeline;
 import com.cqx.common.utils.system.SleepUtil;
@@ -284,6 +285,70 @@ public class RedisFactoryTest {
             List<Slot> dis = discover();
             logger.info("dis：{}", dis);
             SleepUtil.sleepSecond(3);
+        }
+    }
+
+    @Test
+    public void hgetTest() {
+        String key = "error:kafka_single_partition_sync_users";
+        Map<String, String> valMap = redisClient.hgetAll(key);
+        logger.info("valMap：{}，valMap is null：{}，valMap.size：{}", valMap, valMap == null, valMap.size());
+        ErrorBean errorBean = new ErrorBean();
+        if (valMap != null && valMap.size() > 0) {
+            String field = null;
+            long maxSeq = 0L;
+            for (Map.Entry<String, String> entry : valMap.entrySet()) {
+                String[] value_array = entry.getValue().split(",", -1);
+                if (value_array != null && value_array.length >= 3) {
+                    long tmpSeq = Long.valueOf(value_array[0]);
+                    if (maxSeq == 0L) {
+                        field = entry.getKey();
+                        maxSeq = tmpSeq;
+                    }
+                    if (tmpSeq > maxSeq) {
+                        field = entry.getKey();
+                        maxSeq = tmpSeq;
+                    }
+                }
+            }
+            logger.info("field：{}，maxSeq：{}", field, maxSeq);
+            errorBean.setIndex(Integer.valueOf(field));
+            int new_cnt = errorBean.newError();
+            String errorVal = errorBean.getErrorVal("异常测试");
+            logger.info("new_cnt：{}，errorVal：{}", new_cnt, errorVal);
+            redisClient.hset(key, new_cnt + "", errorVal);
+        } else {
+            int new_cnt = errorBean.newError();
+            String errorVal = errorBean.getErrorVal("异常测试");
+            logger.info("new_cnt：{}，errorVal：{}", new_cnt, errorVal);
+            redisClient.hset(key, new_cnt + "", errorVal);
+        }
+    }
+
+    @Test
+    public void hsetTest() {
+        String key = "error:kafka_single_partition_sync_users";
+        redisClient.hset(key, "1", "1000,time,errMsg");
+        redisClient.hset(key, "2", "1001,time,errMsg");
+        redisClient.hset(key, "3", "1002,time,errMsg");
+        redisClient.hset(key, "4", "1003,time,errMsg");
+        redisClient.hset(key, "5", "999,time,errMsg");
+        redisClient.hdel(key, "1");
+        redisClient.hdel(key, "2");
+        redisClient.hdel(key, "3");
+        redisClient.hdel(key, "4");
+        redisClient.hdel(key, "5");
+    }
+
+    @Test
+    public void setStatusTest() {
+        List<String> keys = new ArrayList<>();
+        keys.add("status:kafka_single_partition_sync_users");
+        keys.add("status:kafka_single_partition_sync_itv_users");
+        for (String key : keys) {
+            redisClient.set(key, "run");
+            String val = redisClient.get(key);
+            logger.info("key：{}，val：{}", key, val);
         }
     }
 

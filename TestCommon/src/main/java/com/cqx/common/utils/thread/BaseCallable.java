@@ -3,17 +3,17 @@ package com.cqx.common.utils.thread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * BaseRunable
+ * BaseCallable
  *
  * @author chenqixu
  */
-public abstract class BaseRunable implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(BaseRunable.class);
+public abstract class BaseCallable implements Callable<Integer> {
+    private static final Logger logger = LoggerFactory.getLogger(BaseCallable.class);
     private AtomicBoolean runFlag = new AtomicBoolean(true);
-    private boolean throwException = false;// 默认不抛异常
 
     private boolean isStop() {
         return runFlag.get();
@@ -23,34 +23,25 @@ public abstract class BaseRunable implements Runnable {
         runFlag.set(false);
     }
 
-    public void setThrowException(boolean throwException) {
-        this.throwException = throwException;
-    }
-
     @Override
-    public void run() {
+    public Integer call() throws Exception {
         logger.debug("{} start.", this);
         while (isStop()) {
             try {
                 exec();
             } catch (Exception e) {
-                if (throwException) {
-                    throw new RuntimeException(e);
-                } else {
-                    logger.error(e.getMessage(), e);
-                }
+                logger.error(e.getMessage(), e);
+                throw e;
             }
         }
         try {
             lastExec();
         } catch (Exception e) {
-            if (throwException) {
-                throw new RuntimeException(e);
-            } else {
-                logger.error(e.getMessage(), e);
-            }
+            logger.error(e.getMessage(), e);
+            throw e;
         }
         logger.debug("{} stop.", this);
+        return 0;
     }
 
     public abstract void exec() throws Exception;

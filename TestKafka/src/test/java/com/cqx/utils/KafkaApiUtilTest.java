@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -78,5 +79,10 @@ public class KafkaApiUtilTest {
                 kafkaApiUtil.deleteTopicByName(name);
             }
         }
+    }
+
+    @Test
+    public void consumerGroupCommand() throws IOException {
+        kafkaApiUtil.consumerGroupCommand();
     }
 }

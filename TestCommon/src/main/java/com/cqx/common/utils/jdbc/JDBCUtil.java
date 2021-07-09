@@ -237,7 +237,25 @@ public class JDBCUtil implements IJDBCUtil {
             closeConn(conn);
         }
         try {
-            String sql = "select * from " + tableName + " where rownum=0";
+            String sql = "select * from " + tableName;
+            switch (dbBean.getDbType()) {
+                case ORACLE:
+                    sql += " where rownum=0";
+                    break;
+                case MYSQL:
+                    sql += " limit 0";
+                    break;
+                case POSTGRESQL:
+                    sql += " limit 0";
+                    break;
+                case DERBY:
+                    sql += " limit 0";
+                    break;
+                case OTHER:
+                default:
+                    sql += " limit 0";
+                    break;
+            }
             conn = getConnection();
             assert conn != null;
             stm = conn.createStatement();
@@ -261,6 +279,84 @@ public class JDBCUtil implements IJDBCUtil {
             ret.add(queryResult);
         }
         return ret;
+    }
+
+    /**
+     * 查询元数据
+     *
+     * @param tab_name
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public LinkedHashMap<String, String> getDstTableMetaData(String tab_name) throws SQLException {
+        List<QueryResult> metaData = getTableMetaData(tab_name);
+        LinkedHashMap<String, String> metaMap = new LinkedHashMap<>();
+        for (QueryResult md : metaData) {
+            metaMap.put(md.getColumnName(), md.getColumnClassName());
+        }
+        return metaMap;
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param metaMap
+     * @param fields_array
+     * @return
+     */
+    @Override
+    public String[] getFieldsTypeAsArray(Map<String, String> metaMap, String[] fields_array) {
+        List<String> fields_type_list = getFieldsTypeAsList(metaMap, fields_array);
+        String[] fields_type = {};
+        return fields_type_list.toArray(fields_type);
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param metaMap
+     * @param fields_array
+     * @return
+     */
+    @Override
+    public List<String> getFieldsTypeAsList(Map<String, String> metaMap, String[] fields_array) {
+        List<String> fields_type_list = new ArrayList<>();
+        for (String _field : fields_array) {
+            fields_type_list.add(metaMap.get(_field));
+        }
+        return fields_type_list;
+    }
+
+    /**
+     * 通过表名获取默认字段类型
+     *
+     * @param tab_name
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public String[] getDefaultFieldsTypeAsArray(String tab_name) throws SQLException {
+        List<String> fields_type_list = getDefaultFieldsTypeAsList(tab_name);
+        String[] fields_type = {};
+        return fields_type_list.toArray(fields_type);
+    }
+
+    /**
+     * 通过表名获取默认字段类型
+     *
+     * @param tab_name
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public List<String> getDefaultFieldsTypeAsList(String tab_name) throws SQLException {
+        List<QueryResult> metaData = getTableMetaData(tab_name);
+        List<String> fields_type_list = new ArrayList<>();
+        for (QueryResult md : metaData) {
+            fields_type_list.add(md.getColumnClassName());
+        }
+        return fields_type_list;
     }
 
     /**
@@ -305,7 +401,7 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
-     * 通过表名构造表对象
+     * 通过表名构造默认表对象
      *
      * @param table_name 表名
      * @return BeanUtil
@@ -314,34 +410,7 @@ public class JDBCUtil implements IJDBCUtil {
      */
     @Override
     public BeanUtil generateBeanByTabeName(String table_name) throws SQLException, ClassNotFoundException {
-        ResultSet rs = null;
-        BeanUtil beanUtil;
-        LinkedHashMap<String, Class<?>> properties = new LinkedHashMap<>();
-        Connection conn = null;
-        Statement stm = null;
-        try {
-            conn = getConnection();
-            assert conn != null;
-            stm = conn.createStatement();
-            String sql = "select * from " + table_name + " where 1<>1";
-            rs = stm.executeQuery(sql);
-            ResultSetMetaData rsMeta = rs.getMetaData();
-            for (int i = 0, size = rsMeta.getColumnCount(); i < size; ++i) {
-                String ColumnLabel = rsMeta.getColumnLabel(i + 1);
-                int ColumnType = rsMeta.getColumnType(i + 1);
-                String ColumnClassName = rsMeta.getColumnClassName(i + 1);
-                properties.put(ColumnLabel, Class.forName(ColumnClassName));
-                logger.debug("ColumnLabel：{}，ColumnType：{}，ColumnClassName：{}",
-                        ColumnLabel, ColumnType, ColumnClassName);
-            }
-            beanUtil = new BeanUtil();
-            beanUtil.generateObject(properties);
-        } finally {
-            closeResultSet(rs);
-            closeStm(stm);
-            closeConn(conn);
-        }
-        return beanUtil;
+        return generateBeanByTabeNameAndFields("*", table_name);
     }
 
     /**
@@ -660,26 +729,7 @@ public class JDBCUtil implements IJDBCUtil {
      */
     @Override
     public int executeUpdate(String sql) throws SQLException {
-        int result;
-        Connection conn = null;
-        Statement stm = null;
-        try {
-            conn = getConnection();
-            assert conn != null;
-            conn.setAutoCommit(false);
-            stm = conn.createStatement();
-            result = stm.executeUpdate(sql);
-            conn.commit();
-        } catch (SQLException e) {
-            logger.error("JDBCUtilException：executeUpdate异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
-            result = -1;
-            if (conn != null) conn.rollback();
-            if (isThrow()) throw e;
-        } finally {
-            closeStm(stm);
-            closeConn(conn);
-        }
-        return result;
+        return executeUpdate(sql, false);
     }
 
     /**
@@ -705,7 +755,14 @@ public class JDBCUtil implements IJDBCUtil {
         } catch (SQLException e) {
             logger.error("JDBCUtilException：executeUpdate异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             result = -1;
-            if (conn != null && !autoCommit) conn.rollback();
+            if (conn != null && !autoCommit) {
+                try {
+                    conn.rollback();
+                } catch (SQLException se) {
+                    // 加入回滚操作可能的异常，要不然异常抛出不准确
+                    e.addSuppressed(se);
+                }
+            }
             if (isThrow()) throw e;
         } finally {
             closeStm(stm);
@@ -761,7 +818,14 @@ public class JDBCUtil implements IJDBCUtil {
         } catch (SQLException e) {
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sqls, e);
             retList.add(-1);
-            if (conn != null) conn.rollback();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException se) {
+                    // 加入回滚操作可能的异常，要不然异常抛出不准确
+                    e.addSuppressed(se);
+                }
+            }
             if (isThrow()) throw e;
         } finally {
             closeStm(stm);
@@ -781,12 +845,11 @@ public class JDBCUtil implements IJDBCUtil {
      * @param pks_type
      * @return
      * @throws SQLException
-     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[], MergeEnum)
      */
     @Override
-    public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table,
-                                      String[] fields, String[] fields_type,
-                                      String[] pks, String[] pks_type) throws SQLException {
+    public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type) throws SQLException {
         return executeBatch(iQueryResultBeanList, table, fields, fields_type, pks, pks_type, false);
     }
 
@@ -802,12 +865,12 @@ public class JDBCUtil implements IJDBCUtil {
      * @param ismissing
      * @return
      * @throws SQLException
-     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[], MergeEnum)
      */
     @Override
     public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table
             , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing) throws SQLException {
-        return executeBatch(iQueryResultBeanList, table, fields, fields_type, pks, pks_type, ismissing, false);
+        return executeBatch(iQueryResultBeanList, table, fields, fields_type, pks, pks_type, ismissing, null);
     }
 
     /**
@@ -821,14 +884,14 @@ public class JDBCUtil implements IJDBCUtil {
      * @param pks
      * @param pks_type
      * @param ismissing
-     * @param isMergeInto
+     * @param mergeEnum
      * @return
      * @throws SQLException
      */
     @Override
     public List<Integer> executeBatch(List<? extends IQueryResultBean> iQueryResultBeanList, String table
             , String[] fields, String[] fields_type, String[] pks, String[] pks_type
-            , boolean ismissing, boolean isMergeInto) throws SQLException {
+            , boolean ismissing, MergeEnum mergeEnum) throws SQLException {
         List<String> sqlList = new ArrayList<>();
 
         //检查
@@ -849,7 +912,7 @@ public class JDBCUtil implements IJDBCUtil {
             List<QueryResult> queryResults = iQueryResultBean.getQueryResults();
             //构造SQL
             String sql = buildBatchSQL(op_type, queryResults, table, fields,
-                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, isMergeInto);
+                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, mergeEnum);
             if (sql != null && sql.length() > 0) sqlList.add(sql);
         }
         return executeBatch(sqlList);
@@ -867,7 +930,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @param pks_type
      * @return
      * @throws SQLException
-     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[], MergeEnum)
      */
     @Override
     public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
@@ -888,12 +951,12 @@ public class JDBCUtil implements IJDBCUtil {
      * @param ismissing
      * @return
      * @throws SQLException
-     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[])
+     * @see JDBCUtil#buildBatchSQL(String, List, String, String[], String[], String[], String[], boolean, String, String[], MergeEnum)
      */
     @Override
     public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
             , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing) throws SQLException {
-        return executeBatch(op_types, tList, table, fields, fields_type, pks, pks_type, ismissing, false);
+        return executeBatch(op_types, tList, table, fields, fields_type, pks, pks_type, ismissing, null);
     }
 
     /**
@@ -908,14 +971,14 @@ public class JDBCUtil implements IJDBCUtil {
      * @param pks
      * @param pks_type
      * @param ismissing
-     * @param isMergeInfo
+     * @param mergeEnum
      * @return
      * @throws SQLException
      */
     @Override
     public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
             , String[] fields, String[] fields_type, String[] pks, String[] pks_type
-            , boolean ismissing, boolean isMergeInfo) throws SQLException {
+            , boolean ismissing, MergeEnum mergeEnum) throws SQLException {
         List<String> sqlList = new ArrayList<>();
 
         //检查
@@ -937,7 +1000,7 @@ public class JDBCUtil implements IJDBCUtil {
             List<QueryResult> queryResults = tList.get(op_type_index);
             //构造SQL
             String sql = buildBatchSQL(op_type, queryResults, table, fields,
-                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, isMergeInfo);
+                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, mergeEnum);
             if (sql != null && sql.length() > 0) sqlList.add(sql);
         }
         return executeBatch(sqlList);
@@ -956,6 +1019,17 @@ public class JDBCUtil implements IJDBCUtil {
         return executeBatch(sql, tList, dstFieldsType, false);
     }
 
+    /**
+     * 批量执行，返回结果(0:成功，-1:失败)<br>
+     * 支持对手工新建的QueryResult进行Clob处理
+     *
+     * @param sql
+     * @param tList
+     * @param dstFieldsType
+     * @param isClob
+     * @return
+     * @throws Exception
+     */
     @Override
     public int executeBatch(String sql, List<List<QueryResult>> tList, List<String> dstFieldsType, boolean isClob) throws Exception {
         int add_cnt = 0;
@@ -1016,7 +1090,14 @@ public class JDBCUtil implements IJDBCUtil {
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
             success_cnt = -1;
-            if (conn != null) conn.rollback();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException se) {
+                    // 加入回滚操作可能的异常，要不然异常抛出不准确
+                    e.addSuppressed(se);
+                }
+            }
             if (isThrow()) throw e;
         } finally {
             closePstmt(pstmt);
@@ -1104,7 +1185,14 @@ public class JDBCUtil implements IJDBCUtil {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ret = -1;
-            if (conn != null) conn.rollback();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException se) {
+                    // 加入回滚操作可能的异常，要不然异常抛出不准确
+                    e.addSuppressed(se);
+                }
+            }
         } finally {
             closePstmt(pstmt);
             closeConn(conn);
@@ -1207,7 +1295,14 @@ public class JDBCUtil implements IJDBCUtil {
             logger.debug("add_cnt：{}，success_cnt：{}，batch_cnt：{}", add_cnt, success_cnt, batch_cnt);
         } catch (Exception e) {
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
-            if (conn != null) conn.rollback();
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException se) {
+                    // 加入回滚操作可能的异常，要不然异常抛出不准确
+                    e.addSuppressed(se);
+                }
+            }
             if (isThrow()) throw e;
         } finally {
             closePstmt(pstmt);
@@ -1311,9 +1406,16 @@ public class JDBCUtil implements IJDBCUtil {
             if (remaining_size > 0)
                 executeBatch(sql, tList, methodLinkedHashMap);
         } catch (Exception e) {
-            //回滚
-            if (conn != null) conn.rollback();
             logger.error("JDBCUtilException：executeBatch异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            //回滚
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException se) {
+                    // 加入回滚操作可能的异常，要不然异常抛出不准确
+                    e.addSuppressed(se);
+                }
+            }
             if (isThrow()) throw e;
         } finally {
             closePstmt(pstmt);
@@ -1429,14 +1531,14 @@ public class JDBCUtil implements IJDBCUtil {
      * @param ismissing          字段是否有值（ogg特殊）
      * @param insert_fields      插入字段
      * @param insert_fields_type 插入字段类型
-     * @param isMergeInto        是否要合并写入（表里有值就不写，没值就写入）
+     * @param mergeEnum          写入合并的模式，分为MERGE_INTO_ONLY和MERGE_INTO_UPDATE
      * @return
      * @throws SQLException
      */
     private String buildBatchSQL(String op_type, List<QueryResult> queryResults,
                                  String table, String[] fields, String[] fields_type,
                                  String[] pks, String[] pks_type, boolean ismissing,
-                                 String insert_fields, String[] insert_fields_type, boolean isMergeInto) throws SQLException {
+                                 String insert_fields, String[] insert_fields_type, MergeEnum mergeEnum) throws SQLException {
         String sql = "";
         if (op_type == null || op_type.trim().length() == 0) throw new NullPointerException("op_type为空！");
         op_type = op_type.toLowerCase();
@@ -1455,7 +1557,7 @@ public class JDBCUtil implements IJDBCUtil {
                     }
                 }
                 // 合并写入（表里有值就不写，没值就写入）
-                if (isMergeInto) {
+                if (mergeEnum != null) {
                     StringBuilder insert_where_values = new StringBuilder();
                     // 处理where
                     insert_where_values.append(buildWhere(op_type, queryResults, fields, pks, pks_type, ismissing));
@@ -1468,7 +1570,7 @@ public class JDBCUtil implements IJDBCUtil {
                                 op_type, Arrays.asList(pks), queryResults);
                         break;
                     }
-                    sql = pgDeclare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString());
+                    sql = pgDeclare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), mergeEnum);
                 } else {// 正常写入
                     sql = String.format(insert, table, insert_fields, insert_values.toString());
                 }

@@ -579,7 +579,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <!--<version>42.0.0</version>-->
+            <!--<version>42.2.9</version>-->
             <!--<version>9.2-1003-jdbc4</version>-->
             <version>9.4.1212.jre7</version>
             <exclusions>
@@ -624,6 +624,19 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${excel.poi.version}</version>
+        </dependency>
+
+        <!-- oceanbase -->
+        <dependency>
+            <groupId>com.alipay.oceanbase</groupId>
+            <artifactId>oceanbase-client</artifactId>
+            <version>1.1.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- test -->

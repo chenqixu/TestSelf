@@ -12,6 +12,7 @@ public class QueryResultFactory {
     private List<List<QueryResult>> tList = new ArrayList<>();
     private List<QueryResult> queryResults = new ArrayList<>();
     private List<String> dstFieldsType = new ArrayList<>();
+    private List<String> dstFieldsTypeResult = new ArrayList<>();
 
     private QueryResultFactory() {
     }
@@ -33,6 +34,7 @@ public class QueryResultFactory {
 
     public QueryResultFactory toList() {
         tList.add(queryResults);
+        dstFieldsTypeResult = new ArrayList<>(dstFieldsType);
         queryResults = new ArrayList<>();
         dstFieldsType = new ArrayList<>();
         return this;
@@ -43,6 +45,6 @@ public class QueryResultFactory {
     }
 
     public List<String> getDstFieldsType() {
-        return dstFieldsType;
+        return dstFieldsTypeResult;
     }
 }

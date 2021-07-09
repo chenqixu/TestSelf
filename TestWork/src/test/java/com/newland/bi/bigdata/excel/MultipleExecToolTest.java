@@ -1,6 +1,5 @@
 package com.newland.bi.bigdata.excel;
 
-import com.cqx.common.utils.file.FileUtil;
 import com.newland.bi.bigdata.bean.ADBExcelBean;
 import org.junit.After;
 import org.junit.Before;
@@ -38,19 +37,35 @@ public class MultipleExecToolTest {
         }
     }
 
+    /**
+     * 校验ogg的schema
+     *
+     * @throws Exception
+     */
     @Test
-    public void all() throws Exception {
-        FileUtil fileUtil = new FileUtil();
-        String name = "d:\\Work\\实时\\ADB\\KafkaToAdb\\config\\20210609-config\\toolconfig\\check_ogg_schema_%s.yaml";
+    public void all_CHECK_OGG_SCHEMA_FILE_NAME() throws Exception {
         for (ADBExcelBean adbExcelBean : multipleExecTool.run(path)) {
-            try {
-                String fileName = String.format(name, adbExcelBean.getAdb_table_name());
-                System.out.println(fileName);
-                fileUtil.createFile(fileName);
-                fileUtil.write(multipleExecTool.getOggSchemaCheck(adbExcelBean));
-            } finally {
-                fileUtil.closeWrite();
-            }
+            String table_name = adbExcelBean.getAdb_table_name().replace("rl_", "");
+            multipleExecTool.saveToFile(toolconfigPath
+                    , MultipleExecTool.CHECK_OGG_SCHEMA_FILE_NAME
+                    , multipleExecTool.getOggSchemaCheck(adbExcelBean)
+                    , table_name);
+        }
+    }
+
+    /**
+     * 更新ogg的schema
+     *
+     * @throws Exception
+     */
+    @Test
+    public void all_UPDATE_OGG_FLAT_SCHEMA_FILE_NAME() throws Exception {
+        for (ADBExcelBean adbExcelBean : multipleExecTool.run(path)) {
+            String table_name = adbExcelBean.getAdb_table_name().replace("rl_", "");
+            multipleExecTool.saveToFile(toolconfigPath
+                    , MultipleExecTool.UPDATE_OGG_FLAT_SCHEMA_FILE_NAME
+                    , multipleExecTool.getUpdateOggFlatSchema(adbExcelBean)
+                    , table_name);
         }
     }
 

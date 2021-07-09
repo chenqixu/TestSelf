@@ -21,11 +21,14 @@ import java.util.List;
 public class MultipleExecTool {
     public static final String MULTIPLE_EXEC_FILE_NAME = "multiple_exec_%s.yaml";
     public static final String KAFKA_SINGLE_PARTITION_SYNC_FILE_NAME = "kafka_single_partition_sync_%s.config.yaml";
+    public static final String CHECK_OGG_SCHEMA_FILE_NAME = "check_ogg_schema_%s.yaml";
+    public static final String UPDATE_OGG_FLAT_SCHEMA_FILE_NAME = "update_ogg_flat_schema_%s.yaml ";
     private static final Logger logger = LoggerFactory.getLogger(MultipleExecTool.class);
     private StringBuilder multiple_exec = new StringBuilder();
     private StringBuilder kafka_to_jdbc_mixed = new StringBuilder();
     private StringBuilder ogg_schema_check = new StringBuilder();
     private StringBuilder kafka_single_partition_sync = new StringBuilder();
+    private StringBuilder update_ogg_flat_schema = new StringBuilder();
 
     public MultipleExecTool() {
         multiple_exec.append("multiple_exec:\n" +
@@ -239,6 +242,25 @@ public class MultipleExecTool {
                 "      pass_word: \"#cF2-0wFgl\"\n" +
                 "      tns: \"jdbc:oracle:thin:@10.48.236.215:1521/edc_cfg_pri\"\n" +
                 "      dbType: \"ORACLE\"");
+
+        update_ogg_flat_schema.append("file_path: \"/ogg/dirdef/\"\n" +
+                "file_name: \"%s\"\n" + // avsc定义名称
+                "ogg_topic_name: \"%s\"\n" + // ogg话题
+                "flat_topic_name: \"%s\"\n" + // flat话题
+                "avsc_type: SFTP\n" +
+                "dbbeans: \n" +
+                "  - name: srcBean\n" +
+                "    user_name: \"edc_cfg\"\n" +
+                "    pass_word: \"#cF2-0wFgl\"\n" +
+                "    tns: \"jdbc:oracle:thin:@10.48.236.215:1521/edc_cfg_pri\"\n" +
+                "    dbType: \"ORACLE\"\n" +
+                "ftpbeans:\n" +
+                "  - name: oggSftp\n" +
+                "    type: SFTP\n" +
+                "    user_name: \"gg\"\n" +
+                "    pass_word: \"z+xESe0P\"\n" +
+                "    host: \"10.48.137.234\"\n" +
+                "    port: 22");
     }
 
     public void printMultipleExec(ADBExcelBean adbExcelBean) {
@@ -255,6 +277,10 @@ public class MultipleExecTool {
 
     public void printKafkaSinglePartitionSync(ADBExcelBean adbExcelBean) {
         logger.info("\n{}", getKafkaSinglePartitionSync(adbExcelBean));
+    }
+
+    public void printUpdateOggFlatSchema(ADBExcelBean adbExcelBean) {
+        logger.info("\n{}", getUpdateOggFlatSchema(adbExcelBean));
     }
 
     public String getKafkaToJdbcMixed(ADBExcelBean adbExcelBean) {
@@ -324,6 +350,16 @@ public class MultipleExecTool {
         return String.format(ogg_schema_check.toString()
                 , adbExcelBean.getOgg_topic()
                 , adbExcelBean.getOgg_asvc_name());
+    }
+
+    public String getUpdateOggFlatSchema(ADBExcelBean adbExcelBean) {
+        // avsc定义名称
+        // ogg话题
+        // flat话题
+        return String.format(update_ogg_flat_schema.toString()
+                , adbExcelBean.getOgg_asvc_name()
+                , adbExcelBean.getOgg_topic()
+                , adbExcelBean.getFlat_topic());
     }
 
     public ADBExcelBean run(String path, String sheetName) {

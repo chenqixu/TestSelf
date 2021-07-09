@@ -1,6 +1,12 @@
 package com.cqx.utils;
 
+import com.cqx.bean.PartitionAssignmentState;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.scala.DefaultScalaModule;
 import kafka.admin.AdminUtils;
+import kafka.admin.ConsumerGroupCommand;
 import kafka.admin.TopicCommand;
 import kafka.utils.ZkUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -10,11 +16,10 @@ import org.apache.kafka.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.Configuration;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -180,5 +185,93 @@ public class KafkaApiUtil {
      */
     public int getPartition(byte[] key, int numPartitions) {
         return Utils.abs(Utils.murmur2(key)) % numPartitions;
+    }
+
+    /**
+     * 消费组工具
+     *
+     * @throws IOException
+     */
+    public void consumerGroupCommand() throws IOException {
+        String brokers = "10.1.8.200:9092,10.1.8.201:9092,10.1.8.202:9092";
+        String groupId = "test";
+        String commandConfig = "D:\\Document\\Workspaces\\Git\\TestSelf\\TestKafka\\src\\test\\resources\\consumergroups.properties";
+
+        String[] args = {"--describe", "--bootstrap-server", brokers, "--group", groupId, "--command-config", commandConfig};
+        Configuration.setConfiguration(new SimpleClientConfiguration("admin", "admin"));
+//        ConsumerGroupCommand.main(args);
+
+
+//        ConsumerGroupCommand.ConsumerGroupCommandOptions opts =
+//                new ConsumerGroupCommand.ConsumerGroupCommandOptions(args);
+//        ConsumerGroupCommand.KafkaConsumerGroupService kafkaConsumerGroupService =
+//                new ConsumerGroupCommand.KafkaConsumerGroupService(opts);
+//        scala.Tuple2<scala.Option<String>, scala.Option<scala.collection.Seq<ConsumerGroupCommand
+//                .PartitionAssignmentState>>> res = kafkaConsumerGroupService.describeGroup();
+//        kafkaConsumerGroupService.describeGroup();
+//        scala.collection.Seq<ConsumerGroupCommand.PartitionAssignmentState> pasSeq = res._2.get();
+//        scala.collection.Iterator<ConsumerGroupCommand.PartitionAssignmentState> iterable = pasSeq.iterator();
+//        while (iterable.hasNext()) {
+//            ConsumerGroupCommand.PartitionAssignmentState pas = iterable.next();
+//            System.out.println(String.format("\n%-30s %-10s %-15s %-15s %-10s %-50s%-30s %s",
+//                    pas.topic().get(), pas.partition().get(), pas.offset().get(),
+//                    pas.logEndOffset().get(), pas.lag().get(), pas.consumerId().get(),
+//                    pas.host().get(), pas.clientId().get()));
+//        }
+
+
+        ConsumerGroupCommand.ConsumerGroupCommandOptions options =
+                new ConsumerGroupCommand.ConsumerGroupCommandOptions(args);
+        ConsumerGroupCommand.KafkaConsumerGroupService kafkaConsumerGroupService =
+                new ConsumerGroupCommand.KafkaConsumerGroupService(options);
+        ObjectMapper mapper = new ObjectMapper();
+        //1. 使用jackson-module-scala_2.12
+        mapper.registerModule(new DefaultScalaModule());
+        //2. 反序列化时忽略对象不存在的属性
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //3. 将Scala对象序列化成JSON字符串
+        String source = mapper.writeValueAsString(kafkaConsumerGroupService.describeGroup()._2.get());
+        //4. 将JSON字符串反序列化成Java对象
+        List<PartitionAssignmentState> target = mapper.readValue(source,
+                getCollectionType(mapper, List.class, PartitionAssignmentState.class));
+        for (PartitionAssignmentState pas : target) {
+            System.out.println(String.format("%s %s %s %s %s %s"
+                    , pas.getTopic(), pas.getPartition(), pas.getHost(), pas.getOffset()
+                    , pas.getLogEndOffset(), pas.getLag()));
+        }
+//        //5. 排序
+//        target.sort((o1, o2) -> o1.getPartition() - o2.getPartition());
+//        //6. 打印
+//        printPasList(target);
+    }
+
+    /**
+     * 将JSON字符串反序列化成Java对象
+     *
+     * @param mapper
+     * @param collectionClass
+     * @param elementClasses
+     * @return
+     */
+    private JavaType getCollectionType(ObjectMapper mapper
+            , Class<?> collectionClass, Class<?>... elementClasses) {
+        return mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
+    }
+
+    /**
+     * 打印
+     *
+     * @param list
+     */
+    private void printPasList(List<PartitionAssignmentState> list) {
+        System.out.println(String.format("%-40s %-10s %-15s %-15s %-10s %-50s%-30s %s",
+                "TOPIC", "PARTITION", "CURRENT-OFFSET", "LOG-END-OFFSET", "LAG", "CONSUMER-ID", "HOST", "CLIENT-ID"));
+        list.forEach(item -> {
+            System.out.println(String.format("%-40s %-10s %-15s %-15s %-10s %-50s%-30s %s",
+                    item.getTopic(), item.getPartition(), item.getOffset(), item.getLogEndOffset(), item.getLag(),
+                    Optional.ofNullable(item.getConsumerId()).orElse("-"),
+                    Optional.ofNullable(item.getHost()).orElse("-"),
+                    Optional.ofNullable(item.getClientId()).orElse("-")));
+        });
     }
 }
