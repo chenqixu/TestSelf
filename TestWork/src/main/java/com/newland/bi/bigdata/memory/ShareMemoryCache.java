@@ -138,7 +138,7 @@ public class ShareMemoryCache {
         int flag = getHashCodeDies(derviceID, dies);
         String newfilename = StringUtil.getEndsWithPath(path) + flag + ".txt";
         BaseRandomAccessFile newraf = rafMap.get(newfilename);
-        indexMsg = indexMsg + "," + mydatafile.getIndex() + "," + length + ";";
+        indexMsg = indexMsg + "," + mydatafile.getWriteIndex() + "," + length + ";";
         // 写数据文件
         mydatafile.write(msg.getBytes(), length);
         // 写索引文件，格式：id,off,len;，如：567,0,3;

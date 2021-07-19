@@ -237,25 +237,7 @@ public class JDBCUtil implements IJDBCUtil {
             closeConn(conn);
         }
         try {
-            String sql = "select * from " + tableName;
-            switch (dbBean.getDbType()) {
-                case ORACLE:
-                    sql += " where rownum=0";
-                    break;
-                case MYSQL:
-                    sql += " limit 0";
-                    break;
-                case POSTGRESQL:
-                    sql += " limit 0";
-                    break;
-                case DERBY:
-                    sql += " limit 0";
-                    break;
-                case OTHER:
-                default:
-                    sql += " limit 0";
-                    break;
-            }
+            String sql = "select * from " + tableName + " where 1=0";
             conn = getConnection();
             assert conn != null;
             stm = conn.createStatement();

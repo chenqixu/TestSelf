@@ -1,6 +1,7 @@
 package com.cqx.common.utils.system;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -109,5 +110,23 @@ public class ArraysUtil {
         String[] tmp = new String[list.size()];
         for (int i = 0; i < list.size(); i++) tmp[i] = list.get(i);
         return tmp;
+    }
+
+    /**
+     * Collection转字符串，拼接splitStr
+     *
+     * @param collection
+     * @param splitStr
+     * @return
+     */
+    public static String collectionToStr(Collection<String> collection, char splitStr) {
+        StringBuilder send_fields = new StringBuilder();
+        for (String dstTableField : collection) {
+            send_fields.append(dstTableField).append(splitStr);
+        }
+        if (send_fields.length() > 0) {
+            send_fields.deleteCharAt(send_fields.length() - 1);
+        }
+        return send_fields.toString();
     }
 }

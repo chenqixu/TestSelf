@@ -1,9 +1,11 @@
 package com.cqx.common.utils.thread;
 
 import com.cqx.common.utils.system.SleepUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,34 +16,45 @@ import java.util.concurrent.Future;
  *
  * @author chenqixu
  */
-public class ExecutorFactory {
+public class ExecutorFactory<V> {
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorFactory.class);
     private ExecutorService executor;
-    private List<Future> futureList = new ArrayList<>();
-    private List<BaseCallable> baseCallableList = new ArrayList<>();
+    private Future<List<V>> future;
+    private BaseCallable<V> callable;
 
     private ExecutorFactory(int nThreads) {
         executor = Executors.newFixedThreadPool(nThreads);
     }
 
-    public static ExecutorFactory newInstance(int nThreads) {
-        return new ExecutorFactory(nThreads);
+    public static <V> ExecutorFactory<V> newInstance(int nThreads) {
+        return new ExecutorFactory<>(nThreads);
     }
 
-    public void submit(BaseCallable task) {
-        baseCallableList.add(task);
-        futureList.add(executor.submit(task));
+    public void add(BaseCallable<V> task, Map params) {
+        task.init(params);
+        callable = task;
     }
 
-    public void join() throws ExecutionException, InterruptedException {
-        for (Future future : futureList) {
-            future.get();
+    public boolean hasTask() {
+        return callable != null;
+    }
+
+    public void submit(long timeout) {
+        callable.restart(timeout);
+        future = executor.submit(callable);
+    }
+
+    public List<V> get() {
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error(e.getMessage(), e);
+            return null;
         }
     }
 
     public void stop() {
-        for (BaseCallable baseCallable : baseCallableList) {
-            baseCallable.stop();
-        }
+        callable.stop();
         executor.shutdown();
         //shutdown并不会join到主线程中
         while (!executor.isTerminated()) {

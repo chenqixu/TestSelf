@@ -453,6 +453,13 @@
             <version>0.6.3</version>
         </dependency>
 
+        <!-- mapdb -->
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>3.0.8</version>
+        </dependency>
+
         <!-- calcite -->
         <dependency>
             <groupId>org.apache.calcite</groupId>
@@ -639,6 +646,30 @@
             </exclusions>
         </dependency>
 
+        <!-- jstorm -->
+        <dependency>
+            <groupId>com.alibaba.jstorm</groupId>
+            <artifactId>jstorm-core</artifactId>
+            <version>2.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.9.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
@@ -705,8 +736,8 @@
                         <configuration>
                             <tasks>
                                 <!--<copy overwrite="true"-->
-                                      <!--tofile="${project.parent.build.directory}/${project.artifactId}-${project.version}.jar"-->
-                                      <!--file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>-->
+                                <!--tofile="${project.parent.build.directory}/${project.artifactId}-${project.version}.jar"-->
+                                <!--file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>-->
                                 <copy overwrite="true"
                                       tofile="D:/Document/Workspaces/Git/TestJStorm/target/${project.artifactId}-${project.version}.jar"
                                       file="${project.build.directory}/${project.artifactId}-${project.version}.jar"/>

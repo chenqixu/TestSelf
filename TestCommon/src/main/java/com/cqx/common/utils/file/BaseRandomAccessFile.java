@@ -1,8 +1,6 @@
 package com.cqx.common.utils.file;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -15,8 +13,8 @@ import java.nio.channels.OverlappingFileLockException;
  *
  * @author chenqixu
  */
-public class BaseRandomAccessFile {
-    private int index = 0;
+public class BaseRandomAccessFile implements Closeable {
+    private int writeIndex = 0;
     private RandomAccessFile randomAccessFile;
     //内容缓存，比较消耗内存
     private String data;
@@ -40,6 +38,10 @@ public class BaseRandomAccessFile {
         }
     }
 
+    public void seek(long pos) throws IOException {
+        randomAccessFile.seek(pos);
+    }
+
     public void write(String str) throws IOException {
         write(str.getBytes());
     }
@@ -49,9 +51,9 @@ public class BaseRandomAccessFile {
     }
 
     public void write(byte[] b, int len) throws IOException {
-        randomAccessFile.seek(index);
+        randomAccessFile.seek(writeIndex);
         randomAccessFile.write(b, 0, len);
-        index += len;
+        writeIndex += len;
     }
 
     public boolean write(long pos, byte[] b) throws IOException {
@@ -97,6 +99,10 @@ public class BaseRandomAccessFile {
         return b;
     }
 
+    public String readLine() throws IOException {
+        return randomAccessFile.readLine();
+    }
+
     private String readAll() throws IOException {
         int len = (int) randomAccessFile.length();
         byte[] b = new byte[len];
@@ -105,6 +111,11 @@ public class BaseRandomAccessFile {
         return new String(b);
     }
 
+    public long getFilePointer() throws IOException {
+        return randomAccessFile.getFilePointer();
+    }
+
+    @Override
     public void close() throws IOException {
         //文件通道
         if (fileChannel != null) {
@@ -116,8 +127,8 @@ public class BaseRandomAccessFile {
         }
     }
 
-    public int getIndex() {
-        return index;
+    public int getWriteIndex() {
+        return writeIndex;
     }
 
     public long length() throws IOException {
