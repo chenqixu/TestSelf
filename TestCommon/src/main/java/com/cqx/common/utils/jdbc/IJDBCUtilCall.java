@@ -19,6 +19,16 @@ public interface IJDBCUtilCall extends Closeable {
         List<QueryResult> getQueryResults();
     }
 
+    interface IQueryResultV2Bean extends IQueryResultBean {
+        List<QueryResult> getOldPksResults();
+
+        void setOp_type(String op_type);
+
+        void setQueryResults(List<QueryResult> queryResults);
+
+        void setOldPksResults(List<QueryResult> oldPksResults);
+    }
+
     abstract class ICallBack extends ICallBackClose {
         public abstract void call(ResultSet rs) throws SQLException;
     }

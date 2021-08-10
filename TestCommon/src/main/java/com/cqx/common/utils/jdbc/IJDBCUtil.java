@@ -257,7 +257,8 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * 仅适用于ogg，有对应的操作类型(i,u,d)<br>
      * 根据操作类型、表名、字段、pks、QueryResult自行拼接sql后，批量执行<br>
      * 有ismissing参数，表示字段缺失，不需要拼接入sql语句中<br>
-     * 支持写入合并
+     * 支持写入合并<br>
+     * 支持更新主键
      *
      * @param iQueryResultBeanList
      * @param table
@@ -334,6 +335,32 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
             , String[] fields, String[] fields_type, String[] pks, String[] pks_type
             , boolean ismissing, MergeEnum mergeEnum) throws SQLException;
+
+
+    /**
+     * 批量执行，op_type和QueryResult是分开的<br>
+     * 仅适用于ogg，有对应的操作类型(i,u,d)<br>
+     * 根据操作类型、表名、字段、pks、QueryResult自行拼接sql后，批量执行<br>
+     * 有ismissing参数，表示字段缺失，不需要拼接入sql语句中<br>
+     * 支持写入合并<br>
+     * 支持更新主键
+     *
+     * @param op_types
+     * @param tList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @param ismissing
+     * @param mergeEnum
+     * @param oldPksList  旧主键，支持主键更新
+     * @return
+     * @throws SQLException
+     */
+    List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing
+            , MergeEnum mergeEnum, List<List<QueryResult>> oldPksList) throws SQLException;
 
     /**
      * 批量执行，返回结果(0:成功，-1:失败)<br>
@@ -446,4 +473,13 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @throws Exception
      */
     void getConnection(IConnCallBack iConnCallBack) throws Exception;
+
+    /**
+     * 执行存储过程
+     *
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    boolean executeCall(String sql) throws SQLException;
 }

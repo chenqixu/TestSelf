@@ -1,7 +1,9 @@
 package com.cqx.common.utils.kafka;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 /**
  * KafkaProducerUtil<br>
@@ -53,12 +56,25 @@ public class KafkaProducerUtil<K, V> implements Closeable {
         producer = new KafkaProducer<>(properties);
     }
 
-    public void send(String topic, K key, V value) {
-        producer.send(new ProducerRecord<>(topic, key, value));
+    public Future<RecordMetadata> send(String topic, K key, V value) {
+        return producer.send(new ProducerRecord<>(topic, key, value));
     }
 
-    public void send(String topic, V value) {
-        producer.send(new ProducerRecord<K, V>(topic, value));
+    public Future<RecordMetadata> send(String topic, V value) {
+        return send(topic, null, value);
+    }
+
+    /**
+     * 回调模式
+     *
+     * @param topic
+     * @param key
+     * @param value
+     * @param callback
+     * @return
+     */
+    public Future<RecordMetadata> sendCallback(String topic, K key, V value, Callback callback) {
+        return producer.send(new ProducerRecord<>(topic, key, value), callback);
     }
 
     public void release() {

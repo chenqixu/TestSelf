@@ -2,6 +2,7 @@ package com.cqx.common.utils.jdbc;
 
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
+import com.cqx.common.utils.jdbc.IJDBCUtilCall.IQueryResultBean;
 import com.cqx.common.utils.system.ArraysUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
@@ -28,9 +29,10 @@ public class JDBCUtilTest extends TestBase {
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localAdbBean");
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("adbBean");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("adbBean");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("localoracleBean");
         dbBean.setPool(false);
 //        jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
         jdbcUtil = new JDBCUtil(dbBean);
@@ -141,8 +143,13 @@ public class JDBCUtilTest extends TestBase {
         logger.info("ret：{}", ret);
     }
 
+    /**
+     * 插入测试，MERGE_INTO_ONLY模式
+     *
+     * @throws Exception
+     */
     @Test
-    public void executeBatchSqlsInsertTest() throws Exception {
+    public void executeBatchSqlsInsertMERGE_INTO_ONLYTest() throws Exception {
         JDBCUtil jdbcUtil = null;
         try {
             Map params = getParam("jdbc.yaml");
@@ -151,15 +158,15 @@ public class JDBCUtilTest extends TestBase {
             jdbcUtil = new JDBCUtil(adbBean);
 
             List<List<QueryResult>> list = QueryResultFactory.getInstance()
-                    .buildQR("f_varchar", "java.lang.String", "test")
-                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_varchar", "java.lang.String", "test1")
+                    .buildQR("f_boolean", "java.lang.Boolean", true)
                     .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
                     .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
                     .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
                     .buildQR("f_decimal", "long", 591500319216463L)
                     .buildQR("f_pk", "long", 123L)
                     .toList()
-                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_varchar", "java.lang.String", "test2")
                     .buildQR("f_boolean", "java.lang.Boolean", false)
                     .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
                     .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
@@ -179,6 +186,385 @@ public class JDBCUtilTest extends TestBase {
             String[] pks_type = {"long", "long"};
             List<Integer> rets = jdbcUtil.executeBatch(op_types, list, table, fields, fields_type
                     , pks, pks_type, false, MergeEnum.MERGE_INTO_ONLY);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 插入测试，MERGE_INTO_ONLY模式，IQueryResultBean
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsInsertMERGE_INTO_ONLY_IQRTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<IQueryResultBean> qrBeanData = QueryResultFactory.getInstance(MergeBean.class)
+                    .buildQR("f_varchar", "java.lang.String", "test1")
+                    .buildQR("f_boolean", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toQRBeanList("i")
+                    .buildQR("f_varchar", "java.lang.String", "test2")
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toQRBeanList("i")
+                    .getQRBeanData();
+
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(qrBeanData, table, fields, fields_type
+                    , pks, pks_type, false, MergeEnum.MERGE_INTO_ONLY);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 插入测试，MERGE_INTO_UPDATE模式
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsInsertMERGE_INTO_UPDATETest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<List<QueryResult>> list = QueryResultFactory.getInstance()
+                    .buildQR("f_varchar", "java.lang.String", "test1")
+                    .buildQR("f_boolean", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toList()
+                    .buildQR("f_varchar", "java.lang.String", "test2")
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toList()
+                    .getData();
+
+            List<String> op_types = new ArrayList<>();
+            op_types.add("i");
+            op_types.add("i");
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(op_types, list, table, fields, fields_type
+                    , pks, pks_type, false, MergeEnum.MERGE_INTO_UPDATE);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 更新测试
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsUpdateTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<List<QueryResult>> list = QueryResultFactory.getInstance()
+                    .buildQR("f_varchar_isMissing", "java.lang.Boolean", false)
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toList()
+                    .getData();
+
+            List<String> op_types = new ArrayList<>();
+            op_types.add("u");
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(op_types, list, table, fields, fields_type
+                    , pks, pks_type, true, MergeEnum.MERGE_INTO_ONLY);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 更新测试，IQueryResultBean
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsUpdate_IQRTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<IQueryResultBean> qrBeanData = QueryResultFactory.getInstance(MergeBean.class)
+                    .buildQR("f_varchar_isMissing", "java.lang.Boolean", false)
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toQRBeanList("u")
+                    .getQRBeanData();
+
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(qrBeanData, table, fields, fields_type
+                    , pks, pks_type, true, MergeEnum.MERGE_INTO_ONLY);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 主键更新测试
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsUpdatePksTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<List<QueryResult>> list = QueryResultFactory.getInstance()
+                    .buildQR("f_varchar_isMissing", "java.lang.Boolean", false)
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean_isMissing", "java.lang.Boolean", false)
+                    .buildQR("f_boolean", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 124L)
+                    .toList()
+                    .getData();
+
+            List<List<QueryResult>> oldPks = QueryResultFactory.getInstance()
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean", "java.lang.Boolean", false)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 123L)
+                    .toList()
+                    .getData();
+
+            List<String> op_types = new ArrayList<>();
+            op_types.add("u");
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(op_types, list, table, fields, fields_type
+                    , pks, pks_type, true, MergeEnum.MERGE_INTO_ONLY, oldPks);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 主键更新测试，IQueryResultBean
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsUpdatePks_IQRTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<IQueryResultBean> qrBeanData = QueryResultFactory.getInstance(MergeBean.class)
+                    .buildQR("f_varchar_isMissing", "java.lang.Boolean", false)
+                    .buildQR("f_varchar", "java.lang.String", "test")
+                    .buildQR("f_boolean_isMissing", "java.lang.Boolean", false)
+                    .buildQR("f_boolean", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildQR("f_date_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildQR("f_time_isMissing", "java.lang.Boolean", true)
+                    .buildQR("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 124L)
+                    .buildOldPks("f_varchar", "java.lang.String", "test")
+                    .buildOldPks("f_boolean", "java.lang.Boolean", false)
+                    .buildOldPks("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
+                    .buildOldPks("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
+                    .buildOldPks("f_time", "java.sql.Time", new java.sql.Time(new Date().getTime()))
+                    .buildOldPks("f_decimal", "long", 591500319216463L)
+                    .buildOldPks("f_pk", "long", 123L)
+                    .toQRBeanList("u")
+                    .getQRBeanData();
+
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(qrBeanData, table, fields, fields_type
+                    , pks, pks_type, true, MergeEnum.MERGE_INTO_ONLY);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 删除测试
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsDeleteTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<List<QueryResult>> list = QueryResultFactory.getInstance()
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 124L)
+                    .toList()
+                    .getData();
+
+            List<String> op_types = new ArrayList<>();
+            op_types.add("d");
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(op_types, list, table, fields, fields_type
+                    , pks, pks_type, true, MergeEnum.MERGE_INTO_ONLY);
+            for (int ret : rets) {
+                logger.info("ret：{}", ret);
+            }
+        } finally {
+            if (jdbcUtil != null) jdbcUtil.close();
+        }
+    }
+
+    /**
+     * 删除测试，IQueryResultBean
+     *
+     * @throws Exception
+     */
+    @Test
+    public void executeBatchSqlsDelete_IQRTest() throws Exception {
+        JDBCUtil jdbcUtil = null;
+        try {
+            Map params = getParam("jdbc.yaml");
+            ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+            DBBean adbBean = paramsParserUtil.getBeanMap().get("adbBean");
+            jdbcUtil = new JDBCUtil(adbBean);
+
+            List<IQueryResultBean> qrBeanData = QueryResultFactory.getInstance(MergeBean.class)
+                    .buildQR("f_decimal", "long", 591500319216463L)
+                    .buildQR("f_pk", "long", 124L)
+                    .toQRBeanList("d")
+                    .getQRBeanData();
+
+            String table = "test1";
+            String[] fields = {"f_varchar", "f_boolean", "f_timestamp", "f_date", "f_time"};
+            String[] fields_type = {"java.lang.String", "boolean", "java.sql.Timestamp", "java.sql.Date", "java.sql.Time"};
+
+            String[] pks = {"f_decimal", "f_pk"};
+            String[] pks_type = {"long", "long"};
+            List<Integer> rets = jdbcUtil.executeBatch(qrBeanData, table, fields, fields_type
+                    , pks, pks_type, true, MergeEnum.MERGE_INTO_ONLY);
             for (int ret : rets) {
                 logger.info("ret：{}", ret);
             }
@@ -284,6 +670,55 @@ public class JDBCUtilTest extends TestBase {
         logger.info("getDefaultFieldsTypeAsList：{}", jdbcUtil.getDefaultFieldsTypeAsList(table_name));
     }
 
+    @Test
+    public void executeCall() throws SQLException {
+        String sql = "call DBMS_STATS.GATHER_TABLE_STATS('BISHOW','ALARM_FBSCJ_MONITOR',degree=>64)";
+        sql = "begin DBMS_STATS.GATHER_TABLE_STATS('WEB','TOOLUI_TASK',degree => 64) ; end;";
+//        boolean ret = jdbcUtil.executeCall(sql);
+        int ret = jdbcUtil.executeUpdate(sql);
+        logger.info("sql：{}，ret：{}", sql, ret);
+    }
+
+    @Test
+    public void interfaceExtendTest() {
+        infTest(new Q2() {
+            @Override
+            public String getType() {
+                return "q2";
+            }
+
+            @Override
+            public String getData() {
+                return "q2Data";
+            }
+        });
+        infTest(new Q1() {
+            @Override
+            public String getData() {
+                return "q1Data";
+            }
+        });
+    }
+
+    private void infTest(Q1 q1) {
+        if (q1 instanceof Q2) {
+            logger.info("getType：{}", ((Q2) q1).getType());
+        } else {
+            logger.info("getData：{}", q1.getData());
+        }
+//        Q2 q2 = (Q2) q1;
+//        logger.info("getData：{}，getType：{}", q2.getData(), q2.getType());
+    }
+
+    interface Q1 {
+        String getData();
+    }
+
+    interface Q2 extends Q1 {
+        String getType();
+    }
+
+
     class ConcurrentQuery1 extends BaseRunableThread {
         @Override
         protected void runnableExec() throws Exception {
@@ -297,29 +732,6 @@ public class JDBCUtilTest extends TestBase {
         protected void runnableExec() throws Exception {
             queryTest2();
             SleepUtil.sleepMilliSecond(500);
-        }
-    }
-
-    class MergeBean implements IJDBCUtilCall.IQueryResultBean {
-        private String op_type;
-        private List<QueryResult> queryResults;
-
-        @Override
-        public String getOp_type() {
-            return op_type;
-        }
-
-        public void setOp_type(String op_type) {
-            this.op_type = op_type;
-        }
-
-        @Override
-        public List<QueryResult> getQueryResults() {
-            return queryResults;
-        }
-
-        public void setQueryResults(List<QueryResult> queryResults) {
-            this.queryResults = queryResults;
         }
     }
 }

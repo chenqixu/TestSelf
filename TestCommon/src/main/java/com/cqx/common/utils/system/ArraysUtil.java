@@ -10,6 +10,8 @@ import java.util.List;
  * @author chenqixu
  */
 public class ArraysUtil {
+    public static final String ISMISSING = "_ismissing";
+    public static final String ISMISSING_TYPE = "java.lang.Boolean";
 
     /**
      * 数组相加，a1，a2变成一个新数组
@@ -128,5 +130,43 @@ public class ArraysUtil {
             send_fields.deleteCharAt(send_fields.length() - 1);
         }
         return send_fields.toString();
+    }
+
+    /**
+     * 在数组增加 字段_ismissing
+     *
+     * @param array
+     * @return
+     */
+    public static String[] addIsmissing(String[] array) {
+        List<String> tmpList = new ArrayList<>();
+        for (String tmp : array) {
+            tmpList.add(tmp + ISMISSING);
+            tmpList.add(tmp);
+        }
+        String[] tmp_array = new String[tmpList.size()];
+        for (int i = 0; i < tmpList.size(); i++) {
+            tmp_array[i] = tmpList.get(i);
+        }
+        return tmp_array;
+    }
+
+    /**
+     * 在数组中增加 _ismissing的类型java.lang.Boolean
+     *
+     * @param array
+     * @return
+     */
+    public static String[] addIsmissingType(String[] array) {
+        List<String> tmpList = new ArrayList<>();
+        for (String tmp : array) {
+            tmpList.add(ISMISSING_TYPE);
+            tmpList.add(tmp);
+        }
+        String[] tmp_array = new String[tmpList.size()];
+        for (int i = 0; i < tmpList.size(); i++) {
+            tmp_array[i] = tmpList.get(i);
+        }
+        return tmp_array;
     }
 }

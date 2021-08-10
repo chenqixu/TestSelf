@@ -34,6 +34,8 @@ public class FtpUtilTest {
         CollectorConfInfo.dataSourceFileRegex = "A04002[0-9]{17}.AVL";
         FTPFileFilter fileFilter = new DataColectorFTPFileFilter();
         FtpUtil.listFtpFiles(fileList, ftpClient, remoteFilePath, fileFilter);
+        FtpReplyCode replyCode = FtpUtil.getFtpReplyCode(ftpClient);
+        String replyString = FtpUtil.getReplyString(ftpClient);
         if (fileList.size() > 0) {
             FileInfo fileInfo = fileList.get(0);
             logger.info("size：{}，simple：{}，source_path：{}，file_name：{}", fileList.size(), fileInfo,
@@ -50,6 +52,8 @@ public class FtpUtilTest {
 //                down_cnt++;
 //                if (down_cnt > 2) break;
 //            }
+        } else {
+            logger.info("没有文件，\n【状态】{}，\n【说明】{}", replyCode, replyString);
         }
         FtpUtil.closeFtpConnect(ftpClient);
     }

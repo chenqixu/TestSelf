@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * RecordConvertor
+ * 记录转换器
  *
  * @author chenqixu
  */

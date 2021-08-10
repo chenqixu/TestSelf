@@ -23,7 +23,63 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * JDBCUtil
+ * <h2>JDBC工具类</h2>
+ * <p>
+ * <h3>示范：</h3>
+ * <pre>
+ * // 传一个DBBean进行初始化
+ * JDBCUtil jdbc = new JDBCUtil(DBBean);
+ * jdbc.其他操作
+ * jdbc.close();
+ * </pre>
+ * <p>
+ * {@link DBBean}获取：
+ * <ul>
+ * <li>如果你的配置是yaml格式</li>
+ * <pre>
+ *     dbbeans:
+ *       - name: srcBean
+ *         user_name: "label_core"
+ *         pass_word: "admin"
+ *         tns: "jdbc:postgresql://10.1.8.206:5432/label_core"
+ *         dbType: "POSTGRESQL"
+ *
+ *     // 那么DBBean就可以这样获取
+ *     Map param = YamlParser.builder().parserConfToMap(conf);// 配置文件名，含全路径
+ *     ParamsParserUtil paramsParserUtil = new ParamsParserUtil(param);// 解析Map
+ *     DBBean srcBean = paramsParserUtil.getBeanMap().get("srcBean");// 这里的name对应配置里的name
+ * </pre>
+ * <li>如果你不想用配置文件</li>
+ * <pre>
+ *     // 那么直接new一个DBBean对象
+ *     DBBean dbBean = new DBBean();
+ *     dbBean.setName("testDB");
+ *     dbBean.setDbType(DBType.ORACLE);
+ *     dbBean.setTns("jdbc:oracle:thin:@10.1.8.204:1521:orapri");
+ *     dbBean.setUser_name("test");
+ *     dbBean.setPass_word("123456");
+ * </pre>
+ * </ul>
+ * <p>
+ * {@link DBType}说明：
+ * <pre>
+ * 目前支持以下4种模式
+ * MYSQL
+ * ORACLE
+ * POSTGRESQL：实际上就是ADB
+ * OTHER：专门为其他数据库设置的类型
+ *
+ * // OTHER使用举例(GSDB)：
+ * // 需要设置driver、和validation_query
+ * dbbeans:
+ *   - name: gsdbBean
+ *     user_name: frtbase
+ *     pass_word: frtbase
+ *     tns:
+ *       - "jdbc:gsdb://10.1.8.148:22581/gsdb"
+ *     driver: fjlz.gsdb.jdbc.GsdbDriver
+ *     validation_query: select 1 from dual
+ * </pre>
  *
  * @author chenqixu
  */
@@ -212,6 +268,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @return List<QueryResult>
      * @throws SQLException SQL异常
      */
+    @Override
     public List<QueryResult> getTableMetaData(String tableName) throws SQLException {
         List<QueryResult> queryResultList = new ArrayList<>();
         Map<String, String> columnRemarksMap = new HashMap<>();
@@ -232,6 +289,7 @@ public class JDBCUtil implements IJDBCUtil {
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            if (isThrow()) throw e;
         } finally {
             closeResultSet(rs);
             closeConn(conn);
@@ -247,6 +305,7 @@ public class JDBCUtil implements IJDBCUtil {
             queryResultList = buildQueryResult(rsMeta, null);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            if (isThrow()) throw e;
         } finally {
             closeResultSet(rs);
             closeStm(stm);
@@ -857,17 +916,18 @@ public class JDBCUtil implements IJDBCUtil {
 
     /**
      * 根据操作类型，字段，pk来构造SQL，最后批量执行<br>
-     * 支持写入合并
+     * 支持写入合并<br>
+     * 支持更新主键
      *
-     * @param iQueryResultBeanList
-     * @param table
-     * @param fields
-     * @param fields_type
-     * @param pks
-     * @param pks_type
-     * @param ismissing
-     * @param mergeEnum
-     * @return
+     * @param iQueryResultBeanList 数据
+     * @param table                表名
+     * @param fields               更新字段[]
+     * @param fields_type          更新字段类型[]
+     * @param pks                  主键[]
+     * @param pks_type             主键类型[]
+     * @param ismissing            ogg特殊字段，表示字段是否有用
+     * @param mergeEnum            写入合并模式
+     * @return 执行结果集合
      * @throws SQLException
      */
     @Override
@@ -892,9 +952,14 @@ public class JDBCUtil implements IJDBCUtil {
         for (IQueryResultBean iQueryResultBean : iQueryResultBeanList) {
             String op_type = iQueryResultBean.getOp_type();
             List<QueryResult> queryResults = iQueryResultBean.getQueryResults();
+            List<QueryResult> oldPksResults = null;
+            if (iQueryResultBean instanceof IQueryResultV2Bean) {
+                IQueryResultV2Bean iQueryResultV2Bean = (IQueryResultV2Bean) iQueryResultBean;
+                oldPksResults = iQueryResultV2Bean.getOldPksResults();
+            }
             //构造SQL
-            String sql = buildBatchSQL(op_type, queryResults, table, fields,
-                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, mergeEnum);
+            String sql = buildBatchSQL(op_type, queryResults, table, fields, fields_type, pks, pks_type
+                    , ismissing, insert_fields, insert_fields_type, mergeEnum, oldPksResults);
             if (sql != null && sql.length() > 0) sqlList.add(sql);
         }
         return executeBatch(sqlList);
@@ -983,6 +1048,56 @@ public class JDBCUtil implements IJDBCUtil {
             //构造SQL
             String sql = buildBatchSQL(op_type, queryResults, table, fields,
                     fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, mergeEnum);
+            if (sql != null && sql.length() > 0) sqlList.add(sql);
+        }
+        return executeBatch(sqlList);
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL，最后批量执行<br>
+     * 支持写入合并<br>
+     * 支持更新主键
+     *
+     * @param op_types
+     * @param tList
+     * @param table
+     * @param fields
+     * @param fields_type
+     * @param pks
+     * @param pks_type
+     * @param ismissing
+     * @param mergeEnum
+     * @param oldPksList  旧主键，支持主键更新
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public List<Integer> executeBatch(List<String> op_types, List<List<QueryResult>> tList, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing
+            , MergeEnum mergeEnum, List<List<QueryResult>> oldPksList) throws SQLException {
+        List<String> sqlList = new ArrayList<>();
+
+        //检查
+        if (op_types.size() != tList.size()) throw new SQLException("op_types长度和tList长度不一致！");
+        if (table == null || table.trim().length() == 0) throw new NullPointerException("table为空！");
+        if (fields == null || fields.length == 0) throw new NullPointerException("fields为空！");
+        if (fields_type == null || fields_type.length == 0) throw new NullPointerException("fields_type为空！");
+        if (fields.length != fields_type.length) throw new SQLException("fields长度和fields_type不一致！");
+        if (pks == null || pks.length == 0) throw new NullPointerException("pks为空！");
+        if (pks_type == null || pks_type.length == 0) throw new NullPointerException("pks_type为空！");
+        if (pks.length != pks_type.length) throw new SQLException("pks长度和pks_type不一致！");
+
+        //插入的字段、字段类型由 field+pks 组成
+        String[] insert_fields_type = ArraysUtil.arrayCopy(fields_type, pks_type);
+        String insert_fields = ArraysUtil.arrayToStr(ArraysUtil.arrayCopy(fields, pks), ",");
+        //具体处理
+        for (int op_type_index = 0; op_type_index < op_types.size(); op_type_index++) {
+            String op_type = op_types.get(op_type_index);
+            List<QueryResult> queryResults = tList.get(op_type_index);
+            List<QueryResult> oldPksResults = oldPksList.get(op_type_index);
+            //构造SQL
+            String sql = buildBatchSQL(op_type, queryResults, table, fields,
+                    fields_type, pks, pks_type, ismissing, insert_fields, insert_fields_type, mergeEnum, oldPksResults);
             if (sql != null && sql.length() > 0) sqlList.add(sql);
         }
         return executeBatch(sqlList);
@@ -1517,10 +1632,35 @@ public class JDBCUtil implements IJDBCUtil {
      * @return
      * @throws SQLException
      */
-    private String buildBatchSQL(String op_type, List<QueryResult> queryResults,
-                                 String table, String[] fields, String[] fields_type,
-                                 String[] pks, String[] pks_type, boolean ismissing,
-                                 String insert_fields, String[] insert_fields_type, MergeEnum mergeEnum) throws SQLException {
+    private String buildBatchSQL(String op_type, List<QueryResult> queryResults, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing
+            , String insert_fields, String[] insert_fields_type, MergeEnum mergeEnum) throws SQLException {
+        return buildBatchSQL(op_type, queryResults, table, fields, fields_type, pks, pks_type, ismissing
+                , insert_fields, insert_fields_type, mergeEnum, null);
+    }
+
+    /**
+     * 根据操作类型，字段，pk来构造SQL，支持主键更新
+     *
+     * @param op_type            操作类型：i、u、d
+     * @param queryResults       操作数据
+     * @param table              操作表
+     * @param fields             更新字段（需要剔除pk）
+     * @param fields_type        更新字段类型
+     * @param pks                pk字段
+     * @param pks_type           pk字段类型
+     * @param ismissing          字段是否有值（ogg特殊）
+     * @param insert_fields      插入字段
+     * @param insert_fields_type 插入字段类型
+     * @param mergeEnum          写入合并的模式，分为MERGE_INTO_ONLY和MERGE_INTO_UPDATE
+     * @param oldPksResults      旧主键，支持主键更新
+     * @return
+     * @throws SQLException
+     */
+    private String buildBatchSQL(String op_type, List<QueryResult> queryResults, String table
+            , String[] fields, String[] fields_type, String[] pks, String[] pks_type, boolean ismissing
+            , String insert_fields, String[] insert_fields_type, MergeEnum mergeEnum
+            , List<QueryResult> oldPksResults) throws SQLException {
         String sql = "";
         if (op_type == null || op_type.trim().length() == 0) throw new NullPointerException("op_type为空！");
         op_type = op_type.toLowerCase();
@@ -1542,10 +1682,9 @@ public class JDBCUtil implements IJDBCUtil {
                 if (mergeEnum != null) {
                     StringBuilder insert_where_values = new StringBuilder();
                     // 处理where
-                    insert_where_values.append(buildWhere(op_type, queryResults, fields, pks, pks_type, ismissing));
-                    if (insert_where_values.length() > 0) {
-                        insert_where_values.delete(insert_where_values.length() - 5, insert_where_values.length());
-                    } else if (insert_where_values.length() == 0) {
+                    insert_where_values.append(buildSql(op_type, queryResults, fields
+                            , pks, pks_type, ismissing, "and"));
+                    if (insert_where_values.length() == 0) {
                         //todo pkMissing
 //                    if (pkMissing != null) pkMissing.mark();
                         logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
@@ -1602,42 +1741,52 @@ public class JDBCUtil implements IJDBCUtil {
                     if (queryResults.size() != (fields.length + pks.length))
                         throw new SQLException("数据长度和(fields+pks)的长度不一致！");
                     //处理set
-                    for (int i = 0; i < fields.length; i++) {
-                        QueryResult queryResult = queryResults.get(i);
-                        String field = fields[i];
-                        String field_type = fields_type[i];
-                        update_set_values
-                                .append(field)
-                                .append("=")
-                                .append(stmtSetValue(field_type, queryResult.getValue()));
-                        if (i < fields.length - 1) {
-                            update_set_values.append(",");
-                        }
-                    }
+                    update_set_values.append(buildSql("all", queryResults, null
+                            , fields, fields_type, ismissing, ","));
                 }
-                // 处理where
-                update_where_values.append(buildWhere(op_type, queryResults, fields, pks, pks_type, ismissing));
-                if (update_where_values.length() > 0) {
-                    update_where_values.delete(update_where_values.length() - 5, update_where_values.length());
-                } else if (update_where_values.length() == 0) {
-                    //todo pkMissing
+                // 更新主键
+                if (oldPksResults != null && oldPksResults.size() > 0) {
+                    int update_set_len = update_set_values.length();
+                    logger.warn("捕获到更新主键！");
+                    // 如果set不为空
+                    if (update_set_len > 0) {
+                        update_set_values.append(",");
+                    }
+                    // 把queryResults中的主键加到set中
+                    update_set_values.append(buildSql("u_pks", queryResults, fields
+                            , pks, pks_type, ismissing, ","));
+                    // oldPkResults处理到where中
+                    update_where_values.append(buildSql(op_type, oldPksResults, fields
+                            , pks, pks_type, ismissing, "and"));
+                    if (update_where_values.length() == 0) {
+                        //todo pkMissing
 //                    if (pkMissing != null) pkMissing.mark();
-                    logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
-                            op_type, Arrays.asList(pks), queryResults);
-                    break;
+                        logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
+                                op_type, Arrays.asList(pks), oldPksResults);
+                        break;
+                    }
+                } else {
+                    // 处理where
+                    update_where_values.append(buildSql(op_type, queryResults, fields
+                            , pks, pks_type, ismissing, "and"));
+                    if (update_where_values.length() == 0) {
+                        //todo pkMissing
+//                    if (pkMissing != null) pkMissing.mark();
+                        logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
+                                op_type, Arrays.asList(pks), queryResults);
+                        break;
+                    }
                 }
                 sql = String.format(update, table, update_set_values.toString(), update_where_values.toString());
                 break;
             case "d":
-                //数据检查
+                // 数据检查
                 if (queryResults.size() != (pks.length))
                     throw new SQLException("数据长度和pks的长度不一致！");
                 StringBuilder delete_values = new StringBuilder();
-                //处理where
-                delete_values.append(buildWhere(op_type, queryResults, fields, pks, pks_type, ismissing));
-                if (delete_values.length() > 0) {
-                    delete_values.delete(delete_values.length() - 5, delete_values.length());
-                } else if (delete_values.length() == 0) {
+                // 处理where
+                delete_values.append(buildSql(op_type, queryResults, fields, pks, pks_type, ismissing, "and"));
+                if (delete_values.length() == 0) {
                     //todo pkMissing
 //                    if (pkMissing != null) pkMissing.mark();
                     logger.warn("where条件均为空！op_type：{}，pks：{}，数据：{}",
@@ -2005,6 +2154,15 @@ public class JDBCUtil implements IJDBCUtil {
         }
     }
 
+    /**
+     * 通过字符串构建Clob
+     *
+     * @param conn    连接
+     * @param content 内容
+     * @return
+     * @throws SQLException
+     * @throws IOException
+     */
     private Clob buildClob(Connection conn, String content) throws SQLException, IOException {
         CLOB clob = CLOB.createTemporary(conn, false, CLOB.DURATION_SESSION);
         clob.open(CLOB.MODE_READWRITE);
@@ -2014,47 +2172,121 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
-     * 处理where
+     * <h3>拼接sql</h3>
+     * [field1]=[field1_value] [splitStr] [field2]=[field2_value] ……
+     * <p>
+     * 循环buildFields，field从buildFields获取，field_type从buildFields_type获取，field_value从queryResults获取
+     * <pre>
+     *     如：update table set [拼接的sql] where 条件
+     *     或：update table set field=value where [拼接的sql]
+     *     或：select field from table where [拼接的sql]
+     *     或：delete from table where [拼接的sql]
+     * </pre>
+     * 操作类型
+     * <pre>
+     *     i：值从fields.length开始获取，跳过前面的更新字段
+     *     u-isMissing：值从fields.length * 2开始获取，跳过前面的更新字段，前面的更新字段有带isMissing
+     *     u-not isMissing：值从fields.length开始获取，跳过前面的更新字段
+     *     d：值从头开始获取，因为这里传入的queryResults只有where条件
+     *     u_pks：值从fields.length * 2开始获取，跳过前面的更新字段，前面的更新字段有带isMissing
+     * </pre>
      *
-     * @param op_type
-     * @param queryResults
-     * @param fields
-     * @param pks
-     * @param pks_type
-     * @param ismissing
-     * @return
+     * @param op_type          操作类型[i|u|d|u_pks]
+     * @param queryResults     数据结果
+     * @param fields           更新字段
+     * @param buildFields      拼接sql中的字段[]
+     * @param buildFields_type 拼接sql中的字段[]的类型[]
+     * @param isMissing        是否包含isMissing字段
+     * @param splitStr         分隔字符串，可以是","，也可以是"and"
+     * @return 拼接的sql，用splitStr进行衔接
      */
-    private String buildWhere(String op_type, List<QueryResult> queryResults, String[] fields
-            , String[] pks, String[] pks_type, boolean ismissing) {
-        StringBuilder where_values = new StringBuilder();
-        // 处理where
-        for (int i = 0; i < pks.length; i++) {
+    private String buildSql(String op_type, List<QueryResult> queryResults, String[] fields
+            , String[] buildFields, String[] buildFields_type, boolean isMissing, String splitStr) {
+        StringBuilder build_values = new StringBuilder();
+        // 循环buildFields - 拼接sql中的字段[]
+        for (int i = 0; i < buildFields.length; i++) {
             QueryResult queryResult;
-            if ("i".equals(op_type)) {
-                // 去掉前面的更新字段，只用到后面的pks
-                queryResult = queryResults.get(fields.length + i);
-            } else if ("u".equals(op_type)) {
-                if (ismissing) {
-                    queryResult = queryResults.get(fields.length * 2 + i);
-                } else {
+            switch (op_type) {
+                case "i":
+                    // 去掉前面的更新字段，只用到后面的主键
+                    // queryResults规则
+                    // field1，field2……，pks1，pks2……
                     queryResult = queryResults.get(fields.length + i);
-                }
-            } else if ("d".equals(op_type)) {
-                queryResult = queryResults.get(i);
-            } else {
-                return where_values.toString();
+                    break;
+                case "u":
+                    // 去掉前面的更新字段，只用到后面的主键
+                    if (isMissing) {
+                        // 前面的更新字段有带isMissing
+                        // queryResults规则
+                        // field1_isMissing，field1，field2_isMissing，field2……，pks1，pks2……
+                        queryResult = queryResults.get(fields.length * 2 + i);
+                    } else {
+                        // queryResults规则
+                        // field1，field2……，pks1，pks2……
+                        queryResult = queryResults.get(fields.length + i);
+                    }
+                    break;
+                case "d":
+                case "all":
+                    // queryResults规则
+                    // pks1，pks2……
+                    queryResult = queryResults.get(i);
+                    break;
+                case "u_pks":
+                    // 去掉前面的更新字段，只用到后面的主键
+                    // 前面的更新字段有带isMissing
+                    // queryResults规则
+                    // field1_isMissing，field1，field2_isMissing，field2……，pks1，pks2……
+                    queryResult = queryResults.get(fields.length * 2 + i);
+                    break;
+                default:
+                    // 不认识的类型，直接返回
+                    return build_values.toString();
             }
-            String pk = pks[i];
-            String pk_type = pks_type[i];
+            // 要拼接的字段
+            String buildField = buildFields[i];
+            // 要拼接的字段类型
+            String buildField_type = buildFields_type[i];
+            // 从对应的queryResult取值
             Object field_value = queryResult.getValue();
+            // 如果不为空则进行拼接
             if (field_value != null) {
-                where_values
-                        .append(pk)
+                build_values
+                        .append(buildField)
                         .append("=")
-                        .append(stmtSetValue(pk_type, field_value));
-                where_values.append(" and ");
+                        .append(stmtSetValue(buildField_type, field_value));
+                // 如果不是末尾，则需要拼接上分隔字符串
+                if (i < buildFields.length - 1) {
+                    build_values.append(" ").append(splitStr).append(" ");
+                }
             }
         }
-        return where_values.toString();
+        return build_values.toString();
+    }
+
+    /**
+     * 执行存储过程
+     *
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    public boolean executeCall(String sql) throws SQLException {
+        Connection conn = null;
+        CallableStatement cstm = null;
+        boolean ret = false;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            cstm = conn.prepareCall(sql);
+            ret = cstm.execute();
+        } catch (SQLException e) {
+            logger.error("JDBCUtilException：executeCall异常，" + e.getMessage() + "，报错的SQL：" + sql, e);
+            if (isThrow()) throw e;
+        } finally {
+            closePstmt(cstm);
+            closeConn(conn);
+        }
+        return ret;
     }
 }

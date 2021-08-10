@@ -92,8 +92,7 @@ public class FtpUtil {
      * @param fileFilter
      * @return
      */
-    public static List<FileInfo> listFtpFiles(List<FileInfo> fileList, FTPClient ftpClient,
-                                              String remoteFilePath, FTPFileFilter fileFilter) {
+    public static List<FileInfo> listFtpFiles(List<FileInfo> fileList, FTPClient ftpClient, String remoteFilePath, FTPFileFilter fileFilter) {
         if (ftpClient != null) {
             try {
                 //描述指定目录,取出指定后缀名的文件,放入数组中
@@ -161,6 +160,15 @@ public class FtpUtil {
         return inputStream;
     }
 
+    /**
+     * 文件下载
+     *
+     * @param ftpClient
+     * @param ftp_file_path
+     * @param file_name
+     * @param save_file_path
+     * @throws IOException
+     */
     public static void ftpFileDownload(FTPClient ftpClient, String ftp_file_path, String file_name, String save_file_path) throws IOException {
         TimeCostUtil timeCostUtil = new TimeCostUtil();
         timeCostUtil.start();
@@ -307,6 +315,29 @@ public class FtpUtil {
     }
 
     /**
+     * 获取返回码的说明
+     *
+     * @param ftpClient
+     * @return
+     */
+    public static String getReplyString(FTPClient ftpClient) {
+        if (ftpClient != null) {
+            return ftpClient.getReplyString();
+        }
+        return null;
+    }
+
+    /**
+     * 获取返回码的说明
+     *
+     * @param ftpClient
+     * @return
+     */
+    public static FtpReplyCode getFtpReplyCode(FTPClient ftpClient) {
+        return FtpReplyCode.getFtpReplyCodeByCode(getReplyCode(ftpClient));
+    }
+
+    /**
      * 结束数据连接
      *
      * @param ftpClient
@@ -319,5 +350,4 @@ public class FtpUtil {
         }
         return -1;
     }
-
 }

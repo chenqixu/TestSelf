@@ -3,6 +3,8 @@ package com.cqx.common.utils.kafka;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.list.IKVList;
+import com.cqx.common.utils.system.ArraysUtil;
+import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -207,5 +210,70 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             logger.info("获取当前 consumer已经分配到的分区：{}", kafkaConsumerUtil.assignedPartitions());
 //            }
         }
+    }
+
+    @Test
+    public void updatePksTest() throws Exception {
+        String oggTopic = "USER_PRODUCT";
+        String flatTopic = "FLAT_USER_PRODUCT";
+        String[] pks = {"home_city",
+                "product_type",
+                "subscription_id",
+                "user_id",
+                "product_id"};
+        String[] send_pks_before_array = ArraysUtil.arrayAddPrefix(pks, "before_");
+        String[] send_pks_after_array = ArraysUtil.arrayAddPrefix(pks, "after_");
+        // 从配置文件解析参数
+        Map param = (Map) getParam("kafka.yaml").get("param");
+        // 从配置中获取话题工具URL
+        String schemaUrl = (String) param.get("schema_url");
+        logger.info("【param】{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            // 订阅
+            kafkaConsumerUtil.subscribe(oggTopic);
+            // 获取OggSchema
+            Schema oggScheam = kafkaConsumerUtil.getSchema();
+            SchemaUtil schemaUtil = new SchemaUtil(schemaUrl);
+            // 获取扁平化Schema
+            Schema flatSchema = schemaUtil.getSchemaByTopic(flatTopic);
+
+            // 扁平化工具
+            FlatUtil flatUtil = new FlatUtil(oggTopic, oggScheam, flatSchema);
+
+            for (IKVList.Entry<ConsumerRecord<String, byte[]>, GenericRecord> entry : kafkaConsumerUtil.pollsHasConsumerRecord(1000L).entrySet()) {
+                ConsumerRecord<String, byte[]> key = entry.getKey();
+                GenericRecord value = entry.getValue();
+                logger.info("【timestamp】{}，【offset】{}，【value】{}", key.timestamp(), key.offset(), value);
+
+                // 扁平化处理
+                GenericRecord flatRecord = flatUtil.flat(value);
+                Map beforePksMap = new HashMap();
+                for (String before : send_pks_before_array) {
+                    logger.debug("key：{}，value：{}", before, flatRecord.get(before));
+                    beforePksMap.put(before.replace("before_", ""), flatRecord.get(before));
+                }
+                for (String after : send_pks_after_array) {
+                    boolean compare = compare(beforePksMap.get(after.replace("after_", ""))
+                            , flatRecord.get(after));
+                    logger.debug("key：{}，value：{}，compare：{}", after, flatRecord.get(after), compare);
+                    if (!compare) {
+                        logger.warn("捕获到主键更新！");
+//                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 比较两个对象，转成toString进行比较
+     *
+     * @param o1
+     * @param o2
+     * @return
+     */
+    private boolean compare(Object o1, Object o2) {
+        logger.info("o1：{} {}，o2：{} {}", o1.getClass(), o1, o2.getClass(), o2);
+        return o1.toString().equals(o2.toString());
     }
 }

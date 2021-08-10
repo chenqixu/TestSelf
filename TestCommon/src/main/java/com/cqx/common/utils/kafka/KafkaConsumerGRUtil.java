@@ -1,7 +1,10 @@
 package com.cqx.common.utils.kafka;
 
+import com.cqx.common.utils.file.FileCount;
+import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.list.IKVList;
 import com.cqx.common.utils.list.KVList;
+import com.cqx.common.utils.param.ParamUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +41,8 @@ import java.util.Map;
  */
 public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerGRUtil.class);
+    private final String schemaMode_URL = "URL";
+    private final String schemaMode_FILE = "FILE";
     private SchemaUtil schemaUtil;
     private RecordConvertor recordConvertor = null;
     private Schema schema;
@@ -44,13 +50,40 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     private String groupId;
     private String fromTime;
     private String fromOffset;
+    private String schemaMode;
+    private String avscStr;
     private Map<TopicPartition, Long> topicPartitionOffsetMap;
 
     public KafkaConsumerGRUtil(Map stormConf) throws IOException {
         super(stormConf);
-        String schema_url = (String) stormConf.get("schema_url");
-        // schema工具类
-        schemaUtil = new SchemaUtil(schema_url);
+        // 新增schema读取模式：[URL|FILE]，默认是URL
+        try {
+            schemaMode = ParamUtil.setValDefault(stormConf, "kafkaconf.newland.schema.mode", schemaMode_URL);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            // 默认是URL
+            schemaMode = schemaMode_URL;
+        }
+        // schema模式匹配
+        switch (schemaMode) {
+            // 本地文件模式
+            case schemaMode_FILE:
+                // 读取avsc文件
+                String avsc_file = (String) stormConf.get("kafkaconf.newland.schema.file");
+                if (avsc_file == null || avsc_file.trim().length() == 0 || !FileUtil.isExists(avsc_file)) {
+                    throw new RuntimeException("初始化失败，读取avsc文件异常！kafkaconf.newland.schema.file：" + avsc_file);
+                }
+                avscStr = avscFromFile(avsc_file);
+                logger.info("从 {} 文件读取avsc文件内容：{}", avsc_file, avscStr);
+                schemaUtil = new SchemaUtil(null);
+                break;
+            // 远程服务、默认模式
+            case schemaMode_URL:
+            default:
+                String schema_url = (String) stormConf.get("schema_url");
+                //schema工具类
+                schemaUtil = new SchemaUtil(schema_url);
+                break;
+        }
         // 模式
         mode = (String) stormConf.get("kafkaconf.newland.consumer.mode");
         // 消费时间
@@ -69,7 +102,18 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     @Override
     public void subscribe(String topic) {
         super.subscribe(topic);
-        schema = schemaUtil.getSchemaByTopic(topic);
+        // schema模式匹配
+        switch (schemaMode) {
+            case schemaMode_FILE:
+                // schema从本地文件获取
+                schema = schemaUtil.getSchemaByString(avscStr);
+                break;
+            case schemaMode_URL:
+            default:
+                // schema从远程服务器获取
+                schema = schemaUtil.getSchemaByTopic(topic);
+                break;
+        }
         //记录转换工具类
         recordConvertor = new RecordConvertor(schema);
         try {
@@ -110,7 +154,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
                 logger.info("从group id：{}，的上个位置消费", groupId);
             }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("kafka模式匹配异常，对应模式：%s", mode), e);
+            throw new RuntimeException("订阅话题异常", e);
         }
     }
 
@@ -280,5 +324,32 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
 
     public Schema getSchema() {
         return schema;
+    }
+
+    /**
+     * 从文件读取avsc
+     *
+     * @param file_name
+     * @return
+     * @throws IOException
+     */
+    public String avscFromFile(String file_name) throws IOException {
+        // 读取文件
+        FileCount fileCount;
+        FileUtil fileUtils = new FileUtil();
+        final StringBuilder avsc = new StringBuilder();
+        try {
+            fileCount = new FileCount() {
+                @Override
+                public void run(String content) throws IOException {
+                    avsc.append(content);
+                }
+            };
+            fileUtils.setReader(file_name);
+            fileUtils.read(fileCount);
+        } finally {
+            fileUtils.closeRead();
+        }
+        return avsc.toString();
     }
 }

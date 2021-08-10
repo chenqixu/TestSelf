@@ -36,3 +36,20 @@ dbbeans:
     pass_word: "T%vdNV#i$2"
     tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
     dbType: "ORACLE"
+  - name: localoracleBean
+    user_name: "bishow"
+    pass_word: "bishow"
+    tns: "jdbc:oracle:thin:@192.168.230.128:1521:orcl"
+    dbType: "ORACLE"
+  - name: hiveHuaWeiBean
+    user_name: ""
+    pass_word: ""
+    tns: ""
+    dbType: "HIVE3"
+    auth:
+      auth_type: ""
+      bdoc_id: ""
+      bdoc_key: ""
+      principal: ""
+      keytab: ""
+      krb5: ""

@@ -1,9 +1,13 @@
 package com.cqx.common.utils.kafka;
 
 import com.cqx.common.bean.kafka.AvroLevelData;
+import com.cqx.common.bean.kafka.DefaultBean;
+import org.apache.avro.Schema;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /**
  * KafkaProducerGRUtil
@@ -24,6 +28,7 @@ import java.util.Map;
 public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
     private GenericRecordUtil genericRecordUtil;
     private String topic;
+    private Schema schema;
 
     public KafkaProducerGRUtil(Map stormConf) throws IOException {
         super(stormConf);
@@ -36,13 +41,14 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
         //初始化schema
         this.topic = topic;
         genericRecordUtil.addTopic(topic);
+        schema = genericRecordUtil.getSchema(topic);
     }
 
     /**
      * 发送随机数据
      */
-    public void sendRandom() {
-        send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic));
+    public Future<RecordMetadata> sendRandom() {
+        return send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic));
     }
 
     /**
@@ -50,24 +56,32 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
      *
      * @param param
      */
-    public void sendRandom(Map<String, String> param) {
-        send(topic, genericRecordUtil.genericRandomRecord(topic, param));
+    public Future<RecordMetadata> sendRandom(Map<String, String> param) {
+        return send(topic, genericRecordUtil.genericRandomRecord(topic, param));
     }
 
-    public void sendRandom(AvroLevelData avroLevelData) {
-        send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic, avroLevelData));
+    public Future<RecordMetadata> sendRandom(AvroLevelData avroLevelData) {
+        return send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic, avroLevelData));
     }
 
-    public void sends(String kafkaKey, Map<String, String> kafkaValue) {
+    public Future<RecordMetadata> sends(String kafkaKey, Map<String, String> kafkaValue) {
         byte[] msg = genericRecordUtil.genericRecord(topic, kafkaValue);
         if (kafkaKey != null) {
-            send(topic, kafkaKey, msg);
+            return send(topic, kafkaKey, msg);
         } else {
-            send(topic, msg);
+            return send(topic, msg);
         }
     }
 
-    public void sends(Map<String, String> kafkaValue) {
-        sends(null, kafkaValue);
+    public Future<RecordMetadata> sends(Map<String, String> kafkaValue) {
+        return sends(null, kafkaValue);
+    }
+
+    public Schema getSchema() {
+        return schema;
+    }
+
+    public void setDefaultBean(DefaultBean defaultBean) {
+        genericRecordUtil.setDefaultBean(defaultBean);
     }
 }
