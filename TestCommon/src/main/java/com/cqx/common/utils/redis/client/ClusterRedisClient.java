@@ -12,18 +12,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClusterRedisClient extends RedisClient {
     private static final Logger logger = LoggerFactory.getLogger(ClusterRedisClient.class);
-    private JedisPoolConfig config;
-    private MyJedisCluster cluster;
+    private JedisCluster cluster;
     private Set<HostAndPort> HostAndPort_set = new HashSet<>();
 
     public ClusterRedisClient(RedisFactory.Builder builder) {
-        config = new JedisPoolConfig();
-        config.setMaxIdle(DEFAULT_MAX_IDLE);
-        config.setMaxTotal(DEFAULT_MAX_TOTAL);
-        config.setMaxWaitMillis(DEFAULT_MAX_WAIT_MILLIS);
         addHostAndPort(builder);
-//        cluster = new MyJedisCluster(HostAndPort_set, config);
-        cluster = new MyJedisCluster(HostAndPort_set);
+        if (builder.isPipeline()) {
+            cluster = new MyJedisCluster(HostAndPort_set);
+            setPipeline(true);
+        } else {
+            cluster = new JedisCluster(HostAndPort_set);
+        }
     }
 
     private void addHostAndPort(RedisFactory.Builder builder) {
@@ -149,9 +148,13 @@ public class ClusterRedisClient extends RedisClient {
 
     @Override
     public void close() {
-        //释放所有为pipeline分配的Jedis连接
-        cluster.reset();
-        //调用JedisCluster自身的close
+        // 释放所有为pipeline分配的Jedis连接
+        if (isPipeline()) {
+            if (cluster instanceof MyJedisCluster) {
+                ((MyJedisCluster) cluster).reset();
+            }
+        }
+        // 调用JedisCluster自身的close
         try {
             cluster.close();
         } catch (IOException e) {
@@ -175,23 +178,34 @@ public class ClusterRedisClient extends RedisClient {
         }
 
         private Pipeline getPipeline(String key) {
-            return cluster.callBack(new MyJedisCluster.MyJedisClusterCallBack<Pipeline>() {
-                @Override
-                public Pipeline call() {
-                    int slot = cluster.getSlot(key);
-                    String node = cluster.getNodeBySlot(slot);
-                    Pipeline pipeline = pipelinePool.get(node);
-                    if (pipeline == null) {
-                        Jedis jedis = cluster.getConnectionFromSlot(slot);
-                        if (jedis != null) {
-                            pipeline = jedis.pipelined();
-                            pipelinePool.put(node, pipeline);
-                            logger.debug("pipelinePool.put：{}", node);
-                        } else throw new NullPointerException("slot : " + slot + ", node：" + node + "，jedis is null !");
-                    }
-                    return pipeline;
+            if (isPipeline()) {
+                if (cluster instanceof MyJedisCluster) {
+                    MyJedisCluster myJedisCluster = (MyJedisCluster) cluster;
+                    return myJedisCluster.callBack(new MyJedisCluster.MyJedisClusterCallBack<Pipeline>() {
+                        @Override
+                        public Pipeline call() {
+                            int slot = myJedisCluster.getSlot(key);
+                            String node = myJedisCluster.getNodeBySlot(slot);
+                            Pipeline pipeline = pipelinePool.get(node);
+                            if (pipeline == null) {
+                                Jedis jedis = myJedisCluster.getConnectionFromSlot(slot);
+                                if (jedis != null) {
+                                    pipeline = jedis.pipelined();
+                                    pipelinePool.put(node, pipeline);
+                                    logger.debug("pipelinePool.put：{}", node);
+                                } else {
+                                    throw new NullPointerException("slot : " + slot + ", node：" + node + "，jedis is null !");
+                                }
+                            }
+                            return pipeline;
+                        }
+                    });
+                } else {
+                    throw new UnsupportedOperationException("客户端初始化异常，非自定义集群！" + cluster.getClass());
                 }
-            });
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -201,7 +215,11 @@ public class ClusterRedisClient extends RedisClient {
 
         @Override
         protected void renewCache() {
-            cluster.renewCache();
+            if (isPipeline()) {
+                if (cluster instanceof MyJedisCluster) {
+                    ((MyJedisCluster) cluster).renewCache();
+                }
+            }
         }
 
         @Override
@@ -238,32 +256,32 @@ public class ClusterRedisClient extends RedisClient {
 
         @Override
         protected void set_inside(String key, String value) {
-            getPipeline(key).set(key, value);
+            if (isPipeline()) getPipeline(key).set(key, value);
         }
 
         @Override
         protected void del_inside(String key) {
-            getPipeline(key).del(key);
+            if (isPipeline()) getPipeline(key).del(key);
         }
 
         @Override
         protected void request_get_inside(String key) {
-            getPipeline(key).get(key);
+            if (isPipeline()) getPipeline(key).get(key);
         }
 
         @Override
         protected void hset_inside(String key, String field, String value) {
-            getPipeline(key).hset(key, field, value);
+            if (isPipeline()) getPipeline(key).hset(key, field, value);
         }
 
         @Override
         protected void hdel_inside(String key, String field) {
-            getPipeline(key).hdel(key, field);
+            if (isPipeline()) getPipeline(key).hdel(key, field);
         }
 
         @Override
         protected void request_hget_inside(String key, String field) {
-            getPipeline(key).hget(key, field);
+            if (isPipeline()) getPipeline(key).hget(key, field);
         }
 
         @Override

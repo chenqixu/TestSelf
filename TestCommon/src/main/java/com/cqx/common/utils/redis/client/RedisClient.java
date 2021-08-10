@@ -15,6 +15,7 @@ public abstract class RedisClient {
     protected static final int DEFAULT_MAX_TOTAL = 8;
     protected static final int DEFAULT_MAX_WAIT_MILLIS = 2000;
     protected RedisPipeline redisPipeline;
+    protected boolean isPipeline = true;
 
     public abstract Set<String> keys(String pattern);
 
@@ -66,5 +67,18 @@ public abstract class RedisClient {
         if (redisPipeline == null) redisPipeline = generatePipeline(commit_num, get_cache_num);
         if (redisPipeline != null) redisPipeline.open();
         return redisPipeline;
+    }
+
+    public boolean isPipeline() {
+        return isPipeline;
+    }
+
+    /**
+     * 是否支持管道
+     *
+     * @param pipeline
+     */
+    public void setPipeline(boolean pipeline) {
+        this.isPipeline = isPipeline;
     }
 }

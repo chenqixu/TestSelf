@@ -31,6 +31,7 @@ public class RedisFactoryTest {
 //                .setMode(RedisFactory.SINGLE_MODE_TYPE)
                 .setIp_ports("10.1.8.200:10000,10.1.8.201:10000,10.1.8.202:10000")
                 .setMode(RedisFactory.CLUSTER_MODE_TYPE)
+                .setPipeline(false)
                 .build();
     }
 
@@ -84,6 +85,11 @@ public class RedisFactoryTest {
         isShowResult = false;//查询结果不显示
         //查询
 //        redisQuery();
+    }
+
+    @Test
+    public void clusterOffSet() {
+        redisClient.set("0", "0");
     }
 
     @Test
