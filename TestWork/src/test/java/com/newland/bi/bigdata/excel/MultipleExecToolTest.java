@@ -22,14 +22,18 @@ public class MultipleExecToolTest {
     public void tearDown() throws Exception {
         if (adbExcelBean != null) {
             String table_name = adbExcelBean.getAdb_table_name().replace("rl_", "");
-            multipleExecTool.saveToFile(toolconfigPath
-                    , MultipleExecTool.MULTIPLE_EXEC_FILE_NAME
-                    , multipleExecTool.getMultipleExec(adbExcelBean)
-                    , table_name);
+            // 全量修复
+//            multipleExecTool.saveToFile(toolconfigPath
+//                    , MultipleExecTool.MULTIPLE_EXEC_FILE_NAME
+//                    , multipleExecTool.getMultipleExec(adbExcelBean)
+//                    , table_name);
+
+            // 单线程模式
             multipleExecTool.saveToFile(configPath
                     , MultipleExecTool.KAFKA_SINGLE_PARTITION_SYNC_FILE_NAME
                     , multipleExecTool.getKafkaSinglePartitionSync(adbExcelBean)
                     , table_name);
+
 //            multipleExecTool.printMultipleExec(adbExcelBean);
 //            multipleExecTool.printKafkaToJdbcMixed(adbExcelBean);
 //            multipleExecTool.printOggSchemaCheck(adbExcelBean);
@@ -69,6 +73,36 @@ public class MultipleExecToolTest {
         }
     }
 
+    /**
+     * 增量修复
+     *
+     * @throws Exception
+     */
+    @Test
+    public void all_MULTIPLE_EXEC_REPAIR() throws Exception {
+        for (ADBExcelBean adbExcelBean : multipleExecTool.run(path)) {
+            multipleExecTool.saveToFile(toolconfigPath
+                    , MultipleExecTool.MULTIPLE_EXEC_REPAIR_FILE_NAME
+                    , multipleExecTool.getMultipleExecRepair(adbExcelBean)
+                    , adbExcelBean.getAdb_table_name());
+        }
+    }
+
+    /**
+     * 全量修复
+     *
+     * @throws Exception
+     */
+    @Test
+    public void all_MULTIPLE_EXEC() throws Exception {
+        for (ADBExcelBean adbExcelBean : multipleExecTool.run(path)) {
+            multipleExecTool.saveToFile(toolconfigPath
+                    , MultipleExecTool.MULTIPLE_EXEC_FILE_NAME
+                    , multipleExecTool.getMultipleExec(adbExcelBean)
+                    , adbExcelBean.getAdb_table_name());
+        }
+    }
+
     @Test
     public void rl_un_common_flow() {
         adbExcelBean = multipleExecTool.run(path, "rl_un_common_flow");
@@ -92,5 +126,35 @@ public class MultipleExecToolTest {
     @Test
     public void rl_res_chnl_storage_sales() {
         adbExcelBean = multipleExecTool.run(path, "rl_res_chnl_storage_sales");
+    }
+
+    @Test
+    public void rl_user_additional_info() {
+        adbExcelBean = multipleExecTool.run(path, "rl_user_additional_info");
+    }
+
+    @Test
+    public void rl_user_odfw_export_info() {
+        adbExcelBean = multipleExecTool.run(path, "rl_user_odfw_export_info");
+    }
+
+    @Test
+    public void rl_broadband_users() {
+        adbExcelBean = multipleExecTool.run(path, "rl_broadband_users");
+    }
+
+    @Test
+    public void rl_itv_users() {
+        adbExcelBean = multipleExecTool.run(path, "rl_itv_users");
+    }
+
+    @Test
+    public void rl_users() {
+        adbExcelBean = multipleExecTool.run(path, "rl_users");
+    }
+
+    @Test
+    public void rl_user_product() {
+        adbExcelBean = multipleExecTool.run(path, "rl_user_product");
     }
 }

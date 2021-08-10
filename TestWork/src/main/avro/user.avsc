@@ -5,6 +5,7 @@
      {"name": "name", "type": "string", "default": ""},
      {"name": "favorite_number",  "type": "int", "default": -1},
      {"name": "favorite_color", "type": "string", "default": ""},
+//     {"name": "5g_n3_http", "type": "string", "default": ""},
      {"name": "id", "type": ["long", "null"]}
  ]
 }

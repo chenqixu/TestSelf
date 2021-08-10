@@ -27,12 +27,15 @@
             <hadoop.version>2.6.0</hadoop.version> <hadoop.mr.version>2.6.0</hadoop.mr.version>
         <hadoop.version>3.0.0-cdh6.1.1</hadoop.version> -->
         <hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
+        <!--<hadoop.version>3.1.0</hadoop.version>-->
         <hadoop.mr.version>2.6.0-cdh5.7.2</hadoop.mr.version>
         <!-- <hbase.version>0.98.1-cdh5.1.5</hbase.version> <hbase.version>0.98.1-cdh5.1.0</hbase.version>
             <hbase.version>1.1.1</hbase.version> -->
         <hbase.version>1.2.0-cdh5.7.2</hbase.version>
+        <!--<hbase.version>2.1.0</hbase.version>-->
         <!-- <hive.version>0.12.0 0.12.0-cdh5.1.5</hive.version> <hive.version>0.10.0-cdh4.3.0</hive.version><hive.version>1.1.0-cdh5.7.2</hive.version> -->
         <hive.version>1.1.0</hive.version>
+        <!--<hive.version>3.1.0</hive.version>-->
         <!-- parquet version -->
         <parquet.version>1.5.0-cdh5.4.0</parquet.version>
         <spark.version>1.6.0</spark.version>
