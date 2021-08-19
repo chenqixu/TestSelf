@@ -26,10 +26,14 @@ public class KryoUtils {
             return new Input(1);
         }
     };
+    /**
+     * Output中的bufferSize就是单次序列化的上限，如果byte[]长度超过这个上限，就会异常
+     */
     private static ThreadLocal<Output> threadKryoOutput = new ThreadLocal<Output>() {
         @Override
         protected Output initialValue() {
             return new Output(new ByteArrayOutputStream(), 100000);
+//            return new Output(new ByteArrayOutputStream(), 2000000);
 //            return new Output(2000, 2000000000);
         }
     };

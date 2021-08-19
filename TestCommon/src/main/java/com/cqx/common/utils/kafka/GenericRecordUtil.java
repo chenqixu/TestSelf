@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class GenericRecordUtil {
     /**
      * 话题初始化
      *
-     * @param topic
+     * @param topic 话题名称
      */
     public void addTopic(String topic) {
         // 从远程服务获取话题的schema
@@ -47,8 +48,87 @@ public class GenericRecordUtil {
         recordConvertorMap.put(topic, new RecordConvertor(schema));
         // 根据获取的schema，构造一个AvroRecord对象
         AvroRecord avroRecord = schemaUtil.dealSchema(schema, null);
+        // 把AvroRecord对象加入map
+        avroRecordMap.put(topic, avroRecord);
+        //########################################
+        // 把字段类型加入map中，只适用于字段平铺开来的情况
+        //########################################
+        addSchemaFieldMap(topic, schema);
+    }
+
+    /**
+     * 根据传入的schema字符串对话题进行初始化
+     *
+     * @param topic        话题名称
+     * @param schemaString schema
+     */
+    public void addTopicBySchemaString(String topic, String schemaString) {
+        // 从远程服务获取话题的schema
+        Schema schema = schemaUtil.getSchemaByString(schemaString);
+        logger.info("addTopic，topic：{}，schema：{}", topic, schema);
+        // 把话题和schema加入映射关系的map中
+        schemaMap.put(topic, schema);
+        // 构造对应的记录转换器，并加入map
+        recordConvertorMap.put(topic, new RecordConvertor(schema));
+        // 根据获取的schema，构造一个AvroRecord对象
+        AvroRecord avroRecord = schemaUtil.dealSchema(schema, null);
         //把AvroRecord对象加入map
         avroRecordMap.put(topic, avroRecord);
+        //########################################
+        // 把字段类型加入map中，只适用于字段平铺开来的情况
+        //########################################
+        addSchemaFieldMap(topic, schema);
+    }
+
+    /**
+     * 只适用于字段平铺开来的情况
+     *
+     * @param topic
+     * @param schema
+     */
+    private void addSchemaFieldMap(String topic, Schema schema) {
+        // 获取字段类型，进行映射，防止不规范写法
+        Map<String, Schema.Type> _schemaFieldMap = new HashMap<>();
+        // 获取字段
+        for (Schema.Field field : schema.getFields()) {
+            // 字段名称
+            String name = field.name();
+            /**
+             * 字段类型
+             * RECORD, ENUM, ARRAY, MAP, UNION, FIXED, STRING, BYTES,
+             * INT, LONG, FLOAT, DOUBLE, BOOLEAN, NULL;
+             */
+            Schema.Type type = field.schema().getType();
+            // 仅处理有字段名称的数据
+            if (name != null && name.length() > 0) {
+                // 判断字段类型
+                switch (type) {
+                    // 组合类型需要映射出真正的类型
+                    case UNION:
+                        // 获取组合类型中的所有类型
+                        List<Schema> types = field.schema().getTypes();
+                        // 循环判断
+                        for (Schema schema1 : types) {
+                            Schema.Type type1 = schema1.getType();
+                            if (type1.equals(Schema.Type.INT) ||
+                                    type1.equals(Schema.Type.STRING) ||
+                                    type1.equals(Schema.Type.LONG) ||
+                                    type1.equals(Schema.Type.FLOAT) ||
+                                    type1.equals(Schema.Type.DOUBLE) ||
+                                    type1.equals(Schema.Type.BOOLEAN)
+                            ) {
+                                _schemaFieldMap.put(name, type1);
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        _schemaFieldMap.put(name, type);
+                        break;
+                }
+            }
+        }
+        schemaFieldMap.put(topic, _schemaFieldMap);
     }
 
     /**

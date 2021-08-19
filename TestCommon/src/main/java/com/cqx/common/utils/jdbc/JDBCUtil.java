@@ -2155,7 +2155,7 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
-     * 通过字符串构建Clob
+     * 通过字符串构建Clob，只适用于Oracle
      *
      * @param conn    连接
      * @param content 内容
@@ -2164,6 +2164,14 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws IOException
      */
     private Clob buildClob(Connection conn, String content) throws SQLException, IOException {
+        // 可能的异常
+        // java.lang.ClassCastException: org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper cannot be cast to oracle.jdbc.OracleConnection
+        // 原因
+        // The connection pool usually has a wrapper around the real connection instance, that's why your cast fails.
+        // 连接池通常包装了一个真实的真实的Connection实例
+        // 解决方案
+        // 调用打开包装的方法：unwrap
+        conn = conn.unwrap(oracle.jdbc.OracleConnection.class);
         CLOB clob = CLOB.createTemporary(conn, false, CLOB.DURATION_SESSION);
         clob.open(CLOB.MODE_READWRITE);
         Writer wr = clob.getCharacterOutputStream();

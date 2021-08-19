@@ -10,5 +10,7 @@ import java.io.IOException;
 public interface IFileRead {
     void run(String content) throws IOException;
 
+    void run(byte[] content) throws IOException;
+
     void tearDown() throws IOException;
 }

@@ -19,7 +19,7 @@ public class KryoSerializationImpl<T> implements ISerialization<T> {
     }
 
     @Override
-    public byte[] serialize(Object t) {
+    public byte[] serialize(T t) {
         if (t == null) {
             return null;
         } else {

@@ -76,6 +76,52 @@ public class KafkaConsumerGRUtilTest extends TestBase {
     }
 
     @Test
+    public void polls1() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            // 订阅
+            kafkaConsumerUtil.subscribe("USER_PRODUCT");
+            // 从头开始消费
+            kafkaConsumerUtil.fromBeginning();
+            for (int i = 0; i < 1500; i++) {
+                try {
+                    for (IKVList.Entry<Long, GenericRecord> entry : kafkaConsumerUtil.pollsHasOffset(1000L).entrySet()) {
+                        Object value = entry.getValue();
+                        logger.info("【offset】{}，【value】{}，【value.class】{}",
+                                entry.getKey(), value, value != null ? value.getClass() : null);
+                    }
+                } catch (Exception e) {
+                    logger.error("consumer.poll 异常：" + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void polls2() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            // 订阅
+            kafkaConsumerUtil.subscribe("USER_ADDITIONAL_INFO");
+            // 从头开始消费
+            kafkaConsumerUtil.fromBeginning();
+            for (int i = 0; i < 1500; i++) {
+                try {
+                    for (IKVList.Entry<Long, GenericRecord> entry : kafkaConsumerUtil.pollsHasOffset(1000L).entrySet()) {
+                        Object value = entry.getValue();
+                        logger.info("【offset】{}，【value】{}，【value.class】{}",
+                                entry.getKey(), value, value != null ? value.getClass() : null);
+                    }
+                } catch (Exception e) {
+                    logger.error("consumer.poll 异常：" + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    @Test
     public void pollNoScheam() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         logger.info("{}", param);

@@ -29,6 +29,7 @@ public class FileUtil {
     private BufferedWriter writer;
     private BufferedReader reader;
     private OutputStream outputStream;
+    private InputStream inputStream;
 
     public static File[] listFiles(String filePath) {
         File file = new File(filePath);
@@ -405,6 +406,16 @@ public class FileUtil {
         iFileRead.tearDown();
     }
 
+    public void readInputStream(IFileRead iFileRead, int off, int len) throws IOException {
+        byte[] b = new byte[len];
+        int ret = inputStream.read(b, off, len);
+        if (ret > 0) {
+            iFileRead.run(b);
+        }
+        //结束
+        iFileRead.tearDown();
+    }
+
     public void read(IFileRead iFileRead, int threadNum) throws IOException {
         BlockingQueue<String> contentQueue = new LinkedBlockingQueue<>();
         List<DealThread> threads = new ArrayList<>();
@@ -578,6 +589,16 @@ public class FileUtil {
         }
     }
 
+    public void closeInputStream() {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void closeWrite() {
         try {
             writer.flush();
@@ -630,6 +651,10 @@ public class FileUtil {
 
     public void setReader(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
         setReader(fileName, "UTF-8");
+    }
+
+    public void setInputStreamReader(String fileName) throws FileNotFoundException {
+        this.inputStream = new FileInputStream(new File(fileName));
     }
 
     public boolean isWindow() {

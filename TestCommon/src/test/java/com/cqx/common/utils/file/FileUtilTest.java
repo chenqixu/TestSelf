@@ -64,6 +64,10 @@ public class FileUtilTest {
                 }
 
                 @Override
+                public void run(byte[] content) throws IOException {
+                }
+
+                @Override
                 public void tearDown() throws IOException {
 
                 }

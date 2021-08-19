@@ -26,6 +26,7 @@ public class ProtostuffUtils {
     };
 
     static {
+        // 注册java.sql.Timestamp处理方式
         idStrategy.registerDelegate(TIMESTAMP_DELEGATE);
     }
 
@@ -33,7 +34,6 @@ public class ProtostuffUtils {
         Schema<T> schema = (Schema<T>) cachedSchema.get(clazz);
         if (schema == null) {
             schema = RuntimeSchema.createFrom(clazz, idStrategy);
-//            Schema<T> schema = RuntimeSchema.getSchema(clazz);
             cachedSchema.put(clazz, schema);
         }
         return schema;
@@ -81,7 +81,6 @@ public class ProtostuffUtils {
      * @return
      */
     public static <T> T deserialize(byte[] data, Class<T> clazz) {
-//        Schema<T> schema = RuntimeSchema.getSchema(clazz);
         Schema<T> schema = getSchema(clazz);
         T obj = schema.newMessage();
         ProtostuffIOUtil.mergeFrom(data, obj, schema);

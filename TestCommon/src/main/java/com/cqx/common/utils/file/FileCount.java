@@ -13,6 +13,9 @@ public abstract class FileCount implements IFileRead {
 
     private Map<String, Long> count = new HashMap<>();
 
+    public void run(byte[] content) throws IOException {
+    }
+
     public void count(String name) {
         Long cnt = count.get(name);
         if (cnt == null) {
@@ -32,5 +35,6 @@ public abstract class FileCount implements IFileRead {
         return cnt;
     }
 
-    public void tearDown() throws IOException {}
+    public void tearDown() throws IOException {
+    }
 }

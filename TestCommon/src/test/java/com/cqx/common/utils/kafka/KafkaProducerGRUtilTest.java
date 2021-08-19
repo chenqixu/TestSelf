@@ -4,12 +4,12 @@ import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.bean.kafka.DefaultBean;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
+import com.cqx.common.utils.system.SleepUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
 public class KafkaProducerGRUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerGRUtilTest.class);
@@ -156,6 +156,328 @@ public class KafkaProducerGRUtilTest extends TestBase {
             avroLevelData.putChildVal("before", "USER_ID", 591305002979620L);
             avroLevelData.putChildVal("before", "PRODUCT_ID", 1002160002L);
             kafkaProducerGRUtil.sendRandom(avroLevelData).get();
+        }
+    }
+
+    @Test
+    public void sendUSER_PRODUCT_schema() throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("topology.receiver.buffer.size", "8");
+        params.put("ogg_topic_name", "ogg_test");
+        params.put("storm.principal.tolocal", "backtype.storm.security.auth.DefaultPrincipalToLocal");
+        // 去掉key中带点的
+        List<String> keys = new ArrayList<>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if (key.contains(".")) {
+                keys.add(key);
+            }
+        }
+        logger.info("keys：{}", keys);
+        for (String k : keys) {
+            params.remove(k);
+        }
+        logger.info("params：{}", params);
+
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        String topic = "USER_PRODUCT";
+        String schema = "{\n" +
+                "  \"type\": \"record\",\n" +
+                "  \"name\": \"TB_SER_OGG_TEST_USER_PRODUCT\",\n" +
+                "  \"namespace\": \"FRTBASE\",\n" +
+                "  \"fields\": [\n" +
+                "    {\n" +
+                "      \"name\": \"table\",\n" +
+                "      \"type\": \"string\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"op_type\",\n" +
+                "      \"type\": \"string\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"op_ts\",\n" +
+                "      \"type\": \"string\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"current_ts\",\n" +
+                "      \"type\": \"string\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"pos\",\n" +
+                "      \"type\": \"string\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"primary_keys\",\n" +
+                "      \"type\": {\n" +
+                "        \"type\": \"array\",\n" +
+                "        \"items\": \"string\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"tokens\",\n" +
+                "      \"type\": {\n" +
+                "        \"type\": \"map\",\n" +
+                "        \"values\": \"string\"\n" +
+                "      },\n" +
+                "      \"default\": {}\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"before\",\n" +
+                "      \"type\": [\n" +
+                "        \"null\",\n" +
+                "        {\n" +
+                "          \"type\": \"record\",\n" +
+                "          \"name\": \"columns\",\n" +
+                "          \"fields\": [\n" +
+                "            {\n" +
+                "              \"name\": \"HOME_CITY\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"HOME_CITY_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"PRODUCT_TYPE\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"PRODUCT_TYPE_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"SUBSCRIPTION_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"SUBSCRIPTION_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"USER_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"USER_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"PRODUCT_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"PRODUCT_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"STATUS\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"STATUS_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"INURE_TIME\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"string\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"INURE_TIME_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"EXPIRE_TIME\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"string\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"EXPIRE_TIME_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"OPERATION_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"OPERATION_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"HISTORY_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"HISTORY_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_TIME\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"string\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_TIME_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"MODIFY_TIME\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"string\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"MODIFY_TIME_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"MODIFY_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"MODIFY_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"REQUEST_SOURCE\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"REQUEST_SOURCE_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"TEST_FLAG\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"TEST_FLAG_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"REC_UPDATE_TIME\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"string\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"REC_UPDATE_TIME_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_REQUEST_SOURCE\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_REQUEST_SOURCE_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_ACCEPT_ID\",\n" +
+                "              \"type\": [\n" +
+                "                \"null\",\n" +
+                "                \"long\"\n" +
+                "              ],\n" +
+                "              \"default\": null\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"name\": \"CREATE_ACCEPT_ID_isMissing\",\n" +
+                "              \"type\": \"boolean\"\n" +
+                "            }\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"default\": null\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"name\": \"after\",\n" +
+                "      \"type\": [\n" +
+                "        \"null\",\n" +
+                "        \"columns\"\n" +
+                "      ],\n" +
+                "      \"default\": null\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic(topic);//设置话题
+            for (int i = 0; i < 5; i++) {
+                kafkaProducerGRUtil.send(topic, schema.getBytes());
+                SleepUtil.sleepMilliSecond(200);
+            }
         }
     }
 }

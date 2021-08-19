@@ -2,6 +2,8 @@ package com.cqx.common.utils.serialize.impl;
 
 import com.cqx.common.utils.serialize.ISerialization;
 
+import java.io.IOException;
+
 /**
  * String
  *
@@ -15,12 +17,12 @@ public class StringSerializationImpl implements ISerialization<String> {
     }
 
     @Override
-    public byte[] serialize(String o) {
+    public byte[] serialize(String o) throws IOException {
         return o.getBytes();
     }
 
     @Override
-    public String deserialize(byte[] bytes) {
+    public String deserialize(byte[] bytes) throws IOException {
         return new String(bytes);
     }
 }

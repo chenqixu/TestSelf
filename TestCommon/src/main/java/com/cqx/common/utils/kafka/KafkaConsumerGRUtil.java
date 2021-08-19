@@ -293,15 +293,17 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
         try {
             // 尝试能否转换成avro
             oggRecord.setGenericRecord(getGenericRecord(bytes));
-        } catch (Exception e) {
+        } catch (Exception toGenericRecordException) {
             logger.warn("{} 无法转换成avro，尝试能否更新schema." + new String(bytes));
             // 不能转换成avro
             try {
                 // 就尝试能否更新schema
                 oggRecord.updateSchema(updateSchema(new String(bytes)));
-            } catch (Exception e1) {
-                logger.warn(String.format("%s 更新schema异常！", new String(bytes)), e1);
-                throw e1;
+            } catch (Exception updateSchemaException) {
+                logger.warn(String.format("%s 更新schema异常！", new String(bytes)), updateSchemaException);
+                // 加入转换异常，否则只能看到更新异常
+                updateSchemaException.addSuppressed(toGenericRecordException);
+                throw updateSchemaException;
             }
         }
         return oggRecord;
