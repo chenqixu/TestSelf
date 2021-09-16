@@ -364,6 +364,9 @@ public class GenericRecordUtil {
         if (avroLevelData != null && avroLevelData.hasVal()) {
             // 从AvroRecord找到匹配的父级
             GenericRecord fatherGR = findAvroRecord(genericRecord, avroRecord, avroLevelData.getName());
+            if (fatherGR == null) {
+                throw new NullPointerException("找不到匹配的父级：" + avroLevelData.getName());
+            }
             // 设置参数
             putGR(fatherGR, avroLevelData.getVal());
             // 如果有子节点

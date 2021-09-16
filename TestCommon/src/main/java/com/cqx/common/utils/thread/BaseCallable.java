@@ -23,9 +23,11 @@ public abstract class BaseCallable<V> implements Callable<List<V>> {
     private long commitTime;
 
     public void init(Map params) {
-        String max_poll_size = params.get(FileConsumer.MAX_POLL_SIZE).toString();
-        if (max_poll_size != null) {
-            setMax_size(Long.valueOf(max_poll_size));
+        if (params != null) {
+            String max_poll_size = params.get(FileConsumer.MAX_POLL_SIZE).toString();
+            if (max_poll_size != null) {
+                setMax_size(Long.valueOf(max_poll_size));
+            }
         }
     }
 
@@ -42,6 +44,12 @@ public abstract class BaseCallable<V> implements Callable<List<V>> {
         runFlag.set(false);
     }
 
+    /**
+     * 要么满足时间条件，要么满足最大记录数，就会停止
+     *
+     * @return 返回获取到的数据列表
+     * @throws Exception
+     */
     @Override
     public List<V> call() throws Exception {
         List<V> vList = new ArrayList<>();

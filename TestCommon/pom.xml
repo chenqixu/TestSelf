@@ -13,12 +13,14 @@
 
     <properties>
         <!--<hadoop.version>2.6.0-cdh5.14.2</hadoop.version>-->
-        <hadoop.version>2.6.0-cdh5.7.2</hadoop.version>
+        <hadoop.version>3.1.1</hadoop.version>
+        <!--<hadoop.version>2.6.0-cdh5.7.2</hadoop.version>-->
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.19</slf4j.version>
         <jedis.version>2.9.0</jedis.version>
         <excel.poi.version>4.1.2</excel.poi.version>
-        <JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>
+        <!--<JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>-->
+        <JAVA_HOME>D:\Program Files\Java\jdk1.8.0_201</JAVA_HOME>
     </properties>
 
     <dependencies>
@@ -109,6 +111,19 @@
                 <exclusion>
                     <groupId>*</groupId>
                     <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- avro -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.8.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -314,7 +329,7 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-            <version>2.6.0-cdh5.7.2</version>
+            <version>${hadoop.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -329,12 +344,12 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-yarn-api</artifactId>
-            <version>2.6.0-cdh5.7.2</version>
+            <version>${hadoop.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-yarn-common</artifactId>
-            <version>2.6.0-cdh5.7.2</version>
+            <version>${hadoop.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -650,7 +665,7 @@
         <dependency>
             <groupId>com.alipay.oceanbase</groupId>
             <artifactId>oceanbase-client</artifactId>
-            <version>1.1.10</version>
+            <version>1.1.7</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -681,6 +696,13 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- antlr4 -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.9.1</version>
         </dependency>
 
         <!-- test -->

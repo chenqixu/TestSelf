@@ -39,4 +39,11 @@ public class ProcessBuilderFactoryTest {
         logger.info("ret : {}", ret);
     }
 
+    @Test
+    public void execCmdSession() {
+        System.setProperty("file.encoding", "GBK");
+        ProcessBuilderFactory processBuilderFactory = new ProcessBuilderFactory();
+        processBuilderFactory.execCmd("cmd.exe", "/c", "set a=4");
+        processBuilderFactory.execCmd("cmd.exe", "/c", "echo %a%");
+    }
 }

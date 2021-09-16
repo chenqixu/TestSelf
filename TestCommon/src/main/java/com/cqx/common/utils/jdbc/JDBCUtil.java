@@ -3,6 +3,7 @@ package com.cqx.common.utils.jdbc;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.jdbc.postgresql.PGDeclare;
 import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.TimeCostUtil;
 import oracle.sql.CLOB;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
@@ -154,16 +155,16 @@ public class JDBCUtil implements IJDBCUtil {
     private DataSource setupDataSource(DBBean dbBean) {
         return setupDataSource(dbBean.getDbType().getDriver(),
                 dbBean.getUser_name(), dbBean.getPass_word(), dbBean.getTns(),
-                5, 2, 3, 5000,
+                5, 2, 3, 60000L,
                 dbBean.getDbType().getValidation_query(),
                 false, true, false, false,
-                60000, 300000);
+                60000L, 300000L);
     }
 
     private DataSource setupDataSource(DBBean dbBean, int MaxActive, int MinIdle, int MaxIdle) {
         return setupDataSource(dbBean.getDbType().getDriver(),
                 dbBean.getUser_name(), dbBean.getPass_word(), dbBean.getTns(),
-                MaxActive, MinIdle, MaxIdle, 5000L,
+                MaxActive, MinIdle, MaxIdle, 60000L,
                 dbBean.getDbType().getValidation_query(),
                 false, true, false, false,
                 60000L, 300000L);
@@ -239,23 +240,36 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException SQL异常
      */
     protected Connection getConnection() throws SQLException {
-        if (dbBean.isPool()) {//走连接池
+        if (dbBean.isPool()) {// 走连接池
             if (dataSource != null) {
-                return dataSource.getConnection();
+                BasicDataSource _bs = (BasicDataSource) dataSource;
+                TimeCostUtil timeCostUtil = new TimeCostUtil();
+                timeCostUtil.start();
+                Connection _conn = _bs.getConnection();
+                logger.debug("【连接池模式】获取数据库连接时长：{}，当前活动连接：{}，当前空闲连接：{}"
+                        , timeCostUtil.stopAndGet()
+                        , _bs.getNumActive()
+                        , _bs.getNumIdle()
+                );
+                return _conn;
             }
-        } else {//不走连接池
+        } else {// 不走连接池
             Properties props = new Properties();
-            //没有用户名
+            // 没有用户名
             if (dbBean.getUser_name() == null || dbBean.getUser_name().trim().length() == 0) {
                 return DriverManager.getConnection(dbBean.getTns());
             } else {
-                //有用户名
+                // 有用户名
                 props.put("user", dbBean.getUser_name());
                 props.put("password", dbBean.getPass_word());
                 props.put("remarksReporting", "true");
-                //seconds – the login time limit in seconds; zero means there is no limit
-                DriverManager.setLoginTimeout(15);
-                return DriverManager.getConnection(dbBean.getTns(), props);
+                // seconds – the login time limit in seconds; zero means there is no limit
+                DriverManager.setLoginTimeout(120);// 两分钟登录超时
+                TimeCostUtil timeCostUtil = new TimeCostUtil();
+                timeCostUtil.start();
+                Connection _conn = DriverManager.getConnection(dbBean.getTns(), props);
+                logger.debug("【非连接池模式】获取数据库连接时长：{}", timeCostUtil.stopAndGet());
+                return _conn;
             }
         }
         return null;
@@ -1555,7 +1569,19 @@ public class JDBCUtil implements IJDBCUtil {
         if (conn != null)
             try {
                 logger.debug("closeConn：{}", conn);
+                TimeCostUtil timeCostUtil = new TimeCostUtil();
+                timeCostUtil.start();
                 conn.close();
+                if (dbBean.isPool() && dataSource != null) {// 走连接池
+                    BasicDataSource _bs = (BasicDataSource) dataSource;
+                    logger.debug("【连接池模式】数据库连接还给连接池时长：{}，当前活动连接：{}，当前空闲连接：{}"
+                            , timeCostUtil.stopAndGet()
+                            , _bs.getNumActive()
+                            , _bs.getNumIdle()
+                    );
+                } else {
+                    logger.debug("【非连接池模式】数据库连接关闭时长：{}", timeCostUtil.stopAndGet());
+                }
             } catch (SQLException e) {
                 logger.error("JDBCUtilException：关闭Connection异常，" + e.getMessage(), e);
             }

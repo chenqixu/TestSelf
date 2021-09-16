@@ -301,6 +301,17 @@ public class FtpUtil {
         return flag;
     }
 
+
+    public static boolean upload(FTPClient ftpClient, String localFilePath, String remoteFilePath, String fileName) throws IOException {
+        boolean storeRet = false;
+        if (ftpClient != null) {
+            storeRet = ftpClient.storeFile(remoteFilePath + fileName, new FileInputStream(localFilePath + fileName));
+            logger.info("localFilePath：{}，remoteFilePath：{}，fileName：{}，storeRet：{}"
+                    , localFilePath, remoteFilePath, fileName, storeRet);
+        }
+        return storeRet;
+    }
+
     /**
      * 获取返回码
      *

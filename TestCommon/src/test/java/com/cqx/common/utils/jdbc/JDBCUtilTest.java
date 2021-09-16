@@ -18,6 +18,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class JDBCUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(JDBCUtilTest.class);
@@ -29,13 +32,15 @@ public class JDBCUtilTest extends TestBase {
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle12c_cctsys_dev_Bean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localAdbBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("adbBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localoracleBean");
-        dbBean.setPool(false);
+//        dbBean.setPool(false);
 //        jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
-        jdbcUtil = new JDBCUtil(dbBean);
+//        jdbcUtil = new JDBCUtil(dbBean);
+        jdbcUtil = new JDBCUtil(dbBean, 10, 4, 5);
     }
 
     @After
@@ -680,6 +685,24 @@ public class JDBCUtilTest extends TestBase {
     }
 
     @Test
+    public void multiExecute() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        MultiQuery f = new MultiQuery("1", "f", "2021082823");
+        MultiQuery m = new MultiQuery("1", "m", "2021082823");
+        MultiQuery s = new MultiQuery("1", "s", "2021082823");
+        MultiQuery c = new MultiQuery("1", "c", "2021082823");
+        MultiBatch mb = new MultiBatch(10000);
+        executor.submit(mb);
+        for (int i = 0; i < 10; i++) {
+            executor.submit(f);
+            executor.submit(m);
+            executor.submit(s);
+            executor.submit(c);
+        }
+        SleepUtil.sleepMilliSecond(6000);
+    }
+
+    @Test
     public void interfaceExtendTest() {
         infTest(new Q2() {
             @Override
@@ -718,7 +741,6 @@ public class JDBCUtilTest extends TestBase {
         String getType();
     }
 
-
     class ConcurrentQuery1 extends BaseRunableThread {
         @Override
         protected void runnableExec() throws Exception {
@@ -732,6 +754,65 @@ public class JDBCUtilTest extends TestBase {
         protected void runnableExec() throws Exception {
             queryTest2();
             SleepUtil.sleepMilliSecond(500);
+        }
+    }
+
+    class MultiBatch implements Runnable {
+        int max_cnt = 10000;
+
+        MultiBatch(int max_cnt) {
+            this.max_cnt = max_cnt;
+        }
+
+        @Override
+        public void run() {
+            int cnt = 0;
+            List<String> sqlList = new ArrayList<>();
+            String insertSql = "insert into multi_test_list(task_id,file_name) values(1,'abcd.txt')";
+            sqlList.add(insertSql);
+            while (cnt < max_cnt) {
+                try {
+                    jdbcUtil.executeBatch(sqlList);
+                } catch (SQLException e) {
+                    logger.error(e.getMessage(), e);
+                }
+                cnt++;
+            }
+        }
+    }
+
+    class MultiQuery implements Callable<MultiTestBean> {
+        String task_id;
+        String task_type;
+        String task_cycle;
+        TimeCostUtil tc = new TimeCostUtil();
+
+        MultiQuery(String task_id, String task_type, String task_cycle) {
+            this.task_id = task_id;
+            this.task_type = task_type;
+            this.task_cycle = task_cycle;
+        }
+
+        @Override
+        public MultiTestBean call() throws Exception {
+            // 先update
+            String updateSql = "update multi_test set file_size=file_size+10 "
+                    + " where task_id='"
+                    + task_id + "' and task_type='"
+                    + task_type + "' and task_cycle='"
+                    + task_cycle + "'";
+            jdbcUtil.executeUpdate(updateSql);
+            // 在查询
+            tc.start();
+            String sql = "select task_id,task_name,task_type,task_cycle,file_size from multi_test "
+                    + " where task_id='"
+                    + task_id + "' and task_type='"
+                    + task_type + "' and task_cycle='"
+                    + task_cycle + "'";
+            List<MultiTestBean> multiTestBeanList = jdbcUtil.executeQuery(sql, MultiTestBean.class);
+            MultiTestBean result = (multiTestBeanList != null && multiTestBeanList.size() > 0) ? multiTestBeanList.get(0) : null;
+            logger.info("cost：{}，{}", tc.stopAndGet(), result);
+            return result;
         }
     }
 }

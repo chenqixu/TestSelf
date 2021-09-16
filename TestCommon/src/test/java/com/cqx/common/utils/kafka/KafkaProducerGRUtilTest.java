@@ -82,7 +82,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT1");
             avroLevelData.putVal("op_type", "I");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);
@@ -106,7 +106,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT1");
             avroLevelData.putVal("op_type", "U");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);
@@ -128,6 +128,9 @@ public class KafkaProducerGRUtilTest extends TestBase {
             avroLevelData.putChildVal("after", "USER_ID", 591305002979620L);
             avroLevelData.putChildVal("after", "PRODUCT_ID", 1002160002L);
             avroLevelData.putChildVal("after", "STATUS", 2L);
+//            avroLevelData.putChildVal("after", "CREATE_TIME", "2021-08-12 11:33:00");
+            avroLevelData.putChildVal("after", "CREATE_TIME", "null");
+            avroLevelData.putChildVal("after", "CREATE_TIME_isMissing", true);
             DefaultBean defaultBean = new DefaultBean();
             defaultBean.setDefault_boolean(false);
             kafkaProducerGRUtil.setDefaultBean(defaultBean);
