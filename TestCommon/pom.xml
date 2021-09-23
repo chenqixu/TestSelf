@@ -428,7 +428,8 @@
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc7</artifactId>
-            <version>12.1.0.2</version>
+            <!--<version>12.1.0.2</version>-->
+            <version>12.1.0.2-SNAPSHOT</version>
             <!-- <artifactId>ojdbc6</artifactId> -->
             <!-- <version>11.2.0.4.0</version> -->
             <!-- <artifactId>ojdbc14</artifactId> -->
@@ -703,6 +704,13 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>4.9.1</version>
+        </dependency>
+
+        <!-- chm -->
+        <dependency>
+            <groupId>org.chm4j</groupId>
+            <artifactId>chm4j</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
         <!-- test -->
