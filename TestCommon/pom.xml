@@ -19,6 +19,7 @@
         <slf4j.version>1.7.19</slf4j.version>
         <jedis.version>2.9.0</jedis.version>
         <excel.poi.version>4.1.2</excel.poi.version>
+        <jsoup.version>1.13.1</jsoup.version>
         <!--<JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>-->
         <JAVA_HOME>D:\Program Files\Java\jdk1.8.0_201</JAVA_HOME>
     </properties>
@@ -711,6 +712,13 @@
             <groupId>org.chm4j</groupId>
             <artifactId>chm4j</artifactId>
             <version>0.0.1</version>
+        </dependency>
+
+        <!-- jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
         </dependency>
 
         <!-- test -->
