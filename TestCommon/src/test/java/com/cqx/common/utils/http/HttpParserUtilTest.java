@@ -29,9 +29,9 @@ public class HttpParserUtilTest {
                 , ".sect2"
                 , ListHelper.getInstance(String.class).add("h3").add("th").add("td").get()
                 , null
-                , new HttpParserUtil.IHttpParserUtilDeal() {
+                , new AbstractHttpParserUtilDeal() {
                     @Override
-                    public void deal(Element parent, Element child, String childCcsQuery) {
+                    public void deal(Element parent, Element child, String childCcsQuery, boolean isEnd) {
                         APIBean apiBean = apiBeanMap.get(parent.siblingIndex());
                         if (apiBean == null && childCcsQuery.equals("h3")) {
                             String className = child.text();

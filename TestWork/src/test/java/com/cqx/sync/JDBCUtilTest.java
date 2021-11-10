@@ -92,6 +92,11 @@ public class JDBCUtilTest {
                 srcdbBean.setUser_name("web");
                 srcdbBean.setPass_word("T%vdNV#i$2");
                 break;
+            case "bishow":
+                srcdbBean.setTns("jdbc:oracle:thin:@10.1.0.242:1521:ywxx");
+                srcdbBean.setUser_name("bishow");
+                srcdbBean.setPass_word("C%MuhN#q$4");
+                break;
         }
         return srcdbBean;
     }
@@ -117,7 +122,8 @@ public class JDBCUtilTest {
 //        srcdbBean = oracleConfig("frtbase_dblink");
 //        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
-        srcdbBean = oracleConfig("web");
+//        srcdbBean = oracleConfig("web");
+        srcdbBean = oracleConfig("bishow");
 //        srcdbBean = mysqlConfig("local");
 //        srcdbBean = mysqlConfig("flink");
 //        srcdbBean = postgresqlConfig("dev");

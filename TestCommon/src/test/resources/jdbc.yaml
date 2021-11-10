@@ -36,16 +36,29 @@ dbbeans:
     pass_word: "T%vdNV#i$2"
     tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
     dbType: "ORACLE"
+  - name: oracle12c_cctsys_dev_Bean
+    user_name: "cctsys_dev"
+    pass_word: "TyM*2CnEm"
+    tns: "jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1"
+    dbType: "ORACLE"
   - name: localoracleBean
     user_name: "bishow"
     pass_word: "bishow"
     tns: "jdbc:oracle:thin:@192.168.230.128:1521:orcl"
     dbType: "ORACLE"
+  - name: oceanbeanBean
+    user_name:
+    pass_word:
+    tns: ""
+    dbType: "OTHER"
+    driver: com.alipay.oceanbase.jdbc.Driver
+    validation_query: select 1 from dual
   - name: hiveHuaWeiBean
     user_name: ""
     pass_word: ""
     tns: ""
     dbType: "HIVE3"
+    isPool: false
     auth:
       auth_type: ""
       bdoc_id: ""

@@ -1,7 +1,7 @@
-package com.cqx.yaoqi;
+package com.cqx.download.yaoqi;
 
-import com.cqx.common.utils.log.MyLogger;
-import com.cqx.common.utils.log.MyLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class YaoqiParser {
-    private static final MyLogger logger = MyLoggerFactory.getLogger(YaoqiParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(YaoqiParser.class);
     private static final String F1 = "<li><a  title=\"";
     private static final String F2 = "href=\"";
     private static final String F3 = "\">";

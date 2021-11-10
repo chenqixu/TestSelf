@@ -1,9 +1,9 @@
-package com.cqx.yaoqi.http;
+package com.cqx.download.http;
 
 import com.cqx.bean.RestParam;
-import com.cqx.common.utils.log.MyLogger;
-import com.cqx.common.utils.log.MyLoggerFactory;
-import com.cqx.yaoqi.FileUtil;
+import com.cqx.download.yaoqi.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -21,7 +21,7 @@ import java.net.*;
  * @author chenqixu
  */
 public class HttpsUtil {
-    private static final MyLogger logger = MyLoggerFactory.getLogger(HttpsUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpsUtil.class);
 
     // TODO: 2020/9/21 缺文件发送，可参考https://www.cnblogs.com/huadoumi/p/4772719.html
 

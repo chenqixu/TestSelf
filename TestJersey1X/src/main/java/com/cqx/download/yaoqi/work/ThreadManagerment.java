@@ -1,15 +1,15 @@
-package com.cqx.yaoqi.work;
+package com.cqx.download.yaoqi.work;
 
-import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.system.SleepUtil;
-import com.cqx.common.utils.log.MyLoggerFactory;
-import com.cqx.yaoqi.AppMain;
-import com.cqx.yaoqi.TitleAndUrl;
+import com.cqx.download.yaoqi.TitleAndUrl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -20,46 +20,56 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author chenqixu
  */
 public class ThreadManagerment {
-    private static final MyLogger logger = MyLoggerFactory.getLogger(ThreadManagerment.class);
-    //待下载队列
+    private static final Logger logger = LoggerFactory.getLogger(ThreadManagerment.class);
+    // 待下载队列
     private BlockingQueue<TitleAndUrl> titleAndUrlBlockingQueue = new LinkedBlockingQueue<>();
-    //是否下载
+    // 是否下载
     private boolean isDownload = true;
-    private int downloadNum = 10;//下载并发
-    private int max_down_page_count = 1;//默认下载一页
+    // 下载并发
+    private int downloadNum = 10;
+    // 默认下载一页
+    private int max_down_page_count = 1;
+    // 扫描本地路径，防止重复下载
+    private String scan_local_path;
 
     public ThreadManagerment() {
     }
 
-    public ThreadManagerment(boolean isDownload, int downloadNum, int max_down_page_count) {
+    public ThreadManagerment(String scan_local_path, boolean isDownload, int downloadNum, int max_down_page_count) {
+        this.scan_local_path = scan_local_path;
         this.isDownload = isDownload;
         this.downloadNum = downloadNum;
         this.max_down_page_count = max_down_page_count;
     }
 
-    public ThreadManagerment(boolean isDownload) {
-        this(isDownload, 10, 1);
+    public ThreadManagerment(String scan_local_path, boolean isDownload) {
+        this(scan_local_path, isDownload, 10, 1);
     }
 
-    public ThreadManagerment(int downloadNum) {
-        this(true, downloadNum, 1);
+    public ThreadManagerment(String scan_local_path, int downloadNum) {
+        this(scan_local_path, true, downloadNum, 1);
     }
 
-    public ThreadManagerment(boolean isDownload, int max_down_page_count) {
-        this(isDownload, 10, max_down_page_count);
+    public ThreadManagerment(String scan_local_path, boolean isDownload, int max_down_page_count) {
+        this(scan_local_path, isDownload, 10, max_down_page_count);
     }
 
-    public ThreadManagerment(int downloadNum, int max_down_page_count) {
-        this(true, downloadNum, max_down_page_count);
+    public ThreadManagerment(String scan_local_path, int downloadNum, int max_down_page_count) {
+        this(scan_local_path, true, downloadNum, max_down_page_count);
+    }
+
+    public Map<String, String> scanLocalFile(String scan_local_path) {
+        this.scan_local_path = scan_local_path;
+        return scanLocalFile();
     }
 
     public Map<String, String> scanLocalFile() {
         Map<String, String> map = new HashMap<>();
         //扫描本地路径，防止重复下载
-        File file = new File(AppMain.FILE_PATH);
-        for (String str : file.list()) {
+        File file = new File(scan_local_path);
+        for (String str : Objects.requireNonNull(file.list())) {
             //确认下是不是目录，是的话，加入map
-            if (new File(AppMain.FILE_PATH + str).isDirectory()) {
+            if (new File(scan_local_path + str).isDirectory()) {
                 map.put(str, "ok");
             }
         }

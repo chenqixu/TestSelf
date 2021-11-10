@@ -1,4 +1,4 @@
-package com.cqx.yaoqi;
+package com.cqx.download.yaoqi;
 
 /**
  * TitleAndUrl

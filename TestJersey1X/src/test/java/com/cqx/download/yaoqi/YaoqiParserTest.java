@@ -1,4 +1,4 @@
-package com.cqx.yaoqi;
+package com.cqx.download.yaoqi;
 
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;

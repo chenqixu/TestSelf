@@ -8,9 +8,9 @@ param:
   kafkaconf.sasl.mechanism: "PLAIN"
   kafkaconf.group.id: "test"
 #  kafkaconf.group.id: "REALTIME_LOCATION_J_ALTIBASE"
-  kafkaconf.enable.auto.commit: "false"
-#  kafkaconf.newland.consumer.mode: "fromBeginning"
-  kafkaconf.newland.consumer.mode: "fromEnd"
+#  kafkaconf.enable.auto.commit: "false"
+  kafkaconf.newland.consumer.mode: "fromBeginning"
+#  kafkaconf.newland.consumer.mode: "fromEnd"
 #    kafkaconf.newland.consumer.mode: "fromTime"
 #    kafkaconf.newland.consumer.fromTime: "2021-04-06 16:00:00"
 #  kafkaconf.newland.consumer.mode: "fromOffset"
@@ -25,4 +25,5 @@ param:
 #  topic: nmc_app_nl_loc_mix_v1
 #  topic: nmc_etl_hw_lte_s1mme_v1
 #  topic: BROADBAND_RESERVATION
-  topic: USER_ADDITIONAL_INFO
+#  topic: USER_ADDITIONAL_INFO
+  topic: USER_PRODUCT

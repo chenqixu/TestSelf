@@ -1,4 +1,4 @@
-package com.cqx.yaoqi.http;
+package com.cqx.download.http;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;

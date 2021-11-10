@@ -1,9 +1,8 @@
-package com.cqx.yaoqi.http;
+package com.cqx.download.http;
 
-import com.cqx.common.utils.log.MyLogger;
-import com.cqx.common.utils.log.MyLoggerFactory;
-import com.cqx.yaoqi.AppMain;
-import com.cqx.yaoqi.FileUtil;
+import com.cqx.download.yaoqi.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
@@ -13,7 +12,8 @@ import java.io.*;
  * @author chenqixu
  */
 public class FileStreamDeal implements StreamDeal {
-    private static final MyLogger logger = MyLoggerFactory.getLogger(FileStreamDeal.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileStreamDeal.class);
+    private static String file_path;
 
     @Override
     public Object deal(InputStream inputStream, FileUtil fileUtil) throws IOException {
@@ -22,7 +22,7 @@ public class FileStreamDeal implements StreamDeal {
             //读取内容
             byte[] getData = readInputStream(inputStream);
             // 文件保存位置
-            File saveDir = new File(AppMain.FILE_PATH + fileUtil.getTitle());
+            File saveDir = new File(getFile_path() + fileUtil.getTitle());
             if (!saveDir.exists()) {
                 saveDir.mkdirs();
             }
@@ -34,7 +34,7 @@ public class FileStreamDeal implements StreamDeal {
         } finally {
             if (fos != null) fos.close();
         }
-        return "";
+        return "ok";
     }
 
     /**
@@ -53,5 +53,13 @@ public class FileStreamDeal implements StreamDeal {
         }
         bos.close();
         return bos.toByteArray();
+    }
+
+    public String getFile_path() {
+        return file_path;
+    }
+
+    public static void setFile_path(String file_path) {
+        FileStreamDeal.file_path = file_path;
     }
 }

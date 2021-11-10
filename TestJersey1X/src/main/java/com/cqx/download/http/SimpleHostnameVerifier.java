@@ -1,4 +1,4 @@
-package com.cqx.yaoqi.http;
+package com.cqx.download.http;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;

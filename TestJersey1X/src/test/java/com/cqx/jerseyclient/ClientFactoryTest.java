@@ -1,16 +1,16 @@
 package com.cqx.jerseyclient;
 
+import com.cqx.common.utils.log.MyLogger;
+import com.cqx.common.utils.log.MyLoggerFactory;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.download.yaoqi.YaoqiParserTest;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
 public class ClientFactoryTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClientFactoryTest.class);
+    private static final MyLogger logger = MyLoggerFactory.getLogger(YaoqiParserTest.class);
 
     @Test
     public void postFile() {

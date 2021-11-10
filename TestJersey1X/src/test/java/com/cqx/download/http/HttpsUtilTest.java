@@ -1,7 +1,7 @@
-package com.cqx.yaoqi.http;
+package com.cqx.download.http;
 
 import com.cqx.bean.RestParam;
-import com.cqx.yaoqi.FileUtil;
+import com.cqx.download.yaoqi.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 

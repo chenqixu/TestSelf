@@ -10,6 +10,8 @@ public enum DBType {
     ORACLE("oracle.jdbc.driver.OracleDriver", "select 1 from dual"),
     POSTGRESQL("org.postgresql.Driver", "select 1"),
     DERBY("org.apache.derby.jdbc.EmbeddedDriver", "values 1"),
+    HIVE1("org.apache.hadoop.hive.jdbc.HiveDriver", "select 1"),
+    HIVE3("org.apache.hive.jdbc.HiveDriver", "select 1"),
     OTHER("", ""),
     ;
 

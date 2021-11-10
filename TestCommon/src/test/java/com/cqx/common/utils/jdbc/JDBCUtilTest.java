@@ -90,7 +90,8 @@ public class JDBCUtilTest extends TestBase {
         c2.stop();
     }
 
-    private void queryTest1() throws SQLException {
+    @Test
+    public void queryTest1() throws SQLException {
         TimeCostUtil exec = new TimeCostUtil();
         exec.start();
         List<List<QueryResult>> results = jdbcUtil.executeQuery("select user_id from sm2_user");

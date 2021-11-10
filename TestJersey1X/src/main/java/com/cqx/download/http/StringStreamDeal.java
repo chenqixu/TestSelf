@@ -1,6 +1,6 @@
-package com.cqx.yaoqi.http;
+package com.cqx.download.http;
 
-import com.cqx.yaoqi.FileUtil;
+import com.cqx.download.yaoqi.FileUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;

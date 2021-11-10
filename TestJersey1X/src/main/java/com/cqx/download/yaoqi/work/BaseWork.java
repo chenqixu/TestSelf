@@ -1,4 +1,4 @@
-package com.cqx.yaoqi.work;
+package com.cqx.download.yaoqi.work;
 
 /**
  * BaseWork
