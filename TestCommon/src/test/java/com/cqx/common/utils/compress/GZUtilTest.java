@@ -1,5 +1,6 @@
 package com.cqx.common.utils.compress;
 
+import com.cqx.common.utils.compress.gz.GZUtil;
 import com.cqx.common.utils.file.FileResult;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.hdfs.HdfsTool;

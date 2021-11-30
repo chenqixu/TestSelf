@@ -30,25 +30,25 @@ public class FtpUtil {
 	private long end = 0;
 	private String contorlCharset = null;
 
-//	private Logger log = Logger.getLogger(FtpUtil.class);
 	private org.slf4j.Logger logger = LoggerFactory.getLogger(FtpUtil.class);
 	private ProFTPClientInterface client = null;
 
 	public FtpUtil(String host, String user, String pwd) {
-		this.host = host;
-		this.user = user;
-		this.pwd = pwd;
-		initLicense();
+		this(host, user, pwd, 21,120);
 	}
 
 	public FtpUtil(String host, String user, String pwd, int port, int timeout) {
+		this(host, user, pwd, port, timeout, Level.ERROR);
+	}
+
+	public FtpUtil(String host, String user, String pwd, int port, int timeout, Level level) {
 		this.host = host;
 		this.user = user;
 		this.pwd = pwd;
 		this.ftpPort = port;
 		this.sftpPort = port;
 		this.timeout = timeout * 1000;
-		initLicense();
+		initLicense(level);
 	}
 
 //	public void setLog(Logger log) {
@@ -56,11 +56,11 @@ public class FtpUtil {
 //	}
 
 	/**
-	 * 初始化证书信息
+	 * 初始化证书信息以及设置日志级别
 	 */
-	private void initLicense() {
+	private void initLicense(Level level) {
 		License.setLicenseDetails("hello", "371-2454-4908-7510");
-		Logger.setLevel(Level.ERROR);
+		Logger.setLevel(level);
 	}
 
 	/**

@@ -31,16 +31,17 @@ public class JDBCUtilTest extends TestBase {
         Map params = getParam("jdbc.yaml");
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
+        DBBean dbBean = paramsParserUtil.getBeanMap().get("mysql79Bean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle12c_cctsys_dev_Bean");
+//        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle12c_cctsys_dev_Bean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localAdbBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("adbBean");
 //        DBBean dbBean = paramsParserUtil.getBeanMap().get("localoracleBean");
 //        dbBean.setPool(false);
 //        jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
 //        jdbcUtil = new JDBCUtil(dbBean);
-        jdbcUtil = new JDBCUtil(dbBean, 10, 4, 5);
+        jdbcUtil = new JDBCUtil(dbBean, 1, 1, 1);
     }
 
     @After
@@ -732,6 +733,11 @@ public class JDBCUtilTest extends TestBase {
         }
 //        Q2 q2 = (Q2) q1;
 //        logger.info("getData：{}，getType：{}", q2.getData(), q2.getType());
+    }
+
+    @Test
+    public void test79Mysql() throws SQLException {
+        jdbcUtil.executeQuery("select 1");
     }
 
     interface Q1 {

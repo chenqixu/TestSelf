@@ -10,9 +10,26 @@ import java.io.IOException;
  * @author chenqixu
  */
 public abstract class AbstractHttpParserUtilDeal implements HttpParserUtil.IHttpParserUtilDeal {
+    private ICallBack iCallBack;
 
-    public abstract void deal(Element parent, Element child, String childCcsQuery, boolean isEnd) throws IOException;
+    public AbstractHttpParserUtilDeal() {
+    }
+
+    public AbstractHttpParserUtilDeal(ICallBack iCallBack) {
+        this.iCallBack = iCallBack;
+    }
+
+    public void deal(Element parent, Element child, String childCcsQuery, boolean isEnd) throws IOException {
+        if (iCallBack != null)
+            this.iCallBack.callBack();
+    }
 
     public void noDataDeal() {
+        if (iCallBack != null)
+            this.iCallBack.callBack();
+    }
+
+    public void setiCallBack(ICallBack iCallBack) {
+        this.iCallBack = iCallBack;
     }
 }

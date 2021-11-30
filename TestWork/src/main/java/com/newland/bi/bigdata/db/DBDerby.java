@@ -18,7 +18,7 @@ public class DBDerby {
         String dbName = "d:\\tmp\\data\\derby\\mydb"; // the name of the database
         String protocol = "jdbc:derby:" + dbName + ";create=true";
         DBBean dbBean = new DBBean();
-        dbBean.setDbType(DBType.DERBY);
+        dbBean.setDbType(DBType.DERBY_LOCAL);
         dbBean.setPool(false);
         dbBean.setTns(protocol);
         try (JDBCUtil jdbcUtil = new JDBCUtil(dbBean)) {

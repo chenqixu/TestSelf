@@ -1,5 +1,6 @@
 package com.cqx.common.utils.http;
 
+import com.cqx.common.utils.system.SleepUtil;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,8 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.NoRouteToHostException;
 import java.net.URLDecoder;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * http解析工具
@@ -20,6 +24,7 @@ import java.util.List;
 public class HttpParserUtil {
     private static final Logger logger = LoggerFactory.getLogger(HttpParserUtil.class);
     private final String LOCAL_HEAD = "file:///";
+    private AtomicLong downloadSize = new AtomicLong(0);
 
     /**
      * 截取url
@@ -52,6 +57,17 @@ public class HttpParserUtil {
     }
 
     /**
+     * 获取格式化后的大小
+     *
+     * @param size
+     * @param enumSizeUnit
+     * @return
+     */
+    public static String getFormatSize(long size, EnumSizeUnit enumSizeUnit) {
+        return String.format("%s (%s)", size / enumSizeUnit.getDivisor(), enumSizeUnit.getName());
+    }
+
+    /**
      * 通过css获取Elements
      *
      * @param url     网址
@@ -61,10 +77,10 @@ public class HttpParserUtil {
      */
     public Elements parserGetElements(String url, int timeout, String parentCcsQuery) throws IOException {
         Document doc;
-        if (url.startsWith(LOCAL_HEAD)) {
+        if (url.startsWith(LOCAL_HEAD)) {// 本地文件
             File input = new File(url.replace(LOCAL_HEAD, ""));
             doc = Jsoup.parse(input, "UTF-8");
-        } else {
+        } else {// 网络地址
             doc = connUrlGetDoc(url, timeout);
         }
         return doc.select(parentCcsQuery);
@@ -149,35 +165,36 @@ public class HttpParserUtil {
      * @param url      网址
      * @param timeout  超时
      * @param savePath 保存路径全名，含文件名
+     * @return 文件大小（单位byte）
      */
-    public void download(String url, int timeout, String savePath) {
+    public long download(String url, int timeout, String savePath) {
         int statusCode = 0;
         int retryCnt = 0;
+        long fileSize = 0L;
         // 无限连接直到成功
         while (statusCode != 200) {
             if (retryCnt >= 1) {
                 logger.warn("【重试次数】{}，【地址】{}", retryCnt, url);
             }
             try {
-                Connection conn = Jsoup.connect(url);
-                Connection.Response response = conn
-                        .method(Connection.Method.GET)
-                        .timeout(timeout)
-                        .ignoreContentType(true)
-                        .execute();
+                Connection.Response response = execute(url, timeout);
                 statusCode = response.statusCode();
                 // 保存文件，抛出异常要重试
-                saveFile(response.bodyStream(), savePath);
+                fileSize = saveFile(response.bodyStream(), savePath);
+                downloadSize.addAndGet(fileSize);
             } catch (Exception e) {
                 retryCnt++;
                 statusCode = 0;
                 logger.error(String.format("下载文件异常，状态=%s，重试次数=%s，异常信息=%s"
                         , statusCode, retryCnt, e.getMessage()));
-                if (retryCnt > 30) {
-                    throw new NullPointerException("下载文件异常次数超过30次！严重告警！地址：" + url);
+                // 网络物理异常，可以休眠的久一点
+                if (UnknownHostException.class.isAssignableFrom(e.getClass())
+                        || NoRouteToHostException.class.isAssignableFrom(e.getClass())) {
+                    SleepUtil.sleepSecond(5);
                 }
             }
         }
+        return fileSize;
     }
 
     /**
@@ -197,20 +214,47 @@ public class HttpParserUtil {
                 logger.warn("【重试次数】{}，【地址】{}", retryCnt, url);
             }
             try {
-                Connection conn = Jsoup.connect(url);
-                Connection.Response response = conn
-                        .timeout(timeout)
-                        .execute();
+                Connection.Response response = execute(url, timeout);
                 statusCode = response.statusCode();
-                document = response.parse();
+                // 可能正常返回404，不是返回200，造一个空文档对象
+                if (statusCode != 200) {
+                    logger.warn("请求{}返回了非200状态：{}", url, statusCode);
+                    return new Document("Null");
+                } else {
+                    document = response.parse();
+                }
             } catch (UncheckedIOException | IOException e) {// 只有连接异常才会自动重试
                 retryCnt++;
                 statusCode = 0;
                 logger.error(String.format("解析url获取对应的Document异常，状态=%s，重试次数=%s，异常信息=%s"
                         , statusCode, retryCnt, e.getMessage()));
+                // 太多重定向，直接返回一个空文档对象
+                if (e.getMessage().contains("Too many redirects occurred trying to load URL")) {
+                    logger.warn("太多重定向，直接返回一个空文档对象！");
+                    return new Document("Null");
+                }
             }
         }
         return document;
+    }
+
+    /**
+     * 解析url
+     *
+     * @param url
+     * @param timeout
+     * @return
+     * @throws IOException
+     */
+    private Connection.Response execute(String url, int timeout) throws IOException {
+        Connection conn = Jsoup.connect(url);
+        addHeader(conn);
+        return conn
+                .method(Connection.Method.GET)// 使用GET请求
+                .timeout(timeout)// 设置超时
+                .ignoreContentType(true)// 忽略类型错误
+                .ignoreHttpErrors(true)// 忽略Http错误
+                .execute();
     }
 
     /**
@@ -233,14 +277,16 @@ public class HttpParserUtil {
      *
      * @param bufferedInputStream 输入流
      * @param savePath            保存路径全名，含文件名
+     * @return 文件大小（单位byte）
      * @throws IOException 写文件可能产生的IO异常
      */
-    private void saveFile(BufferedInputStream bufferedInputStream, String savePath) throws IOException {
+    private long saveFile(BufferedInputStream bufferedInputStream, String savePath) throws IOException {
         int buffer_len = 2048;
         // 一次最多读取2k
         byte[] buffer = new byte[buffer_len];
         // 实际读取的长度
-        int readLenghth;
+        int readLength;
+        long realReadLength = 0L;
         try (
                 // 根据文件保存地址，创建文件输出流
                 FileOutputStream fileOutputStream = new FileOutputStream(new File(savePath));
@@ -248,13 +294,43 @@ public class HttpParserUtil {
                 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream)
         ) {
             // 文件逐步写入本地
-            while ((readLenghth = bufferedInputStream.read(buffer, 0, buffer_len)) != -1) {// 先读出来，保存在buffer数组中
-                bufferedOutputStream.write(buffer, 0, readLenghth);// 再从buffer中取出来保存到本地
+            while ((readLength = bufferedInputStream.read(buffer, 0, buffer_len)) != -1) {// 先读出来，保存在buffer数组中
+                bufferedOutputStream.write(buffer, 0, readLength);// 再从buffer中取出来保存到本地
+                realReadLength += readLength;
             }
         } finally {
             // 关闭缓冲流
             bufferedInputStream.close();
         }
+        return realReadLength;
+    }
+
+    /**
+     * 添加模拟浏览器的header
+     *
+     * @param conn
+     */
+    private void addHeader(Connection conn) {
+        conn.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36");
+        conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        conn.header("Accept-Language", "zh-cn,zh;q=0.5");
+        conn.header("Accept-Encoding", "gzip, deflate");
+    }
+
+    /**
+     * 获取下载总量（byte）
+     *
+     * @return
+     */
+    public long getDownloadSize() {
+        return downloadSize.get();
+    }
+
+    /**
+     * 重置下载总量（byte）
+     */
+    public void resetDownloadSize() {
+        downloadSize.set(0L);
     }
 
     public interface IHttpParserUtilDeal {

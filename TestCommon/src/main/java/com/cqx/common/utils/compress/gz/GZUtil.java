@@ -1,4 +1,4 @@
-package com.cqx.common.utils.compress;
+package com.cqx.common.utils.compress.gz;
 
 import java.io.*;
 import java.util.zip.GZIPOutputStream;

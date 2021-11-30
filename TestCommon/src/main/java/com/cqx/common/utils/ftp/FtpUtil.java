@@ -36,10 +36,12 @@ public class FtpUtil {
             if (!FTPReply.isPositiveCompletion(replyCode)) {
                 throw new FTPConnectionClosedException("FtpUtilException：FTP连接登录失败,应答码为:" + replyCode);
             }
-            //设置以二进制方式传输
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            //设置文件传输方式
+            ftpClient.setFileType(ftpParamCfg.getFileType());
             //被动模式
-            ftpClient.enterLocalPassiveMode();
+            if (ftpParamCfg.isPassiveMode()) {
+                ftpClient.enterLocalPassiveMode();
+            }
         } catch (Exception e) {
             if (ftpClient != null && ftpClient.isConnected()) {
                 try {

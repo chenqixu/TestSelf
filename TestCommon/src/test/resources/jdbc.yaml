@@ -11,6 +11,11 @@ dbbeans:
     pass_word: "suyan"
     tns: "jdbc:mysql://10.1.8.200:3306/suyan_perf?useUnicode=true"
     dbType: "MYSQL"
+  - name: mysql79Bean
+    user_name: "zyh"
+    pass_word: "zyh"
+    tns: "jdbc:mysql://10.1.12.79:3306/resource_service?useUnicode=true&serverTimezone=GMT%2B8"
+    dbType: "MYSQL"
   - name: adbBean
     user_name: "label_core"
     pass_word: "admin"
