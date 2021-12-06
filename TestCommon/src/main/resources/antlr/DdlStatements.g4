@@ -1,0 +1,5 @@
+parser grammar DdlStatements;
+
+createInputStreamStatement
+    :
+    ;
