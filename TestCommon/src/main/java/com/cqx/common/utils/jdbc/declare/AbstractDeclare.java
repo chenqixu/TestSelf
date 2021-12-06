@@ -1,54 +1,37 @@
-package com.cqx.common.utils.jdbc.postgresql;
+package com.cqx.common.utils.jdbc.declare;
 
 import com.cqx.common.utils.jdbc.MergeEnum;
 
 /**
- * PGDeclare
+ * AbstractDeclare
  *
  * @author chenqixu
  */
-public class PGDeclare {
-    private final String insertSql = "insert into %s(%s) values(%s)";
-    private final String selectSql = "select count(1) into hasval from %s where %s";
-    private final String updateSql = "update %s set %s where %s";
-    private String pgdeclareInsertOnly;
-    private String pgdeclareInsertUpdate;
+public abstract class AbstractDeclare {
+    protected final String insertSql = "insert into %s(%s) values(%s)";
+    protected final String selectSql = "select count(1) into hasval from %s where %s";
+    protected final String updateSql = "update %s set %s where %s";
+    protected String pgdeclareInsertOnly;
+    protected String pgdeclareInsertUpdate;
 
-    private PGDeclare() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("do")
-                .append(" $$")
-                .append(" DECLARE")
-                .append("  hasval numeric;")
-                .append(" BEGIN")
-                .append(" %s;")
-                .append(" if hasval=0 THEN")
-                .append(" %s;")
-                .append(" else")
-                .append(" %s;")
-                .append(" end if;")
-                .append(" END;")
-                .append(" $$");
-        pgdeclareInsertUpdate = sb.toString();
-
-        sb.delete(0, sb.length());
-        sb.append("do")
-                .append(" $$")
-                .append(" DECLARE")
-                .append("  hasval numeric;")
-                .append(" BEGIN")
-                .append(" %s;")
-                .append(" if hasval=0 THEN")
-                .append(" %s;")
-                .append(" end if;")
-                .append(" END;")
-                .append(" $$");
-        pgdeclareInsertOnly = sb.toString();
+    public AbstractDeclare() {
+        pgdeclareInsertUpdate = setPgdeclareInsertUpdate();
+        pgdeclareInsertOnly = setPgdeclareInsertOnly();
     }
 
-    public static PGDeclare builder() {
-        return new PGDeclare();
-    }
+    /**
+     * 没有值就写入，有值就更新
+     *
+     * @return
+     */
+    protected abstract String setPgdeclareInsertUpdate();
+
+    /**
+     * 没有值就写入，有值不做处理
+     *
+     * @return
+     */
+    protected abstract String setPgdeclareInsertOnly();
 
     /**
      * 默认只插不更新

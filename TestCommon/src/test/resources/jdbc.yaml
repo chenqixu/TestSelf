@@ -14,8 +14,8 @@ dbbeans:
   - name: mysql79Bean
     user_name: "zyh"
     pass_word: "zyh"
-    tns: "jdbc:mysql://10.1.12.79:3306/resource_service?useUnicode=true&serverTimezone=GMT%2B8"
-    dbType: "MYSQL"
+    tns: "jdbc:mysql://10.1.12.79:3306/resource_service?useUnicode=true&serverTimezone=GMT%2B8&useSSL=false"
+    dbType: "MYSQL8"
   - name: adbBean
     user_name: "label_core"
     pass_word: "admin"

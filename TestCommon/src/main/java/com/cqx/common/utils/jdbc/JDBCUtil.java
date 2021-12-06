@@ -1,7 +1,8 @@
 package com.cqx.common.utils.jdbc;
 
 import com.cqx.common.utils.file.FileUtil;
-import com.cqx.common.utils.jdbc.postgresql.PGDeclare;
+import com.cqx.common.utils.jdbc.declare.AbstractDeclare;
+import com.cqx.common.utils.jdbc.declare.DeclareHelper;
 import com.cqx.common.utils.system.ArraysUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import oracle.sql.CLOB;
@@ -94,8 +95,8 @@ public class JDBCUtil implements IJDBCUtil {
     private List<String> keyList = new ArrayList<>();
     private List<String> endList = new ArrayList<>();
     private int batchNum = 2000;
-    private boolean isThrow = true;//是否抛出异常，默认抛出
-    private PGDeclare pgDeclare = PGDeclare.builder();
+    private boolean isThrow = true;// 是否抛出异常，默认抛出
+    private AbstractDeclare declare;// 写入合并
 
     public JDBCUtil(DBBean dbBean) {
         this(dbBean, -1, -1, -1);
@@ -103,6 +104,7 @@ public class JDBCUtil implements IJDBCUtil {
 
     public JDBCUtil(DBBean dbBean, int MaxActive, int MinIdle, int MaxIdle) {
         this.dbBean = dbBean;
+        this.declare = DeclareHelper.builder(dbBean.getDbType());
         init(MaxActive, MinIdle, MaxIdle);
     }
 
@@ -1717,7 +1719,10 @@ public class JDBCUtil implements IJDBCUtil {
                                 op_type, Arrays.asList(pks), queryResults);
                         break;
                     }
-                    sql = pgDeclare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), mergeEnum);
+                    if (declare == null) {
+                        throw new NullPointerException("这个类型" + this.getDbBean().getDbType() + "没有实现写入合并！");
+                    }
+                    sql = declare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), mergeEnum);
                 } else {// 正常写入
                     sql = String.format(insert, table, insert_fields, insert_values.toString());
                 }
