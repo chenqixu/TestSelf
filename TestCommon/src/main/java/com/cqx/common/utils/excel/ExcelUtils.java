@@ -231,7 +231,7 @@ public class ExcelUtils {
      * @param path
      * @return
      */
-    private String getPostfix(String path) {
+    public static String getPostfix(String path) {
         if (path == null || ExcelCommons.EMPTY.equals(path.trim())) {
             return ExcelCommons.EMPTY;
         }

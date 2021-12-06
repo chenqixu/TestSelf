@@ -9,5 +9,6 @@ public class ExcelCommons {
     public static final String POINT = ".";
 
     public static final String NOT_EXCEL_FILE = " : Not the Excel file!";
+    public static final String NOT_DOC_FILE = " : Not the Doc file!";
     public static final String PROCESSING = "Processing...";
 }
