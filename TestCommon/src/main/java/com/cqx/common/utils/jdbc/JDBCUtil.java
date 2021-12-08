@@ -1720,7 +1720,7 @@ public class JDBCUtil implements IJDBCUtil {
                         break;
                     }
                     if (declare == null) {
-                        throw new NullPointerException("这个类型" + this.getDbBean().getDbType() + "没有实现写入合并！");
+                        throw new NullPointerException("这个数据库" + this.getDbBean().getDbType() + "没有实现写入合并！");
                     }
                     sql = declare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), mergeEnum);
                 } else {// 正常写入
