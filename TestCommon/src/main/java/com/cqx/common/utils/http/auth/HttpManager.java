@@ -463,6 +463,12 @@ public class HttpManager {
                         APIErrorResponse apiErrorResponse;
                         try {
                             apiErrorResponse = gson.fromJson(responseEntity, APIErrorResponse.class);
+                            if (apiErrorResponse.getErrorCode() == null || apiErrorResponse.getErrorCode().length() == 0) {
+                                apiErrorResponse.setErrorCode("-1");
+                            }
+                            if (apiErrorResponse.getErrorMessage() == null || apiErrorResponse.getErrorMessage().length() == 0) {
+                                apiErrorResponse.setErrorMessage(responseEntity);
+                            }
                         } catch (Exception e) {
                             String reasonPhrase = response.getStatusInfo().getReasonPhrase();
                             // INFORMATIONAL, SUCCESSFUL, REDIRECTION, CLIENT_ERROR, SERVER_ERROR, OTHER

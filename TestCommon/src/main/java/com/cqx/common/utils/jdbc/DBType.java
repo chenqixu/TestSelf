@@ -14,6 +14,10 @@ public enum DBType {
     DERBY_NET("org.apache.derby.jdbc.ClientDriver", "values 1"),
     HIVE1("org.apache.hadoop.hive.jdbc.HiveDriver", "select 1"),
     HIVE3("org.apache.hive.jdbc.HiveDriver", "select 1"),
+    IMPALA("com.cloudera.impala.jdbc41.Driver", "select 1 from dual"),
+    GSDB("fjlz.gsdb.jdbc.GsdbDriver", "select 1 from dual"),
+    OB_ORACLE("com.alipay.oceanbase.jdbc.Driver", "select 1 from dual"),
+    OB_MYSQL(MYSQL),
     OTHER("", ""),
     ;
 
@@ -22,6 +26,10 @@ public enum DBType {
 
     DBType(String driver) {
         this.driver = driver;
+    }
+
+    DBType(DBType dbType) {
+        this(dbType.getDriver(), dbType.getValidation_query());
     }
 
     DBType(String driver, String validation_query) {
