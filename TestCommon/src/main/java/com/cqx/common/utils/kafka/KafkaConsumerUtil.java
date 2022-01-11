@@ -89,9 +89,14 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
         this.kafka_username = kafka_username;
         this.kafka_password = kafka_password;
         Properties properties = KafkaPropertiesUtil.initConf(stormConf);
-        if (kafka_username == null) kafka_username = properties.getProperty("newland.kafka_username");
-        if (kafka_password == null) kafka_password = properties.getProperty("newland.kafka_password");
-        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+        if (kafka_username == null) {
+            this.kafka_username = properties.getProperty("newland.kafka_username");
+        }
+        if (kafka_password == null) {
+            this.kafka_password = properties.getProperty("newland.kafka_password");
+        }
+        String kafkaSecurityProtocol = properties.getProperty("sasl.mechanism");
+        Configuration.setConfiguration(new SimpleClientConfiguration(this.kafka_username, this.kafka_password, kafkaSecurityProtocol));
         KafkaPropertiesUtil.removeNewlandProperties(properties);
         consumer = new KafkaConsumer<>(properties);
     }
@@ -110,8 +115,9 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
         this.kafka_password = kafka_password;
         Properties properties = new Properties();
         properties.load(new FileInputStream(conf));
+        String kafkaSecurityProtocol = properties.getProperty("sasl.mechanism");
         if (kafka_username != null && kafka_password != null) {
-            Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+            Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password, kafkaSecurityProtocol));
         } else {
             // java.security.auth.login.config 变量设置
             String propertyAuth = properties.getProperty("java.security.auth.login.config");

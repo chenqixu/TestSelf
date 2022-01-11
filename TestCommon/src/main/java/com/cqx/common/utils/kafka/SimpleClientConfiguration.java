@@ -1,6 +1,7 @@
 package com.cqx.common.utils.kafka;
 
 import org.apache.kafka.common.security.plain.PlainLoginModule;
+import org.apache.kafka.common.security.scram.ScramLoginModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,19 +11,36 @@ import javax.security.auth.login.Configuration;
 import java.util.HashMap;
 
 /**
- * SimpleClientConfiguration
+ * SimpleClientConfiguration<br>
+ * <pre>
+ *     GSSAPI：使用的Kerberos认证，可以集成目录服务，比如AD。Kafka最小版本 0.9
+ *     PLAIN：使用简单用户名和密码形式，Kafka最小版本 0.10
+ *     SCRAM：主要解决PLAIN动态更新问题以及安全机制，Kafka最小版本 0.10.2
+ *     OAUTHBEARER：基于OAuth 2认证框架，Kafka最小版本 2.0
+ * </pre>
  *
  * @author chenqixu
  */
 public class SimpleClientConfiguration extends Configuration {
-
-    private static Logger logger = LoggerFactory.getLogger(SimpleClientConfiguration.class);
+    public static final String PlainProtocol = "PLAIN";
+    public static final String ScramProtocol = "SCRAM";
+    private static final Logger logger = LoggerFactory.getLogger(SimpleClientConfiguration.class);
     private String username;
     private String password;
+    private String loginModeName;
 
     public SimpleClientConfiguration(String username, String password) {
+        this(username, password, PlainProtocol);
+    }
+
+    public SimpleClientConfiguration(String username, String password, String kafkaSecurityProtocol) {
         this.username = username;
         this.password = password;
+        if (kafkaSecurityProtocol != null && kafkaSecurityProtocol.startsWith(ScramProtocol)) {
+            loginModeName = ScramLoginModule.class.getName();
+        } else {// 默认是简单认证
+            loginModeName = PlainLoginModule.class.getName();
+        }
     }
 
     @Override
@@ -32,7 +50,7 @@ public class SimpleClientConfiguration extends Configuration {
             map.put("username", username);
             map.put("password", password);
             AppConfigurationEntry configurationEntry
-                    = new AppConfigurationEntry(PlainLoginModule.class.getName(), LoginModuleControlFlag.REQUIRED, map);
+                    = new AppConfigurationEntry(loginModeName, LoginModuleControlFlag.REQUIRED, map);
             logger.info("KafkaClient return：{}", configurationEntry);
             return new AppConfigurationEntry[]{configurationEntry};
         }

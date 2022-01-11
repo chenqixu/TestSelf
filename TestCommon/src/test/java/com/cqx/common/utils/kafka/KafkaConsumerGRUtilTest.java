@@ -322,4 +322,24 @@ public class KafkaConsumerGRUtilTest extends TestBase {
         logger.info("o1：{} {}，o2：{} {}", o1.getClass(), o1, o2.getClass(), o2);
         return o1.toString().equals(o2.toString());
     }
+
+    /**
+     * 从scram认证模式下的kafka话题进行消费
+     *
+     * @throws Exception
+     */
+    @Test
+    public void pollScram() throws Exception {
+        Map param = (Map) getParam("kafka_scram.yaml").get("param");//从配置文件解析参数
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            kafkaConsumerUtil.subscribe(topic);//订阅
+            for (IKVList.Entry<String, byte[]> entry : kafkaConsumerUtil.pollHasKey(1000L).entrySet()) {
+                byte[] value = entry.getValue();
+                logger.info("【key】{}，【value】{}，【value.class】{}",
+                        entry.getKey(), new String(value), value.getClass().getSimpleName());
+            }
+        }
+    }
 }

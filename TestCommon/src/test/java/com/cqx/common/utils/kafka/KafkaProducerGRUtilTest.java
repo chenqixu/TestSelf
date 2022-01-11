@@ -5,11 +5,13 @@ import com.cqx.common.bean.kafka.DefaultBean;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.system.SleepUtil;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.Future;
 
 public class KafkaProducerGRUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerGRUtilTest.class);
@@ -481,6 +483,24 @@ public class KafkaProducerGRUtilTest extends TestBase {
                 kafkaProducerGRUtil.send(topic, schema.getBytes());
                 SleepUtil.sleepMilliSecond(200);
             }
+        }
+    }
+
+    /**
+     * 往scram认证模式下的kafka话题发送随机数据
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendScramRandom() throws Exception {
+        Map param = (Map) getParam("kafka_scram.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerUtil<String, byte[]> kafkaProducerGRUtil = new KafkaProducerUtil<>(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            String value = System.currentTimeMillis() + "";
+            String key = String.valueOf(value.hashCode());
+            Future<RecordMetadata> metadataFuture = kafkaProducerGRUtil.send(topic, key, value.getBytes());//随机产生数据
+            RecordMetadata recordMetadata = metadataFuture.get();
+            logger.info("recordMetadata:{}", recordMetadata);
         }
     }
 }

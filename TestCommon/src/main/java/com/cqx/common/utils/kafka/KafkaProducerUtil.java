@@ -17,7 +17,13 @@ import java.util.concurrent.Future;
 
 /**
  * KafkaProducerUtil<br>
- * 2021-04-20 cqx 增加Closeable接口，方便JDK8语法糖使用
+ * 2021-04-20 cqx 增加Closeable接口，方便JDK8语法糖使用<br>
+ * <pre>
+ *     acks=0，不等待broker的确认信息，最小延迟
+ *     acks=1，leader已经接收了数据的确认信息，Replica异步拉取信息，比较折衷
+ *     acks=-1，ISR列表中的所有Replica都返回确认信息
+ *     acks=all，ISR列表中的所有Replica都返回确认信息
+ * </pre>
  *
  * @author chenqixu
  */
@@ -36,7 +42,8 @@ public class KafkaProducerUtil<K, V> implements Closeable {
         Properties properties = KafkaPropertiesUtil.initConf(stormConf);
         String kafka_username = properties.getProperty("newland.kafka_username");
         String kafka_password = properties.getProperty("newland.kafka_password");
-        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+        String kafkaSecurityProtocol = properties.getProperty("sasl.mechanism");
+        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password, kafkaSecurityProtocol));
         KafkaPropertiesUtil.removeNewlandProperties(properties);
         producer = new KafkaProducer<>(properties);
     }
