@@ -34,6 +34,7 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
     private Map stormConf;
     private String kafka_username;
     private String kafka_password;
+    private boolean isTransaction;// 事务开关
 
     /**
      * 走Properties文件，认证使用java.security.auth.login.config
@@ -67,6 +68,10 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
         init(stormConf, null, null);
     }
 
+    public KafkaConsumerUtil(Map stormConf, boolean isTransaction) throws IOException {
+        init(stormConf, null, null, isTransaction);
+    }
+
     /**
      * 走Map配置，用户密码显示输入
      *
@@ -79,12 +84,17 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
         init(stormConf, kafka_username, kafka_password);
     }
 
+    private void init(Map stormConf, String kafka_username, String kafka_password) {
+        init(stormConf, kafka_username, kafka_password, false);
+    }
+
     /**
      * 初始化，使用Map的配置来替代每一台的配置文件
      *
      * @param stormConf
      */
-    private void init(Map stormConf, String kafka_username, String kafka_password) {
+    private void init(Map stormConf, String kafka_username, String kafka_password, boolean isTransaction) {
+        this.isTransaction = isTransaction;
         this.stormConf = stormConf;
         this.kafka_username = kafka_username;
         this.kafka_password = kafka_password;
@@ -98,6 +108,13 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
         String kafkaSecurityProtocol = properties.getProperty("sasl.mechanism");
         Configuration.setConfiguration(new SimpleClientConfiguration(this.kafka_username, this.kafka_password, kafkaSecurityProtocol));
         KafkaPropertiesUtil.removeNewlandProperties(properties);
+        if (isTransaction) {
+            // 设置事务隔离级别, 读已提交(仅仅消费有提交标记的消息)
+            properties.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
+            // 消费者&生产者事务, 必须关闭消费端的自动提交
+            // 应避免消费失败同时更新了offset, 导致无法重新消费"消费端失败"的消息
+            properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        }
         consumer = new KafkaConsumer<>(properties);
     }
 

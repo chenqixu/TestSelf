@@ -32,6 +32,20 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
 
     public KafkaProducerGRUtil(Map stormConf) throws IOException {
         super(stormConf);
+        initGR(stormConf);
+    }
+
+    public KafkaProducerGRUtil(Map stormConf, boolean isTransaction) throws IOException {
+        super(stormConf, isTransaction);
+        initGR(stormConf);
+    }
+
+    /**
+     * 初始化
+     *
+     * @param stormConf
+     */
+    private void initGR(Map stormConf) {
         String schema_url = (String) stormConf.get("schema_url");
         //初始化工具类
         genericRecordUtil = new GenericRecordUtil(schema_url);
@@ -41,6 +55,13 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
         //初始化schema
         this.topic = topic;
         genericRecordUtil.addTopic(topic);
+        schema = genericRecordUtil.getSchema(topic);
+    }
+
+    public void setTopic(String topic, String schemaString) {
+        //初始化schema
+        this.topic = topic;
+        genericRecordUtil.addTopicBySchemaString(topic, schemaString);
         schema = genericRecordUtil.getSchema(topic);
     }
 

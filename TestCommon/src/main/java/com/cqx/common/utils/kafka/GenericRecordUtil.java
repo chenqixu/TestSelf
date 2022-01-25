@@ -393,7 +393,7 @@ public class GenericRecordUtil {
         genericByAvroRecord(avroRecord, genericRecord, true);
         // 从AvroRecord找到匹配的父级，然后设置到对应的子级去
         findAndSet(genericRecord, avroRecord, avroLevelData);
-        logger.info("genericRandomRecord：{}", genericRecord);
+        logger.debug("genericRandomRecord：{}", genericRecord);
         return recordConvertor.recordToBinary(genericRecord);
     }
 

@@ -763,6 +763,12 @@
             <version>2.2.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.traffic</groupId>
+            <artifactId>traffic-shm</artifactId>
+            <version>0.1</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>

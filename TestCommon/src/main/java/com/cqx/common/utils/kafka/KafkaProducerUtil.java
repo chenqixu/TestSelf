@@ -1,9 +1,8 @@
 package com.cqx.common.utils.kafka;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +10,7 @@ import javax.security.auth.login.Configuration;
 import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Future;
 
 /**
@@ -30,26 +28,70 @@ import java.util.concurrent.Future;
 public class KafkaProducerUtil<K, V> implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerUtil.class);
     private KafkaProducer<K, V> producer;
+    private boolean isTransaction;// 事务开关
+    private ProducerRecordsBuilder producerRecordsBuilder;
 
+    /**
+     * kafka参数从配置文件中获取，认证信息另外传入
+     *
+     * @param conf
+     * @param kafka_username
+     * @param kafka_password
+     * @throws IOException
+     */
     public KafkaProducerUtil(String conf, String kafka_username, String kafka_password) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(conf));
-        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
-        producer = new KafkaProducer<>(properties);
+        buildProducer(init(properties, kafka_username, kafka_password, null));
     }
 
+    /**
+     * kafka参数从Map中获取
+     *
+     * @param stormConf
+     * @throws IOException
+     */
     public KafkaProducerUtil(Map stormConf) throws IOException {
+        this(stormConf, false);
+    }
+
+    /**
+     * kafka参数从Map中获取，支持事务
+     *
+     * @param stormConf
+     * @param isTransaction
+     * @throws IOException
+     */
+    public KafkaProducerUtil(Map stormConf, boolean isTransaction) throws IOException {
+        this.isTransaction = isTransaction;
         Properties properties = KafkaPropertiesUtil.initConf(stormConf);
         String kafka_username = properties.getProperty("newland.kafka_username");
         String kafka_password = properties.getProperty("newland.kafka_password");
         String kafkaSecurityProtocol = properties.getProperty("sasl.mechanism");
-        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password, kafkaSecurityProtocol));
-        KafkaPropertiesUtil.removeNewlandProperties(properties);
-        producer = new KafkaProducer<>(properties);
+        // 认证 && 初始化参数
+        Properties newProperties = init(properties, kafka_username, kafka_password, kafkaSecurityProtocol);
+        if (isTransaction) {
+            // 配置生产者端事务ID
+            newProperties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG
+                    // 避免重复, 拼接 UUID 来保证唯一
+                    , "transaction-id" + ":" + UUID.randomUUID().toString());
+            // 配置重试机制(all-至少一个副本写入数据, 30S未接收到应答则重复发送)
+            newProperties.put(ProducerConfig.ACKS_CONFIG, "all");
+            newProperties.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, 30000);
+            // 开启幂等机制
+            newProperties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        }
+        // 构造生产者
+        buildProducer(newProperties);
+        if (isTransaction) {
+            // 初始化事务
+            if (producer != null) producer.initTransactions();
+            else throw new NullPointerException("初始化事务失败！生产者为空，请检查。");
+        }
     }
 
     /**
-     * 使用内存中的配置来替代每一台的配置文件
+     * kafka参数从Map中获取，认证信息另外传入
      *
      * @param stormConf
      * @param kafka_username
@@ -58,8 +100,31 @@ public class KafkaProducerUtil<K, V> implements Closeable {
      */
     public KafkaProducerUtil(Map stormConf, String kafka_username, String kafka_password) throws IOException {
         Properties properties = KafkaPropertiesUtil.initConf(stormConf);
-        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+        buildProducer(init(properties, kafka_username, kafka_password, null));
+    }
+
+    /**
+     * 认证 && 初始化参数
+     *
+     * @param properties
+     * @param kafka_username
+     * @param kafka_password
+     * @param kafkaSecurityProtocol
+     */
+    private Properties init(Properties properties, String kafka_username, String kafka_password, String kafkaSecurityProtocol) {
+        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password, kafkaSecurityProtocol));
         KafkaPropertiesUtil.removeNewlandProperties(properties);
+        // 为避免长时间未达到发送批次上线, 导致数据不发送, 设置必须发送的时间间隔, 毫秒, 5000ms
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 5000);
+        return properties;
+    }
+
+    /**
+     * 构造生产者
+     *
+     * @param properties
+     */
+    private void buildProducer(Properties properties) {
         producer = new KafkaProducer<>(properties);
     }
 
@@ -84,6 +149,67 @@ public class KafkaProducerUtil<K, V> implements Closeable {
         return producer.send(new ProducerRecord<>(topic, key, value), callback);
     }
 
+    /**
+     * 使用事务提交
+     *
+     * @param producerRecords
+     */
+    public void sendWithTransaction(List<ProducerRecord<K, V>> producerRecords) {
+        if (!isTransaction) {
+            throw new UnsupportedOperationException("事务未开启，不支持事务提交！");
+        }
+        try {
+            // 生产者开始事务
+            producer.beginTransaction();
+            for (ProducerRecord<K, V> producerRecord : producerRecords) {
+                producer.send(producerRecord);
+            }
+            // 生产者提交事务
+            producer.commitTransaction();
+        } catch (Exception e) {
+            logger.error("提交事务异常，错误信息：" + e.getMessage(), e);
+            // 生产者终止事务
+            producer.abortTransaction();
+        }
+    }
+
+    /**
+     * 消费者和生产者协同事务
+     *
+     * @param producerRecords
+     * @param consumerTopic
+     * @param consumerPartition
+     * @param consumerOffset
+     * @param consumerGroupId
+     */
+    public void sendWithConsumerTransaction(List<ProducerRecord<K, V>> producerRecords
+            , String consumerTopic, int consumerPartition, long consumerOffset, String consumerGroupId) {
+        if (!isTransaction) {
+            throw new UnsupportedOperationException("事务未开启，不支持事务提交！");
+        }
+        // 记录record元数据, 及消费端消费的消息的offset
+        Map<TopicPartition, OffsetAndMetadata> offsets = new HashMap<>();
+        // 记录元数据
+        offsets.put(new TopicPartition(consumerTopic, consumerPartition)
+                // 返回下次需要消费的消息的offset, 注意+1  !!!, 返回当前消息offset会重复消费当前消息
+                , new OffsetAndMetadata(consumerOffset + 1));
+        try {
+            // 生产者开始事务
+            producer.beginTransaction();
+            for (ProducerRecord<K, V> producerRecord : producerRecords) {
+                producer.send(producerRecord);
+            }
+            // 提交消费端偏移量
+            producer.sendOffsetsToTransaction(offsets, consumerGroupId);
+            // 生产者提交事务
+            producer.commitTransaction();
+        } catch (Exception e) {
+            logger.error("提交事务异常，错误信息：" + e.getMessage(), e);
+            // 生产者终止事务
+            producer.abortTransaction();
+        }
+    }
+
     public void release() {
         if (producer != null) producer.close();
     }
@@ -91,5 +217,30 @@ public class KafkaProducerUtil<K, V> implements Closeable {
     @Override
     public void close() {
         release();
+    }
+
+    public void newInstance() {
+        producerRecordsBuilder = new ProducerRecordsBuilder();
+    }
+
+    public void addProducerRecord(String topic, K key, V value) {
+        if (producerRecordsBuilder != null) producerRecordsBuilder.add(topic, key, value);
+    }
+
+    public List<ProducerRecord<K, V>> getProducerRecords() {
+        if (producerRecordsBuilder != null) return producerRecordsBuilder.getProducerRecords();
+        return null;
+    }
+
+    class ProducerRecordsBuilder {
+        List<ProducerRecord<K, V>> producerRecords = new ArrayList<>();
+
+        void add(String topic, K key, V value) {
+            producerRecords.add(new ProducerRecord<>(topic, key, value));
+        }
+
+        public List<ProducerRecord<K, V>> getProducerRecords() {
+            return producerRecords;
+        }
     }
 }

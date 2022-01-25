@@ -8,14 +8,14 @@ param:
   kafkaconf.sasl.mechanism: "PLAIN"
   kafkaconf.group.id: "test"
 #  kafkaconf.group.id: "REALTIME_LOCATION_J_ALTIBASE"
-#  kafkaconf.enable.auto.commit: "false"
-  kafkaconf.newland.consumer.mode: "fromBeginning"
+  kafkaconf.enable.auto.commit: "false"
+#  kafkaconf.newland.consumer.mode: "fromBeginning"
 #  kafkaconf.newland.consumer.mode: "fromEnd"
 #    kafkaconf.newland.consumer.mode: "fromTime"
 #    kafkaconf.newland.consumer.fromTime: "2021-04-06 16:00:00"
 #  kafkaconf.newland.consumer.mode: "fromOffset"
 #  kafkaconf.newland.consumer.fromOffset: "0,20467"#0,20408
-  kafkaconf.acks: "0"
+  kafkaconf.acks: "1"
   kafkaconf.batch.size: "1048576"
   kafkaconf.newland.kafka_username: admin
   kafkaconf.newland.kafka_password: admin

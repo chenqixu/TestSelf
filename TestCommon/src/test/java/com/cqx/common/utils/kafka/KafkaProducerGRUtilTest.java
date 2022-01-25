@@ -5,6 +5,7 @@ import com.cqx.common.bean.kafka.DefaultBean;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.system.SleepUtil;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -501,6 +502,174 @@ public class KafkaProducerGRUtilTest extends TestBase {
             Future<RecordMetadata> metadataFuture = kafkaProducerGRUtil.send(topic, key, value.getBytes());//随机产生数据
             RecordMetadata recordMetadata = metadataFuture.get();
             logger.info("recordMetadata:{}", recordMetadata);
+        }
+    }
+
+    /**
+     * 构造NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1
+     *
+     * @param msisdn
+     * @param exec_time
+     * @return
+     */
+    private AvroLevelData buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(long msisdn, String exec_time) {
+        AvroLevelData avroLevelData = AvroLevelData.newInstance("NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1");
+        avroLevelData.putVal("op_type", "I");
+        String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
+        avroLevelData.putVal("current_ts", now);
+        avroLevelData.putVal("primary_keys", Arrays.asList("EXEC_TIME", "MSISDN"));
+        // after
+        avroLevelData.putChildVal("after", "MSISDN", msisdn);
+        avroLevelData.putChildVal("after", "DUN_TYPE", 1L);
+        avroLevelData.putChildVal("after", "EXEC_TIME", exec_time);
+        avroLevelData.putChildVal("after", "USER_STATUS", 1L);
+        avroLevelData.putChildVal("after", "BALANCE", 0L);
+        avroLevelData.putChildVal("after", "SUB_BALANCE", 0L);
+        avroLevelData.putChildVal("after", "TOTAL_OWING", 0L);
+        return avroLevelData;
+    }
+
+    /**
+     * 模拟正常数据
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1_1() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1");//设置话题
+            DefaultBean defaultBean = new DefaultBean();
+            defaultBean.setDefault_boolean(false);
+            kafkaProducerGRUtil.setDefaultBean(defaultBean);
+            // 模拟正常数据
+//            for (int i = 0; i < 1600; i++) {
+//                kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+//                        13500000001L + i, "2021-08-12 11:33:44"));
+//            }
+//            for (int i = 0; i < 1600; i++) {
+//                kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+//                        13500000001L + i, "2021-08-12 11:33:45"));
+//            }
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:46"));
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:47"));
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:48"));
+        }
+    }
+
+    /**
+     * 模拟重复数据
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1_2() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1");//设置话题
+            DefaultBean defaultBean = new DefaultBean();
+            defaultBean.setDefault_boolean(false);
+            kafkaProducerGRUtil.setDefaultBean(defaultBean);
+            // 模拟重复数据
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:03")).get();
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000002L, "2021-08-12 11:33:03")).get();
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000001L, "2021-08-12 11:33:03")).get();
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:03")).get();
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:04")).get();
+        }
+    }
+
+    /**
+     * 模拟延迟数据
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1_3() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1");//设置话题
+            DefaultBean defaultBean = new DefaultBean();
+            defaultBean.setDefault_boolean(false);
+            kafkaProducerGRUtil.setDefaultBean(defaultBean);
+            // 模拟延迟数据
+            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+                    13500000000L, "2021-08-12 11:33:21")).get();
+        }
+    }
+
+    /**
+     * 模拟schema变更
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1_4() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            String topic = "NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1";
+            // 模拟schema变更
+            String schema = "{\"type\":\"record\",\"name\":\"NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1\",\"namespace\":\"FRTBASE\",\"fields\":[{\"name\":\"table\",\"type\":\"string\"},{\"name\":\"op_type\",\"type\":\"string\"},{\"name\":\"op_ts\",\"type\":\"string\"},{\"name\":\"current_ts\",\"type\":\"string\"},{\"name\":\"pos\",\"type\":\"string\"},{\"name\":\"primary_keys\",\"type\":{\"type\":\"array\",\"items\":\"string\"}},{\"name\":\"tokens\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{}},{\"name\":\"before\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"columns\",\"fields\":[{\"name\":\"MSISDN\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"MSISDN_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"DUN_TYPE\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"DUN_TYPE_TYPE_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"EXEC_TIME\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"EXEC_TIME_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"USER_STATUS\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"USER_STATUS_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"BALANCE\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"BALANCE_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"SUB_BALANCE\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"SUB_BALANCE_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"TOTAL_OWING\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"TOTAL_OWING_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null}]}],\"default\":null},{\"name\":\"after\",\"type\":[\"null\",\"columns\"],\"default\":null}]}";
+//            schema = "{\"type\":\"record\",\"name\":\"NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1\",\"namespace\":\"FRTBASE\",\"fields\":[{\"name\":\"table\",\"type\":\"string\"},{\"name\":\"op_type\",\"type\":\"string\"},{\"name\":\"op_ts\",\"type\":\"string\"},{\"name\":\"current_ts\",\"type\":\"string\"},{\"name\":\"pos\",\"type\":\"string\"},{\"name\":\"primary_keys\",\"type\":{\"type\":\"array\",\"items\":\"string\"}},{\"name\":\"tokens\",\"type\":{\"type\":\"map\",\"values\":\"string\"},\"default\":{}},{\"name\":\"before\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"columns\",\"fields\":[{\"name\":\"MSISDN\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"MSISDN_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"DUN_TYPE\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"DUN_TYPE_TYPE_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"EXEC_TIME\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"EXEC_TIME_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"USER_STATUS\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"USER_STATUS_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"BALANCE\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"BALANCE_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"SUB_BALANCE\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"SUB_BALANCE_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"TOTAL_OWING\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"TOTAL_OWING_isMissing\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"TEST_FIELD1\",\"type\":[\"null\",\"long\"],\"default\":null}]}],\"default\":null},{\"name\":\"after\",\"type\":[\"null\",\"columns\"],\"default\":null}]}";
+            kafkaProducerGRUtil.send(topic, schema.getBytes()).get();
+//            DefaultBean defaultBean = new DefaultBean();
+//            defaultBean.setDefault_boolean(false);
+//            kafkaProducerGRUtil.setDefaultBean(defaultBean);
+            // 发送一条变更后的数据
+//            kafkaProducerGRUtil.setTopic(topic, schema);// 设置话题
+//            kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
+//                    13500000003L, "2021-08-12 11:33:07")).get();
+        }
+    }
+
+    /**
+     * 消费者 && 生产者 协同事务测试
+     *
+     * @throws Exception
+     */
+    @Test
+    public void transactionConsumerProducer() throws Exception {
+        String consumerTopic = "NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1";
+        String consumerGroupId = "grpid_nl_dun_notify_result_v1";// 设置消费组
+        String producerTopic = "NMC_FLAT_B_DUN_NOTIFY_RESULT_R_I_V1";
+        Map param = (Map) getParam("kafka.yaml").get("param");// 从配置文件解析参数
+        param.put("kafkaconf.group.id", "grpid_nl_dun_notify_result_v1");// 设置消费组
+        try (KafkaProducerGRUtil kafkaProducerUtil = new KafkaProducerGRUtil(param, true);
+             KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param, true)) {
+            kafkaConsumerUtil.subscribe(consumerTopic);
+            int i = 0;
+            while (i < 10) {
+                List<ConsumerRecord<String, byte[]>> consumerRecords = kafkaConsumerUtil.pollHasConsumerRecord(1000L);
+                if (consumerRecords.size() > 0) {
+                    kafkaProducerUtil.newInstance();
+                    boolean isFirst = true;
+                    long firstOffset = 0L;
+                    long lastOffset = 0L;
+                    for (ConsumerRecord<String, byte[]> consumerRecord : consumerRecords) {
+                        if (isFirst) {
+                            firstOffset = consumerRecord.offset();
+                            isFirst = false;
+                        }
+                        lastOffset = consumerRecord.offset();
+                        kafkaProducerUtil.addProducerRecord(producerTopic, consumerRecord.key(), consumerRecord.value());
+                    }
+                    logger.info("消费到记录：{}，起始偏移量：{}，最后偏移量：{}", consumerRecords.size(), firstOffset, lastOffset);
+                    kafkaProducerUtil.sendWithConsumerTransaction(kafkaProducerUtil.getProducerRecords()
+                            , consumerTopic, 0, lastOffset, consumerGroupId);
+                    logger.info("提交事务完成");
+                }
+                logger.info("i：{}", i);
+                i++;
+                SleepUtil.sleepSecond(3);
+            }
         }
     }
 }

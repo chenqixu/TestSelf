@@ -56,6 +56,22 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
 
     public KafkaConsumerGRUtil(Map stormConf) throws IOException {
         super(stormConf);
+        initGR(stormConf);
+    }
+
+
+    public KafkaConsumerGRUtil(Map stormConf, boolean isTransaction) throws IOException {
+        super(stormConf, isTransaction);
+        initGR(stormConf);
+    }
+
+    /**
+     * 初始化
+     *
+     * @param stormConf
+     * @throws IOException
+     */
+    private void initGR(Map stormConf) throws IOException {
         // 新增schema读取模式：[URL|FILE]，默认是URL
         try {
             schemaMode = ParamUtil.setValDefault(stormConf, "kafkaconf.newland.schema.mode", schemaMode_URL);

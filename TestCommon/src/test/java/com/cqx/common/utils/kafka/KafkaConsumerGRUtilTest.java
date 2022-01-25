@@ -4,6 +4,7 @@ import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.list.IKVList;
 import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.SleepUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -330,15 +331,87 @@ public class KafkaConsumerGRUtilTest extends TestBase {
      */
     @Test
     public void pollScram() throws Exception {
-        Map param = (Map) getParam("kafka_scram.yaml").get("param");//从配置文件解析参数
+        Map param = (Map) getParam("kafka_scram.yaml").get("param");// 从配置文件解析参数
+        param.put("kafkaconf.newland.consumer.mode", "fromBeginning");// 强制从头开始消费
         logger.info("{}", param);
         try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
             String topic = (String) param.get("topic");//获取话题
             kafkaConsumerUtil.subscribe(topic);//订阅
-            for (IKVList.Entry<String, byte[]> entry : kafkaConsumerUtil.pollHasKey(1000L).entrySet()) {
-                byte[] value = entry.getValue();
-                logger.info("【key】{}，【value】{}，【value.class】{}",
-                        entry.getKey(), new String(value), value.getClass().getSimpleName());
+            for (ConsumerRecord<String, byte[]> entry : kafkaConsumerUtil.pollHasConsumerRecord(1000L)) {
+                byte[] value = entry.value();
+                logger.info("【topic】{}，【offset】{}，【key】{}，【value】{}"
+                        , entry.topic()
+                        , entry.offset()
+                        , entry.key()
+                        , new String(value)
+                );
+            }
+            kafkaConsumerUtil.commitSync(0, 0);
+        }
+    }
+
+    /**
+     * 从scram认证模式下的kafka话题进行消费
+     *
+     * @throws Exception
+     */
+    @Test
+    public void pollScramCommitOffset() throws Exception {
+        Map param = (Map) getParam("kafka_scram.yaml").get("param");// 从配置文件解析参数
+        param.put("kafkaconf.enable.auto.commit", "false");// 强制不自动提交
+        param.put("kafkaconf.max.poll.interval.ms", "10000"); // kafka服务端认为应用多久之后没有消费，又重新发送，默认5分钟，单位是毫秒
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            kafkaConsumerUtil.subscribe(topic);//订阅
+            int cnt = 0;
+            while (true) {
+                for (ConsumerRecord<String, byte[]> entry : kafkaConsumerUtil.pollHasConsumerRecord(1000L)) {
+                    byte[] value = entry.value();
+                    logger.info("【topic】{}，【offset】{}，【key】{}，【value】{}"
+                            , entry.topic()
+                            , entry.offset()
+                            , entry.key()
+                            , new String(value)
+                    );
+                    cnt++;
+                }
+                SleepUtil.sleepSecond(1);
+                if (cnt > 0) {
+                    SleepUtil.sleepSecond(10);
+                    cnt--;
+                }
+            }
+        }
+    }
+
+    @Test
+    public void pollNMC_FLAT_B_DUN_NOTIFY_RESULT_R_I_V1() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");// 从配置文件解析参数
+        param.put("kafkaconf.group.id", "grpid_nl_dun_notify_result_v1");// 设置消费组
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param, true)) {
+            String topic = "NMC_FLAT_B_DUN_NOTIFY_RESULT_R_I_V1";// 待消费话题
+//            topic = "NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1";
+            kafkaConsumerUtil.subscribe(topic);// 订阅话题
+            int i = 0;
+            while (i < 10) {
+                List<ConsumerRecord<String, byte[]>> consumerRecords = kafkaConsumerUtil.pollHasConsumerRecord(1000L);
+                if (consumerRecords.size() > 0) {
+                    for (ConsumerRecord<String, byte[]> entry : consumerRecords) {
+                        byte[] value = entry.value();
+                        logger.info("【topic】{}，【offset】{}，【key】{}，【value】{}"
+                                , entry.topic()
+                                , entry.offset()
+                                , entry.key()
+                                , new String(value)
+                        );
+                    }
+                    kafkaConsumerUtil.commitSync();
+                }
+                logger.info("i：{}", i);
+                i++;
+                SleepUtil.sleepSecond(3);
             }
         }
     }

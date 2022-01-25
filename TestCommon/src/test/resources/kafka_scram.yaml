@@ -15,7 +15,7 @@ param:
 #  kafkaconf.newland.consumer.fromTime: "2021-04-06 16:00:00"
 #  kafkaconf.newland.consumer.mode: "fromOffset"
 #  kafkaconf.newland.consumer.fromOffset: "0,20467"#0,20408
-  kafkaconf.acks: "-1"
+  kafkaconf.acks: "1"
   kafkaconf.batch.size: "1048576"
   kafkaconf.newland.kafka_username: newland
   kafkaconf.newland.kafka_password: 123456
