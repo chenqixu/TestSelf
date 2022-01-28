@@ -43,7 +43,17 @@ public class FlatUtil {
     }
 
     /**
-     * 处理单条记录
+     * 对OggRecord进行扁平化处理
+     *
+     * @param record
+     * @return
+     */
+    public GenericRecord flat(OggRecord record) {
+        return flat(record.getGenericRecord());
+    }
+
+    /**
+     * 对GenericRecord进行扁平化处理
      *
      * @param record
      * @return
@@ -113,17 +123,39 @@ public class FlatUtil {
 
             sendRecord.put(attrName, value);
         }
-
+        // 处理完
         return sendRecord;
     }
 
     /**
-     * 处理多条记录
+     * 扁平化成OggRecord
      *
      * @param records
      * @return
      */
-    public List<GenericRecord> flat(List<GenericRecord> records) {
+    public List<OggRecord> flatOggRecord(List<OggRecord> records) {
+        List<OggRecord> flatRet = new ArrayList<>();
+        if (records == null || records.size() == 0) {
+            return null;
+        }
+
+        for (OggRecord record : records) {
+            // 处理完一条记录，加入List
+            OggRecord deal = new OggRecord();
+            deal.setGenericRecord(flat(record));
+            deal.setOffset(record.getOffset());
+            flatRet.add(deal);
+        }
+        return flatRet;
+    }
+
+    /**
+     * 扁平化成GenericRecord
+     *
+     * @param records
+     * @return
+     */
+    public List<GenericRecord> flatGenericRecord(List<GenericRecord> records) {
         List<GenericRecord> flatRet = new ArrayList<>();
         if (records == null || records.size() == 0) {
             return null;

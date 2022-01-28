@@ -194,20 +194,29 @@ public class KafkaProducerUtil<K, V> implements Closeable {
                 // 返回下次需要消费的消息的offset, 注意+1  !!!, 返回当前消息offset会重复消费当前消息
                 , new OffsetAndMetadata(consumerOffset + 1));
         try {
-            // 生产者开始事务
+            // 启动事务
             producer.beginTransaction();
             for (ProducerRecord<K, V> producerRecord : producerRecords) {
                 producer.send(producerRecord);
             }
-            // 提交消费端偏移量
+            // 将指定偏移的列表发送给消费者组协调员，并将这些偏移标记为当前事务的一部分。
+            // 只有当事务成功提交时，这些偏移才会被视为已提交。
+            // 提交的偏移量应该是应用程序将使用的下一条消息，即lastProcessedMessageOffset+1。
             producer.sendOffsetsToTransaction(offsets, consumerGroupId);
-            // 生产者提交事务
+            // 提交事务（消费者偏移量提交+生产者提交），保证原子性
             producer.commitTransaction();
         } catch (Exception e) {
             logger.error("提交事务异常，错误信息：" + e.getMessage(), e);
-            // 生产者终止事务
+            // 强制终止事务
             producer.abortTransaction();
         }
+    }
+
+    /**
+     * 强制刷新
+     */
+    public void flush() {
+        producer.flush();
     }
 
     public void release() {

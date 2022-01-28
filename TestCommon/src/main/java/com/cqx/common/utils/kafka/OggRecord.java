@@ -11,8 +11,9 @@ import org.apache.avro.generic.GenericRecord;
 public class OggRecord {
     private GenericRecord genericRecord;
     private Schema schema;
-    private boolean isSchema = false;
-    private boolean isRecord = true;
+    private boolean isSchema = false;// 默认不是schema
+    private boolean isRecord = true;// 默认是数据
+    private long offset;
 
     public GenericRecord getGenericRecord() {
         return genericRecord;
@@ -50,5 +51,13 @@ public class OggRecord {
         setRecord(false);
         setSchema(true);
         setSchema(schema);
+    }
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
     }
 }

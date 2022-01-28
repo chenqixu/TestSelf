@@ -408,6 +408,18 @@ public class GenericRecordUtil {
     }
 
     /**
+     * 把GenericRecord转换成byte[]
+     *
+     * @param topic
+     * @param genericRecord
+     * @return
+     */
+    public byte[] recordToBinary(String topic, GenericRecord genericRecord) {
+        RecordConvertor recordConvertor = recordConvertorMap.get(topic);
+        return recordConvertor.recordToBinary(genericRecord);
+    }
+
+    /**
      * 返回话题的schema
      *
      * @param topic

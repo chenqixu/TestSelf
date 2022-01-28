@@ -43,6 +43,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerGRUtil.class);
     private final String schemaMode_URL = "URL";
     private final String schemaMode_FILE = "FILE";
+    private final String schemaMode_NOAVRO = "NOAVRO";
     private SchemaUtil schemaUtil;
     private RecordConvertor recordConvertor = null;
     private Schema schema;
@@ -58,7 +59,6 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
         super(stormConf);
         initGR(stormConf);
     }
-
 
     public KafkaConsumerGRUtil(Map stormConf, boolean isTransaction) throws IOException {
         super(stormConf, isTransaction);
@@ -81,6 +81,9 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
         }
         // schema模式匹配
         switch (schemaMode) {
+            // 非avro
+            case schemaMode_NOAVRO:
+                break;
             // 本地文件模式
             case schemaMode_FILE:
                 // 读取avsc文件
@@ -120,18 +123,22 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
         super.subscribe(topic);
         // schema模式匹配
         switch (schemaMode) {
+            case schemaMode_NOAVRO:
+                break;
             case schemaMode_FILE:
                 // schema从本地文件获取
                 schema = schemaUtil.getSchemaByString(avscStr);
+                // 记录转换工具类
+                recordConvertor = new RecordConvertor(schema);
                 break;
             case schemaMode_URL:
             default:
                 // schema从远程服务器获取
                 schema = schemaUtil.getSchemaByTopic(topic);
+                // 记录转换工具类
+                recordConvertor = new RecordConvertor(schema);
                 break;
         }
-        //记录转换工具类
-        recordConvertor = new RecordConvertor(schema);
         try {
             //模式匹配
             if ("fromBeginning".equals(mode)) {

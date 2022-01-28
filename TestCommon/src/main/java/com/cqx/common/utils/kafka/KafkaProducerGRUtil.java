@@ -3,6 +3,7 @@ package com.cqx.common.utils.kafka;
 import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.bean.kafka.DefaultBean;
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.io.IOException;
@@ -96,6 +97,19 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
 
     public Future<RecordMetadata> sends(Map<String, String> kafkaValue) {
         return sends(null, kafkaValue);
+    }
+
+    public Future<RecordMetadata> sends(String kafkaKey, GenericRecord genericRecord) {
+        byte[] msg = genericRecordUtil.recordToBinary(topic, genericRecord);
+        if (kafkaKey != null) {
+            return send(topic, kafkaKey, msg);
+        } else {
+            return send(topic, msg);
+        }
+    }
+
+    public Future<RecordMetadata> sends(GenericRecord genericRecord) {
+        return sends(null, genericRecord);
     }
 
     public Schema getSchema() {
