@@ -520,12 +520,12 @@ public class KafkaProducerGRUtilTest extends TestBase {
         avroLevelData.putVal("primary_keys", Arrays.asList("EXEC_TIME", "MSISDN"));
         // after
         avroLevelData.putChildVal("after", "MSISDN", msisdn);
-        avroLevelData.putChildVal("after", "DUN_TYPE", 1L);
+        avroLevelData.putChildVal("after", "DUN_TYPE", 4L);
         avroLevelData.putChildVal("after", "EXEC_TIME", exec_time);
-        avroLevelData.putChildVal("after", "USER_STATUS", 1L);
-        avroLevelData.putChildVal("after", "BALANCE", 0L);
-        avroLevelData.putChildVal("after", "SUB_BALANCE", 0L);
-        avroLevelData.putChildVal("after", "TOTAL_OWING", 0L);
+        avroLevelData.putChildVal("after", "USER_STATUS", 99L);
+        avroLevelData.putChildVal("after", "BALANCE", 25500L);
+        avroLevelData.putChildVal("after", "SUB_BALANCE", 2900L);
+        avroLevelData.putChildVal("after", "TOTAL_OWING", 3900L);
         return avroLevelData;
     }
 
@@ -552,11 +552,11 @@ public class KafkaProducerGRUtilTest extends TestBase {
 //                        13500000001L + i, "2021-08-12 11:33:45"));
 //            }
             kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
-                    13500000000L, "2021-08-12 11:33:46"));
+                    13500000000L, "2021-08-12 11:33:51"));
             kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
-                    13500000000L, "2021-08-12 11:33:47"));
+                    13500000000L, "2021-08-12 11:33:51"));
             kafkaProducerGRUtil.sendRandom(buildNMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1(
-                    13500000000L, "2021-08-12 11:33:48"));
+                    13500000000L, "2021-08-12 11:33:54"));
         }
     }
 

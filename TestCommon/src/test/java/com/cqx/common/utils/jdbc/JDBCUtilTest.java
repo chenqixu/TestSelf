@@ -30,15 +30,23 @@ public class JDBCUtilTest extends TestBase {
     public void setUp() throws Exception {
         Map params = getParam("jdbc.yaml");
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
-        DBBean dbBean = paramsParserUtil.getBeanMap().get("mysql79Bean");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("oracle12c_cctsys_dev_Bean");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("localAdbBean");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("adbBean");
-//        DBBean dbBean = paramsParserUtil.getBeanMap().get("localoracleBean");
-//        dbBean.setPool(false);
+        // 从JVM参数中获取，使用方式：-Djdbc.bean=mysql79Bean
+        String jdbcBean = System.getProperty("jdbc.bean");
+        DBBean dbBean;
+        if (jdbcBean != null && jdbcBean.trim().length() > 0) {
+            logger.info("获取到-Djdbc.bean={}", jdbcBean);
+            dbBean = paramsParserUtil.getBeanMap().get(jdbcBean);
+        } else {
+//            dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
+            dbBean = paramsParserUtil.getBeanMap().get("mysql79Bean");
+//            dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
+//            dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
+//            dbBean = paramsParserUtil.getBeanMap().get("oracle12c_cctsys_dev_Bean");
+//            dbBean = paramsParserUtil.getBeanMap().get("localAdbBean");
+//            dbBean = paramsParserUtil.getBeanMap().get("adbBean");
+//            dbBean = paramsParserUtil.getBeanMap().get("localoracleBean");
+//            dbBean.setPool(false);
+        }
 //        jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
 //        jdbcUtil = new JDBCUtil(dbBean);
         jdbcUtil = new JDBCUtil(dbBean, 1, 1, 1);
@@ -662,8 +670,8 @@ public class JDBCUtilTest extends TestBase {
 
     @Test
     public void metaDataTest() throws Exception {
-        String table_name = "qry_sell_task";
-        String[] fields_array = {"sell_id", "sell_place", "sell_count", "create_time"};
+        String table_name = "zyh";
+        String[] fields_array = {"queue_used_orgid", "queue_used_orgname", "collect_time"};
         // getDstTableMetaData
         LinkedHashMap<String, String> metaDataMap = jdbcUtil.getDstTableMetaData(table_name);
         logger.info("metaDataMap：{}", metaDataMap);

@@ -82,6 +82,12 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
         return send(topic, genericRecordUtil.genericRandomRecord(topic, param));
     }
 
+    /**
+     * 发送一条已经构建好的AvroLevelData数据，未构建的字段使用默认值
+     *
+     * @param avroLevelData
+     * @return
+     */
     public Future<RecordMetadata> sendRandom(AvroLevelData avroLevelData) {
         return send(topic, genericRecordUtil.genericRandomRecordByAvroRecord(topic, avroLevelData));
     }

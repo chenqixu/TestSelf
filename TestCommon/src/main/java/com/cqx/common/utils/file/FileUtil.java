@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -240,7 +239,7 @@ public class FileUtil {
                 stream.close();
                 stream = null;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -437,17 +436,24 @@ public class FileUtil {
         try {
             readerThread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         for (Thread thread : threads) {
             try {
                 thread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
 
+    /**
+     * 不知道做什么的，看上去是拼接SQL的values语句
+     *
+     * @param sql sql语句
+     * @return
+     */
+    @Deprecated
     public List<String> read(String sql) {
         List<String> resultlist = new ArrayList<>();
         try {
@@ -464,7 +470,7 @@ public class FileUtil {
                 resultlist.add(sb.toString());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return resultlist;
     }
@@ -477,31 +483,36 @@ public class FileUtil {
      * @return
      */
     public List<String> read(String path, String read_code) {
-        File file = null;
-        BufferedReader reader = null;
-        List<String> sublist = new Vector<String>();
+        List<String> sublist = new ArrayList<>();
         try {
-            file = new File(path);
-            if (file.isFile()) {
-                reader = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(file), read_code));
-                String _tmp = null;
-                while ((_tmp = reader.readLine()) != null) {
-                    sublist.add(_tmp);
+            setReader(path, read_code);
+            read(new FileCount() {
+                @Override
+                public void run(String content) throws IOException {
+                    sublist.add(content);
                 }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            });
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeRead();
         }
         return sublist;
+    }
+
+    /**
+     * 从文件读取内容到字符串
+     *
+     * @param path
+     * @param read_code
+     * @return
+     */
+    public String readToStr(String path, String read_code) {
+        StringBuilder sb = new StringBuilder();
+        for (String content : read(path, read_code)) {
+            sb.append(content);
+        }
+        return sb.toString();
     }
 
     public void createFile(String filename, String write_code, boolean append)
@@ -534,7 +545,7 @@ public class FileUtil {
             try {
                 outputStream.write(bytes);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -544,7 +555,7 @@ public class FileUtil {
             try {
                 outputStream.write(bytes, off, len);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -565,7 +576,7 @@ public class FileUtil {
                 writer.write(str);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -575,7 +586,7 @@ public class FileUtil {
                 writer.write(s, off, len);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -583,8 +594,9 @@ public class FileUtil {
         if (reader != null) {
             try {
                 reader.close();
+                reader = null;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -593,8 +605,9 @@ public class FileUtil {
         if (inputStream != null) {
             try {
                 inputStream.close();
+                inputStream = null;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -603,14 +616,16 @@ public class FileUtil {
         try {
             writer.flush();
             writer.close();
+            writer = null;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
+                    writer = null;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
@@ -620,14 +635,16 @@ public class FileUtil {
         try {
             outputStream.flush();
             outputStream.close();
+            outputStream = null;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
+                    outputStream = null;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
@@ -685,7 +702,7 @@ public class FileUtil {
             } catch (Exception e) {
                 //异常也视为完成，否则消费者线程不会停止
                 flag = true;
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             }
         }
 
@@ -713,7 +730,7 @@ public class FileUtil {
                         iFileRead.run(str);
                         count();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }

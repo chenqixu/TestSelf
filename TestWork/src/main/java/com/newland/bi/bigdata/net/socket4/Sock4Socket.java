@@ -1,9 +1,8 @@
 package com.newland.bi.bigdata.net.socket4;
 
-import sun.net.SocksProxy;
-
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Sock4Socket
@@ -11,6 +10,10 @@ import java.net.*;
  * @author chenqixu
  */
 public class Sock4Socket extends Socket {
+    /**
+     * 等待超时时间
+     */
+    private static final int SEC_WAIT = 5;
     // 版本
     static byte VERSION4 = 0X04;
     // 请求
@@ -20,10 +23,6 @@ public class Sock4Socket extends Socket {
     static byte END = 0X00;
     private String targetHost;
     private int targetPort;
-    /**
-     * 等待超时时间
-     */
-    private static final int SEC_WAIT = 5;
 
     public Sock4Socket(String proxyHost, int proxyPort, String targetHost,
                        int targetPort) throws UnknownHostException, IOException {

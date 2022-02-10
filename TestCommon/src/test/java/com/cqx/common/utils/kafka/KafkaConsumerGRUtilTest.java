@@ -389,13 +389,14 @@ public class KafkaConsumerGRUtilTest extends TestBase {
     public void pollNMC_FLAT_B_DUN_NOTIFY_RESULT_R_I_V1() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");// 从配置文件解析参数
         param.put("kafkaconf.group.id", "grpid_nl_dun_notify_result_v1");// 设置消费组
+        param.put("kafkaconf.newland.consumer.mode", "fromBeginning");// 设置从头消费
         logger.info("{}", param);
         try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param, true)) {
             String topic = "NMC_FLAT_B_DUN_NOTIFY_RESULT_R_I_V1";// 待消费话题
 //            topic = "NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1";
             kafkaConsumerUtil.subscribe(topic);// 订阅话题
             int i = 0;
-            while (i < 10) {
+            while (i < 3) {
                 List<ConsumerRecord<String, byte[]>> consumerRecords = kafkaConsumerUtil.pollHasConsumerRecord(1000L);
                 if (consumerRecords.size() > 0) {
                     for (ConsumerRecord<String, byte[]> entry : consumerRecords) {

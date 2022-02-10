@@ -34,26 +34,15 @@ public class GenericRecordUtil {
     }
 
     /**
-     * 话题初始化
+     * 话题初始化，从远程服务获取话题的schema
      *
      * @param topic 话题名称
      */
     public void addTopic(String topic) {
         // 从远程服务获取话题的schema
         Schema schema = schemaUtil.getSchemaByTopic(topic);
-        logger.info("addTopic，topic：{}，schema：{}", topic, schema);
-        // 把话题和schema加入映射关系的map中
-        schemaMap.put(topic, schema);
-        // 构造对应的记录转换器，并加入map
-        recordConvertorMap.put(topic, new RecordConvertor(schema));
-        // 根据获取的schema，构造一个AvroRecord对象
-        AvroRecord avroRecord = schemaUtil.dealSchema(schema, null);
-        // 把AvroRecord对象加入map
-        avroRecordMap.put(topic, avroRecord);
-        //########################################
-        // 把字段类型加入map中，只适用于字段平铺开来的情况
-        //########################################
-        addSchemaFieldMap(topic, schema);
+        // 初始化话题和对应的schema
+        init(topic, schema);
     }
 
     /**
@@ -65,14 +54,25 @@ public class GenericRecordUtil {
     public void addTopicBySchemaString(String topic, String schemaString) {
         // 从远程服务获取话题的schema
         Schema schema = schemaUtil.getSchemaByString(schemaString);
-        logger.info("addTopic，topic：{}，schema：{}", topic, schema);
+        // 初始化话题和对应的schema
+        init(topic, schema);
+    }
+
+    /**
+     * 初始化话题和对应的schema
+     *
+     * @param topic  话题名称
+     * @param schema schema
+     */
+    private void init(String topic, Schema schema) {
+        logger.info("init，topic：{}，schema：{}", topic, schema);
         // 把话题和schema加入映射关系的map中
         schemaMap.put(topic, schema);
         // 构造对应的记录转换器，并加入map
         recordConvertorMap.put(topic, new RecordConvertor(schema));
         // 根据获取的schema，构造一个AvroRecord对象
         AvroRecord avroRecord = schemaUtil.dealSchema(schema, null);
-        //把AvroRecord对象加入map
+        // 把AvroRecord对象加入map
         avroRecordMap.put(topic, avroRecord);
         //########################################
         // 把字段类型加入map中，只适用于字段平铺开来的情况

@@ -350,7 +350,7 @@ public class JDBCUtil implements IJDBCUtil {
         List<QueryResult> metaData = getTableMetaData(tab_name);
         LinkedHashMap<String, String> metaMap = new LinkedHashMap<>();
         for (QueryResult md : metaData) {
-            metaMap.put(md.getColumnName(), md.getColumnClassName());
+            metaMap.put(md.getColumnName().toLowerCase(), md.getColumnClassName());
         }
         return metaMap;
     }
