@@ -9,15 +9,15 @@ import java.io.*;
  *
  * @author chenqixu
  */
-public class JavaSerializationImpl implements ISerialization<Object> {
-    private Class<Object> tClass;
+public class JavaSerializationImpl<T> implements ISerialization<T> {
+    private Class<T> tClass;
 
     @Override
-    public void setTClass(Class<Object> tClass) {
+    public void setTClass(Class<T> tClass) {
         this.tClass = tClass;
     }
 
-    public byte[] serialize(Object object) {
+    public byte[] serialize(T object) {
         if (object == null) {
             return null;
         } else {
@@ -33,13 +33,13 @@ public class JavaSerializationImpl implements ISerialization<Object> {
         }
     }
 
-    public Object deserialize(byte[] bytes) {
+    public T deserialize(byte[] bytes) {
         if (bytes == null) {
             return null;
         } else {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
-                return ois.readObject();
+                return (T) ois.readObject();
             } catch (IOException var2) {
                 throw new IllegalArgumentException("Failed to deserialize object", var2);
             } catch (ClassNotFoundException var3) {

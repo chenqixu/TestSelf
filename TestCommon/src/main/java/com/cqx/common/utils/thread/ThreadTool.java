@@ -49,12 +49,12 @@ public class ThreadTool {
     public void startTask() {
         while (task.size() > 0) {
             long running = run.get() - end.get();
-            logger.info("running {}，all_task：{}", running, task.size());
+            logger.debug("running {}，all_task：{}", running, task.size());
             if (running < parallel_num) {
                 //启动5-cnt个线程
                 long enable_submit_num = parallel_num - running;
                 long s_num = 0;
-                logger.info("enable_submit_num {}", enable_submit_num);
+                logger.debug("enable_submit_num {}", enable_submit_num);
                 //找到NEW的，启动它
                 Iterator<Thread> it = task.iterator();
                 while (it.hasNext()) {
