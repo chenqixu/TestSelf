@@ -1,5 +1,9 @@
 package com.cqx.common.utils.serialize.impl;
 
+import com.cqx.common.bean.javabean.ClassBean;
+import com.cqx.common.utils.jdbc.DBBean;
+import com.cqx.common.utils.jdbc.DBType;
+import com.cqx.common.utils.jdbc.JDBCUtil;
 import com.cqx.common.utils.serialize.ISerialization;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.thread.ThreadTool;
@@ -24,12 +28,12 @@ public class JavaSerializationImplTest {
     }
 
     @Test
-    public void serialize() throws IOException {
+    public void serializeConcurrent() throws IOException {
         final int count = 5;
         byte[] bytes = iSerialization.serialize(classBean);
         // 线程1：设置并打印班级信息
         Runnable runnable1 = new Runnable() {
-//            ClassBean classBean1 = classBean;
+            //            ClassBean classBean1 = classBean;
             ClassBean classBean1 = iSerialization.deserialize(bytes);
 
             @Override
@@ -48,7 +52,7 @@ public class JavaSerializationImplTest {
         };
         // 线程2：设置并打印班级信息
         Runnable runnable2 = new Runnable() {
-//            ClassBean classBean2 = classBean;
+            //            ClassBean classBean2 = classBean;
             ClassBean classBean2 = iSerialization.deserialize(bytes);
 
             @Override
@@ -69,5 +73,23 @@ public class JavaSerializationImplTest {
         threadTool.addTask(runnable1);
         threadTool.addTask(runnable2);
         threadTool.startTask();
+    }
+
+    @Test
+    public void serialize() throws IOException {
+        DBBean dbBean = new DBBean();
+        dbBean.setDbType(DBType.ORACLE);
+        dbBean.setPool(false);
+        dbBean.setTns("jdbc:oracle:thin:@10.1.8.204:1521:orapri");
+        dbBean.setUser_name("jutap");
+        dbBean.setPass_word("jutap");
+        JDBCUtil jdbcUtil = new JDBCUtil(dbBean);
+        classBean = new ClassBean(jdbcUtil);
+        byte[] bytes = iSerialization.serialize(classBean);
+        ClassBean classBeanNew = iSerialization.deserialize(bytes);
+        logger.info("\nold.hash：{}\nold.value：{}\nnew.hash：{}\nnew.value：{}"
+                , classBean.hashCode(), classBean
+                , classBeanNew.hashCode(), classBeanNew
+        );
     }
 }

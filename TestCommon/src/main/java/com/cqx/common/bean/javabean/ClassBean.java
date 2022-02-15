@@ -1,4 +1,6 @@
-package com.cqx.common.utils.serialize.impl;
+package com.cqx.common.bean.javabean;
+
+import com.cqx.common.utils.jdbc.JDBCUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,9 +22,18 @@ public class ClassBean implements Serializable {
         studentBeans = new ArrayList<>();
     }
 
+    public ClassBean(JDBCUtil jdbcUtil) {
+        headmaster = new TeacherBean(jdbcUtil);
+        studentBeans = new ArrayList<>();
+    }
+
+    public void addStudent(StudentBean studentBean) {
+        studentBeans.add(studentBean);
+    }
+
     @Override
     public String toString() {
-        return "class_no：" + class_no + "，class_name：" + class_name + "，headmaster：" + headmaster;
+        return "class_no：" + class_no + "，class_name：" + class_name + "，headmaster：" + headmaster + "，studentBeans：" + studentBeans;
     }
 
     public List<StudentBean> getStudentBeans() {

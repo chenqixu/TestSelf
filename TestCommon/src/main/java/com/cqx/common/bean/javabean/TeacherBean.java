@@ -1,4 +1,6 @@
-package com.cqx.common.utils.serialize.impl;
+package com.cqx.common.bean.javabean;
+
+import com.cqx.common.utils.jdbc.JDBCUtil;
 
 import java.io.Serializable;
 
@@ -12,6 +14,14 @@ public class TeacherBean implements Serializable {
     private String teacher_name;// 姓名
     private int teacher_sex;// 性别
     private String teacher_major;// 专业
+    private transient JDBCUtil jdbcUtil;
+
+    public TeacherBean() {
+    }
+
+    public TeacherBean(JDBCUtil jdbcUtil) {
+        this.jdbcUtil = jdbcUtil;
+    }
 
     @Override
     public String toString() {

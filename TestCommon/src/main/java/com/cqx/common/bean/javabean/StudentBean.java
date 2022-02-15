@@ -1,4 +1,4 @@
-package com.cqx.common.utils.serialize.impl;
+package com.cqx.common.bean.javabean;
 
 /**
  * 学生
@@ -9,6 +9,11 @@ public class StudentBean {
     private int student_no;// 编号
     private String student_name;// 姓名
     private int student_sex;// 性别
+
+    @Override
+    public String toString() {
+        return "student_no：" + student_no + "，student_name：" + student_name + "，student_sex：" + student_sex;
+    }
 
     public int getStudent_no() {
         return student_no;
