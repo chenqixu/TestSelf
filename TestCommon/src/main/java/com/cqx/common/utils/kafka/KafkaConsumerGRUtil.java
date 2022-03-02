@@ -74,7 +74,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     private void initGR(Map stormConf) throws IOException {
         // 新增schema读取模式：[URL|FILE]，默认是URL
         try {
-            schemaMode = ParamUtil.setValDefault(stormConf, "kafkaconf.newland.schema.mode", schemaMode_URL);
+            schemaMode = ParamUtil.setValDefault(stormConf, SchemaUtil.SCHEMA_MODE, schemaMode_URL);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             // 默认是URL
             schemaMode = schemaMode_URL;
@@ -87,9 +87,11 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
             // 本地文件模式
             case schemaMode_FILE:
                 // 读取avsc文件
-                String avsc_file = (String) stormConf.get("kafkaconf.newland.schema.file");
+                String avsc_file = (String) stormConf.get(SchemaUtil.SCHEAM_FILE);
                 if (avsc_file == null || avsc_file.trim().length() == 0 || !FileUtil.isExists(avsc_file)) {
-                    throw new RuntimeException("初始化失败，读取avsc文件异常！kafkaconf.newland.schema.file：" + avsc_file);
+                    throw new RuntimeException(
+                            String.format("初始化失败，读取avsc文件异常！%s：%s", SchemaUtil.SCHEAM_FILE, avsc_file)
+                    );
                 }
                 avscStr = avscFromFile(avsc_file);
                 logger.info("从 {} 文件读取avsc文件内容：{}", avsc_file, avscStr);
@@ -98,9 +100,8 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
             // 远程服务、默认模式
             case schemaMode_URL:
             default:
-                String schema_url = (String) stormConf.get("schema_url");
                 //schema工具类
-                schemaUtil = new SchemaUtil(schema_url);
+                schemaUtil = new SchemaUtil(null, stormConf);
                 break;
         }
         // 模式

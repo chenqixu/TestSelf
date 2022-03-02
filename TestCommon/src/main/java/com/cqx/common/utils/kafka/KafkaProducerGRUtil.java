@@ -47,9 +47,8 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
      * @param stormConf
      */
     private void initGR(Map stormConf) {
-        String schema_url = (String) stormConf.get("schema_url");
-        //初始化工具类
-        genericRecordUtil = new GenericRecordUtil(schema_url);
+        // 初始化GenericRecord工具类
+        genericRecordUtil = new GenericRecordUtil(null, stormConf);
     }
 
     public void setTopic(String topic) {

@@ -85,7 +85,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT1");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
             avroLevelData.putVal("op_type", "I");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);
@@ -109,7 +109,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT1");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
             avroLevelData.putVal("op_type", "U");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);

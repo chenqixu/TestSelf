@@ -33,6 +33,11 @@ public class GenericRecordUtil {
         schemaUtil = new SchemaUtil(schemaUrl);
     }
 
+    public GenericRecordUtil(String schemaUrl, Map stormConf) {
+        // 初始化schema工具类
+        schemaUtil = new SchemaUtil(schemaUrl, stormConf);
+    }
+
     /**
      * 话题初始化，从远程服务获取话题的schema
      *

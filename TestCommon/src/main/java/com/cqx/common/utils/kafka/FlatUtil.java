@@ -31,6 +31,8 @@ public class FlatUtil {
     private JSONArray keys;
     // 消费者话题
     private String oggTopic;
+    // 字段空值处理，默认需要处理
+    private boolean nullDeal = true;
 
     public FlatUtil(String oggTopic, Schema oggSchema, Schema flatSchema) {
         this.oggTopic = oggTopic;
@@ -102,23 +104,25 @@ public class FlatUtil {
                 }
             }
 
-            // null处理
-            if (value == null && !canBeNull) {
-                if ("string".equals(type))
-                    value = "null";
-                if ("boolean".equals(type))
-                    value = Boolean.FALSE;
-                if ("int".equals(type))
-                    value = 0;
-                if ("long".equals(type))
-                    value = 0L;
-                if ("float".equals(type))
-                    value = (float) 0.0;
-                if ("double".equals(type))
-                    value = 0.0;
-            }
-            if ("string".equals(type) && value != null) {
-                value = value.toString();
+            if (nullDeal) {// 允许null处理
+                // null处理
+                if (value == null && !canBeNull) {
+                    if ("string".equals(type))
+                        value = "null";
+                    if ("boolean".equals(type))
+                        value = Boolean.FALSE;
+                    if ("int".equals(type))
+                        value = 0;
+                    if ("long".equals(type))
+                        value = 0L;
+                    if ("float".equals(type))
+                        value = (float) 0.0;
+                    if ("double".equals(type))
+                        value = 0.0;
+                }
+                if ("string".equals(type) && value != null) {
+                    value = value.toString();
+                }
             }
 
             sendRecord.put(attrName, value);
@@ -217,5 +221,12 @@ public class FlatUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * null不允许处理
+     */
+    public void notNullDeal() {
+        this.nullDeal = false;
     }
 }
