@@ -815,10 +815,18 @@
             <version>2.2.4</version>
         </dependency>
 
+        <!-- traffic-shm -->
         <dependency>
             <groupId>io.traffic</groupId>
             <artifactId>traffic-shm</artifactId>
             <version>0.1</version>
+        </dependency>
+
+        <!-- pcap -->
+        <dependency>
+            <groupId>io.pkts</groupId>
+            <artifactId>pkts-streams</artifactId>
+            <version>3.0.11-SNAPSHOT</version>
         </dependency>
 
         <!-- test -->
