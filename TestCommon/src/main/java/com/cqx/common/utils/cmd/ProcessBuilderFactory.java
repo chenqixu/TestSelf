@@ -32,8 +32,22 @@ public class ProcessBuilderFactory {
     private StringBuffer error_sb = null;
     private BlockingQueue<String> success_log_queue = null;
     private BlockingQueue<String> error_log_queue = null;
+    private volatile boolean isPrint = true;
+    private String logCoding;
 
     public ProcessBuilderFactory() {
+        // 默认打印，默认编码
+        this(true, OtherUtil.getFileEncoding());
+    }
+
+    public ProcessBuilderFactory(boolean isPrint) {
+        // 默认编码
+        this(isPrint, OtherUtil.getFileEncoding());
+    }
+
+    public ProcessBuilderFactory(boolean isPrint, String logCoding) {
+        this.isPrint = isPrint;
+        this.logCoding = logCoding;
     }
 
     public ProcessBuilderFactory(String tag_name) {
@@ -128,8 +142,8 @@ public class ProcessBuilderFactory {
      * @param process
      */
     private void runLog(Process process) {
-        ltinfo = new ProcessBuilderLogThread(process.getInputStream(), "info");
-        lterr = new ProcessBuilderLogThread(process.getErrorStream(), "err");
+        ltinfo = new ProcessBuilderLogThread(process.getInputStream(), "info", logCoding);
+        lterr = new ProcessBuilderLogThread(process.getErrorStream(), "err", logCoding);
         ltinfo.start();
         lterr.start();
     }
@@ -187,17 +201,23 @@ public class ProcessBuilderFactory {
         private String type;
         private StringBuffer threadlog = new StringBuffer();
         private BlockingQueue<String> logQueue = new LinkedBlockingQueue<>();
+        private String fileencoding;// 日志编码
 
         ProcessBuilderLogThread(InputStream is, String type) {
+            this(is, type, OtherUtil.getFileEncoding());
+        }
+
+        ProcessBuilderLogThread(InputStream is, String type, String fileencoding) {
             this.is = is;
             this.type = type;
+            this.fileencoding = fileencoding;
         }
 
         public void run() {
             InputStreamReader isr = null;
             BufferedReader br = null;
             try {
-                isr = new InputStreamReader(is, OtherUtil.getFileEncoding());
+                isr = new InputStreamReader(is, fileencoding);
                 br = new BufferedReader(isr, 1024);
                 String line;
                 while ((line = br.readLine()) != null) {
@@ -206,9 +226,9 @@ public class ProcessBuilderFactory {
                         if (isLogErrDeal) {
                             resultcode = -1;
                         }
-                        logger.error(getTag_name() + line);
+                        if (isPrint) logger.error(getTag_name() + line);
                     } else {
-                        logger.info(getTag_name() + line);
+                        if (isPrint) logger.info(getTag_name() + line);
                     }
                     threadlog.append(line).append(separator);
                     logQueue.add(line);
