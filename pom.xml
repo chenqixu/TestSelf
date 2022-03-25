@@ -23,7 +23,6 @@
         <module>ReadFile</module>
         <module>TestShareClass</module>
         <module>TestSFTPTool</module>
-        <module>TestHbaseTool</module>
         <module>TestHdfsTool</module>
         <module>TestKafka</module>
         <module>TestExcelTool</module>
@@ -41,7 +40,6 @@
         <module>TestMetrics</module>
         <module>TestJersey2X</module>
         <module>TestJersey1X</module>
-        <module>TestNetty</module>
         <module>TestPool</module>
         <module>TestCommon</module>
         <module>TestGBKCode</module>
