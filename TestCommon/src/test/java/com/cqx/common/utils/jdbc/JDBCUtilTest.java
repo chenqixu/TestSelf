@@ -38,7 +38,8 @@ public class JDBCUtilTest extends TestBase {
             dbBean = paramsParserUtil.getBeanMap().get(jdbcBean);
         } else {
 //            dbBean = paramsParserUtil.getBeanMap().get("localmysqlBean");
-            dbBean = paramsParserUtil.getBeanMap().get("mysql79Bean");
+//            dbBean = paramsParserUtil.getBeanMap().get("mysql79Bean");
+            dbBean = paramsParserUtil.getBeanMap().get("fjhblog242Bean");
 //            dbBean = paramsParserUtil.getBeanMap().get("hadoopPostgreSql");
 //            dbBean = paramsParserUtil.getBeanMap().get("oracle242Bean");
 //            dbBean = paramsParserUtil.getBeanMap().get("oracle12c_cctsys_dev_Bean");
@@ -135,7 +136,7 @@ public class JDBCUtilTest extends TestBase {
 
     @Test
     public void postgreSqlTest() throws SQLException {
-        jdbcUtil.executeQuery("select 1");
+        jdbcUtil.executeQuery("select 1 from dual");
     }
 
     @Test

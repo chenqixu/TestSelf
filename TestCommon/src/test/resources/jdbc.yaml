@@ -41,6 +41,11 @@ dbbeans:
     pass_word: "T%vdNV#i$2"
     tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
     dbType: "ORACLE"
+  - name: fjhblog242Bean
+    user_name: "fjhblog"
+    pass_word: "V%DySs#y$7"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"
   - name: oracle12c_cctsys_dev_Bean
     user_name: "cctsys_dev"
     pass_word: "TyM*2CnEm"
