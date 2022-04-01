@@ -390,6 +390,8 @@ public class KafkaConsumerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");// 从配置文件解析参数
         param.put("kafkaconf.group.id", "grpid_nl_dun_notify_result_v1");// 设置消费组
         param.put("kafkaconf.newland.consumer.mode", "fromBeginning");// 设置从头消费
+        param.put("kafkaconf.newland.schema.cluster.name", "kafka10");// schema用到的kafka集群
+        param.put("kafkaconf.newland.schema.group.id", "grpid_nl_dun_notify_result_v1");// schema用到的消费组
         logger.info("{}", param);
         try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param, true)) {
             String topic = "NMC_FLAT_B_DUN_NOTIFY_RESULT_R_I_V1";// 待消费话题

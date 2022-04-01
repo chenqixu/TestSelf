@@ -20,7 +20,8 @@ param:
   kafkaconf.newland.kafka_username: admin
   kafkaconf.newland.kafka_password: admin
   #alice
-  schema_url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
+  #schema_url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
+  kafkaconf.newland.schema.url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
   #  topic: NMC_TB_O_LOG_5G_N1N2_R_I_V1
 #  topic: nmc_app_nl_loc_mix_v1
 #  topic: nmc_etl_hw_lte_s1mme_v1
