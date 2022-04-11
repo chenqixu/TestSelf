@@ -2,6 +2,7 @@ package com.cqx.common.utils.compress.tar;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.z.ZCompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +102,30 @@ public class TarUtil {
     public List<String> unTarFile(String filePath, String outPath, String fileRule, String rename, boolean isDelete) {
         File file = new File(filePath);
         return unTarFile(file, file.getParent() + File.separator, fileRule, rename, isDelete);
+    }
+
+    public void unTarGzFile(String filePath) throws IOException {
+        unTarGzFile(new File(filePath));
+    }
+
+    public void unTarGzFile(File file) throws IOException {
+        try (TarArchiveInputStream is = new TarArchiveInputStream(
+                new GzipCompressorInputStream(new FileInputStream(file)))) {
+            while (true) {
+                TarArchiveEntry entry = is.getNextTarEntry();
+                if (entry == null) {
+                    break;
+                }
+                String entryName = entry.getName();
+                byte[] bs = new byte[BUFFERSIZE];
+                int count = 0;
+                int len;
+                while ((len = is.read(bs)) != -1) {
+                    count += len;
+                }
+                logger.info("{} {}", entryName, count);
+            }
+        }
     }
 
     /**

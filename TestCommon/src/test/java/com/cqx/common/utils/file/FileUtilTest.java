@@ -342,4 +342,32 @@ public class FileUtilTest {
             logger.info("{}", new String(buf));
         }
     }
+
+    @Test
+    public void writeTest() throws Exception {
+        // 按字节写，性能测试
+        String outputFile = "d:\\tmp\\data\\xdr\\xntest.data";
+        byte[] buf = new byte[4096];
+        for (int i = 0; i < buf.length; i++) {
+            buf[i] = 0x00;
+        }
+        long cnt = 0L;
+        long size = 0L;
+        long startFirst = System.currentTimeMillis();
+        long start = startFirst;
+        // 1 MB = 1024 KB = 1048576 BYTE
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            while (cnt < 10) {
+                fos.write(buf, 0, 4096);
+                size += 4096;
+                if (size % 1048576 == 0) {
+                    cnt++;
+                    long end = System.currentTimeMillis();
+                    System.out.println(String.format("当前生成1MB耗时 %s ms，总耗时 %s ms，速度 %s MB/S"
+                            , end - start, end - startFirst, size * 1000 / 1024 / 1024 / (end - startFirst)));
+                    start = end;
+                }
+            }
+        }
+    }
 }
