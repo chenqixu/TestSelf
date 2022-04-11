@@ -64,6 +64,27 @@ public class SqlParser {
 
     }
 
+    public void parser_v2(String sql) {
+        lexical_analysis_v2(sql);
+    }
+
+    private List<String> lexical_analysis_v2(String sql) {
+        LinkedList<String> linkedList = new LinkedList<>();
+        String[] words = sql.trim().split(" ", -1);
+        String[] keys = {"(", ")"};
+        for (String word : words) {
+            logger.info("word：{}", word);
+            //判断有没关键字
+            for (String key : keys) {
+                if (word.contains(key)) {
+
+                    break;
+                }
+            }
+        }
+        return null;
+    }
+
     private List<String> lexical_analysis(String sql) {
         //1、词法分析
         logger.info("===step1【词法分析】===");

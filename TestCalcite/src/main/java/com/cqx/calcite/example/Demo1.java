@@ -93,7 +93,7 @@ public class Demo1 {
     private static String paserTableName(SqlNode tbl) {
         if (tbl.getKind() == SqlKind.AS) {
             SqlBasicCall sqlBasicCall = (SqlBasicCall) tbl;
-            return sqlBasicCall.operands[1].toString();
+            return sqlBasicCall.operand(1).toString();
         }
         return ((SqlIdentifier) tbl).toString();
     }
