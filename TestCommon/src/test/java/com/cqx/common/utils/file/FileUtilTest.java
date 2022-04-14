@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -369,5 +370,41 @@ public class FileUtilTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void readCapFileToSer() throws Exception {
+        RawDataFileWriter rawDataFileWriter = new RawDataFileWriter("d:\\tmp\\data\\xdr\\VoLTE_ici_8582644071373960_1588582644067401578_8651180874284_8618965191816_20220224_094416_012022_11_1588580346752507017.cap");
+        try (FileOutputStream fos = new FileOutputStream(new File("d:\\tmp\\data\\xdr\\new.cap"))) {
+            fos.write(rawDataFileWriter.getSrcBytes());
+        }
+        RawDataFileReader rawDataFileReader = new RawDataFileReader();
+        try (FileInputStream newFis = new FileInputStream(new File("d:\\tmp\\data\\xdr\\new.cap"));
+             FileOutputStream newFos = new FileOutputStream(new File("d:\\tmp\\data\\xdr\\newFos.cap"))) {
+            byte[] buff = new byte[newFis.available()];
+            int ret = newFis.read(buff);
+            newFos.write(rawDataFileReader.readToBytes(buff));
+        }
+    }
+
+    @Test
+    public void bytebuffTest() throws Exception {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+        byteBuffer.put((byte) 1);
+        byteBuffer.put((byte) 2);
+        byteBuffer.put((byte) 3);
+        int position = byteBuffer.position();
+        logger.info("pos: {}, remaining: {}", position, byteBuffer.remaining());
+        byte[] buf = new byte[position];
+        byteBuffer.flip();
+        byteBuffer.get(buf, 0, position);
+        for (byte b : buf) {
+            logger.info("{}", b);
+        }
+        byteBuffer.clear();
+        byteBuffer.put((byte) 4);
+        byteBuffer.put((byte) 5);
+        position = byteBuffer.position();
+        logger.info("pos: {}, remaining: {}", position, byteBuffer.remaining());
     }
 }

@@ -117,13 +117,16 @@ public class TarUtil {
                     break;
                 }
                 String entryName = entry.getName();
-                byte[] bs = new byte[BUFFERSIZE];
-                int count = 0;
-                int len;
-                while ((len = is.read(bs)) != -1) {
-                    count += len;
-                }
-                logger.info("{} {}", entryName, count);
+//                byte[] bs = new byte[BUFFERSIZE];
+//                int count = 0;
+//                int len;
+                int allSize = is.available();
+                byte[] bsall = new byte[allSize];
+                int readSize = is.read(bsall);
+//                while ((len = is.read(bs)) != -1) {
+//                    count += len;
+//                }
+                logger.info("entryName: {}, readSize: {}, allSize: {}", entryName, readSize, allSize);
             }
         }
     }
