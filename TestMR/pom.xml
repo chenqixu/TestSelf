@@ -29,6 +29,12 @@
 			<groupId>com.cqx</groupId>
 			<artifactId>TestCommon</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!--&lt;!&ndash; hadoop &ndash;&gt;-->

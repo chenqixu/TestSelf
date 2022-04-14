@@ -23,11 +23,14 @@ public class OrcReader {
 
     public static void main(String[] args) throws Exception {
         JobConf conf = new JobConf();
-        Path testFilePath = new Path("D:\\tmp\\data\\orcouput");
+//        Path testFilePath = new Path("D:\\tmp\\data\\orcouput");
+        Path testFilePath = new Path("d:\\tmp\\data\\xdr\\test1.orc");
         Properties p = new Properties();
         OrcSerde serde = new OrcSerde();
-        p.setProperty("columns", "name,age");
-        p.setProperty("columns.types", "string:string");
+//        p.setProperty("columns", "name,age");
+//        p.setProperty("columns.types", "string:string");
+        p.setProperty("columns", "content");
+        p.setProperty("columns.types", "string");
         serde.initialize(conf, p);
         StructObjectInspector inspector = (StructObjectInspector) serde.getObjectInspector();
         InputFormat in = new OrcInputFormat();
@@ -41,9 +44,8 @@ public class OrcReader {
         List<? extends StructField> fields = inspector.getAllStructFieldRefs();
         long offset = reader.getPos();
         while (reader.next(key, value)) {
-            Object name = inspector.getStructFieldData(value, fields.get(0));
-            Object age = inspector.getStructFieldData(value, fields.get(1));
-            logger.info("name：{}，age：{}", name, age);
+            Object content = inspector.getStructFieldData(value, fields.get(0));
+            logger.info("content：{}", content);
         }
         reader.close();
     }

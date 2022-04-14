@@ -11,7 +11,7 @@ import org.apache.hadoop.mapreduce.JobStatus;
 import org.apache.hadoop.mapreduce.TypeConverter;
 import org.apache.hadoop.mapreduce.v2.api.records.JobId;
 import org.apache.hadoop.mapreduce.v2.app.job.Job;
-import org.apache.hadoop.mapreduce.v2.hs.JobHistory;
+//import org.apache.hadoop.mapreduce.v2.hs.JobHistory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class LogUtil {
     //	protected org.apache.hadoop.yarn.client.cli.LogsCLI a;// pass
-    protected org.apache.hadoop.mapreduce.v2.hs.JobHistoryServer jhs;// pass
+//    protected org.apache.hadoop.mapreduce.v2.hs.JobHistoryServer jhs;// pass
     protected String mapred_site_xmlpath = LogUtil.class.getClassLoader().getResource("confhw/mapred-site.xml").getPath();
     protected Configuration conf = new Configuration();
 
@@ -35,7 +35,7 @@ public class LogUtil {
     }
 
     public static void main(String[] args) {
-        new LogUtil().JobHistory();
+//        new LogUtil().JobHistory();
     }
 
     /**
@@ -57,19 +57,19 @@ public class LogUtil {
      * PartialJob中无法获取counters、configuration、task等详细信息
      * </pre>
      */
-    public void JobHistory() {
-        JobHistory his = new JobHistory();
-        his.init(conf);
-        System.out.println("getHistoryUrl=" + his.getHistoryUrl());
-        Map<JobId, Job> jobs = his.getAllJobs();//获取的job信息是不完整的（PartialJob）
-        System.out.println(jobs);
-
-        JobID oldJobId = JobID.forName("job_1633092039821_2421");
-        System.out.println(oldJobId.getId());
-        JobId jobId = TypeConverter.toYarn(oldJobId);
-        Job fullJob = his.getJob(jobId);//获取的job信息是完整的（CompletedJob）
-        System.out.println(fullJob);
-    }
+//    public void JobHistory() {
+//        JobHistory his = new JobHistory();
+//        his.init(conf);
+//        System.out.println("getHistoryUrl=" + his.getHistoryUrl());
+//        Map<JobId, Job> jobs = his.getAllJobs();//获取的job信息是不完整的（PartialJob）
+//        System.out.println(jobs);
+//
+//        JobID oldJobId = JobID.forName("job_1633092039821_2421");
+//        System.out.println(oldJobId.getId());
+//        JobId jobId = TypeConverter.toYarn(oldJobId);
+//        Job fullJob = his.getJob(jobId);//获取的job信息是完整的（CompletedJob）
+//        System.out.println(fullJob);
+//    }
 
     /**
      * <pre>
