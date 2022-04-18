@@ -16,8 +16,8 @@ public class SparkHiveTest {
 	 * */
 	public void hiveSelect(String sql){
 		HiveContext hiveCtx = new HiveContext(sc);
-		DataFrame rows = hiveCtx.sql(sql);
-		Row firstRow = rows.first();
-		System.out.println(firstRow.getString(0));
+//		DataFrame rows = hiveCtx.sql(sql);
+//		Row firstRow = rows.first();
+//		System.out.println(firstRow.getString(0));
 	}
 }
