@@ -25,6 +25,7 @@
         <!--<JAVA_HOME>D:\Program Files\Java\jdk1.7.0_03</JAVA_HOME>-->
         <build.jdk.version>1.8</build.jdk.version>
         <java.version>1.8.0_201</java.version>
+        <metrics.version>3.1.2</metrics.version>
         <JAVA_HOME>D:\Program Files\Java\jdk1.8.0_201</JAVA_HOME>
     </properties>
 
@@ -855,6 +856,13 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.59</version>
+        </dependency>
+
+        <!-- metrics -->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics.version}</version>
         </dependency>
     </dependencies>
 
