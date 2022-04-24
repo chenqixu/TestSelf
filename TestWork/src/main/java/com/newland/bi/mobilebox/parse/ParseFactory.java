@@ -5,6 +5,7 @@ import com.newland.bi.mobilebox.bean.BodyInfo;
 import com.newland.bi.mobilebox.bean.HeaderInfo;
 import com.newland.bi.mobilebox.bean.MobileBoxInfo;
 import com.newland.bi.mobilebox.exception.MobileBoxException;
+import com.newland.bi.mobilebox.utils.BodyImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class ParseFactory {
     private static Logger logger = LoggerFactory.getLogger(ParseFactory.class);
     private static Map<Integer, AbstractBodyParse> bodyParseMap = new HashMap<>();
     private static ParseFactory parseFactory = new ParseFactory();
-    private static ClassUtil classUtil = new ClassUtil();
+    private static ClassUtil<BodyImpl, AbstractBodyParse> classUtil = new ClassUtil();
 
     static {
         Set<Class<?>> classSet = classUtil.getClassSet("com.newland.bi.mobilebox.impl",

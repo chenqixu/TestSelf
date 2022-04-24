@@ -22,8 +22,7 @@ import java.util.jar.JarFile;
  *
  * @author chenqixu
  */
-public class ClassUtil {
-
+public class ClassUtil<T extends Annotation, K> {
     private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
 
     /**
@@ -31,7 +30,7 @@ public class ClassUtil {
      *
      * @return
      */
-    public ClassLoader getClassLoader() {
+    public static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
 
@@ -54,7 +53,7 @@ public class ClassUtil {
      * @param isInitialized 为提高性能设置为false
      * @return
      */
-    public Class<?> loadClass(String className, boolean isInitialized) {
+    private static Class<?> loadClass(String className, boolean isInitialized) {
         Class<?> cls;
         try {
             cls = Class.forName(className, isInitialized, getClassLoader());
@@ -68,12 +67,28 @@ public class ClassUtil {
     }
 
     /**
+     * 构建对象
+     *
+     * @param cls
+     * @return
+     */
+    public K generate(Class cls) {
+        K obj = null;
+        try {
+            obj = (K) cls.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return obj;
+    }
+
+    /**
      * 加载指定包下的所有类
      *
      * @param packageName
      * @return
      */
-    public <A extends Annotation> Set<Class<?>> getClassSet(String packageName, Class<A> annotationClass) {
+    public Set<Class<?>> getClassSet(String packageName, Class<T> annotationClazz) {
         Set<Class<?>> classSet = new HashSet<>();
         try {
             Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
@@ -86,7 +101,7 @@ public class ClassUtil {
                         String packagePath = URLDecoder.decode(url.getFile(), "UTF-8");
                         // String packagePath =url.getPath().replaceAll("%20", "");
                         // 添加
-                        addClass(classSet, packagePath, packageName, annotationClass);
+                        addClass(classSet, packagePath, packageName, annotationClazz);
                     } else if (protocol.equals("jar")) {
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                         if (jarURLConnection != null) {
@@ -99,7 +114,7 @@ public class ClassUtil {
                                     if (jarEntryName.endsWith(".class")) {
                                         String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
                                                 .replaceAll("/", ".");
-                                        doAddClass(classSet, className, annotationClass);
+                                        doAddClass(classSet, className, annotationClazz);
                                     }
                                 }
                             }
@@ -115,47 +130,61 @@ public class ClassUtil {
     }
 
     /**
-     * 添加文件到SET集合
+     * 扫描package路径，添加符合条件的Class到SET集合
      *
      * @param classSet
      * @param packagePath
      * @param packageName
      */
-    private <A extends Annotation> void addClass(Set<Class<?>> classSet, String packagePath, String packageName, Class<A> annotationClass) {
+    private void addClass(Set<Class<?>> classSet, String packagePath, String packageName, Class<T> annotationClazz) {
         File[] files = new File(packagePath).listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
                 return (file.isFile() && file.getName().endsWith(".class") || file.isDirectory());
             }
         });
-        for (File file : files) {
-            String fileName = file.getName();
-            if (file.isFile()) {
-                String className = fileName.substring(0, fileName.lastIndexOf("."));
-                if (StringUtils.isNotEmpty(packageName)) {
-                    className = packageName + "." + className;
-                    logger.info("className: {}", className);
+        if (files != null) {
+            for (File file : files) {
+                String fileName = file.getName();
+                if (file.isFile()) {
+                    String className = fileName.substring(0, fileName.lastIndexOf("."));
+                    if (StringUtils.isNotEmpty(packageName)) {
+                        className = packageName + "." + className;
+                        logger.debug("扫描到 className: {}", className);
+                    }
+                    // 添加
+                    doAddClass(classSet, className, annotationClazz);
+                } else {
+                    // 子目录
+                    String subPackagePath = fileName;
+                    if (StringUtils.isNotEmpty(packagePath)) {
+                        subPackagePath = packagePath + "/" + subPackagePath;
+                    }
+                    String subPackageName = fileName;
+                    if (StringUtils.isNotEmpty(packageName)) {
+                        subPackageName = packageName + "." + subPackageName;
+                    }
+                    addClass(classSet, subPackagePath, subPackageName, annotationClazz);
                 }
-                // 添加
-                doAddClass(classSet, className, annotationClass);
-            } else {
-                // 子目录
-                String subPackagePath = fileName;
-                if (StringUtils.isNotEmpty(packagePath)) {
-                    subPackagePath = packagePath + "/" + subPackagePath;
-                }
-                String subPackageName = fileName;
-                if (StringUtils.isNotEmpty(packageName)) {
-                    subPackageName = packageName + "." + subPackageName;
-                }
-                addClass(classSet, subPackagePath, subPackageName, annotationClass);
             }
         }
     }
 
-    private <A extends Annotation> void doAddClass(Set<Class<?>> classSet, String className, Class<A> annotationClass) {
+    /**
+     * 增加类到集合
+     *
+     * @param classSet
+     * @param className
+     */
+    private void doAddClass(Set<Class<?>> classSet, String className, Class<T> annotationClazz) {
+        //类加载
         Class<?> cls = loadClass(className, false);
-        A body = cls.getAnnotation(annotationClass);
-        if (body != null) classSet.add(cls);
+        //尝试通过注解获取对象
+        T body = cls.getAnnotation(annotationClazz);
+        //对象不为空即属于这个注解
+        if (body != null) {
+            classSet.add(cls);
+            logger.debug("增加 {} 类到集合", className);
+        }
     }
 }
