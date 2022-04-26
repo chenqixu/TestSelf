@@ -18,7 +18,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * 类工具
+ * 类扫描工具<br>
+ * 2022-04-26 缺陷修复，jar包无法正常匹配package导致的多匹配问题
  *
  * @author chenqixu
  */
@@ -32,16 +33,6 @@ public class ClassUtil<T extends Annotation, K> {
      */
     public static ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
-    }
-
-    /**
-     * 获取当前加载类下的配置文件路径
-     *
-     * @param resourceName
-     * @return
-     */
-    public URL getResource(String resourceName) {
-        return getClassLoader().getResource(resourceName);
     }
 
     /**
@@ -64,6 +55,16 @@ public class ClassUtil<T extends Annotation, K> {
             throw new RuntimeException(e);
         }
         return cls;
+    }
+
+    /**
+     * 获取当前加载类下的配置文件路径
+     *
+     * @param resourceName
+     * @return
+     */
+    public URL getResource(String resourceName) {
+        return getClassLoader().getResource(resourceName);
     }
 
     /**
@@ -91,18 +92,22 @@ public class ClassUtil<T extends Annotation, K> {
     public Set<Class<?>> getClassSet(String packageName, Class<T> annotationClazz) {
         Set<Class<?>> classSet = new HashSet<>();
         try {
-            Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
+            String packageNamePath = packageName.replace(".", "/");
+            logger.debug("packageName: {}, packageNamePath: {}", packageName, packageNamePath);
+            Enumeration<URL> urls = getClassLoader().getResources(packageNamePath);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 if (url != null) {
                     String protocol = url.getProtocol();
                     if (protocol.equals("file")) {
+                        logger.debug("protocol.file url: {}", url);
                         // 转码
                         String packagePath = URLDecoder.decode(url.getFile(), "UTF-8");
                         // String packagePath =url.getPath().replaceAll("%20", "");
                         // 添加
                         addClass(classSet, packagePath, packageName, annotationClazz);
                     } else if (protocol.equals("jar")) {
+                        logger.debug("protocol.jar url: {}", url);
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                         if (jarURLConnection != null) {
                             JarFile jarFile = jarURLConnection.getJarFile();
@@ -111,7 +116,8 @@ public class ClassUtil<T extends Annotation, K> {
                                 while (jarEntries.hasMoreElements()) {
                                     JarEntry jarEntry = jarEntries.nextElement();
                                     String jarEntryName = jarEntry.getName();
-                                    if (jarEntryName.endsWith(".class")) {
+                                    if (jarEntryName.endsWith(".class") && jarEntryName.contains(packageNamePath)) {
+                                        logger.debug("扫描到 jarEntryName: {}", jarEntryName);
                                         String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
                                                 .replaceAll("/", ".");
                                         doAddClass(classSet, className, annotationClazz);
