@@ -99,12 +99,24 @@ public class SinaleRedisClient extends RedisClient {
         return jedis.hscan(key, cursor, params);
     }
 
+    @Override
     public List<String> mget(String... keys) {
         return jedis.mget(keys);
     }
 
+    @Override
     public List<String> hmget(String key, String... fields) {
         return jedis.hmget(key, fields);
+    }
+
+    @Override
+    public Long incr(String key) {
+        return jedis.incr(key);
+    }
+
+    @Override
+    public Long hincrBy(String key, String field, Long value) {
+        return jedis.hincrBy(key, field, value);
     }
 
     @Override

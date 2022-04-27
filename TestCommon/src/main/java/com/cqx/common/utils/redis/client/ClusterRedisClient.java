@@ -135,6 +135,16 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public Long incr(String key) {
+        return cluster.incr(key);
+    }
+
+    @Override
+    public Long hincrBy(String key, String field, Long value) {
+        return cluster.hincrBy(key, field, value);
+    }
+
+    @Override
     public void flushDB() {
         for (Map.Entry<String, JedisPool> entry : cluster.getClusterNodes().entrySet()) {
             entry.getValue().getResource().flushDB();

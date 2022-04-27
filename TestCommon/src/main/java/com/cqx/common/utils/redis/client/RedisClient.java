@@ -49,6 +49,10 @@ public abstract class RedisClient {
 
     public abstract List<String> hmget(String key, String... fields);
 
+    public abstract Long incr(String key);
+
+    public abstract Long hincrBy(String key, String field, Long value);
+
     public abstract void close();
 
     public abstract void flushDB();

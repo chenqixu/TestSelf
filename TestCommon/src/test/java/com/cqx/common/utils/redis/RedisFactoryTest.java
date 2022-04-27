@@ -5,6 +5,8 @@ import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.client.RedisPipeline;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
+import com.cqx.common.utils.thread.CallableTool;
+import com.cqx.common.utils.thread.ICallableTool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -358,6 +360,19 @@ public class RedisFactoryTest {
         }
     }
 
+    @Test
+    public void concurrentINCRTest() {
+        CallableTool<Long> callableTool = new CallableTool<>(5);
+        INCRGet incrGet1 = new INCRGet("hincrget1", "4G", "20220427-01");
+        INCRGet incrGet2 = new INCRGet("hincrget2", "4G", "20220427-01");
+        INCRGet incrGet3 = new INCRGet("hincrget3", "4G", "20220427-01");
+        callableTool.submitCallable(incrGet1);
+        callableTool.submitCallable(incrGet2);
+        callableTool.submitCallable(incrGet3);
+        callableTool.await();
+        callableTool.stop();
+    }
+
     private List<Slot> discover() {
         //轮询缓存，ping不通过的移除
         //重新获取集群
@@ -459,6 +474,35 @@ public class RedisFactoryTest {
 
         public void setStatus(String status) {
             this.status = status;
+        }
+    }
+
+    public class INCRGet extends ICallableTool<Long> {
+        private RedisClient _redisClient;
+        private String key;
+        private String field;
+
+        public INCRGet(String taskName, String key, String field) {
+            super(taskName);
+            this.key = key;
+            this.field = field;
+            this._redisClient = RedisFactory.builder()
+                    .setIp_ports("10.1.8.200:10000,10.1.8.201:10000,10.1.8.202:10000")
+                    .setMode(RedisFactory.CLUSTER_MODE_TYPE)
+                    .setPipeline(false)
+                    .build();
+        }
+
+        @Override
+        public Long icall() throws Exception {
+            long cnt = 0;
+            while (cnt < 1000) {
+                cnt++;
+                long val = _redisClient.hincrBy(key, field, 1L);
+                logger.info("val: {}", val);
+            }
+            _redisClient.close();
+            return cnt;
         }
     }
 }
