@@ -72,4 +72,10 @@ public class ThreadTool {
             SleepUtil.sleepMilliSecond(scan_interval);
         }
     }
+
+    public void startTaskNotWait() {
+        for (Thread t : task) {
+            t.start();
+        }
+    }
 }

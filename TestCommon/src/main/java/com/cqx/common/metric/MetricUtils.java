@@ -25,9 +25,9 @@ public class MetricUtils {
     /**
      * 默认30秒打印一次指标
      */
-    static {
-        build();
-    }
+//    static {
+//        build();
+//    }
 
     /**
      * 立即报告

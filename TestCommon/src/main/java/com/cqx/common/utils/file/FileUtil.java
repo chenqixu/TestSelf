@@ -590,6 +590,16 @@ public class FileUtil {
         }
     }
 
+    public void flush() {
+        if (writer != null) {
+            try {
+                writer.flush();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
     public void closeRead() {
         if (reader != null) {
             try {
