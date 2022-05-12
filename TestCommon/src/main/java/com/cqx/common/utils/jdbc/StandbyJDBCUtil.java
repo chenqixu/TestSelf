@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
@@ -136,8 +137,8 @@ public class StandbyJDBCUtil {
         return results;
     }
 
-    public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws
-            SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException, InterruptedException {
+    public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException
+            , IllegalAccessException, IntrospectionException, InvocationTargetException, InterruptedException, IOException {
         checkCfg();
         int ret = -1;
         List<JDBCUtil> jdbcUtils = mainStandbySwitch(1);
@@ -158,7 +159,7 @@ public class StandbyJDBCUtil {
             //主库处理
             try {
                 ret = jdbcUtilMain.executeBatch(sql, tList, beanCls, fields);
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 if (checkMain()) throw e;
             }
             //加入备库队列，超过队列阀值则抛

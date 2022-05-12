@@ -135,6 +135,27 @@ public class JDBCUtilTest extends TestBase {
     }
 
     @Test
+    public void insertJavaBeanClobTest() throws Exception {
+        String fields = ":id,:name,:time,:description";
+        String sql = "insert into cqx_test5 values(" + fields + ")";
+        List<CqxTest5Bean> beans = new ArrayList<>();
+        CqxTest5Bean bean1 = new CqxTest5Bean();
+        bean1.setId(1234567890L);
+        bean1.setName("test2");
+        bean1.setTime(new java.sql.Date(new Date().getTime()));
+        String description = "test2_clob_1234567890";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 300; i++) {
+            sb.append(description);
+        }
+        logger.info("description.len: {}", sb.length());
+        bean1.setDescription(sb.toString());
+        beans.add(bean1);
+        int ret = jdbcUtil.executeBatch(sql, beans, CqxTest5Bean.class, fields);
+        logger.info("ret: {}", ret);
+    }
+
+    @Test
     public void postgreSqlTest() throws SQLException {
         jdbcUtil.executeQuery("select 1 from dual");
     }

@@ -5,6 +5,7 @@ import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.client.RedisPipeline;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
+import com.cqx.common.utils.system.TimeUtil;
 import com.cqx.common.utils.thread.CallableTool;
 import com.cqx.common.utils.thread.ICallableTool;
 import org.junit.After;
@@ -371,6 +372,20 @@ public class RedisFactoryTest {
         callableTool.submitCallable(incrGet3);
         callableTool.await();
         callableTool.stop();
+    }
+
+    @Test
+    public void timerTest() {
+        logger.info("now: {}", TimeUtil.getNow());
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("timer.schedule 4000");
+            }
+        }, 5, 4000);
+        SleepUtil.sleepSecond(20);
+        logger.info("end: {}", TimeUtil.getNow());
     }
 
     private List<Slot> discover() {

@@ -17,6 +17,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -1160,7 +1161,10 @@ public class JDBCUtil implements IJDBCUtil {
             if (isClob) {
                 for (List<QueryResult> ts : tList) {
                     for (QueryResult qr : ts) {
-                        if ("java.sql.Clob".equals(qr.getColumnClassName())) {
+                        if ("java.sql.Clob".equals(qr.getColumnClassName())
+                                || "oracle.jdbc.OracleClob".equals(qr.getColumnClassName())
+                                || "oracle.sql.CLOB".equals(qr.getColumnClassName())
+                        ) {
                             String content = qr.getValue().toString();
                             qr.setValue(buildClob(conn, content));
                         }
@@ -1324,7 +1328,8 @@ public class JDBCUtil implements IJDBCUtil {
      * @return 结果
      */
     @Override
-    public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+    public <T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException
+            , IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         return executeBatch(sql, tList, beanCls, fields, false).get(0);
     }
 
@@ -1344,7 +1349,9 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws InvocationTargetException
      */
     @Override
-    public <T> List<Integer> executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields, boolean hasRet) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+    public <T> List<Integer> executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields
+            , boolean hasRet) throws SQLException, IllegalAccessException, IntrospectionException
+            , InvocationTargetException, IOException {
         int add_cnt = 0;
         int success_cnt = 0;
         int batch_cnt = 0;
@@ -1360,6 +1367,11 @@ public class JDBCUtil implements IJDBCUtil {
             pstmt = conn.prepareStatement(sql);// 预编译SQL
             // 获取javabean属性，源端
             BeanInfo beanInfo = Introspector.getBeanInfo(beanCls);
+            // 获取javabean的所有字段
+            Map<String, Field> fieldMap = new HashMap<>();
+            for (Field field : beanCls.getDeclaredFields()) {
+                fieldMap.put(field.getName().toUpperCase(), field);
+            }
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
             LinkedHashMap<String, BatchBean> methodLinkedHashMap = new LinkedHashMap<>();
             for (String str : fields_arr) {
@@ -1369,7 +1381,7 @@ public class JDBCUtil implements IJDBCUtil {
                     if (name.equals(key)) {
                         Method getter = property.getReadMethod();// Java中提供了用来访问某个属性的
                         String propertyName = property.getPropertyType().getName();
-                        methodLinkedHashMap.put(key, new BatchBean(propertyName, getter));
+                        methodLinkedHashMap.put(key, new BatchBean(propertyName, getter, fieldMap.get(name)));
                         break;
                     }
                 }
@@ -1379,8 +1391,9 @@ public class JDBCUtil implements IJDBCUtil {
                 int i = 1;
                 for (Map.Entry<String, BatchBean> entry : methodLinkedHashMap.entrySet()) {
                     Object fieldValue = entry.getValue().getMethod().invoke(t);
+                    boolean strToClob = entry.getValue().isStrToClob();
                     // 设置参数
-                    pstmtSetValue(pstmt, entry.getValue().getName(), i, fieldValue);
+                    pstmtSetValue(pstmt, entry.getValue().getName(), null, i, fieldValue, strToClob);
                     i++;
                 }
                 pstmt.addBatch();
@@ -1437,7 +1450,8 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws IntrospectionException
      * @throws InvocationTargetException
      */
-    public <T> void executeBatchRetry(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+    public <T> void executeBatchRetry(String sql, List<T> tList, Class<T> beanCls, String fields) throws SQLException
+            , IllegalAccessException, IntrospectionException, InvocationTargetException, IOException {
         int success_cnt = 0;
         int batch_cnt = 0;
         // 获取javabean属性，源端
@@ -1479,7 +1493,9 @@ public class JDBCUtil implements IJDBCUtil {
         logger.info("batch_cnt：{}，success_cnt：{}", batch_cnt, success_cnt);
     }
 
-    private <T> int[] executeBatch(String sql, List<T> tList, LinkedHashMap<String, BatchBean> methodLinkedHashMap) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+    private <T> int[] executeBatch(String sql, List<T> tList
+            , LinkedHashMap<String, BatchBean> methodLinkedHashMap) throws SQLException
+            , IllegalAccessException, InvocationTargetException, IOException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         int[] result = {0};
@@ -1896,7 +1912,7 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException
      */
     private void pstmtSetValue(PreparedStatement pstmt, String dstFieldType, int parameterIndex,
-                               Object fieldValue) throws SQLException {
+                               Object fieldValue) throws SQLException, IOException {
         pstmtSetValue(pstmt, dstFieldType, null, parameterIndex, fieldValue);
     }
 
@@ -1911,7 +1927,23 @@ public class JDBCUtil implements IJDBCUtil {
      * @throws SQLException
      */
     private void pstmtSetValue(PreparedStatement pstmt, String dstFieldType, String srcFieldType,
-                               int parameterIndex, Object fieldValue) throws SQLException {
+                               int parameterIndex, Object fieldValue) throws SQLException, IOException {
+        pstmtSetValue(pstmt, dstFieldType, srcFieldType, parameterIndex, fieldValue, false);
+    }
+
+    /**
+     * 根据字段类型判断，进行值转换并设置到PreparedStatement中
+     *
+     * @param pstmt
+     * @param dstFieldType
+     * @param srcFieldType
+     * @param parameterIndex
+     * @param fieldValue
+     * @param strToClob
+     * @throws SQLException
+     */
+    private void pstmtSetValue(PreparedStatement pstmt, String dstFieldType, String srcFieldType,
+                               int parameterIndex, Object fieldValue, boolean strToClob) throws SQLException, IOException {
         // 判断目标字段类型
         switch (dstFieldType) {
             case "java.lang.String":
@@ -1970,7 +2002,14 @@ public class JDBCUtil implements IJDBCUtil {
                 pstmt.setDate(parameterIndex, fieldValue == null ? null : new Date(((java.util.Date) fieldValue).getTime()));
                 break;
             case "java.sql.Clob":
-                pstmt.setClob(parameterIndex, (Clob) fieldValue);
+            case "oracle.jdbc.OracleClob":
+            case "oracle.sql.CLOB":
+                // 需要字符串转Clob
+                if (strToClob) {
+                    pstmt.setClob(parameterIndex, buildClob(pstmt.getConnection(), fieldValue.toString()));
+                } else {
+                    pstmt.setClob(parameterIndex, (Clob) fieldValue);
+                }
                 break;
             default:
                 pstmt.setObject(parameterIndex, fieldValue);
