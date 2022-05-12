@@ -3,6 +3,7 @@
 ##版本变化说明
 * ClassUtil缺陷修复，jar包无法正常匹配package导致的多匹配问题 [common-20220426](#common-20220426)
 * RedisFactory新增incr和hincrBy功能，用于获取分布式的唯一自增ID [common-20220427](#common-20220427)
+* JDBC测试JavaBean方式插入oracle.Clob，结论：String类型就可以，使用buildClob也是可以的 [common-20220512](#common-20220512)
 
 ###common-20220426
 ```
@@ -29,4 +30,13 @@ RedisFactory新增incr和hincrBy功能，用于获取分布式的唯一自增ID
             .build();
     调用对应的hincrBy即可，1L表示每次自增幅度为1
     _redisClient.hincrBy(key, field, 1L);
+```
+###common-20220512
+```
+JDBC测试JavaBean方式插入oracle.Clob，结论：String类型就可以，使用buildClob也是可以的
+1、使用String方式
+javabean中对应的Clob字段类型设置成String就可以了
+2、使用buildClob方式
+javabean中对应的Clob字段类型使用@DB_StrToClob声明，类型使用String
+使用方法即可自动调用buildClob：<T> int executeBatch(String sql, List<T> tList, Class<T> beanCls, String fields) throws Exception;
 ```
