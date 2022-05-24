@@ -2109,11 +2109,25 @@ public class JDBCUtil implements IJDBCUtil {
                             setter.invoke(t, Long.valueOf(value.toString()));
                         }
                     } else if (propertyName.equals("java.sql.Date")) {
-                        if (value instanceof Timestamp) {
-                            setter.invoke(t, new Date(((Timestamp) value).getTime()));
+                        if (value != null) {
+                            if (value instanceof Timestamp) {
+                                setter.invoke(t, new Date(((Timestamp) value).getTime()));
+                            }
+                        }
+                    } else if (propertyName.equals("java.lang.String")) {
+                        if (value != null) {
+                            if (value.getClass().getName().equals("oracle.sql.CLOB")) {
+                                oracle.sql.CLOB clob = (oracle.sql.CLOB) value;
+                                String _value = clob.getSubString(1, (int) clob.length());
+                                setter.invoke(t, _value);
+                            } else {
+                                setter.invoke(t, value);
+                            }
                         }
                     } else {
-                        setter.invoke(t, value);
+                        if (value != null) {
+                            setter.invoke(t, value);
+                        }
                     }
                     break;
                 }

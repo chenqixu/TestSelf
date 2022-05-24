@@ -23,7 +23,7 @@ public class CqxTest5Bean {
     private long id;
     private String name;
     private Date time;
-    @DB_StrToClob
+//    @DB_StrToClob
     private String description;
 
     public long getId() {

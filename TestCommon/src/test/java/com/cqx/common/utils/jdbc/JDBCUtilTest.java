@@ -153,6 +153,11 @@ public class JDBCUtilTest extends TestBase {
         beans.add(bean1);
         int ret = jdbcUtil.executeBatch(sql, beans, CqxTest5Bean.class, fields);
         logger.info("ret: {}", ret);
+
+        List<CqxTest5Bean> queryList = jdbcUtil.executeQuery("select description from cqx_test5", CqxTest5Bean.class);
+        for (CqxTest5Bean cqxTest5Bean : queryList) {
+            logger.info("query：{}", cqxTest5Bean.getDescription());
+        }
     }
 
     @Test

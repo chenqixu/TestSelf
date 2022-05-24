@@ -22,13 +22,13 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class FileUtil {
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
-    private static final String valueSplit = "\\|";
-    private static final int BUFF_SIZE = 4096;
-    private static final String fileSparator = File.separator;
-    private BufferedWriter writer;
-    private BufferedReader reader;
-    private OutputStream outputStream;
-    private InputStream inputStream;
+    protected static final String valueSplit = "\\|";
+    protected static final int BUFF_SIZE = 4096;
+    protected static final String fileSparator = File.separator;
+    protected BufferedWriter writer;
+    protected BufferedReader reader;
+    protected OutputStream outputStream;
+    protected InputStream inputStream;
 
     public static File[] listFiles(String filePath) {
         File file = new File(filePath);
