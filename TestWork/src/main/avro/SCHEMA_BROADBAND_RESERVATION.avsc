@@ -1,7 +1,7 @@
 {
   "type" : "record",
   "name" : "TB_SER_OGG_BROADBAND_RESERV",
-  "namespace": "com.newland.bi.bigdata.bean.avro",
+  "namespace": "com.bussiness.bi.bigdata.bean.avro",
   "fields" : [ {
     "name" : "table",
     "type" : "string"

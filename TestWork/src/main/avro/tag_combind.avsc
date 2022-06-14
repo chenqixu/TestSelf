@@ -1,4 +1,4 @@
-{"namespace": "com.newland.bi.bigdata.bean.avro",
+{"namespace": "com.bussiness.bi.bigdata.bean.avro",
  "type": "record",
  "name": "TagCombind",
  "fields": [
