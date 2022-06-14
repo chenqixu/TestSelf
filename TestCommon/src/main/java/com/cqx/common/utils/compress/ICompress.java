@@ -1,5 +1,7 @@
 package com.cqx.common.utils.compress;
 
+import java.io.IOException;
+
 /**
  * ICompress
  *
@@ -7,11 +9,13 @@ package com.cqx.common.utils.compress;
  */
 public interface ICompress {
 
-    void compress(String source) throws Exception;
+    void compress(String sourceFileName) throws IOException;
 
-    void compress(String source, String dst) throws Exception;
+    void compress(String sourceFileName, String dstFileName) throws IOException;
 
-    void uncompress(String source) throws Exception;
+    byte[] uncompress(String sourceFileName) throws IOException;
 
-    void uncompress(String source, String dst) throws Exception;
+    byte[] uncompress(byte[] dataBytes) throws IOException;
+
+    void uncompress(String sourceFileName, String dstFileName) throws IOException;
 }

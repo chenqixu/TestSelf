@@ -1,6 +1,11 @@
 package com.cqx.common.utils.compress.gz;
 
+import com.cqx.common.utils.compress.AbstractCompress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -8,7 +13,8 @@ import java.util.zip.GZIPOutputStream;
  *
  * @author chenqixu
  */
-public class GZUtil {
+public class GZUtil extends AbstractCompress {
+    private static final Logger logger = LoggerFactory.getLogger(GZUtil.class);
     private OutputStream outStream;
     private GZIPOutputStream gzout;
     private boolean isMemory;
@@ -20,8 +26,7 @@ public class GZUtil {
     private GZUtil(OutputStream outStream, boolean syncFlush) throws IOException {
         if (outStream instanceof ByteArrayOutputStream) {
             isMemory = true;
-        }
-        if (outStream instanceof FileOutputStream) {
+        } else if (outStream instanceof FileOutputStream) {
             isFile = true;
         }
         this.outStream = outStream;
@@ -104,5 +109,63 @@ public class GZUtil {
             try (FileOutputStream fos = new FileOutputStream(fileName)) {
                 fos.write(((ByteArrayOutputStream) outStream).toByteArray());
             }
+    }
+
+    @Override
+    public void compress(String sourceFileName, String dstFileName) throws IOException {
+        if (sourceFileName != null) {
+            File file = new File(sourceFileName);
+            if (file.exists() && file.isFile()) {
+                try (FileInputStream in = new FileInputStream(sourceFileName);
+                     GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(dstFileName))) {
+                    byte[] buffer = new byte[BUFF_SIZE];
+                    int ret;
+                    while ((ret = in.read(buffer)) > 0) {
+                        gzip.write(buffer, 0, ret);
+                    }
+                } catch (IOException e) {
+                    logger.error(String.format("%s gzip compress error.", sourceFileName), e);
+                    throw e;
+                }
+            }
+        }
+    }
+
+    @Override
+    public byte[] uncompress(String sourceFileName) throws IOException {
+        if (sourceFileName != null) {
+            File file = new File(sourceFileName);
+            if (file.exists() && file.isFile()) {
+                return uncompress(new FileInputStream(sourceFileName));
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] uncompress(byte[] dataBytes) throws IOException {
+        if (dataBytes == null || dataBytes.length == 0) {
+            return null;
+        }
+        return uncompress(new ByteArrayInputStream(dataBytes));
+    }
+
+    private byte[] uncompress(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             GZIPInputStream ungzip = new GZIPInputStream(in)
+        ) {
+            byte[] buffer = new byte[BUFF_SIZE];
+            int n;
+            while ((n = ungzip.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            return out.toByteArray();
+        } catch (IOException e) {
+            logger.error("gzip uncompress error.", e);
+            throw e;
+        }
     }
 }

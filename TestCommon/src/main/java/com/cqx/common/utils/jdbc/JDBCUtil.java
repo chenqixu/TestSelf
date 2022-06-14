@@ -1824,6 +1824,10 @@ public class JDBCUtil implements IJDBCUtil {
                         break;
                     }
                 }
+                if (update_set_values.length() == 0) {
+                    logger.warn("没有可更新的字段！pks：{}，数据：{}", Arrays.asList(pks), queryResults);
+                    break;
+                }
                 sql = String.format(update, table, update_set_values.toString(), update_where_values.toString());
                 break;
             case "d":

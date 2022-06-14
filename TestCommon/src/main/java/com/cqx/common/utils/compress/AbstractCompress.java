@@ -1,19 +1,29 @@
 package com.cqx.common.utils.compress;
 
+import java.io.IOException;
+
 /**
  * AbstractCompress
  *
  * @author chenqixu
  */
 public abstract class AbstractCompress implements ICompress {
+    public static int BUFF_SIZE = 2048;
 
-    public abstract void compress(String source) throws Exception;
-
-    public void compress(String source, String dst) throws Exception {
+    public void compress(String sourceFileName) throws IOException {
     }
 
-    public abstract void uncompress(String source) throws Exception;
+    public void compress(String sourceFileName, String dstFileName) throws IOException {
+    }
 
-    public void uncompress(String source, String dst) throws Exception {
+    public byte[] uncompress(String sourceFileName) throws IOException {
+        return null;
+    }
+
+    public byte[] uncompress(byte[] dataBytes) throws IOException {
+        return null;
+    }
+
+    public void uncompress(String sourceFileName, String dstFileName) throws IOException {
     }
 }
