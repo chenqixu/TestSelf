@@ -44,10 +44,10 @@ public class ScanToDB {
             logger.warn("需要传入参数，使用逗号分隔！如：[201909,201910]");
             System.exit(-1);
         }
-        String basePath = "X:\\Reader\\web\\res\\comic\\kamuro";
+        String basePath = "Z:\\Reader\\web\\res\\comic\\kamuro";
         DBBean dbBean = new DBBean();
         dbBean.setDbType(DBType.DERBY_NET);
-        dbBean.setTns("jdbc:derby://localhost:1527/d:/tmp/data/derby/sample");
+        dbBean.setTns("jdbc:derby://localhost:1527/z:/Reader/web/res/db/derby/sample");
         dbBean.setUser_name("admin");
         dbBean.setPass_word("admin");
         ScanToDB scanToDB = new ScanToDB(basePath, dbBean);
@@ -85,8 +85,12 @@ public class ScanToDB {
         String[] bookPaths = file.list();
         if (bookPaths != null) {
             for (String bookPath : bookPaths) {
-                // 从末尾往前倒着找，找到非数字为止
+                // 替换sql关键字
+                bookPath = bookPath.replace("'", "");
+                // kamuro版本从末尾往前倒着找，找到非数字为止
                 Map<String, String> typeID = getTypeAndID(bookPath);
+                // yaoqi特别版，有个漏洞，没有readme.txt文件，无法插入comic_book
+//                Map<String, String> typeID = getYaoqiTypeAndID(bookPath);
                 ComicBookBean comicBookBean = scanImg(monthPath, bookPath, typeID.get(TYPE), typeID.get(ID));
                 if (comicBookBean != null) {
                     comicBookBeans.add(comicBookBean);
@@ -95,14 +99,18 @@ public class ScanToDB {
             logger.info("cnt：{}，atomicImgCnt：{}", imgCnt, atomicImgCnt.size());
             String fields = "month_name,book_name,book_desc,title_img_name";
             // 清理
-            jdbcUtil.executeUpdate("delete from comic_book where month_name='" + monthPath + "'");
+            String deleteComicBookSql = "delete from comic_book where month_name='" + monthPath + "'";
+            jdbcUtil.executeUpdate(deleteComicBookSql);
             // 插入
+            String insertComicBookSql = String.format("insert into comic_book(%s) values(?,?,?,?)", fields);
             jdbcUtil.executeBatch(
-                    String.format("insert into comic_book(%s) values(?,?,?,?)", fields)
+                    insertComicBookSql
                     , comicBookBeans
                     , ComicBookBean.class
                     , fields
             );
+            logger.info("deleteComicBookSql：{}，insertComicBookSql：{}，insert.cnt：{}"
+                    , deleteComicBookSql, insertComicBookSql, comicBookBeans.size());
         } else {
             logger.warn("{}没有扫描到文件！", realMonthPath);
         }
@@ -208,6 +216,24 @@ public class ScanToDB {
         if (index >= 0) {
             map.put(TYPE, bookName.substring(0, index + 1));
             map.put(ID, bookName.substring(index + 1));
+            logger.info("bookName：{}，type：{}，id：{}", bookName, map.get(TYPE), map.get(ID));
+        }
+        return map;
+    }
+
+    /**
+     * 获取类型和ID，从末尾往前倒着找，找到非数字为止
+     *
+     * @param bookName
+     * @return
+     */
+    private Map<String, String> getYaoqiTypeAndID(String bookName) {
+        Map<String, String> map = new HashMap<>();
+       String tmpBookName = bookName.replace("【", "");
+        String[] bookNameArr = tmpBookName.split("】", -1);
+        if (bookNameArr.length == 2) {
+            map.put(TYPE, bookNameArr[0]);
+            map.put(ID, bookNameArr[1]);
             logger.info("bookName：{}，type：{}，id：{}", bookName, map.get(TYPE), map.get(ID));
         }
         return map;

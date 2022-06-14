@@ -42,7 +42,7 @@ public class KamuroAppMain {
     public KamuroAppMain() {
         this.httpParserUtil = new HttpParserUtil();
         // 并发下载图书
-        this.callableTool = new CallableTool<>(4);
+        this.callableTool = new CallableTool<>(3);
     }
 
     public KamuroAppMain(String filePath) {
@@ -63,9 +63,7 @@ public class KamuroAppMain {
     }
 
     public static void main(String[] args) throws IOException {
-        String FILE_PATH = "E:\\Photo\\Comic\\爬虫\\eromanga-kamuro.com\\images\\%s\\";
-        // 移动硬盘
-        FILE_PATH = "X:\\Reader\\web\\res\\comic\\kamuro\\%s\\";
+        String FILE_PATH = "Z:\\Reader\\web\\res\\comic\\kamuro\\%s\\";
         // URL
         String URL = "https://eromanga-kamuro.com/date/2021/11";
 
