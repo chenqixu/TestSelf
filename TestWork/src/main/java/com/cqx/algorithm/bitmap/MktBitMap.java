@@ -4,7 +4,7 @@ import com.cqx.bean.MktBean;
 import com.cqx.bean.UserMktBean;
 import com.cqx.common.utils.jdbc.DBBean;
 import com.cqx.common.utils.jdbc.JDBCUtil;
-import com.newland.bi.bigdata.time.TimeCostUtil;
+import com.bussiness.bi.bigdata.time.TimeCostUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

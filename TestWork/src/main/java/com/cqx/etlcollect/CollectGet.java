@@ -1,6 +1,6 @@
 package com.cqx.etlcollect;
 
-import com.newland.bi.bigdata.utils.SleepUtils;
+import com.bussiness.bi.bigdata.utils.SleepUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

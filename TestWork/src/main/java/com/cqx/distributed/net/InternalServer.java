@@ -1,12 +1,15 @@
 package com.cqx.distributed.net;
 
-import com.alibaba.fastjson.JSON;
-import com.cqx.distributed.resource.ResourceServiceBean;
 import com.cqx.netty.bean.NettyBaseBean;
-import com.cqx.netty.util.ICallBack;
 import com.cqx.netty.util.IServer;
 import com.cqx.netty.util.IServerHandler;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.socket.SocketChannel;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 内部服务
@@ -14,33 +17,31 @@ import io.netty.buffer.ByteBuf;
  * @author chenqixu
  */
 public class InternalServer {
-    private ICallBack<ResourceServiceBean> iCallBack;
     private IServer iServer;
 
     public InternalServer() {
         iServer = IServer.newbuilder();
     }
 
-    public InternalServer(ICallBack<ResourceServiceBean> iCallBack) {
-        this.iCallBack = iCallBack;
-    }
-
     public void start(int port) throws Exception {
+        Map<String, String> params = new HashMap<>();
         iServer.setPort(port)
-                .setiServerHandler(new RegisterServerHandler())
-                .start();
+                .setParams(params)
+                .buildBootstrap()
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    public void initChannel(SocketChannel ch) {
+                        ChannelPipeline p = ch.pipeline();
+                        p.addLast("RegisterServerHandler", new RegisterServerHandler());
+                    }
+                });
+        iServer.start();
     }
 
     public void close() {
-        if (iServer != null) iServer.close();
     }
 
     class RegisterServerHandler extends IServerHandler {
-
-        @Override
-        protected void init() {
-
-        }
 
         @Override
         protected ByteBuf dealHandler(ByteBuf buf) {
@@ -53,10 +54,6 @@ public class InternalServer {
                     //注册成功
                     responseBean.setHead(ServerCodeEnum.Success.getServerCode());
                     responseBean.setBody("资源服务注册成功");
-                    //外部回调
-                    if (iCallBack != null) {
-                        iCallBack.callBack(JSON.parseObject(body, ResourceServiceBean.class));
-                    }
                     break;
                 default:
                     break;

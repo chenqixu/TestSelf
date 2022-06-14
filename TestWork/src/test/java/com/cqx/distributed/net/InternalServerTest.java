@@ -1,7 +1,6 @@
 package com.cqx.distributed.net;
 
 import com.cqx.distributed.resource.ResourceServiceBean;
-import com.cqx.netty.util.ICallBack;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +18,7 @@ public class InternalServerTest {
     @Before
     public void setUp() throws Exception {
         internalServer = new InternalServer();
-        internalClient = new InternalClient(new ICallBack<String>() {
-            @Override
-            public void callBack(String s) {
-                logger.info("callBack：{}", s);
-            }
-        });
+        internalClient = new InternalClient();
     }
 
     @After

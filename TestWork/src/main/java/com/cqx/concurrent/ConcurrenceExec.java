@@ -3,9 +3,6 @@ package com.cqx.concurrent;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 
-
-import com.newland.bi.bigdata.utils.SleepUtils;
-
 /**
  * 高并发框架
  *

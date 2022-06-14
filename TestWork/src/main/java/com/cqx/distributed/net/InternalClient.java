@@ -3,7 +3,6 @@ package com.cqx.distributed.net;
 import com.alibaba.fastjson.JSON;
 import com.cqx.distributed.resource.ResourceServiceBean;
 import com.cqx.netty.bean.NettyBaseBean;
-import com.cqx.netty.util.ICallBack;
 import com.cqx.netty.util.IClient;
 import com.cqx.netty.util.IClientHandler;
 import io.netty.buffer.ByteBuf;
@@ -21,13 +20,8 @@ import java.util.Map;
 public class InternalClient {
     private static final Logger logger = LoggerFactory.getLogger(InternalClient.class);
     private IClient iClient;
-    private ICallBack<String> iCallBack;
 
     public InternalClient() {
-    }
-
-    public InternalClient(ICallBack<String> iCallBack) {
-        this.iCallBack = iCallBack;
     }
 
     public void init(String host, int port) {
@@ -48,7 +42,7 @@ public class InternalClient {
 
     class RegisterClientHandler extends IClientHandler {
         @Override
-        protected ByteBuf sendRequest() {
+        protected ByteBuf channelReadSend() {
             ByteBuf byteBuf = null;
             //发送
             String _head = getParams("head");
@@ -75,10 +69,6 @@ public class InternalClient {
             switch (ServerCodeEnum.valueOf(nettyBaseBean.getHead())) {
                 case Success:
                     logger.info("Success，msg：{}", msg);
-                    //外部回调
-                    if (iCallBack != null) {
-                        iCallBack.callBack(msg);
-                    }
                     break;
                 case Fail:
                     logger.info("Fail，msg：{}", msg);

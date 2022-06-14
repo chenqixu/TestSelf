@@ -1915,7 +1915,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.newland.bi.bigdata.hdfs.SymlinkTest</mainClass>
+                            <mainClass>com.bussiness.bi.bigdata.hdfs.SymlinkTest</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

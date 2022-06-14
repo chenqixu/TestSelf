@@ -2,14 +2,12 @@ package com.cqx.algorithm.bitmap;
 
 import com.cqx.common.utils.jdbc.DBBean;
 import com.cqx.common.utils.jdbc.DBType;
-import com.newland.bi.bigdata.time.TimeCostUtil;
+import com.bussiness.bi.bigdata.time.TimeCostUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MktBitMapTest {
     private static final Logger logger = LoggerFactory.getLogger(MktBitMapTest.class);

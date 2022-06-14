@@ -2,7 +2,7 @@ package com.cqx.etlcollect;
 
 import com.cqx.etlcollect.bean.FileBean;
 import com.cqx.etlcollect.bean.TaskBean;
-import com.newland.bi.bigdata.utils.SleepUtils;
+import com.bussiness.bi.bigdata.utils.SleepUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

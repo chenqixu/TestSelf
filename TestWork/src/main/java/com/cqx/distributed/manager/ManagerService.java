@@ -7,7 +7,6 @@ import com.cqx.distributed.coordinatio.CoordinatioFactory;
 import com.cqx.distributed.coordinatio.CoordinatioInf;
 import com.cqx.distributed.net.InternalServer;
 import com.cqx.distributed.resource.ResourceServiceBean;
-import com.cqx.netty.util.ICallBack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +30,7 @@ public class ManagerService extends BaseService {
         managerServiceBean.setIp("127.0.0.1");
         managerServiceBean.setPort(11000);
         //启动管理服务
-        internalServer = new InternalServer(new ICallBack<ResourceServiceBean>() {
-            @Override
-            public void callBack(ResourceServiceBean resourceServiceBean) {
-                //资源服务进行注册
-                resourceServiceRegister(resourceServiceBean);
-            }
-        });
+        internalServer = new InternalServer();
         try {
             internalServer.start(managerServiceBean.getPort());
         } catch (Exception e) {

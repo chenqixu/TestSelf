@@ -1,7 +1,7 @@
 package com.cqx.process;
 
 import com.cqx.bean.CmdBean;
-import com.newland.bi.bigdata.db.JDBCUtil;
+import com.bussiness.bi.bigdata.db.JDBCUtil;
 
 import java.util.Scanner;
 
