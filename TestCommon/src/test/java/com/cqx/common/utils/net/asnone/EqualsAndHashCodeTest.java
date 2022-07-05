@@ -1,4 +1,4 @@
-package com.cqx.common.utils.file;
+package com.cqx.common.utils.net.asnone;
 
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.system.ByteUtil;

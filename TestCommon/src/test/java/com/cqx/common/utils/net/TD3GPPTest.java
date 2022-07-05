@@ -1,6 +1,8 @@
-package com.cqx.common.utils.file;
+package com.cqx.common.utils.net;
 
 import com.cqx.common.test.TestBase;
+import com.cqx.common.utils.file.FileCount;
+import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.net.asnone.AsnOneUtil;
 import com.cqx.common.utils.net.asnone.LengthOctetsBean;
 import com.cqx.common.utils.net.asnone.TagBean;
@@ -24,37 +26,6 @@ import java.util.Enumeration;
 public class TD3GPPTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(TD3GPPTest.class);
     private int allLength = 0;
-
-    @Test
-    public void htmlTest() throws IOException {
-        FileUtil fileUtil = new FileUtil();
-        try {
-            fileUtil.setReader("d:\\Work\\10.知识库\\3gpp\\3GPP specification Release version matrix.htm");
-            final String keyword = "<td bordercolor=\"#000000\"> <a href=";
-            fileUtil.read(new FileCount() {
-                @Override
-                public void run(String content) throws IOException {
-                    if (content.contains(keyword)) {
-                        String[] contents = content.split(keyword, -1);
-//             logger.info("content: {}", content);
-                        for (String str : contents) {
-                            //找到第一个</，并且后面是a>
-                            int index = str.indexOf("</");
-                            String tag = str.substring(index + 2, index + 4);
-                            if (tag.equals("a>")) {
-                                //找到第一个>前面的数据且不是</a>
-                                //找到不是http开头
-                                String[] newDatas = str.split(">", -1);
-                                logger.info("tag: {}, newDatas[0]: {}", tag, newDatas[0]);
-                            }
-                        }
-                    }
-                }
-            });
-        } finally {
-            fileUtil.closeRead();
-        }
-    }
 
     private void readTL(FileInputStream fis) throws IOException {
         // 读取标签
