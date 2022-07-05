@@ -17,7 +17,7 @@ public class TestBase {
     private static final Logger logger = LoggerFactory.getLogger(TestBase.class);
 
     /**
-     * 获取资源的文件路径
+     * 获取资源的文件路径，前面带file://
      *
      * @param fileName
      * @return
@@ -31,6 +31,29 @@ public class TestBase {
             return path;
         } else {
             logger.error("加载不到配置文件：{}", fileName);
+            return null;
+        }
+    }
+
+    /**
+     * 获取资源的文件路径
+     *
+     * @param fileName
+     * @return
+     */
+    protected String getResourcePath(String fileName) {
+        Object obj = new Object();
+        String tmpFileName = fileName;
+        if (!fileName.startsWith("/")) {
+            tmpFileName = "/" + fileName;
+        }
+        URL url = obj.getClass().getResource(tmpFileName);
+        if (url != null) {
+            String path = url.getPath().replaceFirst("/", "");
+            logger.info("加载到资源文件：{}", path);
+            return path;
+        } else {
+            logger.error("加载不到资源文件：{}", fileName);
             return null;
         }
     }

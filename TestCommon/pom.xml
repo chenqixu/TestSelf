@@ -852,12 +852,6 @@
             <version>0.1.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.59</version>
-        </dependency>
-
         <!-- metrics -->
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -871,6 +865,38 @@
             <artifactId>tess4j</artifactId>
             <version>4.4.0</version>
         </dependency>
+
+        <!-- jenkins plugin cvs -->
+        <!--<dependency>-->
+        <!--<groupId>org.jenkins-ci.plugins</groupId>-->
+        <!--<artifactId>cvs</artifactId>-->
+        <!--<version>2.20-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!-- cvsclient -->
+        <dependency>
+            <groupId>org.netbeans.lib</groupId>
+            <artifactId>cvsclient</artifactId>
+            <version>20060125</version>
+        </dependency>
+
+        <!-- smartcvs -->
+        <dependency>
+            <groupId>smartcvs</groupId>
+            <artifactId>smartcvs</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- asn.1 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.59</version>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.bouncycastle</groupId>-->
+        <!--<artifactId>bcprov-jdk16</artifactId>-->
+        <!--<version>1.46</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

@@ -1,0 +1,98 @@
+Remote-Operation-Notation {joint-iso-ccitt remote-operations(4) notation(0)}
+DEFINITIONS::=
+BEGIN
+EXPORTS BIND, UNBIND, OPERATION, ERROR;
+-- macro definition for bind-operations
+BIND MACRO::=
+BEGIN
+TYPE NOTATION ::= Argument Result Error
+VALUE NOTATION ::= Argument-value | Result-value | Error-value
+Argument ::= empty |"ARGUMENT" Name type (Argument-type)
+-- Expects any ASN.1 type and assigns it to the variable Argument-type
+Result ::= empty |"RESULT" Name type (Result-type)
+-- Expects any ASN.1 type and assigns it to the variable Result-type
+Error ::= empty |"BIND-ERROR" Name type (Error-type)
+-- Expects any ASN.1 type and assigns it to the variable Error-type
+Name ::= empty | identifier
+Argument-value ::= empty |"ARGUMENT" value (Arg-value Argument-type)
+-- Expects a value for the type in Argument-type, and assigns it to the
+-- variable Arg-value
+< VALUE [16] EXPLICIT Argument-type:: = Arg-value >
+-- Returns the final value as explicitly tagged type
+Result-value ::= empty |"RESULT" value (Res-value Result-type)
+-- Expects a value for the type in Result-type, and assigns it to the
+-- variable Res-value
+<VALUE [17] EXPLICIT Result-type::= Res-value>
+-- Returns the final value as explicitly tagged type
+Error-value ::= empty |"ERROR" value (Err-value Error-type)
+-- Expects a value for the type in Error-type, and assigns it to the
+-- variable Err-value
+<VALUE [18] EXPLICIT Error-type::= Err-value>
+-- Returns the final value as explicitly tagged type
+END
+-- Remote Operations Notation continued
+-- Remote Operations Notation continued
+-- macro definition for unbind-operations
+UNBIND MACRO::=
+BEGIN
+TYPE NOTATION ::= Argument Result Errors
+VALUE NOTATION ::= Argument-value | Result-value | Error-value
+Argument ::= empty |"ARGUMENT" Name type (Argument-type)
+-- Expects any ASN.1 type and assigns it to the variable Argument-type
+Result ::= empty |"RESULT" Name type (Result-type)
+-- Expects any ASN.1 type and assigns it to the Result-type
+Error ::= empty |"UNBIND-ERROR" Name type (Error-type)
+-- Expects any ASN.1 type and assigns it to the Error-type
+Name ::= empty | identifier
+Argument-value ::= empty |"ARGUMENT" value (Arg-value Argument-type)
+-- Expects a value for the type in Argument-type, and assigns it to the
+-- variable Arg-value
+<VALUE [19] EXPLICIT Argument-type ::= Arg-value>
+-- Returns the final value as explicitly tagged type
+Result-value ::= empty |"RESULT" value (Res-value Result-type)
+-- Expects a value for the type in Result-type and assigns it to the
+-- variable Res-value
+<VALUE [20] EXPLICIT Result-type::= Res-value>
+-- Returns the final value as explicitly tagged type
+Error-value ::= empty |"ERROR" value (Err-value Error-type)
+-- Expects a value for the type in Error-type and assigns it to the
+-- variable Err-value
+<VALUE [21] EXPLICIT Error-type::= Err-value>
+-- Returns the final value as explicitly tagged type
+END
+-- Remote Operations Notation continued
+-- Remote Operations Notation continued
+-- macro definition for operations
+OPERATION MACRO::=
+BEGIN
+TYPE NOTATION ::= ArgumentResultErrorsLinkedOperations
+VALUE NOTATION ::= value(VALUECHOICE{
+localValue INTEGER,
+globalValue OBJECT IDENTIFIER})
+Argument ::= "ARGUMENT" NamedType | empty
+Result ::= "RESULT" ResultType | empty
+ResultType ::= NamedType | empty
+Errors ::= "ERRORS" "{"ErrorNames"}" | empty
+LinkedOperations ::= "LINKED" "{"LinkedOperationsNames"}" | empty
+ErrorNames ::= ErrorList | empty
+ErrorList ::= Error | ErrorList "," Error
+Error ::= value (ERROR) -- shall reference an error value
+| type -- shall reference an error type if no error value is specified
+LinkedOperation ::= OperationList | empty
+Names
+OperationList ::= Operation | OperationList "," Operation
+Operation ::= value (OPERATION) -- shall reference an operation value
+| type -- shall reference an operation type if no operation value is specified
+NamedType ::= identifier type | type
+END
+-- macro definition for operations errors
+ERROR MACRO::=
+BEGIN
+TYPE NOTATION ::= Parameter
+VALUE NOTATION ::= value(VALUE CHOICE{
+localValue INTEGER,
+globalValue OBJECT IDENTIFIER})
+Parameter ::= "PARAMETER"NamedType | empty
+NamedType ::= identifier type | type
+END
+END -- end of Remote Operations Notation

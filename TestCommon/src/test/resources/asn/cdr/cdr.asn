@@ -1,0 +1,617 @@
+CHFChargingDataTypes {itu-t (0) identified-organization (4) etsi (0) mobileDomain (0) charging (5) chfChargingDataTypes (15) asn1Module (0) version1 (0)}
+DEFINITIONS IMPLICIT TAGS	::=
+BEGIN
+-- EXPORTS everything 
+-- IMPORTS from 32298-f80
+IMPORTS	
+CallDuration,
+CauseForRecClosing,
+ChargingID,
+DataVolumeOctets,
+Diagnostics,
+DynamicAddressFlag,
+InvolvedParty,
+IPAddress,
+LocalSequenceNumber,
+ManagementExtensions,
+MessageClass,
+MessageReference,
+MSTimeZone,
+NodeAddress,
+PLMN-Id,
+PriorityType,
+RATType,
+RecordType,
+ServiceSpecificInfo,
+Session-Id,
+SubscriberEquipmentNumber,
+SubscriptionID,
+ThreeGPPPSDataOffStatus,
+TimeStamp
+FROM GenericChargingDataTypes {itu-t (0) identified-organization (4) etsi(0) mobileDomain (0) charging (5) genericChargingDataTypes (0) asn1Module (0) version2 (1)}
+--wireshark-asn/asn1/gprscdr/
+--32298-f80.doc
+
+AddressString
+FROM MAP-CommonDataTypes {itu-t identified-organization (4) etsi (0) mobileDomain (0) gsm-Network (1) modules (3) map-CommonDataTypes (18)  version18 (18) }
+--wireshark-asn/asn1/gsm_map/
+--29002-f70.pdf
+
+ChargingCharacteristics,
+ChargingRuleBaseName,
+ChChSelectionMode,
+EventBasedChargingInformation,
+PresenceReportingAreaInfo,
+RatingGroupId,
+ServiceIdentifier
+FROM GPRSChargingDataTypes {itu-t (0) identified-organization (4) etsi (0) mobileDomain (0) charging (5) gprsChargingDataTypes (2) asn1Module (0) version2 (1)}
+--wireshark-asn/asn1/gprscdr/
+--32298-f80.doc
+
+OriginatorInfo,
+RecipientInfo,
+SMMessageType,
+SMSResult,
+SMSStatus
+FROM SMSChargingDataTypes {itu-t (0) identified-organization (4) etsi(0) mobileDomain (0) charging (5)  smsChargingDataTypes (10) asn1Module (0) version2 (1)}
+--32298-f80.doc
+;
+--
+--  CHF RECORDS
+--
+
+CHFRecord	::= CHOICE 
+--
+-- Record values 200..201 are specific
+--
+{
+	chargingFunctionRecord			[200] ChargingRecord
+}
+ChargingRecord 	::= SET
+{
+	recordType						[0] RecordType,
+	recordingNetworkFunctionID		[1] NetworkFunctionName,
+	subscriberIdentifier			[2] SubscriptionID OPTIONAL,
+	nFunctionConsumerInformation	[3] NetworkFunctionInformation,
+	triggers						[4] SEQUENCE OF Trigger OPTIONAL,
+	listOfMultipleUnitUsage			[5] SEQUENCE OF MultipleUnitUsage OPTIONAL,
+	recordOpeningTime				[6] TimeStamp,
+	duration						[7] CallDuration,
+	recordSequenceNumber			[8] INTEGER OPTIONAL,
+	causeForRecClosing				[9] CauseForRecClosing,
+	diagnostics						[10] Diagnostics OPTIONAL,
+	localRecordSequenceNumber		[11] LocalSequenceNumber OPTIONAL,
+	recordExtensions				[12] ManagementExtensions OPTIONAL,
+	pDUSessionChargingInformation	[13] PDUSessionChargingInformation OPTIONAL,
+	roamingQBCInformation			[14] RoamingQBCInformation OPTIONAL,
+	sMSChargingInformation			[15] SMSChargingInformation OPTIONAL,
+	chargingSessionIdentifier		[16] ChargingSessionIdentifier OPTIONAL,
+	recordSequenceNumberList [201] IPRecordSequenceNumber OPTIONAL,
+	localRecordSequenceNumberList [202] IPLocalRecordSequenceNumber OPTIONAL,
+	consolidationResult	[203] ConsolidationResult OPTIONAL
+}
+--
+-- PDU Session Charging Information
+--
+
+PDUSessionChargingInformation 	::= SET
+{
+	pDUSessionChargingID			[0] ChargingID,
+	userIdentifier					[1] InvolvedParty OPTIONAL,
+	userEquipmentInfo				[2] SubscriberEquipmentNumber OPTIONAL,
+	userLocationInformation			[3] OCTET STRING (SIZE(4..17)) OPTIONAL,
+	userRoamerInOut					[4] RoamerInOut OPTIONAL,
+	presenceReportingAreaInfo		[5]	PresenceReportingAreaInfo OPTIONAL,
+	pDUSessionId					[6] PDUSessionId,
+	networkSliceInstanceID			[7] NetworkSliceInstanceID OPTIONAL,
+	pDUType							[8] PDUSessionType OPTIONAL,
+	sSCMode							[9] SSCMode OPTIONAL,
+	sUPIPLMNIdentifier				[10] PLMN-Id OPTIONAL,
+	servingNetworkFunctionID		[11] SEQUENCE OF ServingNetworkFunctionID OPTIONAL,
+	rATType							[12] RATType OPTIONAL,
+	dataNetworkNameIdentifier		[13] DataNetworkNameIdentifier OPTIONAL,
+	pDUAddress						[14] PDUAddress OPTIONAL,
+	authorizedQoSInformation		[15] AuthorizedQoSInformation OPTIONAL,
+	uETimeZone 						[16] MSTimeZone OPTIONAL,
+	pDUSessionstartTime				[17] TimeStamp OPTIONAL,
+	pDUSessionstopTime				[18] TimeStamp OPTIONAL,
+	diagnostics						[19] Diagnostics OPTIONAL,
+	chargingCharacteristics			[20] ChargingCharacteristics,
+	chChSelectionMode				[21] ChChSelectionMode OPTIONAL,
+	threeGPPPSDataOffStatus			[22] ThreeGPPPSDataOffStatus OPTIONAL,
+	rANSecondaryRATUsageReport 		[23] SEQUENCE OF NGRANSecondaryRATUsageReport OPTIONAL,
+	subscribedQoSInformation 		[24] SubscribedQoSInformation OPTIONAL,
+	authorizedSessionAMBR 			[25] SessionAMBR OPTIONAL,
+	subscribedSessionAMBR 			[26] SessionAMBR OPTIONAL,
+	servingCNPLMNID					[27] PLMN-Id OPTIONAL,
+	sUPIunauthenticatedFlag 		[28] NULL OPTIONAL,
+	dNNSelectionMode				[29] DNNSelectionMode OPTIONAL
+}
+
+--
+-- Roaming QBC Information
+--
+
+RoamingQBCInformation 	::= SET
+{
+	multipleQFIcontainer			[0] SEQUENCE OF MultipleQFIContainer OPTIONAL,
+	uPFID							[1] NetworkFunctionName OPTIONAL,
+	roamingChargingProfile			[2] RoamingChargingProfile OPTIONAL
+}
+
+
+--
+-- SMS Charging Information
+--
+
+SMSChargingInformation	::= SET
+{
+	sMSNodeAddress				[0] AddressString,
+	originatorInfo				[1] OriginatorInfo OPTIONAL,
+	recipientInfos				[2] SEQUENCE OF RecipientInfo OPTIONAL,
+	userEquipmentInfo			[3] SubscriberEquipmentNumber OPTIONAL,
+	userLocationInformation		[4] OCTET STRING (SIZE(4..17)) OPTIONAL,
+	uETimeZone 					[5] MSTimeZone OPTIONAL,
+	rATType						[6] RATType OPTIONAL,
+	sMSCAddress					[7] AddressString OPTIONAL,
+	eventtimestamp				[8] TimeStamp,
+-- 9 to 19 is for future use
+	sMDataCodingScheme			[20] INTEGER OPTIONAL,
+	sMMessageType				[21] SMMessageType OPTIONAL,
+	sMReplyPathRequested		[22] SMReplyPathRequested OPTIONAL,
+	sMUserDataHeader			[23] OCTET STRING OPTIONAL,
+	sMSStatus					[24] SMSStatus OPTIONAL,
+	sMDischargeTime				[25] TimeStamp OPTIONAL,
+	sMTotalNumber 				[26] INTEGER OPTIONAL,
+	sMServiceType				[27] SMServiceType OPTIONAL,
+	sMSequenceNumber 			[28] INTEGER OPTIONAL,
+	sMSResult					[29] SMSResult OPTIONAL,
+	submissionTime				[30] TimeStamp OPTIONAL,
+	sMPriority					[31] PriorityType OPTIONAL,
+	messageReference			[32] MessageReference,
+	messageSize					[33] INTEGER OPTIONAL,
+	messageClass				[34] MessageClass OPTIONAL,
+	sMdeliveryReportRequested	[35] SMdeliveryReportRequested OPTIONAL
+}
+
+--
+-- PDU Container Information
+--
+
+PDUContainerInformation 		::= SEQUENCE
+{
+	chargingRuleBaseName				[0] ChargingRuleBaseName OPTIONAL,
+	-- aFCorrelationInformation [1] is replaced by afChargingIdentifier [14]
+	timeOfFirstUsage					[2] TimeStamp OPTIONAL,
+	timeOfLastUsage						[3] TimeStamp OPTIONAL,
+	qoSInformation						[4] FiveGQoSInformation OPTIONAL,
+	userLocationInformation				[5] OCTET STRING (SIZE(4..17)) OPTIONAL,
+	presenceReportingAreaInfo			[6] PresenceReportingAreaInfo OPTIONAL,
+	rATType								[7] RATType OPTIONAL,
+	sponsorIdentity						[8] OCTET STRING OPTIONAL,
+	applicationServiceProviderIdentity	[9] OCTET STRING OPTIONAL,
+	servingNetworkFunctionID			[10] SEQUENCE OF ServingNetworkFunctionID OPTIONAL,
+	uETimeZone 							[11] MSTimeZone OPTIONAL,
+	threeGPPPSDataOffStatus				[12] ThreeGPPPSDataOffStatus OPTIONAL,
+	afChargingIdentifier				[14] ChargingID OPTIONAL,
+afChargingIdString					[15] AFChargingID OPTIONAL
+}
+
+--
+-- QFI Container Information
+--
+
+MultipleQFIContainer 		::= SEQUENCE
+{
+	qosFlowId							[0] QoSFlowId OPTIONAL,
+	triggers							[1] SEQUENCE OF Trigger,
+	triggerTimeStamp					[2] TimeStamp OPTIONAL,
+	dataTotalVolume						[3] DataVolumeOctets OPTIONAL,
+	dataVolumeUplink					[4] DataVolumeOctets OPTIONAL,
+	dataVolumeDownlink					[5] DataVolumeOctets OPTIONAL,
+	localSequenceNumber					[6] LocalSequenceNumber OPTIONAL,
+	timeOfFirstUsage					[8] TimeStamp OPTIONAL,
+	timeOfLastUsage						[9] TimeStamp OPTIONAL,
+	qoSInformation						[10] FiveGQoSInformation OPTIONAL,
+	userLocationInformation				[11] OCTET STRING (SIZE(4..17)) OPTIONAL,
+	uETimeZone	 						[12] MSTimeZone OPTIONAL,
+	presenceReportingAreaInfo			[13] PresenceReportingAreaInfo OPTIONAL,
+	rATType								[14] RATType OPTIONAL,
+	reportTime							[15] TimeStamp,
+	servingNetworkFunctionID			[16] SEQUENCE OF ServingNetworkFunctionID OPTIONAL,
+	threeGPPPSDataOffStatus				[17] ThreeGPPPSDataOffStatus OPTIONAL,
+	time								[22] CallDuration OPTIONAL
+}
+
+--
+--  CHF CHARGING TYPES
+--
+
+FiveGQoSInformation	::= SEQUENCE
+--
+-- See TS 32.291 [58] for more information
+-- 
+{
+	fiveQi					[1] INTEGER,
+	aRP						[2] AllocationRetentionPriority,
+	qoSNotificationControl	[3] BOOLEAN OPTIONAL,
+	reflectiveQos			[4] BOOLEAN OPTIONAL,
+	maxbitrateUL			[5] Bitrate OPTIONAL,
+	maxbitrateDL			[6] Bitrate OPTIONAL,
+	guaranteedbitrateUL		[7] Bitrate OPTIONAL,
+	guaranteedbitrateDL		[8] Bitrate OPTIONAL,
+	priorityLevel 			[9] INTEGER OPTIONAL,
+	averWindow				[10] INTEGER OPTIONAL,
+	maxDataBurstVol			[11] INTEGER OPTIONAL,
+	maxPacketLossRateDL 	[12] INTEGER OPTIONAL,
+	maxPacketLossRateUL 	[13] INTEGER OPTIONAL
+}
+
+AFChargingID	::= UTF8String
+--
+-- See 3GPP TS 29.571 [249] for details.
+--
+
+AllocationRetentionPriority	::= SEQUENCE
+{
+	priorityLevel 			[1] INTEGER,
+	preemptionCapability	[2] PreemptionCapability,
+	preemptionVulnerability	[3] PreemptionVulnerability
+}
+
+AMFID	::= OCTET STRING (SIZE(6))
+-- See subclause 2.10.1 of 3GPP TS 23.003 [7] for encoding.
+-- AMFID is defined as an OCTET STRING with 3 bytes length, and is presented in first 3 bytes of this form, the last 3 bytes shall be padded with “FFF”
+
+ChargingSessionIdentifier	::= OCTET STRING
+-- See 3GPP TS 32.290 [57] for details.
+
+AuthorizedQoSInformation	::= SEQUENCE
+--
+-- See TS 32.291 [58] for more information
+-- 
+{
+	fiveQi				[1] INTEGER,
+	aRP					[2] AllocationRetentionPriority,
+	priorityLevel 		[3] INTEGER OPTIONAL,
+	averWindow			[4] INTEGER OPTIONAL,
+	maxDataBurstVol		[5] INTEGER OPTIONAL
+}
+
+Bitrate	::= OCTET STRING
+-- 
+--  See 3GPP TS 29.571 [249] Bitrate data type.
+-- 
+
+
+DataNetworkNameIdentifier	::= IA5String (SIZE(1..63))
+--
+-- Network Identifier part of DNN in dot representation.
+-- For example, if the complete DNN is 'apn1a.apn1b.apn1c.mnc022.mcc111.gprs'
+-- The Identifier is 'apn1a.apn1b.apn1c' and is presented in this form in the CDR.
+--
+
+MultipleUnitUsage 		::= SEQUENCE
+{
+	ratingGroup							[0] RatingGroupId,
+	usedUnitContainers					[1] SEQUENCE OF UsedUnitContainer OPTIONAL,
+	uPFID								[2] NetworkFunctionName OPTIONAL
+}
+
+NGRANSecondaryRATType	::= OCTET STRING
+-- 
+-- "NR" or "EUTRA"
+-- 
+ 
+
+NGRANSecondaryRATUsageReport	::= SEQUENCE
+{
+	nGRANSecondaryRATType			[0] NGRANSecondaryRATType OPTIONAL,
+	qosFlowsUsageReports			[1] SEQUENCE OF QosFlowsUsageReport OPTIONAL
+}
+
+ 
+PDUSessionId 		::= INTEGER (0..255)
+-- 
+-- See 3GPP TS 29.571 [249] for details
+-- 
+
+
+
+QosFlowsUsageReport		::= SEQUENCE
+{
+	qosFlowId						[0] QoSFlowId OPTIONAL,
+	startTime						[1] TimeStamp,
+	endTime							[2] TimeStamp,
+	dataVolumeDownlink				[3] DataVolumeOctets,
+	dataVolumeUplink				[4] DataVolumeOctets
+}
+
+
+NetworkFunctionInformation	::= SEQUENCE
+{
+	networkFunctionality				[0] NetworkFunctionality,
+	networkFunctionName					[1] NetworkFunctionName OPTIONAL,
+	networkFunctionIPv4Address			[2] IPAddress OPTIONAL,
+	networkFunctionPLMNIdentifier	 	[3] PLMN-Id OPTIONAL,
+	networkFunctionIPv6Address			[4] IPAddress,
+-- if networkFunctionIPv6Address is not available a CHF configured value shall be used.
+	networkFunctionFQDN					[5] NodeAddress OPTIONAL
+}
+
+NetworkFunctionName	::= IA5String (SIZE(1..40))
+-- Shall be a Universally Unique Identifier (UUID) version 4, as described in IETF RFC 4122 [410]
+
+NetworkFunctionality	::= ENUMERATED
+{
+	cHF			(0),	-- this value is not used
+	sMF			(1),
+	aMF			(2),
+	sMSF		(3),
+	sGW		(4),
+ 	iSMF		(5),
+	sGSN		(6)
+
+}
+
+NetworkSliceInstanceID	::= SEQUENCE
+-- See S-NSSAI subclause 28.4.2 of TS 23.003 [200] for encoding.
+{
+	sST			[0] SliceServiceType,
+	sD 			[1] SliceDifferentiator OPTIONAL
+}
+
+PartialRecordMethod	::= ENUMERATED
+{
+	default			(0),
+	individual		(1)
+}
+
+PDUAddress 	::= SEQUENCE
+{
+	pDUIPv4Address				[0] IPAddress OPTIONAL,
+	pDUIPv6AddresswithPrefix	[1] IPAddress OPTIONAL,
+	iPV4dynamicAddressFlag		[2] DynamicAddressFlag OPTIONAL,
+	iPV6dynamicPrefixFlag		[3] DynamicAddressFlag OPTIONAL  
+
+}
+
+PDUSessionType		::= ENUMERATED
+{
+	iPv4v6			(0),
+	iPv4			(1),
+	iPv6			(2),
+	unstructured	(3),
+	ethernet		(4)
+}
+-- See 3GPP TS 29.571 [249] for details.
+
+
+PreemptionCapability		::= ENUMERATED
+{
+	nOT-PREEMPT			(0),
+	mAY-PREEMPT			(1)
+}
+
+PreemptionVulnerability		::= ENUMERATED
+{
+	nOT-PREEMPTABLE		(0),
+	pREEMPTABLE			(1)
+}
+
+
+QoSFlowId		::= INTEGER
+
+RatingIndicator	::= BOOLEAN
+-- Included if the units have been rated.
+
+RoamingChargingProfile 		::= SEQUENCE
+{
+	roamingTriggers			[0] SEQUENCE OF RoamingTrigger OPTIONAL,
+	partialRecordMethod		[1] PartialRecordMethod OPTIONAL
+}
+
+RoamerInOut	::= ENUMERATED
+{
+	roamerInBound		(0),
+	roamerOutBound		(1)
+}
+
+RoamingTrigger 		::= SEQUENCE
+{
+	trigger					[0] SMFTrigger OPTIONAL,
+	triggerCategory			[1] TriggerCategory	 OPTIONAL,
+	timeLimit				[2] CallDuration OPTIONAL,
+	volumeLimit				[3] DataVolumeOctets OPTIONAL,
+	maxNbChargingConditions	[4] INTEGER OPTIONAL
+}
+
+ServingNetworkFunctionID	::= SEQUENCE
+{
+	servingNetworkFunctionInformation	[0] NetworkFunctionInformation,
+	aMFIdentifier						[1] AMFID OPTIONAL
+
+}
+
+SessionAMBR	::= SEQUENCE
+{
+	ambrUL				[1] Bitrate,
+	ambrDL				[2] Bitrate
+}
+
+SliceServiceType ::= INTEGER (0..255)
+--
+-- See subclause 28.4.2 TS 23.003 [200]
+--
+
+SliceDifferentiator		::= OCTET STRING (SIZE(3))
+--
+-- See subclause 28.4.2 TS 23.003 [200]
+--
+
+SSCMode	::= INTEGER
+{
+	sSCMode1				(1),
+	sSCMode2				(2),
+	sSCMode3				(3)
+}
+-- See 3GPP TS 29.501 [248] for details.
+
+SMdeliveryReportRequested ::= ENUMERATED
+{
+	yes		(0),
+	no		(1)
+}
+
+SMFTrigger				::= INTEGER
+{
+	startOfPDUSession							(1),
+	atartOfServiceDataFlowNoSession			(2),
+-- Change of Charging conditions
+	qoSChange									(100),
+	userLocationChange							(101),
+	servingNodeChange							(102),
+	presenceReportingAreaChange				(103),
+	threeGPPPSDataOffStatusChange				(104),
+	tariffTimeChange							(105),
+	uETimeZoneChange							(106),
+	pLMNChange									(107),
+	rATTypeChange								(108),
+	sessionAMBRChange							(109),
+	additionOfUPF								(110),
+	removalOfUPF 								(111),
+	insertionOfISMF								(112),
+	removalOfISMF								(113),
+	changeOfISMF								(114),
+-- Limit per PDU session
+	pDUSessionExpiryDataTimeLimit				(200),
+	pDUSessionExpiryDataVolumeLimit				(201),
+	pDUSessionExpiryDataEventLimit				(202),
+	pDUSessionExpiryChargingConditionChanges	(203),
+-- Limit per Rating group
+	ratingGroupDataTimeLimit					(300),
+	ratingGroupDataVolumeLimit					(301),
+	ratingGroupDataEventLimit					(302),
+-- Quota management
+	timeThresholdReached						(400),
+	volumeThresholdReached					 (401),
+	unitThresholdReached						(402),
+	timeQuotaExhausted						 (403),
+	volumeQuotaExhausted						(404),
+	unitQuotaExhausted						 (405),
+	expiryOfQuotaValidityTime					(406),
+	reAuthorizationRequest						(407),
+	startOfServiceDataFlowNoValidQuota			(408),
+	otherQuotaType							(409),
+	expiryOfQuotaHoldingTime                	(410),
+-- Others 
+	terminationOfServiceDataFlow				(500),
+	managementIntervention						(501),
+	unusedQuotaTimerExpiry						(502),
+	endOfPDUSession								(503),
+	cHFResponseWithSessionTermination			(504),
+	cHFAbortRequest								(505),
+	abnormalRelease								(506),
+-- Limit per QoS Flow
+	qoSFlowExpiryDataTimeLimit					(600),
+	qoSFlowExpiryDataVolumeLimit				(601)
+}
+-- See TS 32.255 [15] for details.
+
+SMServiceType 	::= INTEGER
+{
+-- 0 to 10 VAS4SMS Short Message, see TS TS 22.142 [x] for details
+	contentProcessing					(0),
+	forwarding							(1),
+	forwardingMultipleSubscriptions		(2),
+	filtering 							(3),
+	receipt								(4),
+	networkStorage						(5),
+	toMultipleDestinations				(6),
+	virtualPrivateNetwork				(7),
+	autoreply							(8),
+	personalSignature					(9),
+	deferredDelivery					(10)
+-- 11 to 99	Reserved for 3GPP defined SM services
+-- 100 to 199 Vendor specific SM services
+}
+
+SMReplyPathRequested	::= ENUMERATED
+{
+	noReplyPathSet 			(0),
+	replyPathSet			(1)
+}
+
+
+SubscribedQoSInformation	::= SEQUENCE
+--
+-- See TS 32.291 [58] for more information
+-- 
+{
+	fiveQi				[1] INTEGER,
+	aRP					[2] AllocationRetentionPriority OPTIONAL,
+	priorityLevel 		[3] INTEGER OPTIONAL
+}
+
+Trigger	::= CHOICE
+{
+	sMFTrigger		[0] SMFTrigger
+}
+
+TriggerCategory	::= ENUMERATED
+{
+	immediateReport		(0),
+	deferredReport		(1)
+}
+
+UsedUnitContainer 		::= SEQUENCE
+{
+	serviceIdentifier					[0] ServiceIdentifier OPTIONAL,
+	time								[1] CallDuration OPTIONAL,
+	triggers							[2] SEQUENCE OF Trigger,
+	triggerTimeStamp					[3] TimeStamp OPTIONAL,
+	dataTotalVolume						[4] DataVolumeOctets OPTIONAL,
+	dataVolumeUplink					[5] DataVolumeOctets OPTIONAL,
+	dataVolumeDownlink					[6] DataVolumeOctets OPTIONAL,
+	serviceSpecificUnits				[7] INTEGER OPTIONAL,
+	eventTimeStamp						[8] TimeStamp OPTIONAL,
+	localSequenceNumber					[9] LocalSequenceNumber OPTIONAL,
+	ratingIndicator						[10] RatingIndicator OPTIONAL,
+	pDUContainerInformation				[11] PDUContainerInformation OPTIONAL,
+	quotaManagementIndicator			[12] BOOLEAN OPTIONAL
+}
+
+DnnSelectionMode	::= ENUMERATED
+--
+-- See Information Elements TS 29.502 [250] for more information
+--
+{
+	uEorNetworkProvidedSubscriptionVerified				(0),
+	uEProvidedSubscriptionNotVerified					(1),
+	networkProvidedSubscriptionNotVerified				(2)
+}
+
+--
+-- For Consolidation
+-- 
+IPRecordSequenceNumber ::= SEQUENCE
+{
+	nFAddress	[0] IPAddress,
+	recordSequenceNumberList	[1] SEQUENCE OF INTEGER
+}
+
+IPLocalRecordSequenceNumber ::= SEQUENCE
+{
+	nFAddress	[0] IPAddress,
+	localSequenceNumberList	[1] SEQUENCE OF LocalRecordSequenceNumber
+}
+
+ConsolidationResult ::= ENUMERATED
+{
+	normal	(0),
+	abnormal	(1),
+	forInterServingNodeConsolidation  (2),
+	reachLimit	(3),
+	onlyOneCDRGenerated	(4)
+}
+END
