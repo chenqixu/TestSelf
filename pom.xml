@@ -37,7 +37,6 @@
         <module>TestRanger</module>
         <module>TestOozie</module>
         <module>TestZookeeperTool</module>
-        <module>TestMetrics</module>
         <module>TestJersey2X</module>
         <module>TestJersey1X</module>
         <module>TestPool</module>
