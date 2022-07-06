@@ -22,7 +22,6 @@
         </plugins>
     </build>
     <modules>
-        <module>ReadFile</module>
         <module>TestShareClass</module>
         <module>TestSFTPTool</module>
         <module>TestHdfsTool</module>
