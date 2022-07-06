@@ -1,17 +1,5 @@
 package com.bussiness.bi.bi_svc;
 
-/*
- * Copyright (c) 2006 福建新大陆软件工程有限公司 版权所有
- * Newland Co. Ltd. All rights reserved.
- *
- * This software is the confidential and proprietary
- * information of Newland Co. Ltd.
- * ("Confidential Information"). You shall not disclose
- * such Confidential Information and shall use it only
- * in accordance with the terms of the contract agreement
- * you entered into with Newland Co. Ltd
- */
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;

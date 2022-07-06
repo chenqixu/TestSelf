@@ -1,20 +1,5 @@
 package com.bussiness.bi.bigdata.utils.string;
 
-
-/*
- * @(#) $Id: StringUtil.java,v 1.1 2016/07/29 03:09:10 chenjianzeng Exp $
- *
- * Copyright (c) 2006 福建新大陆软件工程有限公司 版权所有
- * Newland Co. Ltd. All rights reserved.
-
- * This software is the confidential and proprietary
- * information of Newland Co. Ltd.
- * ("Confidential Information"). You shall not disclose
- * such Confidential Information and shall use it only
- * in accordance with the terms of the contract agreement
- * you entered into with Newland Co. Ltd
- */
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.dom4j.Document;
