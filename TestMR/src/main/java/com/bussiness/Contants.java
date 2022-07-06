@@ -1,4 +1,4 @@
-package com.newland.bi;
+package com.bussiness;
 
 public class Contants {
 	// 输出文件名

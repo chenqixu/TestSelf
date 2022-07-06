@@ -1,4 +1,4 @@
-package com.newland.bi;
+package com.bussiness;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

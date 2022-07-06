@@ -1,4 +1,4 @@
-package com.newland.bi;
+package com.bussiness;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
