@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: lib/poi-3.10-FINAL.jar lib/poi-ooxml-3.10-FINAL.jar lib/poi-ooxml-schemas-3.10-FINAL.jar lib/commons-codec-1.9.jar lib/dom4j-1.6.1.jar lib/stax-api-1.0.1.jar lib/xmlbeans-2.3.0.jar 
-Main-Class: com.newland.bi.ExcelToTxt
-

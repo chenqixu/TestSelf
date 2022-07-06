@@ -27,7 +27,6 @@
         <module>TestSFTPTool</module>
         <module>TestHdfsTool</module>
         <module>TestKafka</module>
-        <module>TestExcelTool</module>
         <module>TestWork</module>
         <module>TestFrameForm</module>
         <module>TestJavaThinking</module>
