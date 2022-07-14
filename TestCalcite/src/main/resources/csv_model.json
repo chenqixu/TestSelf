@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "defaultSchema": "bigdata",
+  "schemas": [
+    {
+      "name": "bigdata",
+      "type": "custom",
+      "factory": "org.apache.calcite.adapter.csv.CsvSchemaFactory",
+      "operand": {
+        "directory": "data"
+      },
+      "tables": [
+        {
+          "name": "n1n2",
+          "factory": "org.apache.calcite.adapter.csv.CsvTableFactory",
+          "operand": {
+            "file": "data/n1n2_01.txt",
+            "fields": [
+              {
+                "name": "msisdn",
+                "type": "string",
+                "mapping": 0
+              }
+            ]
+          }
+        },
+        {
+          "name": "n5",
+          "type": "custom",
+          "factory": "org.apache.calcite.adapter.csv.CsvTableFactory",
+          "operand": {
+            "file": "data/n5_01.txt",
+            "columns": [
+              "dnn",
+              "snssai_sst"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

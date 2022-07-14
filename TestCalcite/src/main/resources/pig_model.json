@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "defaultSchema": "bigdata",
+  "schemas": [
+    {
+      "name": "bigdata",
+      "type": "custom",
+      "factory": "org.apache.calcite.adapter.pig.PigSchemaFactory",
+      "tables": [
+        {
+          "name": "n1n2",
+          "type": "custom",
+          "factory": "org.apache.calcite.adapter.pig.PigTableFactory",
+          "operand": {
+            "file": "data/n1n2_01.txt",
+            "columns": [
+              "msisdn"
+            ]
+          }
+        },
+        {
+          "name": "n5",
+          "type": "custom",
+          "factory": "org.apache.calcite.adapter.pig.PigTableFactory",
+          "operand": {
+            "file": "data/n5_01.txt",
+            "columns": [
+              "dnn",
+              "snssai_sst"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

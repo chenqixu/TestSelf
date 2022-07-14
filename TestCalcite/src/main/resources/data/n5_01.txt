@@ -1,0 +1,6 @@
+dnn:string,snssai_sst:int
+"CMNET1",128
+"CMWAP2",125
+"IMS3",126
+"CMDTJ4",127
+"NET5",128
