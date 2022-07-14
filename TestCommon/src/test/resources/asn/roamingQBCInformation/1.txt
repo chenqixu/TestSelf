@@ -1,0 +1,310 @@
+CHFRecord={
+   localRecordSequenceNumber=1540
+   recordingNetworkFunctionID=c9967d63-7e5a-4b1b-8ac9-24e7ee5b9c13
+   subscriberIdentifier{
+      subscriptionIDType=1(eND-USER-IMSI)
+      subscriptionIDData=460009931050000
+   }
+   nFunctionConsumerInformation{
+      networkFunctionality=5(iSMF)
+      networkFunctionName=e2a39aed-bc6e-4d9b-bbc3-ba6e5f115c63
+      networkFunctionIPv4Address=100.31.12.20
+      networkFunctionPLMNIdentifier{
+         MCC=000
+         MNC=00
+      }
+      networkFunctionFQDN{
+         domainName=zet.com.cn
+      }
+   }
+   recordOpeningTime=2022-03-30 09:23:34 +08 00
+   duration=0(seconds)
+   recordSequenceNumber=1
+   causeForRecClosing=20(managementIntervention)
+   pDUSessionChargingInformation{
+      pDUSessionChargingID=990905380
+      userIdentifier{
+         iSDN-E164=8618031050000
+      }
+      userLocationInformation{
+         threeGPPType=22
+         geographicLocationType=137(5GS TAI and NCGI)
+         TAI{
+            MCC=640
+            MNC=001
+            TAC=H'131150
+         }
+         NCGI{
+            MCC=640
+            MNC=001
+            NRCI=H'0000000001
+         }
+      }
+      userRoamerInOut=0(roamerInBound)
+      pDUSessionId=5
+      networkSliceInstanceID{
+         sST=1
+         sD=H'31,H'01,H'01
+      }
+      pDUType=1(iPv4)
+      sSCMode=1(sSCMode1)
+      sUPIPLMNIIdetifier{
+         MCC=460
+         MNC=00
+      }
+      servingNetworkFunctionID{
+         changeNum=1
+         [0]{
+            servingNetworkFunctionInformation{
+               networkFunctionality=2(aMF)
+               networkFunctionName=amf1
+               networkFunctionIPv4Address=101.131.5.3
+               networkFunctionPLMNIdentifier{
+                  MCC=460
+                  MNC=025
+               }
+               networkFunctionFQDN{
+                  domainName=http://101.131.5.3:8080
+               }
+            }
+         }
+      }
+      rATType=51(nR)
+      dataNetworkNameIdentifier=apn-5gofacc-pstt05
+      pDUAddress{
+         pDUIPv4Address=0.0.0.0
+      }
+      pDUSessionstartTime=2022-03-30 09:23:34 +08 00
+      chargingCharacteristics=H'08,H'00
+      chChSelectionMode=5(visitingDefault)
+      servingCNPLMNID{
+         MCC=460
+         MNC=025
+      }
+      dNNSelectionMode=0(uEorNetworkProvidedSubscriptionVerified)
+   }
+}
+--------------------------------------------------------------------------------
+CHFRecord={
+   localRecordSequenceNumber=1541
+   recordingNetworkFunctionID=c9967d63-7e5a-4b1b-8ac9-24e7ee5b9c13
+   subscriberIdentifier{
+      subscriptionIDType=1(eND-USER-IMSI)
+      subscriptionIDData=460009931050000
+   }
+   nFunctionConsumerInformation{
+      networkFunctionality=5(iSMF)
+      networkFunctionName=e2a39aed-bc6e-4d9b-bbc3-ba6e5f115c63
+      networkFunctionIPv4Address=100.31.12.20
+      networkFunctionPLMNIdentifier{
+         MCC=000
+         MNC=00
+      }
+      networkFunctionFQDN{
+         domainName=zet.com.cn
+      }
+   }
+   triggers{
+      changeNum=1
+      [0]{
+         sMFTrigger=500(terminationOfServiceDataFlow)
+      }
+   }
+   recordOpeningTime=2022-03-30 09:23:34 +08 00
+   duration=7(seconds)
+   recordSequenceNumber=2
+   causeForRecClosing=0(normalRelease)
+   pDUSessionChargingInformation{
+      pDUSessionChargingID=990905380
+      userIdentifier{
+         iSDN-E164=8618031050000
+      }
+      userLocationInformation{
+         threeGPPType=22
+         geographicLocationType=137(5GS TAI and NCGI)
+         TAI{
+            MCC=640
+            MNC=001
+            TAC=H'131150
+         }
+         NCGI{
+            MCC=640
+            MNC=001
+            NRCI=H'0000000001
+         }
+      }
+      userRoamerInOut=0(roamerInBound)
+      pDUSessionId=5
+      networkSliceInstanceID{
+         sST=1
+         sD=H'31,H'01,H'01
+      }
+      pDUType=1(iPv4)
+      sSCMode=1(sSCMode1)
+      sUPIPLMNIIdetifier{
+         MCC=460
+         MNC=00
+      }
+      servingNetworkFunctionID{
+         changeNum=1
+         [0]{
+            servingNetworkFunctionInformation{
+               networkFunctionality=2(aMF)
+               networkFunctionName=amf1
+               networkFunctionIPv4Address=101.131.5.3
+               networkFunctionPLMNIdentifier{
+                  MCC=460
+                  MNC=007
+               }
+               networkFunctionFQDN{
+                  domainName=http://101.131.5.3:8080
+               }
+            }
+         }
+      }
+      rATType=51(nR)
+      dataNetworkNameIdentifier=apn-5gofacc-pstt05
+      pDUAddress{
+         pDUIPv4Address=205.32.20.10
+      }
+      authorizedQoSInformation{
+         fiveQi=1
+         aRP{
+            priorityLevel=2
+            preemptionCapability=1(mAY-PREEMPT)
+            preemptionVulnerability=1(pREEMPTABLE)
+         }
+         priorityLevel=1
+      }
+      pDUSessionstartTime=2022-03-30 09:23:34 +08 00
+      pDUSessionstopTime=2022-03-30 09:23:41 +08 00
+      chargingCharacteristics=H'08,H'00
+      chChSelectionMode=5(visitingDefault)
+      authorizedSessionAMBR{
+         ambrUL=2 Kbps
+         ambrDL=6 Kbps
+      }
+      servingCNPLMNID{
+         MCC=460
+         MNC=007
+      }
+      dNNSelectionMode=0(uEorNetworkProvidedSubscriptionVerified)
+   }
+   roamingQBCInformation{
+      multipleQFIcontainer{
+         changeNum=2
+         [0]{
+            qosFlowId=1
+            triggerTimeStamp=2022-03-30 09:23:39 +08 00
+            dataTotalVolume=1968(BYTES)
+            dataVolumeUplink=984(BYTES)
+            dataVolumeDownlink=984(BYTES)
+            localSequenceNumber=1
+            timeOfFirstUsage=2022-03-30 09:23:35 +08 00
+            timeOfLastUsage=2022-03-30 09:23:38 +08 00
+            qoSInformation{
+               fiveQi=1
+               aRP{
+                  priorityLevel=2
+                  preemptionCapability=1(mAY-PREEMPT)
+                  preemptionVulnerability=1(pREEMPTABLE)
+               }
+               priorityLevel=1
+            }
+            userLocationInformation{
+               threeGPPType=22
+               geographicLocationType=137(5GS TAI and NCGI)
+               TAI{
+                  MCC=640
+                  MNC=001
+                  TAC=H'131150
+               }
+               NCGI{
+                  MCC=640
+                  MNC=001
+                  NRCI=H'0000000001
+               }
+            }
+            rATType=51(nR)
+            reportTime=2022-03-30 09:23:39 +08 00
+            servingNetworkFunctionID{
+               changeNum=1
+               [0]{
+                  servingNetworkFunctionInformation{
+                     networkFunctionality=2(aMF)
+                     networkFunctionName=amf1
+                     networkFunctionIPv4Address=101.131.5.3
+                     networkFunctionPLMNIdentifier{
+                        MCC=460
+                        MNC=007
+                     }
+                     networkFunctionFQDN{
+                        domainName=http://101.131.5.3:8080
+                     }
+                  }
+               }
+            }
+            time=6(seconds)
+         }
+         [1]{
+            qosFlowId=2
+            triggerTimeStamp=2022-03-30 09:23:39 +08 00
+            dataTotalVolume=1368(BYTES)
+            dataVolumeUplink=684(BYTES)
+            dataVolumeDownlink=684(BYTES)
+            localSequenceNumber=1
+            timeOfFirstUsage=2022-03-30 09:23:35 +08 00
+            timeOfLastUsage=2022-03-30 09:23:38 +08 00
+            qoSInformation{
+               fiveQi=1
+               aRP{
+                  priorityLevel=2
+                  preemptionCapability=0(nOT-PREEMPT)
+                  preemptionVulnerability=0(nOT-PREEMPTABLE)
+               }
+               maxbitrateUL=10.24 Mbps
+               maxbitrateDL=10.24 Mbps
+               guaranteedbitrateUL=10.24 Mbps
+               guaranteedbitrateDL=10.24 Mbps
+            }
+            userLocationInformation{
+               threeGPPType=22
+               geographicLocationType=137(5GS TAI and NCGI)
+               TAI{
+                  MCC=640
+                  MNC=001
+                  TAC=H'131150
+               }
+               NCGI{
+                  MCC=640
+                  MNC=001
+                  NRCI=H'0000000001
+               }
+            }
+            rATType=51(nR)
+            reportTime=2022-03-30 09:23:39 +08 00
+            servingNetworkFunctionID{
+               changeNum=1
+               [0]{
+                  servingNetworkFunctionInformation{
+                     networkFunctionality=2(aMF)
+                     networkFunctionName=amf1
+                     networkFunctionIPv4Address=101.131.5.3
+                     networkFunctionPLMNIdentifier{
+                        MCC=460
+                        MNC=007
+                     }
+                     networkFunctionFQDN{
+                        domainName=http://101.131.5.3:8080
+                     }
+                  }
+               }
+            }
+            time=4(seconds)
+         }
+      }
+      uPFID=bf553c24-9152-4ee0-938d-3dfeb1e462c1
+   }
+}
+--------------------------------------------------------------------------------
+

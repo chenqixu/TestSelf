@@ -1,8 +1,6 @@
 package com.cqx.common.utils.net;
 
 import com.cqx.common.test.TestBase;
-import com.cqx.common.utils.file.FileCount;
-import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.net.asnone.AsnOneUtil;
 import com.cqx.common.utils.net.asnone.LengthOctetsBean;
 import com.cqx.common.utils.net.asnone.TagBean;
@@ -234,11 +232,7 @@ public class TD3GPPTest extends TestBase {
         }
     }
 
-    @Test
-    public void bouncycastleTest() throws Exception {
-        File f = new File(getResourcePath("asn/abnormalRelease/Disk0/B2022040101427.dat"));
-//        File f = new File(getResourcePath("asn/eahc.dat"));
-
+    private ASNOneBean buildCDRRule() {
         // CHFRecord	::= CHOICE
         // --
         // -- Record values 200..201 are specific
@@ -1188,6 +1182,18 @@ public class TD3GPPTest extends TestBase {
 
 
         //===================================
+        return ChargingRecord;
+    }
+
+    @Test
+    public void bouncycastleTest() throws Exception {
+        // abnormalRelease
+        File f = new File(getResourcePath("asn/abnormalRelease/Disk0/B2022040101427.dat"));
+        // changeOfISMF
+//        File f = new File(getResourcePath("asn/changeOfISMF/Disk0/B2022033001317.dat"));
+        // eahc
+//        File f = new File(getResourcePath("asn/eahc.dat"));
+        ASNOneBean ChargingRecord = buildCDRRule();
         try (FileInputStream fis = new FileInputStream(f)) {
             ASN1InputStream asn1InputStream = new ASN1InputStream(fis);
             ASN1Primitive read;
