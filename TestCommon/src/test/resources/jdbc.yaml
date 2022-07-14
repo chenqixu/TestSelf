@@ -51,10 +51,20 @@ dbbeans:
     pass_word: "V%DySs#y$7"
     tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
     dbType: "ORACLE"
+  - name: oracle242mktbiBean
+    user_name: "mktbi"
+    pass_word: "H%OwNn#q$8"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"
   - name: oracle12c_cctsys_dev_Bean
     user_name: "cctsys_dev"
     pass_word: "TyM*2CnEm"
     tns: "jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1"
+    dbType: "ORACLE"
+  - name: oracle11g_xdload_Bean
+    user_name: "xdload"
+    pass_word: "xdload"
+    tns: "jdbc:oracle:thin:@10.1.8.205:1521/cbass"
     dbType: "ORACLE"
   - name: localoracleBean
     user_name: "bishow"

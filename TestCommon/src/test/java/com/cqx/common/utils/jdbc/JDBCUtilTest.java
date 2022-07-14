@@ -4,6 +4,7 @@ import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.jdbc.IJDBCUtilCall.IQueryResultBean;
 import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.ByteUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import com.cqx.common.utils.thread.BaseRunableThread;
@@ -17,6 +18,10 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -25,13 +30,14 @@ import java.util.concurrent.Executors;
 public class JDBCUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(JDBCUtilTest.class);
     private IJDBCUtil jdbcUtil;
+    private String jdbcBean;
 
     @Before
     public void setUp() throws Exception {
         Map params = getParam("jdbc.yaml");
         ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
         // 从JVM参数中获取，使用方式：-Djdbc.bean=mysql79Bean
-        String jdbcBean = System.getProperty("jdbc.bean");
+        jdbcBean = System.getProperty("jdbc.bean");
         DBBean dbBean;
         if (jdbcBean != null && jdbcBean.trim().length() > 0) {
             logger.info("获取到-Djdbc.bean={}", jdbcBean);
@@ -758,6 +764,145 @@ public class JDBCUtilTest extends TestBase {
                 return "q1Data";
             }
         });
+    }
+
+    /**
+     * 会话测试
+     */
+    @Test
+    public void sessionTest() throws Exception {
+        List<String> sqls = new ArrayList<>();
+        if (jdbcBean.equals("oracle242bishowBean")) {
+            //============================
+            // JDBC配置
+            // -Djdbc.bean=oracle242bishowBean
+            //============================
+            // 会话测试1
+            logger.info("==会话测试1，默认==");
+            sqls.add("insert into cqx_test3(sum_date,load_time) values(20220708,sysdate)");
+            sqls.add("select count(1) from cqx_test3");
+            sqls.add("select sum_date,load_time from cqx_test3");
+            sqls.add("delete from cqx_test3");
+            jdbcUtil.execute(sqls);
+
+            // 会话测试2
+            logger.info("==会话测试2，使用alter session set time_zone方式==");
+            sqls.add("select sessiontimezone from dual");
+            sqls.add("ALTER SESSION SET TIME_ZONE='+08:00'");
+            sqls.add("select to_char(to_timestamp_tz('1986-05-04 00:00:00.000000+08','YYYY-MM-DD hh24:mi:ss.FFTZH'), 'YYYY-MM-DD hh24:mi:ss.FFTZH:TZM') from dual");
+            sqls.add("select sessiontimezone from dual");
+            jdbcUtil.execute(sqls);
+        } else if (jdbcBean.equals("oracle11g_xdload_Bean")) {
+            //============================
+            // JDBC配置
+            // -Djdbc.bean=oracle11g_xdload_Bean
+            //============================
+            // 外部表测试1
+            logger.info("==外部表测试1，使用alter session set time_zone方式==");
+//            sqls.add("ALTER SESSION SET TIME_ZONE='Asia/Shanghai'");
+            sqls.add("ALTER SESSION SET TIME_ZONE='+08:00'");
+//            sqls.add("ALTER SESSION SET NLS_LANGUAGE='SIMPLIFIED CHINESE'");
+//            sqls.add("ALTER SESSION SET NLS_TERRITORY='CHINA'");
+            sqls.add("select count(*) from ET_GROUP_DUTY_CUSTOMER_JH");
+            jdbcUtil.execute(sqls);
+        }
+        //============================
+        // 任意oracle即可
+        String userTimezone = System.getProperty("user.timezone");
+        if (userTimezone != null && userTimezone.length() > 0) {
+            // 时区测试1
+            // -Duser.timezone=UTC+08:00
+            // System.setProperty("user.timezone", "UTC+08:00");没有效果，因为加载顺序问题
+            logger.info("==时区测试1，使用-Duser.timezone==");
+            TimeZone tc = TimeZone.getDefault();
+            logger.info("tc: {}, user.timezone: {}", tc, userTimezone);
+            sqls.add("select to_char(to_timestamp_tz('1986-05-04 00:00:00.0','YYYY-MM-DD hh24:mi:ss.FFTZH'), 'YYYY-MM-DD hh24:mi:ss.FFTZH:TZM') from dual");
+            jdbcUtil.execute(sqls);
+        } else {
+            // 时区测试2
+            logger.info("==时区测试2，使用java代码中加载时区方式==");
+            TimeZone tc = TimeZone.getTimeZone("GMT+08:00");
+            TimeZone.setDefault(tc);
+            logger.info("tc {}, user.timezone: {}", tc, userTimezone);
+            sqls.add("select to_char(to_timestamp_tz('1986-05-04 00:00:00.0','YYYY-MM-DD hh24:mi:ss.FFTZH'), 'YYYY-MM-DD hh24:mi:ss.FFTZH:TZM') from dual");
+            jdbcUtil.execute(sqls);
+        }
+    }
+
+    @Test
+    public void hexToStr() {
+        String str = new String(ByteUtil.hexStringToBytes("17b4c94d7dfbbcf023ed720251c896e0aa787a070c0a2e0b0102010151020000817f01020000000000000001010103013100000000010707787a070c101a0100021fe801020102000622010100010a0000000702c10208010604da2f4ee2020f9801030000000001130001121253494d504c4946494544204348494e4553450110000105054348494e41010900010202a3a400000105054348494e410101000102022e2c0102000108085a4853313647424b010a00010909475245474f5249414e010c0001090944442d4d4f4e2d525201070001121253494d504c4946494544204348494e45534501080001060642494e415259010b00010e0e48482e4d492e535358464620414d01390001181844442d4d4f4e2d52522048482e4d492e535358464620414d013a0001121248482e4d492e535358464620414d20545a52013b00011c1c44442d4d4f4e2d52522048482e4d492e535358464620414d20545a52013c00010202a3a401340001060642494e41525901320001040442595445013d0001050546414c5345013e00010b0b800083e8bd3c3c8000000001a3000401010104010102057b0000010300030000000000000000000000000100010100000000214f52412d30313430333a20e69caae689bee588b0e4bbbbe4bd95e695b0e68dae0a"));
+        logger.info(str);
+    }
+
+    @Test
+    public void timezoneTest() throws Exception {
+        // 绝对时间（AbsoluteTime）
+        // [概念] 指向绝对时间线上的一个确定的时刻，不受所在地的影响
+        // [概念举例] UTC时间，Unix时间戳，1970-01-01T00:00:00Z
+        // [JAVA] Instant ZonedDateTime OffsetDateTime
+
+        // 本地时间（LocalDateTime）
+        // [概念] 本地时间仅仅是指的关于年月日、时分秒等信息的一个描述，并不包含所在的时区
+        // [概念举例] 2020年8月24日 03:00
+        // [JAVA] LocalDateTime
+
+        // 时区偏移量（Offset）
+        // 全球分为24个时区，每个时区和零时区相差了数个小时，也就是这里所说的时区偏移量Offset，比如东八区和零时区有+08:00的偏移量。
+        // "北京时间2020年8月24日 03:00" 本质上是一个绝对时间，表示成UTC时间是2020-08-24T03:00:00+08:00，其中的2020-08-24T03:00:00是本地时间，而+08:00表示的是时区偏移量。
+        // 绝对时间 = 本地时间 & 时区偏移量
+        // 时区偏移量 = 地区 & 规则 （Offset = Zone & Rules）
+        // 这里的规则（Rules）可能是一个变化的值，如果我们单纯地认为中国的时区偏移量是8个小时，就出错了，
+        // 事实是，中国采用的不一定总是东八区时间，也可能是东九区时间，出现这个情况因为夏令时的存在（夏令时即DST时间，
+        // 1992年之后中国已经没有再实行过夏令时了），当实行夏令时的时候，中国标准时间的时区偏移量就是+09:00。
+        // 因此，一个地区的时区偏移量是多少，是由当地的政策决定的，可能会随着季节而发生变化，这就是上面所说的“规则”（Rules）。
+
+        // "Asia/Shanghai"和"+08:00"是不同的时区描述，"Asia/Shanghai"只是描述了地区，而"+08:00"描述了准确的时区偏移量，不能将它们看作等价，比如在实行夏令时的时候，这两种描述得到的本地时间就是不同的。
+
+        //=========================
+        // 测试
+        //=========================
+        // Step#1：北京地区
+        // 地区：
+        ZoneId zoneOfBeijing = ZoneId.of("Asia/Shanghai");
+        // 本地时间：2020-08-24 03:00
+        LocalDateTime localDateTimeOfBeijing = LocalDateTime.of(2020, 8, 24, 3, 0);
+        // 绝对时间：ZonedDateTime表示
+        ZonedDateTime zonedDateTimeOfBeijing = ZonedDateTime.of(localDateTimeOfBeijing, zoneOfBeijing);
+
+        // Step#1.1：上海地区
+        // 地区：
+        ZoneId zoneOfShanghai = ZoneId.of("Asia/Shanghai");
+        // 本地时间：1986-05-04 15:00
+        LocalDateTime localDateTimeOfShanghai = LocalDateTime.of(1986, 5, 4, 15, 0);
+        // 绝对时间：ZonedDateTime表示
+        ZonedDateTime zonedDateTimeOfShanghai = ZonedDateTime.of(localDateTimeOfShanghai, zoneOfShanghai);
+
+        // Step#2：绝对时间转化成Instant类型（时间戳类型）
+        Instant absoluteInstant = zonedDateTimeOfBeijing.toInstant();
+
+        // Step#3：伦敦地区
+        // 地区：
+        ZoneId zoneOfLondon = ZoneId.of("Europe/London");
+        // 绝对时间：将Instant绝对时间转化成伦敦地区的ZonedDateTime
+        ZonedDateTime zonedDateTimeOfLondon = ZonedDateTime.ofInstant(absoluteInstant, zoneOfLondon);
+        // 本地时间：
+        LocalDateTime localDateTimeOfLondon = zonedDateTimeOfLondon.toLocalDateTime();
+
+        logger.info("北京本地时间：{},", localDateTimeOfBeijing);
+        logger.info("北京时区偏移量：{}", zonedDateTimeOfBeijing.getOffset());
+
+        logger.info("上海本地时间：{}", localDateTimeOfShanghai);
+        logger.info("上海时区偏移量：{}", zonedDateTimeOfShanghai.getOffset());
+
+        logger.info("伦敦本地时间：{}", localDateTimeOfLondon);
+        logger.info("伦敦时区偏移量：{}", zonedDateTimeOfLondon.getOffset());
+        /*
+         北京本地时间：2020-08-24T03:00
+         北京时区偏移量：+08:00
+         伦敦本地时间：2020-08-23T20:00
+         伦敦时区偏移量：+01:00
+         */
     }
 
     private void infTest(Q1 q1) {

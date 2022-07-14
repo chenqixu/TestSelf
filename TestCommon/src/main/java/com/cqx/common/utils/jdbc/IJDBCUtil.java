@@ -109,6 +109,14 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     BeanUtil generateBeanByTabeName(String table_name) throws SQLException, ClassNotFoundException;
 
     /**
+     * 批量执行SQL，在同一会话内
+     *
+     * @param sqls
+     * @throws SQLException
+     */
+    void execute(List<String> sqls) throws SQLException;
+
+    /**
      * 根据sql查询，查询结果进行回调处理，用的是ResultSet
      *
      * @param sql

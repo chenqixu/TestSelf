@@ -472,6 +472,85 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
+     * 结果打印
+     *
+     * @param resultSet 结果集
+     * @throws SQLException sql异常
+     */
+    public void getResultSet(ResultSet resultSet) throws SQLException {
+        if (resultSet != null) {
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+            int columnCount = resultSetMetaData.getColumnCount();
+            StringBuilder header = new StringBuilder();
+            StringBuilder headerBefore = new StringBuilder();
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = resultSetMetaData.getColumnName(i);
+                header.append(String.format("| %s ", columnName));
+                headerBefore.append("| ");
+                for (int j = 0; j < columnName.length(); j++) {
+                    headerBefore.append("-");
+                }
+                headerBefore.append(" ");
+            }
+            header.append("|");
+            headerBefore.append("|");
+            logger.info("{}", headerBefore);
+            logger.info("{}", header);
+            logger.info("{}", headerBefore);
+            while (resultSet.next()) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 1; i <= columnCount; i++) {
+                    Object val = resultSet.getObject(i);
+                    sb.append(String.format("| %s ", val));
+                }
+                sb.append("|");
+                logger.info("{}", sb);
+            }
+        } else {
+            logger.error("没有查询到结果！");
+        }
+    }
+
+    /**
+     * 批量执行SQL，在同一会话内
+     *
+     * @param sqls
+     * @throws SQLException
+     */
+    @Override
+    public void execute(List<String> sqls) throws SQLException {
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            stm = conn.createStatement();
+            for (String sql : sqls) {
+                boolean executeFlag = stm.execute(sql);
+                if (sql.startsWith("select ")) {
+                    ResultSet resultSet = stm.getResultSet();
+                    logger.info("执行SQL: {}", sql);
+                    if (resultSet != null) {
+                        getResultSet(resultSet);
+                    }
+                } else if (sql.startsWith("update ") || sql.startsWith("insert into") || sql.startsWith("delete ")) {
+                    int updateCount = stm.getUpdateCount();
+                    logger.info("执行SQL: {}, 影响记录数: {}", sql, updateCount);
+                } else {
+                    int updateCount = stm.getUpdateCount();
+                    logger.info("执行SQL: {}, 执行结果: {}", sql, (updateCount > -1));
+                }
+            }
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：execute异常，" + e.getMessage() + "，报错的SQL：" + sqls, e);
+            if (isThrow()) throw e;
+        } finally {
+            closeStm(stm);
+            closeConn(conn);
+        }
+    }
+
+    /**
      * 执行sql查询语句，使用回调接口
      *
      * @param sql
@@ -1738,7 +1817,7 @@ public class JDBCUtil implements IJDBCUtil {
                     if (declare == null) {
                         throw new NullPointerException("这个数据库" + this.getDbBean().getDbType() + "没有实现写入合并！");
                     }
-                    sql = declare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), mergeEnum);
+                    sql = declare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), pks, mergeEnum);
                 } else {// 正常写入
                     sql = String.format(insert, table, insert_fields, insert_values.toString());
                 }

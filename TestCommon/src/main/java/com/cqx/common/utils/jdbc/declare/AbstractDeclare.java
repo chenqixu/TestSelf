@@ -8,9 +8,13 @@ import com.cqx.common.utils.jdbc.MergeEnum;
  * @author chenqixu
  */
 public abstract class AbstractDeclare {
-    protected final String insertSql = "insert into %s(%s) values(%s)";
-    protected final String selectSql = "select count(1) into hasval from %s where %s";
-    protected final String updateSql = "update %s set %s where %s";
+    protected final String TAG_TABLE_NAME = "[table_name]";
+    protected final String TAG_SELECT_SQL = "[select_sql]";
+    protected final String TAG_UPDATE_SQL = "[update_sql]";
+    protected final String TAG_INSERT_SQL = "[insert_sql]";
+    protected String insertSql = "insert into %s(%s) values(%s)";
+    protected String selectSql = "select count(1) into hasval from %s where %s";
+    protected String updateSql = "update %s set %s where %s";
     protected String pgdeclareInsertOnly;
     protected String pgdeclareInsertUpdate;
 
@@ -32,6 +36,42 @@ public abstract class AbstractDeclare {
      * @return
      */
     protected abstract String setPgdeclareInsertOnly();
+
+    /**
+     * 更新插入语句
+     *
+     * @param tableName
+     * @param insert_fields
+     * @param insert_values
+     * @param where_values
+     * @param pks
+     * @return
+     */
+    protected abstract String formatInsertSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks);
+
+    /**
+     * 更新修改语句
+     *
+     * @param tableName
+     * @param insert_fields
+     * @param insert_values
+     * @param where_values
+     * @param pks
+     * @return
+     */
+    protected abstract String formatUpdateSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks);
+
+    /**
+     * 更新查询语句
+     *
+     * @param tableName
+     * @param insert_fields
+     * @param insert_values
+     * @param where_values
+     * @param pks
+     * @return
+     */
+    protected abstract String formatSelectSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks);
 
     /**
      * 默认只插不更新
@@ -58,24 +98,52 @@ public abstract class AbstractDeclare {
      */
     public String declare(String tableName, String insert_fields, String insert_values
             , String where_values, MergeEnum mergeEnum) {
-        String _insertSql = String.format(insertSql, tableName, insert_fields, insert_values);
-        String _selectSql = String.format(selectSql, tableName, where_values);
-        String[] _insertArray = insert_fields.split(",", -1);
-        String[] _insert_valuesArray = insert_values.split(",", -1);
-        StringBuilder set = new StringBuilder();
-        for (int i = 0; i < _insertArray.length; i++) {
-            set.append(_insertArray[i]).append("=").append(_insert_valuesArray[i]);
-            if ((i + 1) < _insertArray.length) {
-                set.append(",");
-            }
-        }
-        String _updateSql = String.format(updateSql, tableName, set.toString(), where_values);
+        return declare(tableName, insert_fields, insert_values, where_values, null, mergeEnum);
+    }
+
+    /**
+     * 默认只插不更新，带pks
+     *
+     * @param tableName
+     * @param insert_fields
+     * @param insert_values
+     * @param where_values
+     * @param pks
+     * @return
+     */
+    public String declare(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+        return declare(tableName, insert_fields, insert_values, where_values, pks, MergeEnum.MERGE_INTO_ONLY);
+    }
+
+    /**
+     * 写入合并，带pks
+     *
+     * @param tableName
+     * @param insert_fields
+     * @param insert_values
+     * @param where_values
+     * @param pks
+     * @param mergeEnum
+     * @return
+     */
+    public String declare(String tableName, String insert_fields, String insert_values
+            , String where_values, String[] pks, MergeEnum mergeEnum) {
+        String _insertSql = formatInsertSql(tableName, insert_fields, insert_values, where_values, pks);
+        String _selectSql = formatSelectSql(tableName, insert_fields, insert_values, where_values, pks);
+        String _updateSql = formatUpdateSql(tableName, insert_fields, insert_values, where_values, pks);
         switch (mergeEnum) {
             case MERGE_INTO_UPDATE:
-                return String.format(pgdeclareInsertUpdate, _selectSql, _insertSql, _updateSql);
+                pgdeclareInsertUpdate = pgdeclareInsertUpdate.replace(TAG_TABLE_NAME, tableName);
+                pgdeclareInsertUpdate = pgdeclareInsertUpdate.replace(TAG_SELECT_SQL, _selectSql);
+                pgdeclareInsertUpdate = pgdeclareInsertUpdate.replace(TAG_INSERT_SQL, _insertSql);
+                pgdeclareInsertUpdate = pgdeclareInsertUpdate.replace(TAG_UPDATE_SQL, _updateSql);
+                return pgdeclareInsertUpdate;
             case MERGE_INTO_ONLY:
             default:
-                return String.format(pgdeclareInsertOnly, _selectSql, _insertSql);
+                pgdeclareInsertOnly = pgdeclareInsertOnly.replace(TAG_TABLE_NAME, tableName);
+                pgdeclareInsertOnly = pgdeclareInsertOnly.replace(TAG_SELECT_SQL, _selectSql);
+                pgdeclareInsertOnly = pgdeclareInsertOnly.replace(TAG_INSERT_SQL, _insertSql);
+                return pgdeclareInsertOnly;
         }
     }
 }

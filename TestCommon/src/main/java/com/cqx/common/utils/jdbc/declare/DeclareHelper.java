@@ -13,6 +13,8 @@ public class DeclareHelper {
         switch (dbType) {
             case POSTGRESQL:
                 return new PGDeclare();
+            case ORACLE:
+                return new OracleDeclare();
         }
         return null;
     }
