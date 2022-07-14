@@ -158,7 +158,7 @@ public class JDBCUtil implements IJDBCUtil {
     private DataSource setupDataSource(DBBean dbBean) {
         return setupDataSource(dbBean.getDbType().getDriver(),
                 dbBean.getUser_name(), dbBean.getPass_word(), dbBean.getTns(),
-                5, 2, 3, 60000L,
+                dbBean.getMaxActive(), dbBean.getMinIdle(), dbBean.getMaxIdle(), 60000L,
                 dbBean.getDbType().getValidation_query(),
                 false, true, false, false,
                 60000L, 300000L);
@@ -270,6 +270,13 @@ public class JDBCUtil implements IJDBCUtil {
                 DriverManager.setLoginTimeout(120);// 两分钟登录超时
                 TimeCostUtil timeCostUtil = new TimeCostUtil();
                 timeCostUtil.start();
+                try {
+                    // 如果lib下有多个驱动，可能会认到其他驱动，所以需要先加载
+                    Class.forName(dbBean.getDbType().getDriver());
+                } catch (ClassNotFoundException e) {
+                    logger.error(e.getMessage(), e);
+                    throw new NullPointerException(String.format("JDBC驱动加载异常：%s", e.getMessage()));
+                }
                 Connection _conn = DriverManager.getConnection(dbBean.getTns(), props);
                 logger.debug("【非连接池模式】获取数据库连接时长：{}", timeCostUtil.stopAndGet());
                 return _conn;
@@ -287,29 +294,44 @@ public class JDBCUtil implements IJDBCUtil {
      */
     @Override
     public List<QueryResult> getTableMetaData(String tableName) throws SQLException {
+        return getTableMetaData(tableName, true);
+    }
+
+    /**
+     * 获取表的元数据
+     *
+     * @param tableName    表名
+     * @param isGetRemarks 是否获取注释，oracle10G不支持
+     * @return List<QueryResult>
+     * @throws SQLException SQL异常
+     */
+    @Override
+    public List<QueryResult> getTableMetaData(String tableName, boolean isGetRemarks) throws SQLException {
         List<QueryResult> queryResultList = new ArrayList<>();
         Map<String, String> columnRemarksMap = new HashMap<>();
         Connection conn = null;
         ResultSet rs = null;
         Statement stm = null;
-        try {
-            conn = getConnection();
-            assert conn != null;
-            DatabaseMetaData meta = conn.getMetaData();
-            //实际上是查询all_tab_columns，具体columnLable可以点进去看具体查询的SQL
-            //主要是为了获取注释，这个需要连接的时候设置remarksReporting为true
-            rs = meta.getColumns(null, null, tableName, null);
-            while (rs.next()) {
-                String columnName = rs.getString("COLUMN_NAME");
-                String columnComment = rs.getString("REMARKS");
-                columnRemarksMap.put(columnName, columnComment);
+        if (isGetRemarks) {// 是否获取注释，oracle10G不支持
+            try {
+                conn = getConnection();
+                assert conn != null;
+                DatabaseMetaData meta = conn.getMetaData();
+                //实际上是查询all_tab_columns，具体columnLable可以点进去看具体查询的SQL
+                //主要是为了获取注释，这个需要连接的时候设置remarksReporting为true
+                rs = meta.getColumns(null, null, tableName, null);
+                while (rs.next()) {
+                    String columnName = rs.getString("COLUMN_NAME");
+                    String columnComment = rs.getString("REMARKS");
+                    columnRemarksMap.put(columnName, columnComment);
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                if (isThrow()) throw e;
+            } finally {
+                closeResultSet(rs);
+                closeConn(conn);
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            if (isThrow()) throw e;
-        } finally {
-            closeResultSet(rs);
-            closeConn(conn);
         }
         try {
             String sql = "select * from " + tableName + " where 1=0";
@@ -348,9 +370,23 @@ public class JDBCUtil implements IJDBCUtil {
      */
     @Override
     public LinkedHashMap<String, String> getDstTableMetaData(String tab_name) throws SQLException {
-        List<QueryResult> metaData = getTableMetaData(tab_name);
+        return getDstTableMetaData(tab_name, true);
+    }
+
+    /**
+     * 查询元数据
+     *
+     * @param tab_name
+     * @param isGetRemarks
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public LinkedHashMap<String, String> getDstTableMetaData(String tab_name, boolean isGetRemarks) throws SQLException {
+        List<QueryResult> metaData = getTableMetaData(tab_name, isGetRemarks);
         LinkedHashMap<String, String> metaMap = new LinkedHashMap<>();
         for (QueryResult md : metaData) {
+            // todo 不知道这里为什么要小写
             metaMap.put(md.getColumnName().toLowerCase(), md.getColumnClassName());
         }
         return metaMap;

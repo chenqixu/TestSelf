@@ -23,6 +23,16 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     List<QueryResult> getTableMetaData(String tableName) throws SQLException;
 
     /**
+     * 获取表的元数据
+     *
+     * @param tableName    表名
+     * @param isGetRemarks 是否获取注释，oracle10G不支持
+     * @return List<QueryResult>
+     * @throws SQLException SQL异常
+     */
+    List<QueryResult> getTableMetaData(String tableName, boolean isGetRemarks) throws SQLException;
+
+    /**
      * 查询元数据
      *
      * @param tab_name
@@ -30,6 +40,16 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @throws SQLException
      */
     LinkedHashMap<String, String> getDstTableMetaData(String tab_name) throws SQLException;
+
+    /**
+     * 查询元数据
+     *
+     * @param tab_name
+     * @param isGetRemarks
+     * @return
+     * @throws SQLException
+     */
+    LinkedHashMap<String, String> getDstTableMetaData(String tab_name, boolean isGetRemarks) throws SQLException;
 
     /**
      * 获取字段类型

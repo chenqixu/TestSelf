@@ -16,6 +16,11 @@ public class DBBean {
     private String pass_word;
     private String tns;
     private DBType dbType;
+    // int MaxActive, int MinIdle, int MaxIdle
+    // 最大可用，最小空闲，最大空闲
+    private int MaxActive = 5;
+    private int MinIdle = 2;
+    private int MaxIdle = 3;
     private boolean isPool = true;//默认走连接池
 
     public static DBBean newbuilder() {
@@ -59,12 +64,33 @@ public class DBBean {
         } else {
             setDbType(DBType.valueOf((String) param.get("dbType")));
         }
+        // int MaxActive, int MinIdle, int MaxIdle
+        Object _MaxActive = param.get("MaxActive");
+        if (_MaxActive != null) {
+            setMaxActive(Integer.valueOf(_MaxActive.toString()));
+        }
+        Object _MinIdle = param.get("MinIdle");
+        if (_MinIdle != null) {
+            setMinIdle(Integer.valueOf(_MinIdle.toString()));
+        }
+        Object _MaxIdle = param.get("MaxIdle");
+        if (_MaxIdle != null) {
+            setMaxIdle(Integer.valueOf(_MaxIdle.toString()));
+        }
         return this;
     }
 
     @Override
     public String toString() {
-        return "DBType：" + dbType + "，tns：" + tns + "，user_name：" + user_name + "，pass_word：" + pass_word + "，isPool：" + isPool;
+        return "DBType：" + dbType
+                + "，tns：" + tns
+                + "，user_name：" + user_name
+                + "，pass_word：" + pass_word
+                + "，MaxActive：" + MaxActive
+                + "，MinIdle：" + MinIdle
+                + "，MaxIdle：" + MaxIdle
+				+ "，isPool：" + isPool
+                ;
     }
 
     public String getUser_name() {
@@ -113,5 +139,29 @@ public class DBBean {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getMaxActive() {
+        return MaxActive;
+    }
+
+    public void setMaxActive(int maxActive) {
+        MaxActive = maxActive;
+    }
+
+    public int getMinIdle() {
+        return MinIdle;
+    }
+
+    public void setMinIdle(int minIdle) {
+        MinIdle = minIdle;
+    }
+
+    public int getMaxIdle() {
+        return MaxIdle;
+    }
+
+    public void setMaxIdle(int maxIdle) {
+        MaxIdle = maxIdle;
     }
 }
