@@ -1,5 +1,7 @@
 package com.cqx.common.utils.jdbc.declare;
 
+import com.cqx.common.utils.jdbc.FiledUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,10 +65,10 @@ public class OracleDeclare extends AbstractDeclare {
      * @return
      */
     @Override
-    protected String formatSelectSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    protected String formatSelectSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         selectSql = "using (select %s from dual) t2 on (%s)";
         String[] array_insert_fields = insert_fields.split(",", -1);
-        String[] array_insert_values = insert_values.split(",", -1);
+        String[] array_insert_values = insert_values.getValsArray();
         StringBuilder dual = new StringBuilder();
         for (int i = 0; i < array_insert_fields.length; i++) {
             dual.append(array_insert_values[i])
@@ -102,10 +104,10 @@ public class OracleDeclare extends AbstractDeclare {
      * @return
      */
     @Override
-    protected String formatUpdateSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    protected String formatUpdateSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         updateSql = "update set %s";
         String[] _insertArray = insert_fields.split(",", -1);
-        String[] _insert_valuesArray = insert_values.split(",", -1);
+        String[] _insert_valuesArray = insert_values.getValsArray();
         Map<String, String> pksMap = new HashMap<>();
         for (String pk : pks) {
             pksMap.put(pk, pk);
@@ -138,7 +140,7 @@ public class OracleDeclare extends AbstractDeclare {
      * @return
      */
     @Override
-    protected String formatInsertSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    protected String formatInsertSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         insertSql = "insert (%s) values(%s)";
         return String.format(insertSql, insert_fields, insert_values);
     }

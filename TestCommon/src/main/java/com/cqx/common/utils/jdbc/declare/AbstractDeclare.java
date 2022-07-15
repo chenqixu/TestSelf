@@ -1,5 +1,6 @@
 package com.cqx.common.utils.jdbc.declare;
 
+import com.cqx.common.utils.jdbc.FiledUtil;
 import com.cqx.common.utils.jdbc.MergeEnum;
 
 /**
@@ -47,7 +48,7 @@ public abstract class AbstractDeclare {
      * @param pks
      * @return
      */
-    protected abstract String formatInsertSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks);
+    protected abstract String formatInsertSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks);
 
     /**
      * 更新修改语句
@@ -59,7 +60,7 @@ public abstract class AbstractDeclare {
      * @param pks
      * @return
      */
-    protected abstract String formatUpdateSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks);
+    protected abstract String formatUpdateSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks);
 
     /**
      * 更新查询语句
@@ -71,7 +72,7 @@ public abstract class AbstractDeclare {
      * @param pks
      * @return
      */
-    protected abstract String formatSelectSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks);
+    protected abstract String formatSelectSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks);
 
     /**
      * 默认只插不更新
@@ -82,7 +83,7 @@ public abstract class AbstractDeclare {
      * @param where_values
      * @return
      */
-    public String declare(String tableName, String insert_fields, String insert_values, String where_values) {
+    public String declare(String tableName, String insert_fields, FiledUtil insert_values, String where_values) {
         return declare(tableName, insert_fields, insert_values, where_values, MergeEnum.MERGE_INTO_ONLY);
     }
 
@@ -96,7 +97,7 @@ public abstract class AbstractDeclare {
      * @param mergeEnum
      * @return
      */
-    public String declare(String tableName, String insert_fields, String insert_values
+    public String declare(String tableName, String insert_fields, FiledUtil insert_values
             , String where_values, MergeEnum mergeEnum) {
         return declare(tableName, insert_fields, insert_values, where_values, null, mergeEnum);
     }
@@ -111,7 +112,7 @@ public abstract class AbstractDeclare {
      * @param pks
      * @return
      */
-    public String declare(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    public String declare(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         return declare(tableName, insert_fields, insert_values, where_values, pks, MergeEnum.MERGE_INTO_ONLY);
     }
 
@@ -126,7 +127,7 @@ public abstract class AbstractDeclare {
      * @param mergeEnum
      * @return
      */
-    public String declare(String tableName, String insert_fields, String insert_values
+    public String declare(String tableName, String insert_fields, FiledUtil insert_values
             , String where_values, String[] pks, MergeEnum mergeEnum) {
         String _insertSql = formatInsertSql(tableName, insert_fields, insert_values, where_values, pks);
         String _selectSql = formatSelectSql(tableName, insert_fields, insert_values, where_values, pks);

@@ -1,5 +1,7 @@
 package com.cqx.common.utils.jdbc.declare;
 
+import com.cqx.common.utils.jdbc.FiledUtil;
+
 /**
  * PGDeclare
  *
@@ -63,7 +65,8 @@ public class PGDeclare extends AbstractDeclare {
      * @param pks
      * @return
      */
-    protected String formatInsertSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    @Override
+    protected String formatInsertSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         return String.format(insertSql, tableName, insert_fields, insert_values);
     }
 
@@ -77,9 +80,10 @@ public class PGDeclare extends AbstractDeclare {
      * @param pks
      * @return
      */
-    protected String formatUpdateSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    @Override
+    protected String formatUpdateSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         String[] _insertArray = insert_fields.split(",", -1);
-        String[] _insert_valuesArray = insert_values.split(",", -1);
+        String[] _insert_valuesArray = insert_values.getValsArray();
         StringBuilder set = new StringBuilder();
         for (int i = 0; i < _insertArray.length; i++) {
             set.append(_insertArray[i]).append("=").append(_insert_valuesArray[i]);
@@ -100,7 +104,8 @@ public class PGDeclare extends AbstractDeclare {
      * @param pks
      * @return
      */
-    protected String formatSelectSql(String tableName, String insert_fields, String insert_values, String where_values, String[] pks) {
+    @Override
+    protected String formatSelectSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
         return String.format(selectSql, tableName, where_values);
     }
 }

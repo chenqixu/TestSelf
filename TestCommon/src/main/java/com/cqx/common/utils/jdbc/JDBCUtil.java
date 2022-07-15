@@ -1828,14 +1828,11 @@ public class JDBCUtil implements IJDBCUtil {
                 //数据检查
                 if (queryResults.size() != (fields.length + pks.length))
                     throw new SQLException("数据长度和(fields+pks)长度不一致！");
-                StringBuilder insert_values = new StringBuilder();
+                FiledUtil insert_values = new FiledUtil();
                 for (int i = 0; i < queryResults.size(); i++) {
                     QueryResult queryResult = queryResults.get(i);
                     String field_type = insert_fields_type[i];
-                    insert_values.append(stmtSetValue(field_type, queryResult.getValue()));
-                    if (i < queryResults.size() - 1) {
-                        insert_values.append(",");
-                    }
+                    insert_values.add(i, queryResults.size(), stmtSetValue(field_type, queryResult.getValue()));
                 }
                 // 合并写入（表里有值就不写，没值就写入）
                 if (mergeEnum != null) {
@@ -1853,7 +1850,7 @@ public class JDBCUtil implements IJDBCUtil {
                     if (declare == null) {
                         throw new NullPointerException("这个数据库" + this.getDbBean().getDbType() + "没有实现写入合并！");
                     }
-                    sql = declare.declare(table, insert_fields, insert_values.toString(), insert_where_values.toString(), pks, mergeEnum);
+                    sql = declare.declare(table, insert_fields, insert_values, insert_where_values.toString(), pks, mergeEnum);
                 } else {// 正常写入
                     sql = String.format(insert, table, insert_fields, insert_values.toString());
                 }
@@ -1999,23 +1996,31 @@ public class JDBCUtil implements IJDBCUtil {
                 result = "" + fieldValue;
                 break;
             case "java.sql.Timestamp":
-                if (fieldValue == null) result = "" + fieldValue;
-                else result = "'" + fieldValue.toString() + "'";
-                break;
             case "java.sql.Time":
-                if (fieldValue == null) result = "" + fieldValue;
-                else result = "'" + fieldValue.toString() + "'";
+                if (fieldValue == null) {
+                    result = "null";
+                } else if (dbBean.getDbType().equals(DBType.ORACLE)) {
+                    result = "to_timestamp('" + fieldValue.toString() + "','yyyy-MM-dd hh24:mi:ss.FF6')";
+                } else {
+                    result = "'" + fieldValue.toString() + "'";
+                }
                 break;
             case "java.sql.Date":
-                if (fieldValue == null) result = "" + fieldValue;
-                else result = "'" + fieldValue.toString() + "'";
-                break;
             case "java.util.Date":
-                if (fieldValue == null) result = "" + fieldValue;
-                else result = "'" + fieldValue.toString() + "'";
+                if (fieldValue == null) {
+                    result = "null";
+                } else if (dbBean.getDbType().equals(DBType.ORACLE)) {
+                    result = "to_date('" + fieldValue.toString() + "','yyyy-MM-dd hh24:mi:ss')";
+                } else {
+                    result = "'" + fieldValue.toString() + "'";
+                }
                 break;
             default:
-                result = "" + fieldValue;
+                if (fieldValue == null) {
+                    result = "null";
+                } else {
+                    result = "" + fieldValue;
+                }
                 break;
         }
         return result;
