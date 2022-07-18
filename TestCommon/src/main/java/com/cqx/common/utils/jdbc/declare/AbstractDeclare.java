@@ -13,16 +13,6 @@ public abstract class AbstractDeclare {
     protected final String TAG_SELECT_SQL = "[select_sql]";
     protected final String TAG_UPDATE_SQL = "[update_sql]";
     protected final String TAG_INSERT_SQL = "[insert_sql]";
-    protected String insertSql = "insert into %s(%s) values(%s)";
-    protected String selectSql = "select count(1) into hasval from %s where %s";
-    protected String updateSql = "update %s set %s where %s";
-    protected String pgdeclareInsertOnly;
-    protected String pgdeclareInsertUpdate;
-
-    public AbstractDeclare() {
-        pgdeclareInsertUpdate = setPgdeclareInsertUpdate();
-        pgdeclareInsertOnly = setPgdeclareInsertOnly();
-    }
 
     /**
      * 没有值就写入，有值就更新
@@ -129,6 +119,8 @@ public abstract class AbstractDeclare {
      */
     public String declare(String tableName, String insert_fields, FiledUtil insert_values
             , String where_values, String[] pks, MergeEnum mergeEnum) {
+        String pgdeclareInsertUpdate = setPgdeclareInsertUpdate();
+         String pgdeclareInsertOnly = setPgdeclareInsertOnly();
         String _insertSql = formatInsertSql(tableName, insert_fields, insert_values, where_values, pks);
         String _selectSql = formatSelectSql(tableName, insert_fields, insert_values, where_values, pks);
         String _updateSql = formatUpdateSql(tableName, insert_fields, insert_values, where_values, pks);

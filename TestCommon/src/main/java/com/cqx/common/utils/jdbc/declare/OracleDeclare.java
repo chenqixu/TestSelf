@@ -21,6 +21,9 @@ import java.util.Map;
  * @author chenqixu
  */
 public class OracleDeclare extends AbstractDeclare {
+    private final String insertSql = "insert (%s) values(%s)";
+    private final String selectSql = "using (select %s from dual) t2 on (%s)";
+    private final String updateSql = "update set %s";
 
     /**
      * 写入合并
@@ -66,7 +69,6 @@ public class OracleDeclare extends AbstractDeclare {
      */
     @Override
     protected String formatSelectSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
-        selectSql = "using (select %s from dual) t2 on (%s)";
         String[] array_insert_fields = insert_fields.split(",", -1);
         String[] array_insert_values = insert_values.getValsArray();
         StringBuilder dual = new StringBuilder();
@@ -105,7 +107,6 @@ public class OracleDeclare extends AbstractDeclare {
      */
     @Override
     protected String formatUpdateSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
-        updateSql = "update set %s";
         String[] _insertArray = insert_fields.split(",", -1);
         String[] _insert_valuesArray = insert_values.getValsArray();
         Map<String, String> pksMap = new HashMap<>();
@@ -141,7 +142,6 @@ public class OracleDeclare extends AbstractDeclare {
      */
     @Override
     protected String formatInsertSql(String tableName, String insert_fields, FiledUtil insert_values, String where_values, String[] pks) {
-        insertSql = "insert (%s) values(%s)";
         return String.format(insertSql, insert_fields, insert_values);
     }
 }

@@ -8,6 +8,9 @@ import com.cqx.common.utils.jdbc.FiledUtil;
  * @author chenqixu
  */
 public class PGDeclare extends AbstractDeclare {
+    private final String insertSql = "insert into %s(%s) values(%s)";
+    private final String selectSql = "select count(1) into hasval from %s where %s";
+    private final String updateSql = "update %s set %s where %s";
 
     /**
      * 写入合并

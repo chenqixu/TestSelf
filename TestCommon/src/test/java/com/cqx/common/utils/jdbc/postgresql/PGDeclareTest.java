@@ -31,6 +31,14 @@ public class PGDeclareTest extends TestBase {
                     , where_values, MergeEnum.MERGE_INTO_UPDATE);
             System.out.println(sql);
 
+            insert_values = new FiledUtil();
+            insert_values.add(0, 2, "'sell_002'");
+            insert_values.add(1, 2, "'task_002'");
+            where_values = "sell_id='sell_002'";
+            sql = declare.declare(tableName, insert_fields, insert_values
+                    , where_values, MergeEnum.MERGE_INTO_UPDATE);
+            System.out.println(sql);
+
             sql = declare.declare(tableName, insert_fields, insert_values
                     , where_values, MergeEnum.MERGE_INTO_ONLY);
             System.out.println(sql);
