@@ -350,5 +350,12 @@
             <artifactId>ggutil</artifactId>
             <version>12.3.2.1.1.005</version>
         </dependency>
+
+        <!-- ac算法 -->
+        <dependency>
+            <groupId>org.ahocorasick</groupId>
+            <artifactId>ahocorasick</artifactId>
+            <version>0.4.0</version>
+        </dependency>
     </dependencies>
 </project>

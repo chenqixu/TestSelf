@@ -1,20 +1,24 @@
 package com.bussiness.bi.bigdata.realtimemonitor.rule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * RuleLinked
  *
  * @author chenqixu
  */
 public class RuleLinked {
-    private IMonitorRule iMonitorRule;
+    private List<IMonitorRule> iMonitorRuleList = new ArrayList<>();
     private RuleLinked next;
 
-    public RuleLinked(IMonitorRule iMonitorRule) {
-        this.iMonitorRule = iMonitorRule;
+    public RuleLinked addRuleChild(IMonitorRule iMonitorRule) {
+        this.iMonitorRuleList.add(iMonitorRule);
+        return this;
     }
 
-    public RuleLinked addNext(IMonitorRule iMonitorRule) {
-        this.next = new RuleLinked(iMonitorRule);
+    public RuleLinked addNext() {
+        this.next = new RuleLinked();
         return this.next;
     }
 
@@ -28,6 +32,10 @@ public class RuleLinked {
     }
 
     public boolean check(String value) throws Exception {
-        return iMonitorRule.check(value);
+        for (IMonitorRule iMonitorRule : iMonitorRuleList) {
+            boolean match = iMonitorRule.check(value);
+            if (match) return true;
+        }
+        return false;
     }
 }

@@ -13,10 +13,11 @@ public class RuleUtil {
     }
 
     public void init() {
-        ruleLinked = new RuleLinked(new IpRule("192.168.1.0"));
-        ruleLinked.addNext(new IpRule("192.168.1.1"))
-                .addNext(new UrlRule("www.baidu.com"))
-                .addNext(new IpRule("192.168.1.2"));
+        ruleLinked = new RuleLinked().addRuleChild(new IpRule("192.168.1.0"));
+        ruleLinked.addNext().addRuleChild(new IpRule("192.168.1.1"))
+                .addNext().addRuleChild(new UrlRule("www.baidu.com"))
+                .addNext().addRuleChild(new IpRule("192.168.1.2"))
+        ;
     }
 
     public boolean check(String value) throws Exception {
