@@ -897,6 +897,13 @@
         <!--<artifactId>bcprov-jdk16</artifactId>-->
         <!--<version>1.46</version>-->
         <!--</dependency>-->
+
+        <!-- pdf -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.26</version>
+        </dependency>
     </dependencies>
 
     <build>

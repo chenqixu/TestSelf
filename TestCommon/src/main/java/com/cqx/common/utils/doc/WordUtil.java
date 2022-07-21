@@ -4,12 +4,13 @@ import com.cqx.common.utils.excel.ExcelCommons;
 import com.cqx.common.utils.excel.ExcelUtils;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * word doc工具
@@ -20,10 +21,118 @@ import java.io.InputStream;
  *
  * @author chenqixu
  */
-public class DocUtil {
-    private static final Logger logger = LoggerFactory.getLogger(DocUtil.class);
+public class WordUtil implements Closeable {
+    private static final Logger logger = LoggerFactory.getLogger(WordUtil.class);
+    private XWPFDocument docxDocument;
+    private XWPFParagraph paragraphX;
+    private XWPFRun runX;
 
-    public DocUtil() {
+    public WordUtil() {
+    }
+
+    /**
+     * 初始化
+     *
+     * @throws IOException
+     */
+    public void open() throws IOException {
+        docxDocument = new XWPFDocument();
+        paragraphX = docxDocument.createParagraph();
+        runX = paragraphX.createRun();
+    }
+
+    /**
+     * 写入文本并换行
+     *
+     * @param text
+     */
+    public void writeText(String text) {
+        runX.setText(text);
+        runX.addCarriageReturn();// 回车
+    }
+
+    /**
+     * 写入图像，200x200 points
+     *
+     * @param imageFile
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void writeImage(String imageFile) throws IOException, InvalidFormatException {
+        writeImage(imageFile, 200, 200);
+    }
+
+    /**
+     * 写入图像
+     *
+     * @param imageFile
+     * @param width
+     * @param height
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void writeImage(String imageFile, double width, double height) throws IOException, InvalidFormatException {
+        int format;
+        if (imageFile.endsWith(".emf")) {
+            format = Document.PICTURE_TYPE_EMF;
+        } else if (imageFile.endsWith(".wmf")) {
+            format = Document.PICTURE_TYPE_WMF;
+        } else if (imageFile.endsWith(".pict")) {
+            format = Document.PICTURE_TYPE_PICT;
+        } else if (imageFile.endsWith(".jpeg") || imageFile.endsWith(".jpg")) {
+            format = Document.PICTURE_TYPE_JPEG;
+        } else if (imageFile.endsWith(".png")) {
+            format = Document.PICTURE_TYPE_PNG;
+        } else if (imageFile.endsWith(".dib")) {
+            format = Document.PICTURE_TYPE_DIB;
+        } else if (imageFile.endsWith(".gif")) {
+            format = Document.PICTURE_TYPE_GIF;
+        } else if (imageFile.endsWith(".tiff")) {
+            format = Document.PICTURE_TYPE_TIFF;
+        } else if (imageFile.endsWith(".eps")) {
+            format = Document.PICTURE_TYPE_EPS;
+        } else if (imageFile.endsWith(".bmp")) {
+            format = Document.PICTURE_TYPE_BMP;
+        } else if (imageFile.endsWith(".wpg")) {
+            format = Document.PICTURE_TYPE_WPG;
+        } else {
+            System.err.println("Unsupported picture: " + imageFile +
+                    ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
+            return;
+        }
+        try (FileInputStream is = new FileInputStream(imageFile)) {
+            runX.addPicture(is, format, imageFile, Units.toEMU(width), Units.toEMU(height));
+        }
+    }
+
+    /**
+     * 写入分页符
+     */
+    public void newPage() {
+        runX.addBreak(BreakType.PAGE);
+    }
+
+    /**
+     * 保存到文件
+     *
+     * @param fileName
+     * @throws IOException
+     */
+    public void save(String fileName) throws IOException {
+        docxDocument.write(new FileOutputStream(fileName));
+    }
+
+    /**
+     * 资源释放
+     */
+    @Override
+    public void close() {
+        if (docxDocument != null)
+            try {
+                docxDocument.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     public void readDoc(String path) throws IOException {
@@ -81,7 +190,7 @@ public class DocUtil {
      * @param range
      */
     private void readTable(Range range) {
-        //遍历range范围内的table。
+        //遍历range范围内的table
         TableIterator tableIter = new TableIterator(range);
         Table table;
         TableRow row;
