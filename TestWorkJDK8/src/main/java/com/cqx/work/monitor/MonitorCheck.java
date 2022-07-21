@@ -105,6 +105,14 @@ public class MonitorCheck {
 //        logger.info("IP校验结果: {}", found);
     }
 
+    public void checkTimeMatch(Map<String, String> userLogMap, UserRuleBean userRuleBean) throws ParseException {
+        checkUserLogTime(userLogMap, userRuleBean);
+    }
+
+    public void checkTimeV1Match(Map<String, String> userLogMap, UserRuleBean userRuleBean) throws ParseException {
+        checkUserLogTimeV1(userLogMap, userRuleBean);
+    }
+
     /**
      * 根据规则时间和用户日志时间做时间校验<br>
      * 时间检验(用户访问时间在监测开始和结束时间之间 _过滤)  14位时间字符串比较
@@ -122,12 +130,33 @@ public class MonitorCheck {
             int startTimeCheck = userRuleBean.getStartTime().compareTo(formatUserTime);
             int endTimeCheck = userRuleBean.getEndTime().compareTo(formatUserTime);
             return startTimeCheck <= 0 && endTimeCheck >= 0;
-
         } else if (StringUtils.isNotBlank(accessTime) && accessTime.length() == 29) {//wlan合成
             long time = Utils.formatTime(accessTime, "yyyy-MM-dd HH:mm:ss");
             String formatUserTime = Utils.formatTime(time, "yyyyMMddHHmmss");
             int startTimeCheck = userRuleBean.getStartTime().compareTo(formatUserTime);
             int endTimeCheck = userRuleBean.getEndTime().compareTo(formatUserTime);
+            return startTimeCheck <= 0 && endTimeCheck >= 0;
+        }
+        return false;
+    }
+
+    /**
+     * 优化后的时间比较
+     *
+     * @param userLogMap
+     * @param userRuleBean
+     * @return
+     * @throws ParseException
+     */
+    public boolean checkUserLogTimeV1(Map<String, String> userLogMap, UserRuleBean userRuleBean) throws ParseException {
+        String accessTime = userLogMap.get("start_time");
+        if (StringUtils.isNotBlank(accessTime) && accessTime.length() == 16) {// 5G、4G用户面是微秒时间戳
+            int startTimeCheck = userRuleBean.getMicroStartTime().compareTo(accessTime);
+            int endTimeCheck = userRuleBean.getMicroEndTime().compareTo(accessTime);
+            return startTimeCheck <= 0 && endTimeCheck >= 0;
+        } else if (StringUtils.isNotBlank(accessTime) && accessTime.length() == 29) {// wlan合成
+            int startTimeCheck = userRuleBean.getWlanStartTime().compareTo(accessTime);
+            int endTimeCheck = userRuleBean.getWlanEndTime().compareTo(accessTime);
             return startTimeCheck <= 0 && endTimeCheck >= 0;
         }
         return false;
@@ -207,7 +236,7 @@ public class MonitorCheck {
             if (StringUtils.isNotBlank(server_pub_ip)) {
                 boolean userIPv4 = IPAddressUtil.isIPv4LiteralAddress(server_pub_ip);
                 boolean userIPv6 = false;
-                if(!userIPv4) userIPv6 = IPAddressUtil.isIPv6LiteralAddress(server_pub_ip);
+                if (!userIPv4) userIPv6 = IPAddressUtil.isIPv6LiteralAddress(server_pub_ip);
 
                 if (userIPv4 && isIPv4) {
                     return IpV4Match(userRuleBean, server_pub_ip);
