@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * 字节工具
@@ -484,5 +485,47 @@ public class ByteUtil {
      */
     public static ByteBuf strToByteBuf(String msg) {
         return Unpooled.copiedBuffer(msg, CharsetUtil.UTF_8);
+    }
+
+    /**
+     * Set进行异或操作
+     *
+     * @param vals
+     * @param <T>
+     * @return
+     */
+    public static <T> long bit_xor_vals_sets(java.util.Set<T> vals) {
+        long rtn = 0L;
+        for (T n : vals) {
+            rtn = bit_xor(rtn, n);
+        }
+        return rtn;
+    }
+
+    /**
+     * 异或操作
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    public static long bit_xor(Object a, Object b) {
+        long rtn;
+
+        if (a instanceof Long && b instanceof Long) {
+            rtn = ((Long) a) ^ ((Long) b);
+            return rtn;
+        } else if (b instanceof Set) {
+            long bs = bit_xor_vals_sets((Set) b);
+            return bit_xor(a, bs);
+        } else if (a instanceof Set) {
+            long as = bit_xor_vals_sets((Set) a);
+            return bit_xor(as, b);
+        } else {
+            long ai = Long.parseLong(String.valueOf(a));
+            long bi = Long.parseLong(String.valueOf(b));
+            rtn = ai ^ bi;
+            return rtn;
+        }
     }
 }
