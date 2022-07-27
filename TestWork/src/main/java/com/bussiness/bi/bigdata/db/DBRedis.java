@@ -11,8 +11,8 @@ public class DBRedis {
     public static void main(String[] args) {
         Connection conn = null;
         try {
-            String DriverClassName = "com.newland.bi.bigdata.redis.RedisDriver";
-            String dbUrl = "10.1.4.185:6380,10.1.4.185:6381,10.1.4.185:6382,10.1.4.185:6383,10.1.4.185:6384,10.1.4.185:6385";
+            String DriverClassName = "com.cqx.common.utils.redis.RedisDriver";
+            String dbUrl = "jdbc:redis://10.1.8.200:10000,10.1.8.200:10001,10.1.8.200:30000,10.1.8.200:30001,10.1.8.201:10000,10.1.8.201:10001,10.1.8.201:30000,10.1.8.201:30001,10.1.8.202:10000,10.1.8.202:10001,10.1.8.202:30000,10.1.8.202:30001";
             String dbUsername = "";
             String dbPassword = "";
             // 加载数据库驱动类

@@ -904,9 +904,24 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.26</version>
         </dependency>
+
+        <!-- 达梦数据库JDBC -->
+        <dependency>
+            <groupId>com.dm</groupId>
+            <artifactId>DmJdbcDriver18</artifactId>
+            <version>18</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <!-- 拷贝资源文件到META-INF目录 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <targetPath>META-INF/</targetPath>
+            </resource>
+        </resources>
+        <!-- 其他编译插件 -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -939,14 +954,24 @@
                 </executions>
             </plugin>
 
+            <!-- MANIFEST.MF文件插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.2</version>
                 <configuration>
                     <archive>
-                        <!--使用manifestFile属性配置自定义的参数文件所在的-->
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <!-- 使用manifestFile属性配置自定义的参数文件所在的 -->
+                        <!--<manifestFile>-->
+                            <!-- 是否要把第三方jar放到manifest的classpath中 -->
+                            <!--<addClasspath>false</addClasspath>-->
+                            <!-- 生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/ -->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
+                            <!-- 执行的主程序路径 -->
+                            <!--<mainClass>XXX</mainClass>-->
+                        <!--</manifestFile>-->
+                        <!-- 使用自定义的MANIFEST.MF文件，和上面可能有冲突无法并存 -->
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
             </plugin>

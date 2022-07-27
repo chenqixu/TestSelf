@@ -21,7 +21,7 @@ public class JDBCUtilTest {
     @Before
     public void setUp() throws Exception {
         jdbcUtil = new JDBCUtil(CmdBean.newbuilder()
-                .setType("redis").setDns("192.168.230.128:6379").setUsername("redis").setPassword("redis"));
+                .setType("redis").setDns("jdbc:redis://192.168.230.128:6379").setUsername("redis").setPassword("redis"));
     }
 
     @Test

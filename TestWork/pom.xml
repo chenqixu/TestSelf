@@ -1895,6 +1895,10 @@
                 <directory>src/main/resources</directory>
                 <targetPath>${project.build.directory}</targetPath>
             </resource>
+            <resource>
+                <directory>src/main/resources/META-INF</directory>
+                <targetPath>META-INF/</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>

@@ -71,6 +71,11 @@ dbbeans:
     pass_word: "bishow"
     tns: "jdbc:oracle:thin:@192.168.230.128:1521:orcl"
     dbType: "ORACLE"
+  - name: dm8_204sysdba_Bean
+    user_name: "SYSDBA"
+    pass_word: "SYSDBA"
+    tns: "jdbc:dm://10.1.8.204:5237"
+    dbType: "DM8"
   - name: oceanbeanBean
     user_name:
     pass_word:

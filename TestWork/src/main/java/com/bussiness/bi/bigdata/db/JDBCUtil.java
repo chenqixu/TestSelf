@@ -291,7 +291,7 @@ public class JDBCUtil {
     private void loadDriver() {
         driverMap.put("oracle", "oracle.jdbc.driver.OracleDriver");
         driverMap.put("mysql", "com.mysql.jdbc.Driver");
-        driverMap.put("redis", "com.newland.bi.bigdata.redis.RedisDriver");
+        driverMap.put("redis", "com.cqx.common.utils.redis.RedisDriver");
         driverMap.put("hive", "org.apache.hive.jdbc.HiveDriver");
         driverMap.put("timesten", "TimestenJDBCTest");
     }

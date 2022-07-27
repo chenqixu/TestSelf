@@ -10,6 +10,7 @@ import java.util.logging.Logger;
  * @author chenqixu
  */
 public class RedisDriver implements Driver {
+    private static final String URL_PREFIX = "jdbc:redis://";
 
     // Register ourselves with the DriverManager
     static {
@@ -22,7 +23,13 @@ public class RedisDriver implements Driver {
 
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
-        return new RedisConnection(url);
+        // 先校验一下TNS正确性
+        // jdbc:redis://10.1.4.185:6380
+        if (url.startsWith(URL_PREFIX)) {
+            return new RedisConnection(url.replace(URL_PREFIX, ""));
+        } else {
+            return null;
+        }
     }
 
     @Override

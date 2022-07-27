@@ -18,6 +18,7 @@ public enum DBType {
     GSDB("fjlz.gsdb.jdbc.GsdbDriver", "select 1 from dual"),
     OB_ORACLE("com.alipay.oceanbase.jdbc.Driver", "select 1 from dual"),
     OB_MYSQL(MYSQL),
+    DM8("dm.jdbc.driver.DmDriver", "select 1 from dual"),
     OTHER("", ""),
     ;
 
