@@ -722,6 +722,140 @@ public class KafkaConsumerGRUtilTest extends TestBase {
     }
 
     /**
+     * ogg话题消费验证，数据结构：9、data，处理流程异常
+     */
+    @Test
+    public void oggPoll9() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        logger.info("{}", param);
+        OggPollInf oggPollInf = new OggPollInf() {
+            @Override
+            public void dataDeal(List<GenericRecord> genericRecords) throws Exception {
+                logger.warn("处理dataDeal异常！！！");
+                throw new NullPointerException("处理过程空指针！");
+            }
+
+            @Override
+            public void updateSchema(Schema schema) {
+                logger.info("不处理updateSchema");
+            }
+        };
+        String topic = "TEST_TOPIC";
+        String schemaStr = "{ \"type\": \"record\",\n" +
+                "  \"name\": \"" + topic + "\",\n" +
+                "  \"namespace\": \"FRTBASE\",\n" +
+                "  \"fields\": [\n" +
+                "    {\"name\": \"table\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"op_type\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"op_ts\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"current_ts\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"pos\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"primary_keys\",\"type\": {\"type\": \"array\",\"items\": \"string\"}},\n" +
+                "    {\"name\": \"tokens\",\"type\": {\"type\": \"map\",\"values\": \"string\"}, \"default\": {}},\n" +
+                "    {\n" +
+                "      \"name\": \"before\",\n" +
+                "      \"type\": [\"null\",\n" +
+                "        {\n" +
+                "          \"type\": \"record\",\n" +
+                "          \"name\": \"columns\",\n" +
+                "          \"fields\": [\n" +
+                "            {\"name\": \"HOME_CITY\",\"type\": [  \"null\",  \"long\"],\"default\": null},\n" +
+                "            {\"name\": \"HOME_CITY_isMissing\",\"type\": [  \"null\",  \"boolean\"],\"default\": null},\n" +
+                "            {\"name\": \"STATUS\",\"type\": [  \"null\",  \"long\"],\"default\": null},\n" +
+                "            {\"name\": \"STATUS_isMissing\",\"type\": [  \"null\",  \"boolean\"],\"default\": null}\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      ],\"default\": null},\n" +
+                "    {\"name\": \"after\",\"type\": [\"null\",\"columns\"],\"default\": null}\n" +
+                "  ]\n" +
+                "}";
+        GenericRecordUtil genericRecordUtil = new GenericRecordUtil(null);
+        genericRecordUtil.addTopicBySchemaString(topic, schemaStr);
+        Schema schema = genericRecordUtil.getSchema(topic);
+
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            // 通过schema构造记录转换工具类
+            kafkaConsumerUtil.buildRecordConvertor(schema);
+            // 存放数据的List
+            List<ConsumerRecord<String, byte[]>> records = new ArrayList<>();
+            // 数据结构
+            // 7、data+异常data
+            logger.info("【测试数据结构9、data，处理流程异常】");
+            records.clear();
+            records.add(buildConsumerRecord(topic, 1
+                    , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+        }
+    }
+
+    /**
+     * ogg话题消费验证，数据结构：10、schema，更新schema异常
+     */
+    @Test
+    public void oggPoll10() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        logger.info("{}", param);
+        OggPollInf oggPollInf = new OggPollInf() {
+            @Override
+            public void dataDeal(List<GenericRecord> genericRecords) throws Exception {
+                logger.warn("处理dataDeal异常！！！");
+                throw new NullPointerException("处理过程空指针！");
+            }
+
+            @Override
+            public void updateSchema(Schema schema) {
+                logger.warn("处理updateSchema异常！！！");
+                throw new NullPointerException("处理updateSchema空指针！");
+            }
+        };
+        String topic = "TEST_TOPIC";
+        String schemaStr = "{ \"type\": \"record\",\n" +
+                "  \"name\": \"" + topic + "\",\n" +
+                "  \"namespace\": \"FRTBASE\",\n" +
+                "  \"fields\": [\n" +
+                "    {\"name\": \"table\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"op_type\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"op_ts\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"current_ts\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"pos\",\"type\": \"string\"},\n" +
+                "    {\"name\": \"primary_keys\",\"type\": {\"type\": \"array\",\"items\": \"string\"}},\n" +
+                "    {\"name\": \"tokens\",\"type\": {\"type\": \"map\",\"values\": \"string\"}, \"default\": {}},\n" +
+                "    {\n" +
+                "      \"name\": \"before\",\n" +
+                "      \"type\": [\"null\",\n" +
+                "        {\n" +
+                "          \"type\": \"record\",\n" +
+                "          \"name\": \"columns\",\n" +
+                "          \"fields\": [\n" +
+                "            {\"name\": \"HOME_CITY\",\"type\": [  \"null\",  \"long\"],\"default\": null},\n" +
+                "            {\"name\": \"HOME_CITY_isMissing\",\"type\": [  \"null\",  \"boolean\"],\"default\": null},\n" +
+                "            {\"name\": \"STATUS\",\"type\": [  \"null\",  \"long\"],\"default\": null},\n" +
+                "            {\"name\": \"STATUS_isMissing\",\"type\": [  \"null\",  \"boolean\"],\"default\": null}\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      ],\"default\": null},\n" +
+                "    {\"name\": \"after\",\"type\": [\"null\",\"columns\"],\"default\": null}\n" +
+                "  ]\n" +
+                "}";
+        GenericRecordUtil genericRecordUtil = new GenericRecordUtil(null);
+        genericRecordUtil.addTopicBySchemaString(topic, schemaStr);
+        Schema schema = genericRecordUtil.getSchema(topic);
+
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            // 通过schema构造记录转换工具类
+            kafkaConsumerUtil.buildRecordConvertor(schema);
+            // 存放数据的List
+            List<ConsumerRecord<String, byte[]>> records = new ArrayList<>();
+            // 数据结构
+            // 7、data+异常data
+            logger.info("【测试数据结构10、schema，更新schema异常】");
+            records.clear();
+            records.add(buildConsumerRecord(topic, 1, schemaStr.getBytes()));
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+        }
+    }
+
+    /**
      * 构造Ogg数据
      *
      * @param topic

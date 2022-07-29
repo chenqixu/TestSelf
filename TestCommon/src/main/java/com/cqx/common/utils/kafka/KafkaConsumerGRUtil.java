@@ -315,6 +315,8 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
      *     6、异常data
      *     7、data+异常data
      *     8、schema+异常data
+     *     9、data，处理流程异常
+     *     10、schema，更新schema异常
      * </pre>
      *
      * @param timeout    单次数据拉取时间
