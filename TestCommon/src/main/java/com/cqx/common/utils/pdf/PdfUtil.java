@@ -2,9 +2,10 @@ package com.cqx.common.utils.pdf;
 
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author chenqixu
  */
 public class PdfUtil {
+    private static final Logger logger = LoggerFactory.getLogger(PdfUtil.class);
     // 分辨率
     private static final int DPI = 288;
 
@@ -31,22 +33,30 @@ public class PdfUtil {
 //        pdfUtil.pageConvertToImage(source, 0, DPI, ImageType.BINARY, targetfile);
     }
 
-    public BufferedImage pageConvertToImage(PDPage page, int dpi, ImageType imageType) throws IOException {
-        try (PDDocument document = new PDDocument()) {
-            document.addPage(page);
-            PDFRenderer renderer = new PDFRenderer(document);
-            document.close();
-            return renderer.renderImageWithDPI(0, dpi, imageType);
-        }
-    }
-
+    /**
+     * 截取指定PDF页面，保存成图片
+     *
+     * @param pdfSource
+     * @param pageIndex
+     * @param dpi
+     * @param imageType
+     * @param targetPath
+     * @throws IOException
+     */
     public void pageConvertToImage(String pdfSource, int pageIndex, int dpi, ImageType imageType, String targetPath) throws IOException {
+        // 读入文件流
         try (FileInputStream inputStream = new FileInputStream(pdfSource);
+             // 加载PDF文档
              PDDocument doc = PDDocument.load(inputStream)) {
+            // 加载PDF渲染器
             PDFRenderer renderer = new PDFRenderer(doc);
+            // Returns the given page as an RGB image at the given DPI.
+            // 返回指定页面的图像流，指定DPI，指定RGB
             BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, dpi, imageType);
+            // 需要刷新图像流，否则会导致没有数据
             bufferedImage.flush();
-            SaveImage(bufferedImage, targetPath);
+            // 把图像流保存成文件
+            saveImage(bufferedImage, targetPath);
         }
     }
 
@@ -65,10 +75,10 @@ public class PdfUtil {
                 // scale – the scaling factor, where 1 = 72 DPI
                 BufferedImage image = renderer.renderImage(0, Float.valueOf(String.valueOf(DPI / 72)));
                 image.flush();
-                SaveImage(image, targetPath);
+                saveImage(image, targetPath);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -80,14 +90,20 @@ public class PdfUtil {
      * @throws Exception
      */
     public byte[] readInputStream(InputStream inStream) throws Exception {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len;
-        while ((len = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, len);
+        byte[] result;
+        try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, len);
+            }
+            result = outStream.toByteArray();
+        } finally {
+            if (inStream != null) {
+                inStream.close();
+            }
         }
-        inStream.close();
-        return outStream.toByteArray();
+        return result;
     }
 
     /**
@@ -96,32 +112,22 @@ public class PdfUtil {
      * @param image      图像流
      * @param targetPath 输出的图像文件
      */
-    public void SaveImage(BufferedImage image, String targetPath) {
-        InputStream byteInputStream = null;
+    public void saveImage(BufferedImage image, String targetPath) {
         File uploadFile = new File(targetPath);
         try (ByteArrayOutputStream bs = new ByteArrayOutputStream();
              ImageOutputStream imOut = ImageIO.createImageOutputStream(bs);
              FileOutputStream fops = new FileOutputStream(uploadFile)
         ) {
             ImageIO.write(image, "jpg", imOut);
-            byteInputStream = new ByteArrayInputStream(bs.toByteArray());
-            fops.write(readInputStream(byteInputStream));
+            fops.write(readInputStream(new ByteArrayInputStream(bs.toByteArray())));
             fops.flush();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (byteInputStream != null) {
-                try {
-                    byteInputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            logger.error(e.getMessage(), e);
         }
     }
 
     /**
-     * 从PDF文件中截取指定页面
+     * 从PDF文件中截取指定页面，另外保存成1个PDF文件
      *
      * @param pageNum
      * @param source
@@ -152,7 +158,7 @@ public class PdfUtil {
             }
             document.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
