@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * KafkaConsumerGRUtil
@@ -183,6 +184,16 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     }
 
     /**
+     * 通过schema构造记录转换工具类
+     *
+     * @param schema
+     */
+    public void buildRecordConvertor(Schema schema) {
+        // 记录转换工具类
+        recordConvertor = new RecordConvertor(schema);
+    }
+
+    /**
      * 消费，只有Value，获得List&lt;GenericRecord&gt;
      *
      * @param timeout
@@ -285,6 +296,157 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
                     // 回滚异常，抛出运行时异常
                     throw new RuntimeException(String.format("回滚异常，topicPartition：%s，firstOffset：%s，异常信息：%s"
                             , topicPartition, firstOffset, rollBackException.getMessage()), rollBackException);
+                }
+            }
+        }
+    }
+
+    /**
+     * 消费Ogg数据，并处理<br>
+     * <pre>
+     *     遇到schema，就先处理正常数据，再处理schema
+     *     如果处理过程遇到异常，就抛出
+     *     支持以下几种情况：
+     *     1、data
+     *     2、data+schema
+     *     3、data+schema+data
+     *     4、schema
+     *     5、schema+data
+     *     6、异常data
+     *     7、data+异常data
+     *     8、schema+异常data
+     * </pre>
+     *
+     * @param timeout    单次数据拉取时间
+     * @param oggPollInf 业务处理类
+     * @throws Exception
+     */
+    public void oggPoll(long timeout, OggPollInf oggPollInf) throws Exception {
+        // 从kafka消费数据
+        List<ConsumerRecord<String, byte[]>> records = pollHasConsumerRecord(timeout);
+        // 进行业务处理
+        oggDataDeal(oggPollInf, records);
+    }
+
+    /**
+     * 处理Ogg数据，非测试模式
+     *
+     * @param oggPollInf 业务处理类
+     * @param records    从kafka消费到的数据
+     * @throws Exception
+     */
+    public void oggDataDeal(OggPollInf oggPollInf, List<ConsumerRecord<String, byte[]>> records) throws Exception {
+        oggDataDeal(oggPollInf, records, false);
+    }
+
+    /**
+     * 处理Ogg数据，具体实现
+     *
+     * @param oggPollInf 业务处理类
+     * @param records    从kafka消费到的数据
+     * @param isTest     是否是测试模式，是：不进行偏移量提交
+     * @throws Exception
+     */
+    public void oggDataDeal(OggPollInf oggPollInf, List<ConsumerRecord<String, byte[]>> records, boolean isTest) throws Exception {
+        long firstOffset = -1L;
+        long lastDealOffset = -1L;
+        int partition = -1;
+        LinkedBlockingDeque<ConsumerRecord<String, byte[]>> deque = new LinkedBlockingDeque<>();
+        if (records.size() > 0) {
+            // 循环写到双端队列
+            for (ConsumerRecord<String, byte[]> consumerRecord : records) {
+                deque.offer(consumerRecord);
+            }
+            // 数据缓存List
+            List<GenericRecord> genericRecords = new ArrayList<>();
+            // 从双端队列获取数据
+            ConsumerRecord<String, byte[]> consumerRecord;
+            while ((consumerRecord = deque.poll()) != null) {
+                // 尝试解析Data
+                try {
+                    // 写入数据缓存List
+                    genericRecords.add(getGenericRecord(consumerRecord.value()));
+                    // 更新最后位置
+                    lastDealOffset = consumerRecord.offset();
+                    // 更新首条记录偏移量
+                    if (firstOffset == -1L) {
+                        firstOffset = lastDealOffset;
+                        partition = consumerRecord.partition();
+                    }
+                } catch (Exception toGenericRecordException) {
+                    logger.warn("解析Data异常，进入异常处理流程，尝试转换schema，当前异常数据偏移量: {}", consumerRecord.offset());
+                    //================
+                    // 异常处理流程
+                    //================
+                    // 如果有数据未处理，则处理业务数据，并把解析不了的数据丢回栈顶
+                    if (genericRecords.size() > 0) {
+                        // 把解析不了的数据丢回栈顶
+                        deque.offerFirst(consumerRecord);
+                        logger.info("解析不了的数据丢回栈顶: {}", consumerRecord);
+                        try {
+                            logger.info("处理业务数据, 首条记录偏移量: {}, 最后位置偏移量: {}", firstOffset, lastDealOffset);
+                            // 处理业务数据
+                            oggPollInf.dataDeal(genericRecords);
+                            // 处理完成，清空缓存
+                            genericRecords.clear();
+                            // 处理完成，提交偏移量
+                            if (!isTest) {
+                                commitSync(consumerRecord.partition(), lastDealOffset);
+                            }
+                            // 更新首条记录偏移量
+                            firstOffset = -1L;
+                            logger.info("处理完成，针对分区: {}, 提交偏移量: {}", consumerRecord.partition(), lastDealOffset);
+                        } catch (Exception dataE) {
+                            // 处理业务数据异常，向上抛出
+                            logger.warn("处理业务数据异常！", dataE);
+                            dataE.addSuppressed(toGenericRecordException);
+                            throw dataE;
+                        }
+                    } else {// 没有数据待处理，尝试转换schema
+                        String value = new String(consumerRecord.value());
+                        try {
+                            // 尝试能否转换成schema
+                            Schema schema = updateSchema(value);
+                            //================
+                            // 转换成功
+                            //================
+                            // 更新数据库
+                            oggPollInf.updateSchema(schema);
+                            // 获取最后位置
+                            lastDealOffset = consumerRecord.offset();
+                            // 提交偏移量
+                            if (!isTest) {
+                                commitSync(consumerRecord.partition(), lastDealOffset);
+                            }
+                            logger.info("转换schema完成，针对分区: {}, 提交偏移量: {}", consumerRecord.partition(), lastDealOffset);
+                        } catch (Exception updateSchemaException) {
+                            // 把解析不了的数据丢回栈顶
+                            deque.offerFirst(consumerRecord);
+                            // 抛出异常
+                            logger.warn(String.format("%s 更新schema异常！", value), updateSchemaException);
+                            updateSchemaException.addSuppressed(toGenericRecordException);
+                            throw updateSchemaException;
+                        }
+                    }
+                }
+            }
+            //================
+            // 正常处理流程
+            //================
+            if (genericRecords.size() > 0) {
+                try {
+                    logger.info("处理业务数据, 首条记录偏移量: {}, 最后位置偏移量: {}", firstOffset, lastDealOffset);
+                    // 处理业务数据
+                    oggPollInf.dataDeal(genericRecords);
+                    // 处理完成，提交偏移量
+                    if (!isTest) {
+                        commitSync(partition, lastDealOffset);
+                    }
+                    logger.info("处理完成，针对分区: {}, 提交偏移量: {}", partition, lastDealOffset);
+                } catch (Exception dataE) {
+                    // 处理业务数据异常，向上抛出
+                    logger.warn("处理业务数据异常！", dataE);
+                    throw dataE;
                 }
             }
         }
