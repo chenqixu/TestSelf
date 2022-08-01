@@ -412,7 +412,7 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
      * 针对所有分区进行提交同步
      */
     public void commitSync() {
-        if (consumer != null) consumer.commitSync();
+        if (consumer != null && topic != null) consumer.commitSync();
     }
 
     /**
@@ -421,10 +421,8 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
      * @param partitionAndOffset key 对应的分区id；value 对应的游标位置
      */
     public void commitSync(Map<Integer, Long> partitionAndOffset) {
-        if (consumer != null) {
-            for (Map.Entry<Integer, Long> partition : partitionAndOffset.entrySet()) {
-                commitSync(partition.getKey(), partition.getValue());
-            }
+        for (Map.Entry<Integer, Long> partition : partitionAndOffset.entrySet()) {
+            commitSync(partition.getKey(), partition.getValue());
         }
     }
 
@@ -435,7 +433,7 @@ public class KafkaConsumerUtil<K, V> implements Closeable {
      * @param offset      目前已经消费的游标位置
      */
     public void commitSync(int partitionId, long offset) {
-        if (consumer != null) {
+        if (consumer != null && topic != null) {
             Map<TopicPartition, OffsetAndMetadata> map = new HashMap<>();
             TopicPartition partition = new TopicPartition(topic, partitionId);
             OffsetAndMetadata offsetAndMetadata = new OffsetAndMetadata(offset + 1);

@@ -331,25 +331,13 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
     }
 
     /**
-     * 处理Ogg数据，非测试模式
+     * 处理Ogg数据，具体实现
      *
      * @param oggPollInf 业务处理类
      * @param records    从kafka消费到的数据
      * @throws Exception
      */
     public void oggDataDeal(OggPollInf oggPollInf, List<ConsumerRecord<String, byte[]>> records) throws Exception {
-        oggDataDeal(oggPollInf, records, false);
-    }
-
-    /**
-     * 处理Ogg数据，具体实现
-     *
-     * @param oggPollInf 业务处理类
-     * @param records    从kafka消费到的数据
-     * @param isTest     是否是测试模式，是：不进行偏移量提交
-     * @throws Exception
-     */
-    public void oggDataDeal(OggPollInf oggPollInf, List<ConsumerRecord<String, byte[]>> records, boolean isTest) throws Exception {
         long firstOffset = -1L;
         long lastDealOffset = -1L;
         int partition = -1;
@@ -392,9 +380,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
                             // 处理完成，清空缓存
                             genericRecords.clear();
                             // 处理完成，提交偏移量
-                            if (!isTest) {
-                                commitSync(consumerRecord.partition(), lastDealOffset);
-                            }
+                            commitSync(consumerRecord.partition(), lastDealOffset);
                             // 更新首条记录偏移量
                             firstOffset = -1L;
                             logger.info("处理完成，针对分区: {}, 提交偏移量: {}", consumerRecord.partition(), lastDealOffset);
@@ -417,9 +403,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
                             // 获取最后位置
                             lastDealOffset = consumerRecord.offset();
                             // 提交偏移量
-                            if (!isTest) {
-                                commitSync(consumerRecord.partition(), lastDealOffset);
-                            }
+                            commitSync(consumerRecord.partition(), lastDealOffset);
                             logger.info("转换schema完成，针对分区: {}, 提交偏移量: {}", consumerRecord.partition(), lastDealOffset);
                         } catch (Exception updateSchemaException) {
                             // 把解析不了的数据丢回栈顶
@@ -441,9 +425,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
                     // 处理业务数据
                     oggPollInf.dataDeal(genericRecords);
                     // 处理完成，提交偏移量
-                    if (!isTest) {
-                        commitSync(partition, lastDealOffset);
-                    }
+                    commitSync(partition, lastDealOffset);
                     logger.info("处理完成，针对分区: {}, 提交偏移量: {}", partition, lastDealOffset);
                 } catch (Exception dataE) {
                     // 处理业务数据异常，向上抛出
