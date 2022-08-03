@@ -6,6 +6,7 @@ import com.cqx.common.utils.jdbc.DBType;
 import com.cqx.common.utils.jdbc.JDBCUtil;
 import com.cqx.download.kamuro.bean.ComicBookBean;
 import com.cqx.download.kamuro.bean.ComicBookImgBean;
+import com.cqx.download.kamuro.bean.ComicMonthBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +76,16 @@ public class ScanToDB {
      * @throws IntrospectionException
      * @throws InvocationTargetException
      */
-    public void scanBook(String monthPath) throws IOException, SQLException
-            , IllegalAccessException, IntrospectionException, InvocationTargetException {
+    public void scanBook(String monthPath) throws Exception {
+        // 先检查comic_month是否有对应记录，如果没有则插入
+        String checkSql_comic_month = String.format("select month_name from comic_month where month_name='%s'", monthPath);
+        String insertSql_comic_month = String.format("insert into comic_month(month_name) values('%s')", monthPath);
+        List<ComicMonthBean> comicMonthBeanList = jdbcUtil.executeQuery(checkSql_comic_month, ComicMonthBean.class);
+        if (comicMonthBeanList.size() == 0) {
+            int ret = jdbcUtil.executeUpdate(insertSql_comic_month);
+            logger.info("对应月份{}在comic_month表中不存在，执行插入操作，结果：{}", monthPath, ret);
+        }
+
         List<ComicBookBean> comicBookBeans = new ArrayList<>();
         // 目录结构：月份/书/图
         // 先扫描出书，再扫描出图即可
@@ -229,7 +238,7 @@ public class ScanToDB {
      */
     private Map<String, String> getYaoqiTypeAndID(String bookName) {
         Map<String, String> map = new HashMap<>();
-       String tmpBookName = bookName.replace("【", "");
+        String tmpBookName = bookName.replace("【", "");
         String[] bookNameArr = tmpBookName.split("】", -1);
         if (bookNameArr.length == 2) {
             map.put(TYPE, bookNameArr[0]);
