@@ -10,7 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author chenqixu
  */
 public abstract class ICallableTool<V> implements Callable {
-    private long lastHeartTime = System.currentTimeMillis();
+    private final long heartTimeOut = 20 * 1000L;
+    private long lastHeartTime = -1L;
     private AtomicInteger errorNum = new AtomicInteger(0);
     private AtomicBoolean isRun = new AtomicBoolean(false);
     private String taskName;
@@ -32,10 +33,13 @@ public abstract class ICallableTool<V> implements Callable {
      * @return
      */
     public boolean heartIsError() {
-        // 超过300秒没有调用心跳
-        boolean flag = (System.currentTimeMillis() - lastHeartTime) > (300 * 1000);
-        // 没有调用心跳，计数器加1
-        if (flag) errorNum.incrementAndGet();
+        // 有启用心跳
+        if (lastHeartTime > -1L) {
+            // 超过xx秒没有调用心跳
+            boolean flag = (System.currentTimeMillis() - lastHeartTime) > heartTimeOut;
+            // 没有调用心跳，计数器加1
+            if (flag) errorNum.incrementAndGet();
+        }
         // 两次及两次以上心跳异常
         return errorNum.get() > 1;
     }

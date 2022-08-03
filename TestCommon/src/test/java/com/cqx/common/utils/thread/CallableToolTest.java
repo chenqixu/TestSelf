@@ -31,7 +31,7 @@ public class CallableToolTest {
                     do {
                         // 正常业务
                         Random random = new Random();
-                        sleep = random.nextInt(3000);
+                        sleep = random.nextInt(6000);
                         logger.info("sleep：{}", sleep);
 //                    if (sleep > 600) {
 //                        logger.warn("throw Exception.");

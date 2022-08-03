@@ -483,7 +483,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
             records.add(buildConsumerRecord(topic, 2
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
 
             // 2、data+schema
             logger.info("【测试数据结构2、data+schema】");
@@ -493,7 +493,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             records.add(buildConsumerRecord(topic, 2
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
             records.add(buildConsumerRecord(topic, 3, schemaStr.getBytes()));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
 
             // 3、data+schema+data
             logger.info("【测试数据结构3、data+schema+data】");
@@ -505,13 +505,13 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             records.add(buildConsumerRecord(topic, 3, schemaStr.getBytes()));
             records.add(buildConsumerRecord(topic, 4
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
 
             // 4、schema
             logger.info("【测试数据结构4、schema】");
             records.clear();
             records.add(buildConsumerRecord(topic, 1, schemaStr.getBytes()));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
 
             // 5、schema+data
             logger.info("【测试数据结构5、schema+data】");
@@ -519,7 +519,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             records.add(buildConsumerRecord(topic, 1, schemaStr.getBytes()));
             records.add(buildConsumerRecord(topic, 2
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
         }
     }
 
@@ -584,7 +584,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             logger.info("【测试数据结构6、异常data】");
             records.clear();
             records.add(buildConsumerRecord(topic, 1, "123".getBytes()));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
         }
     }
 
@@ -651,7 +651,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             records.add(buildConsumerRecord(topic, 1
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
             records.add(buildConsumerRecord(topic, 2, "123".getBytes()));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
         }
     }
 
@@ -717,7 +717,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             records.clear();
             records.add(buildConsumerRecord(topic, 1, schemaStr.getBytes()));
             records.add(buildConsumerRecord(topic, 2, "123".getBytes()));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
         }
     }
 
@@ -784,7 +784,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             records.clear();
             records.add(buildConsumerRecord(topic, 1
                     , genericRecordUtil.genericRandomRecordByAvroRecord(topic, buildOggData(topic))));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
         }
     }
 
@@ -851,7 +851,7 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             logger.info("【测试数据结构10、schema，更新schema异常】");
             records.clear();
             records.add(buildConsumerRecord(topic, 1, schemaStr.getBytes()));
-            kafkaConsumerUtil.oggDataDeal(oggPollInf, records, true);
+            kafkaConsumerUtil.oggDataDeal(oggPollInf, records);
         }
     }
 
