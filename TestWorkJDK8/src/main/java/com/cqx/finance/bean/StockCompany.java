@@ -34,7 +34,7 @@ public class StockCompany {
         }
     }
 
-    public synchronized void setCurrentPrice(float currentPrice) {
+    public void setCurrentPrice(float currentPrice) {
         synchronized (lock) {
             this.currentPrice = currentPrice;
         }
