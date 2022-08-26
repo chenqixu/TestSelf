@@ -1,4 +1,4 @@
-package com.bussiness.bi.bigdata.realtimemonitor.monitor;
+package com.cqx.finance.bean;
 
 /**
  * 坐标

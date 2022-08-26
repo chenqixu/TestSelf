@@ -1,4 +1,6 @@
-package com.bussiness.bi.bigdata.realtimemonitor.monitor;
+package com.cqx.finance;
+
+import com.cqx.finance.bean.Coordinate;
 
 import java.util.ArrayList;
 import java.util.List;
