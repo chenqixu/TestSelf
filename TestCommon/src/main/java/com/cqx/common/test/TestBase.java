@@ -23,8 +23,11 @@ public class TestBase {
      * @return
      */
     protected String getResourceClassPath(String fileName) {
-        Object obj = new Object();
-        URL url = obj.getClass().getResource("/");
+        // 优化
+        // getClasss()可以供非本工程的继承类使用
+        // new Object().getClass()在IDEA运行的时候，在非本工程的继承类中会有问题
+//        Object obj = new Object();
+        URL url = getClass().getResource("/");
         if (url != null) {
             String path = "file://" + url.getPath() + fileName;
             logger.info("加载到配置文件：{}", path);

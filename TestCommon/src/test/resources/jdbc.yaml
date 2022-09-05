@@ -61,6 +61,11 @@ dbbeans:
     pass_word: "TyM*2CnEm"
     tns: "jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1"
     dbType: "ORACLE"
+  - name: oracle12c_receng_Bean
+    user_name: "receng_dev"
+    pass_word: "receng_dev"
+    tns: "jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1"
+    dbType: "ORACLE"
   - name: oracle11g_xdload_Bean
     user_name: "xdload"
     pass_word: "xdload"
