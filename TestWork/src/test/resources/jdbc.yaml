@@ -1,0 +1,103 @@
+dbbeans:
+  - name: gsdbBean
+    user_name: frtbase
+    pass_word: frtbase
+    tns:
+      - "jdbc:gsdb://10.1.8.148:22581/gsdb"
+    driver: fjlz.gsdb.jdbc.GsdbDriver
+    validation_query: select 1 from dual
+  - name: mysqlBean
+    user_name: "suyan"
+    pass_word: "suyan"
+    tns: "jdbc:mysql://10.1.8.200:3306/suyan_perf?useUnicode=true"
+    dbType: "MYSQL"
+  - name: mysql79Bean
+    user_name: "zyh"
+    pass_word: "zyh"
+    tns: "jdbc:mysql://10.1.12.79:3306/resource_service?useUnicode=true&serverTimezone=GMT%2B8&useSSL=false"
+    dbType: "MYSQL8"
+  - name: adbBean
+    user_name: "label_core"
+    pass_word: "admin"
+    tns: "jdbc:postgresql://10.1.8.206:5432/label_core"
+    dbType: "POSTGRESQL"
+  - name: localAdbBean
+    user_name: "label_core"
+    pass_word: "admin"
+    tns: "jdbc:postgresql://192.168.230.128:5432/label_core"
+    dbType: "POSTGRESQL"
+  - name: localmysqlBean
+    user_name: "udap"
+    pass_word: "udap"
+    tns: "jdbc:mysql://127.0.0.1:3306/utap?useUnicode=true"
+    dbType: "MYSQL"
+  - name: hadoopPostgreSql
+    user_name: "scm"
+    pass_word: "pLKPjp6H5S"
+    tns: "jdbc:postgresql://10.1.8.75:7432/scm"
+    dbType: "POSTGRESQL"
+  - name: oracle242Bean
+    user_name: "web"
+    pass_word: "T%vdNV#i$2"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"
+  - name: oracle242bishowBean
+    user_name: "bishow"
+    pass_word: "C%MuhN#q$4"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"
+  - name: fjhblog242Bean
+    user_name: "fjhblog"
+    pass_word: "V%DySs#y$7"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"
+  - name: oracle242mktbiBean
+    user_name: "mktbi"
+    pass_word: "H%OwNn#q$8"
+    tns: "jdbc:oracle:thin:@10.1.0.242:1521/ywxx"
+    dbType: "ORACLE"
+  - name: oracle12c_cctsys_dev_Bean
+    user_name: "cctsys_dev"
+    pass_word: "TyM*2CnEm"
+    tns: "jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1"
+    dbType: "ORACLE"
+  - name: oracle12c_receng_Bean
+    user_name: "receng_dev"
+    pass_word: "receng_dev"
+    tns: "jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1"
+    dbType: "ORACLE"
+  - name: oracle11g_xdload_Bean
+    user_name: "xdload"
+    pass_word: "xdload"
+    tns: "jdbc:oracle:thin:@10.1.8.205:1521/cbass"
+    dbType: "ORACLE"
+  - name: localoracleBean
+    user_name: "bishow"
+    pass_word: "bishow"
+    tns: "jdbc:oracle:thin:@192.168.230.128:1521:orcl"
+    dbType: "ORACLE"
+  - name: dm8_204sysdba_Bean
+    user_name: "SYSDBA"
+    pass_word: "SYSDBA"
+    tns: "jdbc:dm://10.1.8.204:5237"
+    dbType: "DM8"
+  - name: oceanbeanBean
+    user_name:
+    pass_word:
+    tns: ""
+    dbType: "OTHER"
+    driver: com.alipay.oceanbase.jdbc.Driver
+    validation_query: select 1 from dual
+  - name: hiveHuaWeiBean
+    user_name: ""
+    pass_word: ""
+    tns: ""
+    dbType: "HIVE3"
+    isPool: false
+    auth:
+      auth_type: ""
+      bdoc_id: ""
+      bdoc_key: ""
+      principal: ""
+      keytab: ""
+      krb5: ""
