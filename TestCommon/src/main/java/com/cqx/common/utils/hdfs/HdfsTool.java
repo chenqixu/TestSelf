@@ -418,6 +418,38 @@ public class HdfsTool {
         }
     }
 
+    /**
+     * 从本地拷贝文件到HDFS
+     *
+     * @param inputFile
+     * @param outputFile
+     * @throws Exception
+     */
+    public void copyBytesFromLocal(String inputFile, String outputFile) throws Exception {
+        copyBytesFromLocal(fs, inputFile, outputFile);
+    }
+
+    /**
+     * 从本地拷贝文件到HDFS
+     *
+     * @param fs
+     * @param inputFile
+     * @param outputFile
+     * @throws Exception
+     */
+    public void copyBytesFromLocal(FileSystem fs, String inputFile, String outputFile) throws Exception {
+        if (fs != null && new File(inputFile).exists()) {
+            logger.info("copyBytesFromLocal：{} to {}.", inputFile, outputFile);
+            delete(fs, outputFile);
+            InputStream in = new FileInputStream(inputFile);
+            OutputStream out = createFile(fs, outputFile);
+            IOUtils.copyBytes(in, out, fs.getConf());
+            IOUtils.closeStream(in);
+            IOUtils.closeStream(out);
+            logger.info("copyBytesFromLocal closeStream.");
+        }
+    }
+
     public boolean delete(String path) throws IOException {
         return delete(fs, path);
     }
