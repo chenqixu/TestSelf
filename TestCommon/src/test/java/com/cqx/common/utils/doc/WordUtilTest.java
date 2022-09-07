@@ -35,6 +35,13 @@ public class WordUtilTest {
     }
 
     @Test
+    public void readImageDoc() throws IOException {
+        String path = "d:\\Work\\CVS\\BI\\系统文档\\EDC业务\\应用层\\实时应用\\实时ETL\\B域\\09_维护手册\\";
+        String fileName = "关于试点智能互动式语音应答服务的相关需求-维护手册.doc";
+        wordUtil.readDoc(path + fileName);
+    }
+
+    @Test
     public void writeText() throws IOException, InvalidFormatException {
         String fileName = "d:\\tmp\\九色鹿\\test.docx";
         wordUtil.open();

@@ -1,8 +1,10 @@
 package com.cqx.common.utils.doc;
 
+import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.excel.ExcelCommons;
 import com.cqx.common.utils.excel.ExcelUtils;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
@@ -159,10 +161,25 @@ public class WordUtil implements Closeable {
 //            printInfo(document.getRange());
 //            printInfo(document.getBookmarks());
 //            readTable(document.getRange());
-            readList(document.getRange());
+//            readList(document.getRange());
+            readPicture(document.getPicturesTable());
         } finally {
             if (is != null) is.close();
             if (document != null) document.close();
+        }
+    }
+
+    /**
+     * 读取所有图片
+     *
+     * @param picturesTable
+     */
+    private void readPicture(PicturesTable picturesTable) {
+        for (Picture picture : picturesTable.getAllPictures()) {
+            int picSize = picture.getSize();
+            if (picSize > 0) {
+                logger.info("图片大小：{}，描述：{}", Utils.changeUnit(picSize), picture.getDescription());
+            }
         }
     }
 
@@ -219,6 +236,7 @@ public class WordUtil implements Closeable {
         int num = range.numParagraphs();
         Paragraph para;
         for (int i = 0; i < num; i++) {
+            // 获取段落
             para = range.getParagraph(i);
             if (para.isInList()) {
                 logger.info("list: {}", para.text());

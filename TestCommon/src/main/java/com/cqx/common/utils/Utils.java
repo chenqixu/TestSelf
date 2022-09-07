@@ -200,4 +200,55 @@ public class Utils {
         buffer.flip();//need flip
         return buffer.getLong();
     }
+
+    /**
+     * 单位转换
+     *
+     * @param size
+     * @return
+     */
+    public static String changeUnit(int size) {
+        float _size = size;
+        int unitInt = String.valueOf(size).length() / 3;
+        float unitFloat = String.valueOf(size).length() / 3f;
+        int firstDecimal = Integer.valueOf(String.valueOf(unitFloat).split("\\.", -1)[1].substring(0, 1));
+        String ret = "0 B";
+        if (size > 0 && unitInt > 0) {
+            if (firstDecimal > 0) {
+                for (int i = 0; i < unitInt; i++) {
+                    _size = _size / 1000;
+                }
+                ret = _size + " " + getUnit(unitInt);
+            } else if (firstDecimal == 0 && unitInt > 1) {
+                for (int i = 0; i < unitInt - 1; i++) {
+                    _size = _size / 1000;
+                }
+                ret = _size + " " + getUnit(unitInt - 1);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 输出单位
+     *
+     * @param unitInt
+     * @return
+     */
+    public static String getUnit(int unitInt) {
+        switch (unitInt) {
+            case 1:
+                return "KB";
+            case 2:
+                return "MB";
+            case 3:
+                return "GB";
+            case 4:
+                return "TB";
+            case 5:
+                return "PB";
+            default:
+                return "B";
+        }
+    }
 }
