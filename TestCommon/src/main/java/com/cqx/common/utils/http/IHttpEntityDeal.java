@@ -2,6 +2,8 @@ package com.cqx.common.utils.http;
 
 import org.apache.http.HttpEntity;
 
+import java.util.Map;
+
 /**
  * IHttpEntityDeal
  *
@@ -9,5 +11,5 @@ import org.apache.http.HttpEntity;
  */
 public interface IHttpEntityDeal {
 
-    void deal(HttpEntity entity);
+    void deal(Map<String, String> responseHeaderMap, HttpEntity entity);
 }

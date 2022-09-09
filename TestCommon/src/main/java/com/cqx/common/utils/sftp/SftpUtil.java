@@ -266,7 +266,7 @@ public class SftpUtil {
      * @param local_file
      * @param remote_file
      */
-    public static void upload(SftpConnection sftpConnection, String local_file, String remote_file) {
+    public static boolean upload(SftpConnection sftpConnection, String local_file, String remote_file) {
         if (sftpConnection != null) {
             TimeCostUtil timeCostUtil = new TimeCostUtil();
             timeCostUtil.start();
@@ -274,11 +274,15 @@ public class SftpUtil {
             try {
                 channelSftp.put(local_file, remote_file, ChannelSftp.OVERWRITE);
             } catch (SftpException e) {
-                logger.error(e.getMessage(), e);
+                logger.error(String.format("上传出错，本地路径：%s，远程路径：%s，具体错误信息：%s",
+                        local_file, remote_file, e.getMessage()), e);
+                return false;
             }
             timeCostUtil.stop();
-            logger.info("local_file：{}，remote_file：{}，cost：{}", local_file, remote_file, timeCostUtil.getCost());
+            logger.info("完成SFTP上传处理,local_file：{}，remote_file：{}，cost：{}", local_file, remote_file, timeCostUtil.getCost());
+            return true;
         }
+        return false;
     }
 
     /**

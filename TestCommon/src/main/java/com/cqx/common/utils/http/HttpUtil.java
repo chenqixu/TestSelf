@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.Map;
  *
  * @author chenqixu
  */
-public class HttpUtil {
+public class HttpUtil implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
     private static final String GBK_CODE = "GBK";
@@ -32,7 +33,7 @@ public class HttpUtil {
         final String[] result = {""};
         doSend(url, null, UTF8_CODE, HttpGet.class, headerMap, new IHttpEntityDeal() {
             @Override
-            public void deal(HttpEntity entity) {
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
                     result[0] = EntityUtils.toString(entity, UTF8_CODE);
@@ -44,13 +45,11 @@ public class HttpUtil {
         return result[0];
     }
 
-    public String doPost(String url, String data, String data_code) {
-        Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Content-Type", "application/json");
+    public String doPost(String url, Map<String, String> headerMap, String data) {
         final String[] result = {""};
-        doSend(url, data, data_code, HttpPost.class, headerMap, new IHttpEntityDeal() {
+        doSend(url, data, UTF8_CODE, HttpPost.class, headerMap, new IHttpEntityDeal() {
             @Override
-            public void deal(HttpEntity entity) {
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
                     result[0] = EntityUtils.toString(entity);
@@ -62,8 +61,29 @@ public class HttpUtil {
         return result[0];
     }
 
+    /**
+     * 获得完整的Response返回结果
+     *
+     * @param url
+     * @param headerMap
+     * @param data
+     * @return
+     */
+    public HttpResponseBean doPostGetResponse(String url, Map<String, String> headerMap, String data) {
+        final HttpResponseBean[] result = {new HttpResponseBean()};
+        doSend(url, data, UTF8_CODE, HttpPost.class, headerMap, new IHttpEntityDeal() {
+            @Override
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
+                result[0] = new HttpResponseBean(responseHeaderMap, entity);
+            }
+        });
+        return result[0];
+    }
+
     public String doPost(String url, String data) {
-        return doPost(url, data, UTF8_CODE);
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("Content-Type", "application/json");
+        return doPost(url, headerMap, data);
     }
 
     public String doPut(String url, String data) {
@@ -72,7 +92,7 @@ public class HttpUtil {
         final String[] result = {""};
         doSend(url, data, UTF8_CODE, HttpPut.class, headerMap, new IHttpEntityDeal() {
             @Override
-            public void deal(HttpEntity entity) {
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
                     result[0] = EntityUtils.toString(entity);
@@ -129,10 +149,16 @@ public class HttpUtil {
             httpRequestBase.setConfig(requestConfig);
             // 执行请求得到返回对象
             response = httpClient.execute(httpRequestBase);
+            // 通过返回对象获取返回的headers，并设置到Map中
+            Header[] allHeaders = response.getAllHeaders();
+            Map<String, String> responseHeaderMap = new HashMap<>();
+            for (Header header : allHeaders) {
+                responseHeaderMap.put(header.getName(), header.getValue());
+            }
             // 通过返回对象获取返回数据
             HttpEntity entity = response.getEntity();
             // 通过公共接口对entity进行处理
-            iHttpEntityDeal.deal(entity);
+            iHttpEntityDeal.deal(responseHeaderMap, entity);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         } finally {
