@@ -510,4 +510,14 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @throws SQLException
      */
     boolean executeCall(String sql) throws SQLException;
+
+    /**
+     * 信息收集
+     *
+     * @param ownName
+     * @param tableName
+     * @return
+     * @throws SQLException
+     */
+    int gatherTableStats(String ownName, String tableName) throws SQLException;
 }

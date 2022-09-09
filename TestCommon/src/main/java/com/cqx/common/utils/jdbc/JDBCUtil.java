@@ -2506,4 +2506,51 @@ public class JDBCUtil implements IJDBCUtil {
         }
         return ret;
     }
+
+    /**
+     * 信息收集
+     * <pre>
+     *     GATHER_TABLE_STATS  收集目标表、列、及表上索引的统计信息
+     *     OWNNAME  要分析表的拥有者
+     *     TABNAME  要分析的表名
+     *     PARTNAME  分区的名字,只对分区表或分区索引有用
+     *     DEGREE  并行度
+     *     GRANULARITY  收集统计信息的粒度。(只应用于分区表),值包括:
+     *        - 'ALL'  搜集(SUBPARTITION,PARTITION,AND GLOBAL)统计信息
+     *        - 'AUTO'  基于分区的类型来决定粒度，默认值
+     *        - 'DEFAULT'  收集GLOBAL和PARTITION LEVEL的统计信息，等同与'GLOBAL AND PARTITION'
+     *        - 'GLOBAL'  收集全局统计信息
+     *        - 'GLOBAL AND PARTITION'  收集GLOBAL和PARTITION LEVEL统计信息
+     *        - 'GPARTITION'  收集PARTITION-LEVEL的统计信息
+     *        - 'SUBPARTITION'  收集SUBPARTITION-LEVEL统计信息
+     *     CASCADE  收集索引的统计信息。是收集索引的信息.默认为FALSE
+     *     FORCE  即使锁住也要收集表的统计信息
+     *     ESTIMATE_PERCENT  采样行的百分比,取值范围[0.000001,100]，使用常DBMS_STATS.AUTO_SAMPLE_SIZE让ORACLE决定适合的采样大小，
+     *                   这也是默认值，可以使用DBMS_STATS.SET_PARAM进行修改默认值。NULL可以让ORACLE采样全部数据
+     *     BLOCK_SAMPLE  是否采用随即块采样代替行随即行采样
+     *     METHOD_OPT  决定HISTOGRAMS信息是怎样被统计的.METHOD_OPT的取值如下:
+     *        - FOR ALL COLUMNS  统计所有列的HISTOGRAMS
+     *        - FOR ALL INDEXED COLUMNS  统计所有INDEXED列的HISTOGRAMS
+     *        - FOR ALL HIDDEN COLUMNS  统计你看不到列的HISTOGRAMS
+     *        - FOR COLUMNS <LIST> SIZE <INTEGER> | REPEAT | AUTO |
+     *                      INTEGER指的直方图的BUCKETS数量，取值范围为[1,254]
+     *                      REPEAT上次统计过的HISTOGRAMS
+     *                      AUTO  ORACLE根据列数据的分布及相关列的访问量来决定收集直方图的列
+     *                      SKEWONLY  ORACLE 根据列的数据分布来决定哪些列收集直方图
+     * </pre>
+     *
+     * @param ownName   用户
+     * @param tableName 表名
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public int gatherTableStats(String ownName, String tableName) throws SQLException {
+        String sql = String.format("BEGIN DBMS_STATS.GATHER_TABLE_STATS(OWNNAME => '%s'" +
+                ",TABNAME => '%s',DEGREE => 16,ESTIMATE_PERCENT => 2" +
+                ", METHOD_OPT=>'FOR ALL COLUMNS SIZE 1') ; END;", ownName, tableName);
+        int ret = executeUpdate(sql, true);
+        logger.info("信息收集sql：{}，ret：{}", sql, ret);
+        return ret;
+    }
 }

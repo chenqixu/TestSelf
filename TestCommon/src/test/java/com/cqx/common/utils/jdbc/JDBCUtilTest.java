@@ -725,6 +725,8 @@ public class JDBCUtilTest extends TestBase {
 //        boolean ret = jdbcUtil.executeCall(sql);
         int ret = jdbcUtil.executeUpdate(sql);
         logger.info("sql：{}，ret：{}", sql, ret);
+        // 封装的信息收集方法
+        jdbcUtil.gatherTableStats("WEB", "TOOLUI_TASK");
     }
 
     @Test
