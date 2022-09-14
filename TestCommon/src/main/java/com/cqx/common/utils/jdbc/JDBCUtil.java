@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Matcher;
 
 /**
  * <h2>JDBC工具类</h2>
@@ -1977,8 +1978,17 @@ public class JDBCUtil implements IJDBCUtil {
         // 判断目标字段类型
         switch (dstFieldType) {
             case "java.lang.String":
-                if (fieldValue == null) result = "" + fieldValue;
-                else result = "'" + fieldValue.toString().replaceAll("'", "''") + "'";
+                if (fieldValue == null) {
+                    result = "" + fieldValue;
+                } else {
+                    String _tmpValue = fieldValue.toString();
+                    // 双美元符号是postgresql的关键字
+                    if (dbBean.getDbType().equals(DBType.POSTGRESQL) && _tmpValue.contains("$$")) {
+                        _tmpValue = _tmpValue.replaceAll(Matcher.quoteReplacement("$$")
+                                , Matcher.quoteReplacement("\\$\\$"));
+                    }
+                    result = "'" + _tmpValue.replaceAll("'", "''") + "'";
+                }
                 break;
             case "java.lang.Integer":
             case "int":

@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
 
 public class JDBCUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(JDBCUtilTest.class);
@@ -206,7 +207,7 @@ public class JDBCUtilTest extends TestBase {
             jdbcUtil = new JDBCUtil(adbBean);
 
             List<List<QueryResult>> list = QueryResultFactory.getInstance()
-                    .buildQR("f_varchar", "java.lang.String", "test1")
+                    .buildQR("f_varchar", "java.lang.String", "org.apache.ibatis.binding.MapperMethod.execute(MapperMethod.java:82) at org.apache.ibatis.binding.MapperProxy.invoke(MapperProxy.java:53) at com.sun.proxy.$Proxy402.selectMainSite(Unknown Source) at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) at java.lang.reflect.Method.invoke(Method.java:498) at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:333) at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157) at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:92) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179) at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:213) at com.sun.proxy.$Proxy403.selectMainSite(Unknown Source) at com.ztesoft.local.sales.survey.service.impl.MvSiteInfoServiceImpl.selectMainSite(MvSiteInfoServiceImpl.java:143) at com.ztesoft.local.sales.survey.service.impl.MvSiteInfoServiceImpl$$FastClassBySpringCGLIB$$5daf860b.invoke() at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204) at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:721) at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157) at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:92) at ")
                     .buildQR("f_boolean", "java.lang.Boolean", true)
                     .buildQR("f_timestamp", "java.sql.TimeStamp", new java.sql.Timestamp(new Date().getTime()))
                     .buildQR("f_date", "java.sql.Date", new java.sql.Date(new Date().getTime()))
@@ -920,6 +921,12 @@ public class JDBCUtilTest extends TestBase {
     @Test
     public void test79Mysql() throws SQLException {
         jdbcUtil.executeQuery("select 1");
+    }
+
+    @Test
+    public void replaceDollar() {
+        String _tmpValue = "aa$$bb";
+        logger.info(_tmpValue.replaceAll(Matcher.quoteReplacement("$$"), Matcher.quoteReplacement("\\$\\$")));
     }
 
     interface Q1 {
