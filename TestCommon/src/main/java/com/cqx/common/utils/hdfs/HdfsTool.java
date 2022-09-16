@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class HdfsTool {
 
-    private static final String KRB5 = "java.security.krb5.conf";
+    public static final String KRB5 = "java.security.krb5.conf";
     private final static String HDFS_BDOC_ID = "hadoop.security.bdoc.access.id";
     private final static String HDFS_BDOC_KEY = "hadoop.security.bdoc.access.key";
     private final static String HDFS_KEYTAB_STR = "username.client.keytab.file";
