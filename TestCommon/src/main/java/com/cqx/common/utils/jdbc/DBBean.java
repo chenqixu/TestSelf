@@ -52,6 +52,11 @@ public class DBBean {
         } else if (tns.getClass().equals(java.lang.String.class)) {
             setTns((String) param.get("tns"));
         }
+        // isPool
+        Object _isPool = param.get("isPool");
+        if (_isPool != null) {
+            setPool(Boolean.valueOf(_isPool.toString()));
+        }
         // dbType：可能为空，需要解析driver和validation_query
         String _dbType_Str = (String) param.get("dbType");
         if (_dbType_Str == null) {
@@ -89,7 +94,7 @@ public class DBBean {
                 + "，MaxActive：" + MaxActive
                 + "，MinIdle：" + MinIdle
                 + "，MaxIdle：" + MaxIdle
-				+ "，isPool：" + isPool
+                + "，isPool：" + isPool
                 ;
     }
 

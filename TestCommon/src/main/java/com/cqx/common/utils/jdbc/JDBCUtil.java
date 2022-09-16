@@ -134,14 +134,7 @@ public class JDBCUtil implements IJDBCUtil {
                 }
             } catch (Exception e) {
                 logger.error("连接池初始化失败。" + e.getMessage(), e);
-            }
-        } else {// 非连接池
-            try {
-                String DriverClassName = dbBean.getDbType().getDriver();
-                Class.forName(DriverClassName);
-                DriverManager.setLoginTimeout(15);//超时
-            } catch (ClassNotFoundException e) {
-                logger.error("无法加载到数据库驱动类，请检查lib。" + e.getMessage(), e);
+                if (isThrow()) throw e;
             }
         }
     }
@@ -2290,8 +2283,18 @@ public class JDBCUtil implements IJDBCUtil {
             int ColumnDisplaySize = rsMeta.getColumnDisplaySize(column);
             int Precision = rsMeta.getPrecision(column);
             int Scale = rsMeta.getScale(column);
-            String SchemaName = rsMeta.getSchemaName(column);
-            String CatalogName = rsMeta.getCatalogName(column);
+            String SchemaName = "";
+            try {
+                SchemaName = rsMeta.getSchemaName(column);
+            } catch (Exception e) {
+                // hive就不支持：Method not supported
+            }
+            String CatalogName = "";
+            try {
+                CatalogName = rsMeta.getCatalogName(column);
+            } catch (Exception e) {
+                // hive就不支持：Method not supported
+            }
             Object value = null;
             if (rs != null) {
                 value = rs.getObject(column);

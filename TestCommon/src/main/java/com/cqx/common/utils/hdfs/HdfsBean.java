@@ -1,5 +1,9 @@
 package com.cqx.common.utils.hdfs;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * HdfsBean
  *
@@ -12,6 +16,34 @@ public class HdfsBean {
     private String principal;
     private String keytab;
     private String krb5;
+    private String name;
+    private String hadoop_conf;
+
+    public static HdfsBean newbuilder() {
+        return new HdfsBean();
+    }
+
+    public static List<HdfsBean> parser(Object param) {
+        List<Map<String, ?>> parser = (ArrayList<Map<String, ?>>) param;
+        List<HdfsBean> result = new ArrayList<>();
+        for (Map<String, ?> map : parser) {
+            result.add(HdfsBean.newbuilder().parserMap(map));
+        }
+        return result;
+    }
+
+    public HdfsBean parserMap(Map<String, ?> param) {
+        // 解析参数
+        setName((String) param.get("name"));
+        setHadoop_conf((String) param.get("hadoop_conf"));
+        setAuth_type((String) param.get("auth_type"));
+        setBdoc_id((String) param.get("bdoc_id"));
+        setBdoc_key((String) param.get("bdoc_key"));
+        setPrincipal((String) param.get("principal"));
+        setKeytab((String) param.get("keytab"));
+        setKrb5((String) param.get("krb5"));
+        return this;
+    }
 
     public String getAuth_type() {
         return auth_type;
@@ -59,5 +91,21 @@ public class HdfsBean {
 
     public void setKrb5(String krb5) {
         this.krb5 = krb5;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHadoop_conf() {
+        return hadoop_conf;
+    }
+
+    public void setHadoop_conf(String hadoop_conf) {
+        this.hadoop_conf = hadoop_conf;
     }
 }

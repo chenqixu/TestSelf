@@ -2,6 +2,8 @@ package com.cqx.common.utils.jdbc;
 
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
+import com.cqx.common.utils.hdfs.HdfsBean;
+import com.cqx.common.utils.hdfs.HdfsTool;
 import com.cqx.common.utils.jdbc.IJDBCUtilCall.IQueryResultBean;
 import com.cqx.common.utils.system.ArraysUtil;
 import com.cqx.common.utils.system.ByteUtil;
@@ -30,13 +32,17 @@ import java.util.regex.Matcher;
 
 public class JDBCUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(JDBCUtilTest.class);
+    private static final String ZOOKEEPER_DEFAULT_LOGIN_CONTEXT_NAME = "Client";
+    private static final String ZOOKEEPER_SERVER_PRINCIPAL_KEY = "zookeeper.server.principal";
+    private static final String ZOOKEEPER_DEFAULT_SERVER_PRINCIPAL = "zookeeper/hadoop";
     private IJDBCUtil jdbcUtil;
     private String jdbcBean;
+    private ParamsParserUtil paramsParserUtil;
 
     @Before
     public void setUp() throws Exception {
         Map params = getParam("jdbc.yaml");
-        ParamsParserUtil paramsParserUtil = new ParamsParserUtil(params);
+        paramsParserUtil = new ParamsParserUtil(params);
         // 从JVM参数中获取，使用方式：-Djdbc.bean=mysql79Bean
         jdbcBean = System.getProperty("jdbc.bean");
         DBBean dbBean;
@@ -56,8 +62,8 @@ public class JDBCUtilTest extends TestBase {
 //            dbBean.setPool(false);
         }
 //        jdbcUtil = new JDBCRetryUtil(dbBean, 30000, 30);
-//        jdbcUtil = new JDBCUtil(dbBean);
-        jdbcUtil = new JDBCUtil(dbBean, 1, 1, 1);
+        jdbcUtil = new JDBCUtil(dbBean);
+//        jdbcUtil = new JDBCUtil(dbBean, 1, 1, 1);
     }
 
     @After
@@ -927,6 +933,32 @@ public class JDBCUtilTest extends TestBase {
     public void replaceDollar() {
         String _tmpValue = "aa$$bb";
         logger.info(_tmpValue.replaceAll(Matcher.quoteReplacement("$$"), Matcher.quoteReplacement("\\$\\$")));
+    }
+
+    @Test
+    public void hiveTest() throws Exception {
+        // -Djdbc.bean=hiveHuaWeiBean
+        HdfsBean hdfsBean = paramsParserUtil.getHdfsBeanMap().get("hacluster");
+        hdfsBean.setHadoop_conf(getResourcePath(hdfsBean.getHadoop_conf()));
+        hdfsBean.setKeytab(getResourcePath(hdfsBean.getKeytab()));
+        hdfsBean.setKrb5(getResourcePath(hdfsBean.getKrb5()));
+        HdfsTool.zookeeperInitKerberos(hdfsBean.getHadoop_conf()
+                , hdfsBean.getPrincipal().replace("@HADOOP.COM", "")
+                , hdfsBean);
+
+//        String connectionInfo = "10.1.12.79:24002,10.1.12.78:24002,10.1.12.75:24002";
+//        ZookeeperTools zookeeperTools = ZookeeperTools.getInstance();
+//        zookeeperTools.init(connectionInfo);
+//        List<String> list = zookeeperTools.listForPath("/");
+//        StringUtil.printList(list);
+//        zookeeperTools.close();
+
+        for (List<QueryResult> queryResults : jdbcUtil.executeQuery("select * from test1 limit 1")) {
+            logger.info("1、{}", queryResults);
+        }
+        for (List<QueryResult> queryResults : jdbcUtil.executeQuery("show tables")) {
+            logger.info("2、{}", queryResults);
+        }
     }
 
     interface Q1 {

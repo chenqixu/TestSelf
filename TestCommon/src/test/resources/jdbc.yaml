@@ -91,13 +91,13 @@ dbbeans:
   - name: hiveHuaWeiBean
     user_name: ""
     pass_word: ""
-    tns: ""
+    tns: "jdbc:hive2://10.1.12.79:24002,10.1.12.78:24002,10.1.12.75:24002/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;sasl.qop=auth-conf;auth=KERBEROS;principal=hive/hadoop.hadoop.com@HADOOP.COM"
     dbType: "HIVE3"
-    isPool: false
-    auth:
-      auth_type: ""
-      bdoc_id: ""
-      bdoc_key: ""
-      principal: ""
-      keytab: ""
-      krb5: ""
+    isPool: true
+hdfsbeans:
+  - name: hacluster
+    hadoop_conf: "hdfs/"
+    auth_type: "kerberos"
+    principal: "yz_newland@HADOOP.COM"
+    keytab: "hdfs/yz_newland.keytab"
+    krb5: "hdfs/krb5.conf"

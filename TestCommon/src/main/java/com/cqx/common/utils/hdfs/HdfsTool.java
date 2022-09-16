@@ -1,6 +1,7 @@
 package com.cqx.common.utils.hdfs;
 
 import com.cqx.common.utils.file.FileUtil;
+import com.cqx.common.utils.security.LoginUtil;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -31,7 +32,9 @@ public class HdfsTool {
     private final static String HDFS_AUTH_TYPE = "hadoop.security.authentication";
     private final static String HDFS_AUTH_TYPE_CHECK = "hadoop.security.authorization";
     private static final Logger logger = LoggerFactory.getLogger(HdfsTool.class);
-
+    private static final String ZOOKEEPER_DEFAULT_LOGIN_CONTEXT_NAME = "Client";
+    private static final String ZOOKEEPER_SERVER_PRINCIPAL_KEY = "zookeeper.server.principal";
+    private static final String ZOOKEEPER_DEFAULT_SERVER_PRINCIPAL = "zookeeper/hadoop";
     private Configuration configuration;
     private FileSystem fs;
 
@@ -41,6 +44,48 @@ public class HdfsTool {
     public HdfsTool(String conf_path, HdfsBean hdfsBean) throws IOException {
         configuration = getConf(conf_path, hdfsBean);
         fs = getFileSystem(configuration);
+    }
+
+    /**
+     * 初始化本地kerberos认证
+     *
+     * @param conf_path
+     * @param hdfsBean
+     * @return
+     * @throws IOException
+     */
+    public static Configuration initKerberos(String conf_path, HdfsBean hdfsBean) throws IOException {
+        if (hdfsBean.getAuth_type().equals("kerberos")) {
+            return new HdfsTool().getConf(conf_path, hdfsBean);
+        } else {
+            throw new NullPointerException("不是kerberos认证！请确认配置。");
+        }
+    }
+
+    /**
+     * 初始化本地kerberos认证和zookeeper上的kerberos认证
+     *
+     * @param conf_path
+     * @param USER_NAME
+     * @param hdfsBean
+     * @throws IOException
+     */
+    public static void zookeeperInitKerberos(String conf_path, String USER_NAME, HdfsBean hdfsBean) throws IOException {
+        Configuration configuration = initKerberos(conf_path, hdfsBean);
+
+        File userKeytabFile = new File(hdfsBean.getKeytab());
+        if (!userKeytabFile.exists()) {
+            logger.error("userKeytabFile(" + userKeytabFile.getAbsolutePath() + ") does not exsit.");
+            throw new IOException("userKeytabFile(" + userKeytabFile.getAbsolutePath() + ") does not exsit.");
+        }
+        String USER_KEYTAB_FILE = userKeytabFile.getAbsolutePath();
+        String KRB5_FILE = hdfsBean.getKrb5();
+
+        LoginUtil.setJaasConf(ZOOKEEPER_DEFAULT_LOGIN_CONTEXT_NAME, USER_NAME, USER_KEYTAB_FILE);
+        LoginUtil.setZookeeperServerPrincipal(ZOOKEEPER_SERVER_PRINCIPAL_KEY, ZOOKEEPER_DEFAULT_SERVER_PRINCIPAL);
+        // 安全模式
+        // Zookeeper登录认证
+        LoginUtil.login(USER_NAME, USER_KEYTAB_FILE, KRB5_FILE, configuration);
     }
 
     /**

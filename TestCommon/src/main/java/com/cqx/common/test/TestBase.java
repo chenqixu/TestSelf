@@ -45,12 +45,12 @@ public class TestBase {
      * @return
      */
     protected String getResourcePath(String fileName) {
-        Object obj = new Object();
+//        Object obj = new Object();
         String tmpFileName = fileName;
         if (!fileName.startsWith("/")) {
             tmpFileName = "/" + fileName;
         }
-        URL url = obj.getClass().getResource(tmpFileName);
+        URL url = getClass().getResource(tmpFileName);
         if (url != null) {
             String path = url.getPath().replaceFirst("/", "");
             logger.info("加载到资源文件：{}", path);
