@@ -56,7 +56,7 @@ public class HdfsTool {
      */
     public static Configuration initKerberos(String conf_path, HdfsBean hdfsBean) throws IOException {
         if (hdfsBean.getAuth_type().equals("kerberos")) {
-            return new HdfsTool().getConf(conf_path, hdfsBean);
+            return new HdfsTool().getConf(conf_path, hdfsBean, false);
         } else {
             throw new NullPointerException("不是kerberos认证！请确认配置。");
         }
@@ -247,9 +247,24 @@ public class HdfsTool {
     /**
      * 获取配置文件
      *
+     * @param conf_path
+     * @param hdfsBean
      * @return
+     * @throws IOException
      */
     public Configuration getConf(String conf_path, HdfsBean hdfsBean) throws IOException {
+        return getConf(conf_path, hdfsBean, true);
+    }
+
+    /**
+     * 获取配置文件
+     *
+     * @param conf_path
+     * @param hdfsBean
+     * @param isLogin
+     * @return
+     */
+    public Configuration getConf(String conf_path, HdfsBean hdfsBean, boolean isLogin) throws IOException {
         Configuration hadoopConfig = new Configuration();
         String _conf_path = FileUtil.endWith(conf_path);
         hadoopConfig.addResource(new Path(_conf_path + "core-site.xml"));
@@ -282,11 +297,14 @@ public class HdfsTool {
                 hadoopConfig.set(HDFS_AUTH_TYPE, "kerberos");
                 hadoopConfig.set(HDFS_AUTH_TYPE_CHECK, "true");
 
-                // kerberos krb5.conf
-                System.setProperty(KRB5, krb5);
-                UserGroupInformation.setConfiguration(hadoopConfig);
-                //login
-                UserGroupInformation.loginUserFromKeytab(hadoopConfig.get(HDFS_PRINCIPAL_STR), hadoopConfig.get(HDFS_KEYTAB_STR));
+                if (isLogin) {
+                    // kerberos krb5.conf
+                    System.setProperty(KRB5, krb5);
+                    // 设置配置
+                    UserGroupInformation.setConfiguration(hadoopConfig);
+                    // login
+                    UserGroupInformation.loginUserFromKeytab(hadoopConfig.get(HDFS_PRINCIPAL_STR), hadoopConfig.get(HDFS_KEYTAB_STR));
+                }
             } else {
                 throw new NullPointerException(String.format(
                         "当前认证类型为kerberos，principal或keytab或krb5不能为空，[principal]：%s，[keytab]：%s，[krb5]：%s，请检查！",
