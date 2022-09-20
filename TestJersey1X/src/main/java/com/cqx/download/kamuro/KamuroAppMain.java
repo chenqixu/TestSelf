@@ -325,7 +325,7 @@ public class KamuroAppMain {
                             @Override
                             public void callBack() {
                                 // 心跳，需要在回调里执行
-                                logger.info("心跳……");
+                                logger.debug("心跳……");
                                 heartbeat();
                             }
                         });

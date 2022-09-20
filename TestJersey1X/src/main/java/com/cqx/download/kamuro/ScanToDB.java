@@ -49,6 +49,7 @@ public class ScanToDB {
         DBBean dbBean = new DBBean();
         dbBean.setDbType(DBType.DERBY_NET);
         dbBean.setTns("jdbc:derby://localhost:1527/z:/Reader/web/res/db/derby/sample");
+//        dbBean.setTns("jdbc:derby://localhost:1527/d:/tmp/data/derby/sample");
         dbBean.setUser_name("admin");
         dbBean.setPass_word("admin");
         ScanToDB scanToDB = new ScanToDB(basePath, dbBean);
