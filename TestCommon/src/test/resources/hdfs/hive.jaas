@@ -1,0 +1,9 @@
+Client {
+com.sun.security.auth.module.Krb5LoginModule required
+useKeyTab=true
+keyTab="I:\\Document\\Workspaces\\Git\\TestSelf\\TestCommon\\src\\test\\resources\\hdfs\\yz_newland.keytab"
+principal="yz_newland@HADOOP.COM"
+useTicketCache=false
+doNotPrompt=true
+debug=true;
+};

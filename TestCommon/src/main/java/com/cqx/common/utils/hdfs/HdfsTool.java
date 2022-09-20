@@ -9,6 +9,7 @@ import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.DistributedFileSystem;
 import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.security.SecurityUtil;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,8 @@ import java.util.List;
  */
 public class HdfsTool {
 
-    public static final String KRB5 = "java.security.krb5.conf";
+    private static final String KRB5 = "java.security.krb5.conf";
+    private final static String JAAS_LOGIN_CONFIG = "java.security.auth.login.config";
     private final static String HDFS_BDOC_ID = "hadoop.security.bdoc.access.id";
     private final static String HDFS_BDOC_KEY = "hadoop.security.bdoc.access.key";
     private final static String HDFS_KEYTAB_STR = "username.client.keytab.file";
@@ -86,6 +88,28 @@ public class HdfsTool {
         // 安全模式
         // Zookeeper登录认证
         LoginUtil.login(USER_NAME, USER_KEYTAB_FILE, KRB5_FILE, configuration);
+    }
+
+    /**
+     * hive kerberos认证
+     *
+     * @param hdfsBean
+     * @throws IOException
+     */
+    public static void hiveInitKerberos(HdfsBean hdfsBean) throws IOException {
+        System.setProperty(KRB5, hdfsBean.getKrb5());
+        System.setProperty(JAAS_LOGIN_CONFIG, hdfsBean.getJaas());
+        Configuration conf = new Configuration();
+        conf.set(HDFS_AUTH_TYPE, "kerberos");
+        conf.set(HDFS_AUTH_TYPE_CHECK, "true");
+        // 设置客户端的keytab文件路径
+        conf.set(HDFS_KEYTAB_STR, hdfsBean.getKeytab());
+        // 设置新建用户的userPrincipal，此处填写为带域名的用户名，例如创建的用户为user，域为HADOOP.COM，则其userPrincipal则为user@HADOOP.COM。
+        conf.set(HDFS_PRINCIPAL_STR, hdfsBean.getPrincipal());
+
+        // 进行登录认证
+        UserGroupInformation.setConfiguration(conf);
+        SecurityUtil.login(conf, HDFS_KEYTAB_STR, HDFS_PRINCIPAL_STR);
     }
 
     /**

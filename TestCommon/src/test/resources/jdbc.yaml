@@ -101,3 +101,4 @@ hdfsbeans:
     principal: "yz_newland@HADOOP.COM"
     keytab: "hdfs/yz_newland.keytab"
     krb5: "hdfs/krb5.conf"
+    jaas: "hdfs/hive.jaas"

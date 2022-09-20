@@ -942,9 +942,11 @@ public class JDBCUtilTest extends TestBase {
         hdfsBean.setHadoop_conf(getResourcePath(hdfsBean.getHadoop_conf()));
         hdfsBean.setKeytab(getResourcePath(hdfsBean.getKeytab()));
         hdfsBean.setKrb5(getResourcePath(hdfsBean.getKrb5()));
-        HdfsTool.zookeeperInitKerberos(hdfsBean.getHadoop_conf()
-                , hdfsBean.getPrincipal().replace("@HADOOP.COM", "")
-                , hdfsBean);
+        hdfsBean.setJaas(getResourcePath(hdfsBean.getJaas()));
+//        HdfsTool.zookeeperInitKerberos(hdfsBean.getHadoop_conf()
+//                , hdfsBean.getPrincipal().replace("@HADOOP.COM", "")
+//                , hdfsBean);
+        HdfsTool.hiveInitKerberos(hdfsBean);
 
 //        String connectionInfo = "10.1.12.79:24002,10.1.12.78:24002,10.1.12.75:24002";
 //        ZookeeperTools zookeeperTools = ZookeeperTools.getInstance();

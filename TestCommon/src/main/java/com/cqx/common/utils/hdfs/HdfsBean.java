@@ -18,6 +18,7 @@ public class HdfsBean {
     private String krb5;
     private String name;
     private String hadoop_conf;
+    private String jaas;
 
     public static HdfsBean newbuilder() {
         return new HdfsBean();
@@ -42,6 +43,7 @@ public class HdfsBean {
         setPrincipal((String) param.get("principal"));
         setKeytab((String) param.get("keytab"));
         setKrb5((String) param.get("krb5"));
+        setJaas((String) param.get("jaas"));
         return this;
     }
 
@@ -107,5 +109,13 @@ public class HdfsBean {
 
     public void setHadoop_conf(String hadoop_conf) {
         this.hadoop_conf = hadoop_conf;
+    }
+
+    public String getJaas() {
+        return jaas;
+    }
+
+    public void setJaas(String jaas) {
+        this.jaas = jaas;
     }
 }
