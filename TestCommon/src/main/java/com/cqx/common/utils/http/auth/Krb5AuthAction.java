@@ -34,24 +34,24 @@ import java.util.Set;
  *
  * @author chenqixu
  */
-public class Krb5AuthUtil {
-    private Logger LOG = LoggerFactory.getLogger(Krb5AuthUtil.class);
+public class Krb5AuthAction {
+    private Logger LOG = LoggerFactory.getLogger(Krb5AuthAction.class);
     private String principal;
     private String keyTabLocation;
     private String password;
     private final String LoginContextName = "Krb5Login";
     private HttpManager httpManager = new HttpManager();
 
-    public Krb5AuthUtil() {
+    public Krb5AuthAction() {
     }
 
-    public Krb5AuthUtil(String principal, String keyTabLocation) {
+    public Krb5AuthAction(String principal, String keyTabLocation) {
         super();
         this.principal = principal;
         this.keyTabLocation = keyTabLocation;
     }
 
-    public Krb5AuthUtil(String principal, String keyTabLocation, boolean isDebug) {
+    public Krb5AuthAction(String principal, String keyTabLocation, boolean isDebug) {
         this(principal, keyTabLocation);
         if (isDebug) {
             System.setProperty("sun.security.spnego.debug", "true");
@@ -59,7 +59,7 @@ public class Krb5AuthUtil {
         }
     }
 
-    public Krb5AuthUtil(String principal, String keyTabLocation, String krb5Location, boolean isDebug) {
+    public Krb5AuthAction(String principal, String keyTabLocation, String krb5Location, boolean isDebug) {
         this(principal, keyTabLocation, isDebug);
         System.setProperty("java.security.krb5.conf", krb5Location);
     }
@@ -127,7 +127,7 @@ public class Krb5AuthUtil {
      *
      * @return 配置
      */
-    public Configuration createConfiguration() {
+    public Configuration createKeyTabConfiguration() {
         return new Configuration() {
 
             @Override
@@ -190,9 +190,10 @@ public class Krb5AuthUtil {
      * 在通过身份验证的情况下执行对应的action
      *
      * @param privilegedAction 需要执行的action
+     * @param isKeyTab         是否有keytab文件
      * @return HttpResponse Http响应
      */
-    public HttpResponse subjectDoAs(PrivilegedAction<HttpResponse> privilegedAction) {
+    public HttpResponse subjectDoAs(PrivilegedAction<HttpResponse> privilegedAction, boolean isKeyTab) {
         try {
             /**
              * LoginContext类描述用于验证主题的基本方法，并提供一种独立于底层验证技术开发应用程序的方法。
@@ -209,11 +210,21 @@ public class Krb5AuthUtil {
              * CallbackHandler被传递给底层LoginModule，
              * 以便它们可以与用户通信和交互（例如，通过图形用户界面提示输入用户名和密码）。
              */
-            LoginContext lc = new LoginContext(LoginContextName
-                    , createSubject()
-                    , new SetUsPwCallbackHandler()
-                    , createNoKeyTabConfiguration()
-            );
+            LoginContext lc;
+            LOG.info(String.format("[isKeyTab]: %s, keyTabLocation: %s, principal: %s", isKeyTab, keyTabLocation, principal));
+            if (isKeyTab) {
+                lc = new LoginContext(LoginContextName
+                        , createSubject()
+                        , null
+                        , createKeyTabConfiguration()
+                );
+            } else {
+                lc = new LoginContext(LoginContextName
+                        , createSubject()
+                        , new SetUsPwCallbackHandler()
+                        , createNoKeyTabConfiguration()
+                );
+            }
             // 执行身份验证
             lc.login();
             // 返回经过身份验证的主题
@@ -242,7 +253,7 @@ public class Krb5AuthUtil {
                         , url
                         , operationName);
             }
-        });
+        }, keyTabLocation != null);
     }
 
     /**
@@ -264,7 +275,29 @@ public class Krb5AuthUtil {
                         , jsonString
                         , operationName);
             }
-        });
+        }, keyTabLocation != null);
+    }
+
+    /**
+     * 发送DELETE请求
+     *
+     * @param url
+     * @param jsonString
+     * @param operationName
+     * @return
+     */
+    public HttpResponse sendHttpDeleteRequestWithString(final String url
+            , final String jsonString, final String operationName) {
+        return subjectDoAs(new PrivilegedAction<HttpResponse>() {
+
+            @Override
+            public HttpResponse run() {
+                return httpManager.sendHttpDeleteRequestGetHttpResponse(buildSpengoHttpClient()
+                        , url
+                        , jsonString
+                        , operationName);
+            }
+        }, keyTabLocation != null);
     }
 
     /**

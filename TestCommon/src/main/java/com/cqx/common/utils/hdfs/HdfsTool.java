@@ -98,7 +98,13 @@ public class HdfsTool {
      */
     public static void hiveInitKerberos(HdfsBean hdfsBean) throws IOException {
         System.setProperty(KRB5, hdfsBean.getKrb5());
-        System.setProperty(JAAS_LOGIN_CONFIG, hdfsBean.getJaas());
+        // 方式1：使用jaas配置文件
+//        System.setProperty(JAAS_LOGIN_CONFIG, hdfsBean.getJaas());
+        // 方式2：使用代码
+        javax.security.auth.login.Configuration.setConfiguration(
+                new KerberosConfiguration(hdfsBean.getKeytab(), hdfsBean.getPrincipal())
+        );
+
         Configuration conf = new Configuration();
         conf.set(HDFS_AUTH_TYPE, "kerberos");
         conf.set(HDFS_AUTH_TYPE_CHECK, "true");
