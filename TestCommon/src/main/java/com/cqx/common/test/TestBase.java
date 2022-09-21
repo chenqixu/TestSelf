@@ -1,5 +1,6 @@
 package com.cqx.common.test;
 
+import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.config.YamlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,12 @@ public class TestBase {
         }
         URL url = getClass().getResource(tmpFileName);
         if (url != null) {
-            String path = url.getPath().replaceFirst("/", "");
+            String path;
+            if (Utils.isWindow()) {
+                path = url.getPath().replaceFirst("/", "");
+            } else {
+                path = url.getPath();
+            }
             logger.info("加载到资源文件：{}", path);
             return path;
         } else {
