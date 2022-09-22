@@ -88,6 +88,7 @@ import java.util.regex.Matcher;
  * @author chenqixu
  */
 public class JDBCUtil implements IJDBCUtil {
+    public static final int DEFAULT_FETCH_SIZE = 1000;
     private static final Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
     private final String insert = "insert into %s(%s) values(%s)";
     private final String update = "update %s set %s where %s";
@@ -97,8 +98,11 @@ public class JDBCUtil implements IJDBCUtil {
     private List<String> keyList = new ArrayList<>();
     private List<String> endList = new ArrayList<>();
     private int batchNum = 2000;
-    private boolean isThrow = true;// 是否抛出异常，默认抛出
-    private AbstractDeclare declare;// 写入合并
+    private int fetchSize = DEFAULT_FETCH_SIZE;
+    // 是否抛出异常，默认抛出
+    private boolean isThrow = true;
+    // 写入合并
+    private AbstractDeclare declare;
 
     public JDBCUtil(DBBean dbBean) {
         this(dbBean, -1, -1, -1);
@@ -380,8 +384,7 @@ public class JDBCUtil implements IJDBCUtil {
         List<QueryResult> metaData = getTableMetaData(tab_name, isGetRemarks);
         LinkedHashMap<String, String> metaMap = new LinkedHashMap<>();
         for (QueryResult md : metaData) {
-            // todo 不知道这里为什么要小写
-            metaMap.put(md.getColumnName().toLowerCase(), md.getColumnClassName());
+            metaMap.put(md.getColumnName(), md.getColumnClassName());
         }
         return metaMap;
     }
@@ -597,6 +600,7 @@ public class JDBCUtil implements IJDBCUtil {
             assert conn != null;
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
+            rs.setFetchSize(getFetchSize());
             while (rs.next()) {
                 //回调
                 iCallBack.call(rs);
@@ -633,6 +637,7 @@ public class JDBCUtil implements IJDBCUtil {
             assert conn != null;
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
+            rs.setFetchSize(getFetchSize());
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
                 //查询结果设置到java bean中
@@ -668,6 +673,7 @@ public class JDBCUtil implements IJDBCUtil {
             assert conn != null;
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
+            rs.setFetchSize(getFetchSize());
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
                 //查询结果设置到List<QueryResult>中
@@ -703,6 +709,7 @@ public class JDBCUtil implements IJDBCUtil {
             assert conn != null;
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
+            rs.setFetchSize(getFetchSize());
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
                 //查询结果设置到List<QueryResult>中
@@ -743,6 +750,7 @@ public class JDBCUtil implements IJDBCUtil {
             assert conn != null;
             stm = conn.createStatement();
             rs = stm.executeQuery(sql);
+            rs.setFetchSize(getFetchSize());
             ResultSetMetaData rsMeta = rs.getMetaData();
             while (rs.next()) {
                 //查询结果设置到java bean中
@@ -1274,8 +1282,10 @@ public class JDBCUtil implements IJDBCUtil {
                                 || "oracle.jdbc.OracleClob".equals(qr.getColumnClassName())
                                 || "oracle.sql.CLOB".equals(qr.getColumnClassName())
                         ) {
-                            String content = qr.getValue().toString();
-                            qr.setValue(buildClob(conn, content));
+						    if (qr.getValue() != null) {// 可能为空，缺陷修复
+                                String content = qr.getValue().toString();
+                                qr.setValue(buildClob(conn, content));
+                            }
                         }
                     }
                 }
@@ -1747,6 +1757,15 @@ public class JDBCUtil implements IJDBCUtil {
     @Override
     public void setBatchNum(int batchNum) {
         this.batchNum = batchNum;
+    }
+
+    public int getFetchSize() {
+        return fetchSize;
+    }
+
+    @Override
+    public void setFetchSize(int fetchSize) {
+        this.fetchSize = fetchSize;
     }
 
     public boolean isThrow() {
@@ -2310,7 +2329,7 @@ public class JDBCUtil implements IJDBCUtil {
             queryResult.setScale(Scale);
             queryResult.setSchemaName(SchemaName);
             queryResult.setCatalogName(CatalogName);
-            if (rs != null) {
+            if (value != null) {
                 queryResult.setValue(value);
             }
             queryResults.add(queryResult);

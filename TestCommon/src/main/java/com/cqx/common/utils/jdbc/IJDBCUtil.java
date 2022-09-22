@@ -474,6 +474,13 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     void setBatchNum(int batchNum);
 
     /**
+     * 设置每次从数据库获取的记录数
+     *
+     * @param fetchSize
+     */
+    void setFetchSize(int fetchSize);
+
+    /**
      * 设置是否抛出捕获的异常
      *
      * @param aThrow
