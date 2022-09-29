@@ -43,6 +43,39 @@ public class SimpleClientConfiguration extends Configuration {
         }
     }
 
+    /**
+     * 返回sasl.jaas.config的配置，默认ACL认证
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    public static String getSaslJaasConfig(String username, String password) {
+        return getSaslJaasConfig(username, password, PlainProtocol);
+    }
+
+    /**
+     * 返回sasl.jaas.config的配置
+     *
+     * @param username
+     * @param password
+     * @param kafkaSecurityProtocol
+     * @return
+     */
+    public static String getSaslJaasConfig(String username, String password, String kafkaSecurityProtocol) {
+        String sasl_jaas_config;
+        if (kafkaSecurityProtocol != null && kafkaSecurityProtocol.startsWith(SimpleClientConfiguration.ScramProtocol)) {
+            sasl_jaas_config = "org.apache.kafka.common.security.scram.ScramLoginModule required " +
+                    "username=\"" + username + "\" " +
+                    "password=\"" + password + "\";";
+        } else {// 默认是简单认证
+            sasl_jaas_config = "org.apache.kafka.common.security.plain.PlainLoginModule required " +
+                    "username=\"" + username + "\" " +
+                    "password=\"" + password + "\";";
+        }
+        return sasl_jaas_config;
+    }
+
     @Override
     public AppConfigurationEntry[] getAppConfigurationEntry(String name) {
         if ("KafkaClient".equalsIgnoreCase(name)) {

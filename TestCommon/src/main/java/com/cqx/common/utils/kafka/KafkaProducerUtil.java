@@ -6,7 +6,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.Configuration;
 import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -112,7 +111,9 @@ public class KafkaProducerUtil<K, V> implements Closeable {
      * @param kafkaSecurityProtocol
      */
     private Properties init(Properties properties, String kafka_username, String kafka_password, String kafkaSecurityProtocol) {
-        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password, kafkaSecurityProtocol));
+//        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password, kafkaSecurityProtocol));
+        // 一个进程可能有多个kafka客户端，且是不同认证，再使用Configuration.setConfiguration不太合适
+        properties.put("sasl.jaas.config", SimpleClientConfiguration.getSaslJaasConfig(kafka_username, kafka_password, kafkaSecurityProtocol));
         KafkaPropertiesUtil.removeNewlandProperties(properties);
         // 为避免长时间未达到发送批次上线, 导致数据不发送, 设置必须发送的时间间隔, 毫秒, 5000ms
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 5000);
