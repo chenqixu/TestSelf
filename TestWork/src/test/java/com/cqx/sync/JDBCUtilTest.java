@@ -97,6 +97,11 @@ public class JDBCUtilTest {
                 srcdbBean.setUser_name("bishow");
                 srcdbBean.setPass_word("C%MuhN#q$4");
                 break;
+            case "receng":
+                srcdbBean.setTns("jdbc:oracle:thin:@10.1.8.99:1521/orcl12cpdb1");
+                srcdbBean.setUser_name("receng_dev");
+                srcdbBean.setPass_word("receng_dev");
+                break;
         }
         return srcdbBean;
     }
@@ -123,7 +128,8 @@ public class JDBCUtilTest {
 //        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
 //        srcdbBean = oracleConfig("web");
-        srcdbBean = oracleConfig("bishow");
+//        srcdbBean = oracleConfig("bishow");
+        srcdbBean = oracleConfig("receng");
 //        srcdbBean = mysqlConfig("local");
 //        srcdbBean = mysqlConfig("flink");
 //        srcdbBean = postgresqlConfig("dev");
@@ -343,11 +349,11 @@ public class JDBCUtilTest {
     @Test
     public void getTableMetaData() throws SQLException {
         //元数据
-        for (QueryResult queryResult : jdbcUtil.getTableMetaData("cqx_test1")) {
+        for (QueryResult queryResult : jdbcUtil.getTableMetaData("test_1")) {
             logger.info("元数据 {}", queryResult);
         }
         //查询
-        for (List<QueryResult> queryResults : jdbcUtil.executeQuery("select * from cqx_test1")) {
+        for (List<QueryResult> queryResults : jdbcUtil.executeQuery("select * from test_1")) {
             for (QueryResult queryResult : queryResults) {
                 logger.info("查询 {}", queryResult);
             }

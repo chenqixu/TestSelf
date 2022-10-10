@@ -175,6 +175,16 @@ public class ByteUtil {
     }
 
     /**
+     * 返回Bit
+     *
+     * @param val
+     * @return
+     */
+    public static String valToBit(String val) {
+        return bytesToBit(new BigInteger(val).toByteArray());
+    }
+
+    /**
      * 随机生成byte数组
      *
      * @param len
@@ -276,8 +286,8 @@ public class ByteUtil {
      * @return
      */
     public static byte[] bitSet2ByteArray(BitSet bitSet) {
-        byte[] bytes = new byte[bitSet.size() / 8];
-        for (int i = 0; i < bitSet.size(); i++) {
+        byte[] bytes = new byte[bitSet.length() / 8];
+        for (int i = 0; i < bitSet.length(); i++) {
             int index = i / 8;
             int offset = 7 - i % 8;
             bytes[index] |= (bitSet.get(i) ? 1 : 0) << offset;
@@ -527,5 +537,119 @@ public class ByteUtil {
             rtn = ai ^ bi;
             return rtn;
         }
+    }
+
+    /**
+     * 构造TLV格式数据
+     *
+     * @param tag
+     * @param length
+     * @param bytes
+     * @return
+     */
+    public static byte[] buildTLV(int tag, int length, byte[] bytes) {
+        byte[] common = new byte[2];
+        byte[] result;
+        byte value;
+        int format = length;
+        StringBuilder builder = new StringBuilder();
+
+        switch (length) {
+            case 1:
+                value = (byte) 0x01;
+                break;
+            case 2:
+                value = (byte) 0x02;
+                break;
+            case 3:
+                value = (byte) 0x03;
+                break;
+            case 4:
+                value = (byte) 0x04;
+                break;
+            case 5:
+                value = (byte) 0x05;
+                break;
+            case 6:
+                value = (byte) 0x06;
+                break;
+            case 8:
+                value = (byte) 0x07;
+                break;
+            case 16:
+                value = (byte) 0x08;
+                break;
+            case 32:
+                value = (byte) 0x09;
+                break;
+            case 64:
+                value = (byte) 0x10;
+                break;
+            case 128:
+                value = (byte) 0x11;
+                break;
+            case 256:
+                value = (byte) 0x12;
+                break;
+            default:
+                value = (byte) 0x00;
+                format = 0;
+        }
+
+        // tag低8位
+        common[0] = (byte) (tag & 255);
+
+        // Tag 12 bit，高6位为块索引，低6位为值区，这里不需要管索引块
+        // Format 4bit
+        // Tag 低8位(00+tag)
+        // Format+Tag高4位(format低4位+0000)
+        if (format == 0) {// T(2)L(2)V(L)
+            // Format+Tag高4位(format低4位+0000)
+            common[1] = (byte) 0x00;
+            result = new byte[length + 4];
+            // length被拆成了两段，前面是高8位，后面是低8位
+            result[2] = (byte) (length >>> 8 & 255);
+            result[3] = (byte) (length & 255);
+            // 从result的第四位开始拷贝完整的bytes到result
+            System.arraycopy(bytes, 0, result, 4, bytes.length);
+        } else {// 退化为T(2)V(F)格式
+            result = new byte[format + 2];
+            // 获取Format的低四位
+            String lowFormat = byteToLowBit(value);
+            // 获取Tag的高4位（高8位的低4位）
+            String highTag = byteToLowBit((byte) (tag >>> 8 & 255));
+            builder.append(lowFormat);
+            builder.append(highTag);
+            common[1] = bitToByte(builder.toString());
+            // 从result的第二位开始拷贝完整的bytes到result
+            System.arraycopy(bytes, 0, result, 2, bytes.length);
+        }
+        System.arraycopy(common, 0, result, 0, common.length);
+        return result;
+    }
+
+    /**
+     * 获取低四位
+     *
+     * @param value
+     * @return
+     */
+    public static String byteToLowBit(byte value) {
+        return byteToBit(value).substring(4, 8);
+    }
+
+    /**
+     * bit转byte
+     *
+     * @param str
+     * @return
+     */
+    public static byte bitToByte(String str) {
+        if (str.length() != 8) throw new NullPointerException("长度需要为8！");
+        BitSet bitSet = new BitSet(8);
+        for (int i = 0; i < 8; i++) {
+            bitSet.set(i, str.charAt(i) == '1');
+        }
+        return bitSet2ByteArray(bitSet)[0];
     }
 }
