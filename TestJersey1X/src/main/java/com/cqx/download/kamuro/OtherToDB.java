@@ -12,12 +12,19 @@ import java.io.UnsupportedEncodingException;
  *
  * @author chenqixu
  */
-public class YaoqiToDB {
-    private static final Logger logger = LoggerFactory.getLogger(YaoqiToDB.class);
+public class OtherToDB {
+    private static final Logger logger = LoggerFactory.getLogger(OtherToDB.class);
     private FileUtil fileUtil = new FileUtil();
 
     public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-        new YaoqiToDB().createReadMe("Z:\\Reader\\web\\res\\comic\\kamuro\\yaoqi\\");
+        if (args.length == 0) {
+            logger.warn("需要传入目录名参数！如：akisora 或者 yaoqi");
+            System.exit(-1);
+        } else if (args.length == 1) {
+            String tag = args[0];
+            logger.info("tag：{}", tag);
+            new OtherToDB().createReadMe(String.format("Z:\\Reader\\web\\res\\comic\\kamuro\\%s\\", tag));
+        }
     }
 
     /**

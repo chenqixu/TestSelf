@@ -92,6 +92,21 @@ public class ByteUtil {
     }
 
     /**
+     * byte数组转Bit字符串，加上分隔符
+     *
+     * @param bytes
+     * @return
+     */
+    public static String bytesToBitBySeparator(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(byteToBit(b)).append(",");
+        }
+        if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    /**
      * byte数值转short
      *
      * @param b
@@ -108,12 +123,16 @@ public class ByteUtil {
         return l;
     }
 
-    public static byte[] longTo4ByteArray(long i) {
-        byte[] result = new byte[4];
-        result[0] = (byte) ((i >> 24) & 0xFF);
-        result[1] = (byte) ((i >> 16) & 0xFF);
-        result[2] = (byte) ((i >> 8) & 0xFF);
-        result[3] = (byte) (i & 0xFF);
+    public static byte[] longTo8ByteArray(long i) {
+        byte[] result = new byte[8];
+        result[0] = (byte) ((i >> 56) & 0xFF);
+        result[1] = (byte) ((i >> 48) & 0xFF);
+        result[2] = (byte) ((i >> 40) & 0xFF);
+        result[3] = (byte) ((i >> 32) & 0xFF);
+        result[4] = (byte) ((i >> 24) & 0xFF);
+        result[5] = (byte) ((i >> 16) & 0xFF);
+        result[6] = (byte) ((i >> 8) & 0xFF);
+        result[7] = (byte) (i & 0xFF);
         return result;
     }
 
@@ -144,6 +163,11 @@ public class ByteUtil {
         return unsignedBytes(unsignedArray);
     }
 
+    public static int unsignedByteToInt(byte b) {
+        byte[] unsignedArray = {0x00, b};
+        return new BigInteger(unsignedArray).intValue();
+    }
+
     /**
      * 无符号short
      *
@@ -172,6 +196,46 @@ public class ByteUtil {
      */
     public static String unsignedBytes(byte[] bytes) {
         return new BigInteger(bytes).toString();
+    }
+
+    public static byte[] numberToBytes(short data) {
+        return numberToBytes(String.valueOf(data), 2);
+    }
+
+    public static byte[] numberToBytes(int data) {
+        return numberToBytes(String.valueOf(data), 4);
+    }
+
+    public static byte[] numberToBytes(long data) {
+        return numberToBytes(String.valueOf(data), 8);
+    }
+
+    /**
+     * 整数转字节数组，short、int、long
+     *
+     * @param data
+     * @param size
+     * @return
+     */
+    public static byte[] numberToBytes(String data, int size) {
+        byte[] bytes = new BigInteger(data).toByteArray();
+        if (size > bytes.length) {
+            int diff = size - bytes.length;
+            byte[] newbytes = new byte[diff];
+            for (int i = 0; i < diff; i++) {
+                newbytes[i] = 0x00;
+            }
+            bytes = ByteUtil.arrayAdd(newbytes, bytes, bytes.length);
+        } else if (bytes.length > size) {
+            // 取低位
+            int diff = bytes.length - size;
+            byte[] newbytes = new byte[size];
+            for (int i = diff, j = 0; i < bytes.length; i++, j++) {
+                newbytes[j] = bytes[i];
+            }
+            bytes = newbytes;
+        }
+        return bytes;
     }
 
     /**
@@ -306,7 +370,7 @@ public class ByteUtil {
         int index = 0;
         for (int i = 0; i < bytes.length; i++) {
             for (int j = 7; j >= 0; j--) {
-                bitSet.set(index++, (bytes[i] & (1 << j)) >> j == 1 ? true : false);
+                bitSet.set(index++, (bytes[i] & (1 << j)) >> j == 1);
             }
         }
         return bitSet;
@@ -539,62 +603,110 @@ public class ByteUtil {
         }
     }
 
+    public static int byteToFormat(byte value) {
+        int format;
+        switch (value) {
+            case (byte) 1:
+                format = 1;
+                break;
+            case (byte) 2:
+                format = 2;
+                break;
+            case (byte) 3:
+                format = 3;
+                break;
+            case (byte) 4:
+                format = 4;
+                break;
+            case (byte) 5:
+                format = 5;
+                break;
+            case (byte) 6:
+                format = 6;
+                break;
+            case (byte) 7:
+                format = 8;
+                break;
+            case (byte) 8:
+                format = 16;
+                break;
+            case (byte) 9:
+                format = 32;
+                break;
+            case (byte) 10:
+                format = 64;
+                break;
+            case (byte) 11:
+                format = 128;
+                break;
+            case (byte) 12:
+                format = 256;
+                break;
+            default:
+                format = 0;
+        }
+        return format;
+    }
+
+    public static byte formatToByte(int length) {
+        byte value;
+        switch (length) {
+            case 1:
+                value = (byte) 1;
+                break;
+            case 2:
+                value = (byte) 2;
+                break;
+            case 3:
+                value = (byte) 3;
+                break;
+            case 4:
+                value = (byte) 4;
+                break;
+            case 5:
+                value = (byte) 5;
+                break;
+            case 6:
+                value = (byte) 6;
+                break;
+            case 8:
+                value = (byte) 7;
+                break;
+            case 16:
+                value = (byte) 8;
+                break;
+            case 32:
+                value = (byte) 9;
+                break;
+            case 64:
+                value = (byte) 10;
+                break;
+            case 128:
+                value = (byte) 11;
+                break;
+            case 256:
+                value = (byte) 12;
+                break;
+            default:
+                value = (byte) 0;
+        }
+        return value;
+    }
+
     /**
      * 构造TLV格式数据
      *
      * @param tag
-     * @param length
      * @param bytes
      * @return
      */
-    public static byte[] buildTLV(int tag, int length, byte[] bytes) {
+    public static byte[] buildTLV(int tag, byte[] bytes) {
         byte[] common = new byte[2];
         byte[] result;
-        byte value;
+        int length = bytes.length;
         int format = length;
-        StringBuilder builder = new StringBuilder();
-
-        switch (length) {
-            case 1:
-                value = (byte) 0x01;
-                break;
-            case 2:
-                value = (byte) 0x02;
-                break;
-            case 3:
-                value = (byte) 0x03;
-                break;
-            case 4:
-                value = (byte) 0x04;
-                break;
-            case 5:
-                value = (byte) 0x05;
-                break;
-            case 6:
-                value = (byte) 0x06;
-                break;
-            case 8:
-                value = (byte) 0x07;
-                break;
-            case 16:
-                value = (byte) 0x08;
-                break;
-            case 32:
-                value = (byte) 0x09;
-                break;
-            case 64:
-                value = (byte) 0x10;
-                break;
-            case 128:
-                value = (byte) 0x11;
-                break;
-            case 256:
-                value = (byte) 0x12;
-                break;
-            default:
-                value = (byte) 0x00;
-                format = 0;
-        }
+        byte value = formatToByte(length);
+        if (value == (byte) 0) format = 0;
 
         // tag低8位
         common[0] = (byte) (tag & 255);
@@ -614,13 +726,18 @@ public class ByteUtil {
             System.arraycopy(bytes, 0, result, 4, bytes.length);
         } else {// 退化为T(2)V(F)格式
             result = new byte[format + 2];
-            // 获取Format的低四位
-            String lowFormat = byteToLowBit(value);
-            // 获取Tag的高4位（高8位的低4位）
-            String highTag = byteToLowBit((byte) (tag >>> 8 & 255));
-            builder.append(lowFormat);
-            builder.append(highTag);
-            common[1] = bitToByte(builder.toString());
+            // 获取Format的低四位，因为索引块是预留字段，全部为0即可
+            common[1] = (byte) (value << 4 >>> 4);
+//            //==============================
+//            StringBuilder builder = new StringBuilder();
+//            // 获取Format的低四位
+//            String lowFormat = byteToLowBit(value);
+//            // 获取Tag的高4位（高8位的低4位）
+//            String highTag = byteToLowBit((byte) (tag >>> 8 & 255));
+//            builder.append(lowFormat);
+//            builder.append(highTag);
+//            common[1] = bitToByte(builder.toString());
+//            //==============================
             // 从result的第二位开始拷贝完整的bytes到result
             System.arraycopy(bytes, 0, result, 2, bytes.length);
         }
@@ -636,6 +753,26 @@ public class ByteUtil {
      */
     public static String byteToLowBit(byte value) {
         return byteToBit(value).substring(4, 8);
+    }
+
+    /**
+     * 获取低四位转成int
+     *
+     * @param value
+     * @return
+     */
+    public static int getLowBitToInt(byte value) {
+        return unsignedByteToInt((byte) (value << 4 >>> 4));
+    }
+
+    /**
+     * 获取低四位byte
+     *
+     * @param value
+     * @return
+     */
+    public static byte getLowBit(byte value) {
+        return (byte) (value << 4 >>> 4);
     }
 
     /**

@@ -38,5 +38,21 @@ public class ByteUtilTest {
         logger.info("bitSet2ByteArray:{}", ByteUtil.bitSet2ByteArray(bs1));
         logger.info("bitToByte:{}", ByteUtil.unsignedByte(ByteUtil.bitToByte("00110111")));
         logger.info("bitToByte:{}", ByteUtil.unsignedByte(ByteUtil.bitToByte(ByteUtil.valToBit("55"))));
+
+        logger.info("intTo4ByteArray 10:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.intTo4ByteArray(10)));
+        logger.info("numberToBytes 10:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes("10", 4)));
+        logger.info("numberToBytes 10:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes(10)));
+
+        logger.info("intTo2ByteArray 10:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.intTo2ByteArray(10)));
+        logger.info("numberToBytes 10:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes("10", 2)));
+
+        logger.info("longTo8ByteArray 300000000:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.longTo8ByteArray(30000000000L)));
+        logger.info("numberToBytes 300000000:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes("30000000000", 8)));
+        logger.info("numberToBytes 300000000:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes(30000000000L)));
+
+        logger.info("doubleToLongBits 2.25d:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes(Double.doubleToLongBits(2.25d))));
+        logger.info("doubleToRawLongBits 2.25d:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes(Double.doubleToRawLongBits(2.25d))));
+
+        logger.info("(byte) 0x12：{}，(byte) 12：{}", (byte) 0x12, (byte) 12);
     }
 }
