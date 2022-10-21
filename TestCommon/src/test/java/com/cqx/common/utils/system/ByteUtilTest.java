@@ -53,6 +53,11 @@ public class ByteUtilTest {
         logger.info("doubleToLongBits 2.25d:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes(Double.doubleToLongBits(2.25d))));
         logger.info("doubleToRawLongBits 2.25d:{}", ByteUtil.bytesToBitBySeparator(ByteUtil.numberToBytes(Double.doubleToRawLongBits(2.25d))));
 
+        logger.info("doubleToRawLongBits -> numberToBytes -> unsignedBytesToLong -> longBitsToDouble：{}", Double.longBitsToDouble(
+                ByteUtil.unsignedBytesToLong(
+                        ByteUtil.numberToBytes(
+                                Double.doubleToRawLongBits(2.25d)))));
+
         logger.info("(byte) 0x12：{}，(byte) 12：{}", (byte) 0x12, (byte) 12);
     }
 }

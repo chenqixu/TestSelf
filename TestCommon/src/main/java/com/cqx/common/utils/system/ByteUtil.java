@@ -136,6 +136,15 @@ public class ByteUtil {
         return result;
     }
 
+    public static byte[] longTo4ByteArray(long i) {
+        byte[] result = new byte[4];
+        result[0] = (byte) ((i >> 24) & 0xFF);
+        result[1] = (byte) ((i >> 16) & 0xFF);
+        result[2] = (byte) ((i >> 8) & 0xFF);
+        result[3] = (byte) (i & 0xFF);
+        return result;
+    }
+
     public static byte[] intTo4ByteArray(int i) {
         byte[] result = new byte[4];
         result[0] = (byte) ((i >> 24) & 0xFF);
@@ -198,6 +207,10 @@ public class ByteUtil {
         return new BigInteger(bytes).toString();
     }
 
+    public static long unsignedBytesToLong(byte[] bytes) {
+        return new BigInteger(bytes).longValue();
+    }
+
     public static byte[] numberToBytes(short data) {
         return numberToBytes(String.valueOf(data), 2);
     }
@@ -225,7 +238,7 @@ public class ByteUtil {
             for (int i = 0; i < diff; i++) {
                 newbytes[i] = 0x00;
             }
-            bytes = ByteUtil.arrayAdd(newbytes, bytes, bytes.length);
+            bytes = ArraysUtil.arrayAdd(newbytes, bytes, bytes.length);
         } else if (bytes.length > size) {
             // 取低位
             int diff = bytes.length - size;
@@ -258,21 +271,6 @@ public class ByteUtil {
         byte[] ret = new byte[len];
         random.nextBytes(ret);
         return ret;
-    }
-
-    /**
-     * 数组b1和数组b2相拼接
-     *
-     * @param b1
-     * @param b2
-     * @param b2Len
-     * @return
-     */
-    public static byte[] arrayAdd(byte[] b1, byte[] b2, int b2Len) {
-        byte[] n1 = new byte[b1.length + b2Len];
-        System.arraycopy(b1, 0, n1, 0, b1.length);
-        System.arraycopy(b2, 0, n1, b1.length, b2Len);
-        return n1;
     }
 
     /**
@@ -434,10 +432,23 @@ public class ByteUtil {
         return (byte) "0123456789ABCDEF".indexOf(c);
     }
 
+    /**
+     * 字节数组转16进制
+     *
+     * @param bytes
+     * @return
+     */
     public static String bytesToHexStringH(byte[] bytes) {
         return bytesToHexStringH(bytes, null);
     }
 
+    /**
+     * 字节数组转16进制
+     *
+     * @param bytes
+     * @param separator
+     * @return
+     */
     public static String bytesToHexStringH(byte[] bytes, String separator) {
         if (ArrayUtils.isEmpty(bytes)) {
             return null;

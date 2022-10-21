@@ -31,6 +31,37 @@ public class ExcelUtils {
     }
 
     /**
+     * get postfix of the path
+     *
+     * @param path
+     * @return
+     */
+    public static String getPostfix(String path) {
+        if (path == null || ExcelCommons.EMPTY.equals(path.trim())) {
+            return ExcelCommons.EMPTY;
+        }
+        if (path.contains(ExcelCommons.POINT)) {
+            return path.substring(path.lastIndexOf(ExcelCommons.POINT) + 1);
+        }
+        return ExcelCommons.EMPTY;
+    }
+
+    /**
+     * 读取Excel，转换成Map对象
+     *
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public Map<String, List<List<String>>> readExcelToMap(String path) throws IOException {
+        Map<String, List<List<String>>> map = new HashMap<>();
+        for (ExcelSheetList sheetList : readExcel(path)) {
+            map.put(sheetList.getSheetName(), sheetList.getSheetList());
+        }
+        return map;
+    }
+
+    /**
      * read the Excel file
      *
      * @param path the path of the Excel file
@@ -226,22 +257,6 @@ public class ExcelUtils {
     }
 
     /**
-     * get postfix of the path
-     *
-     * @param path
-     * @return
-     */
-    public static String getPostfix(String path) {
-        if (path == null || ExcelCommons.EMPTY.equals(path.trim())) {
-            return ExcelCommons.EMPTY;
-        }
-        if (path.contains(ExcelCommons.POINT)) {
-            return path.substring(path.lastIndexOf(ExcelCommons.POINT) + 1);
-        }
-        return ExcelCommons.EMPTY;
-    }
-
-    /**
      * Write the Excel 2010/2003-2007
      *
      * @param path
@@ -310,5 +325,4 @@ public class ExcelUtils {
         }
         return -1;
     }
-
 }

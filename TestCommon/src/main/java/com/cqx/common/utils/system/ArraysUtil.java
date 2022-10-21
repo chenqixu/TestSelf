@@ -2,6 +2,7 @@ package com.cqx.common.utils.system;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,6 +44,41 @@ public class ArraysUtil {
         byte[] tmp = new byte[list.size()];
         for (int i = 0; i < list.size(); i++) tmp[i] = list.get(i);
         return tmp;
+    }
+
+    /**
+     * 数组b1和数组b2相拼接
+     *
+     * @param b1
+     * @param b2
+     * @param b2Len
+     * @return
+     */
+    public static byte[] arrayAdd(byte[] b1, byte[] b2, int b2Len) {
+        byte[] n1 = new byte[b1.length + b2Len];
+        System.arraycopy(b1, 0, n1, 0, b1.length);
+        System.arraycopy(b2, 0, n1, b1.length, b2Len);
+        return n1;
+    }
+
+    /**
+     * 数组翻转
+     *
+     * @param bytes
+     * @return
+     */
+    public static byte[] arrayFlip(byte[] bytes) {
+        List<Byte> byteList = new ArrayList<>();
+        for (byte bs : bytes) {
+            byteList.add(bs);
+        }
+        Collections.reverse(byteList);
+        int len = byteList.size();
+        byte[] buf = new byte[len];
+        for (int j = 0; j < len; j++) {
+            buf[j] = byteList.get(j);
+        }
+        return buf;
     }
 
     /**
