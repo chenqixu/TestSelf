@@ -14,37 +14,30 @@ import java.util.TimerTask;
  * @author chenqixu
  */
 public class RocksDBWork {
-
     private static final Logger logger = LoggerFactory.getLogger(RocksDBWork.class);
-
     private String dbFilePath;
-    private String dbName;
 
-    public RocksDBWork(String dbFilePath, String dbName) {
+    public RocksDBWork(String dbFilePath) {
         this.dbFilePath = dbFilePath;
-        this.dbName = dbName;
     }
 
     public Runnable getProducter() {
-        return new Producter(dbFilePath, dbName);
+        return new Producter(dbFilePath);
     }
 
     public Runnable getConsumer() {
-        return new Consumer(dbFilePath, dbName);
+        return new Consumer(dbFilePath);
     }
 
     public TimerTask getTimerTask() {
-        return new MyTimerTask(dbFilePath, dbName);
+        return new MyTimerTask(dbFilePath);
     }
 
     class Producter implements Runnable {
-
         private String dbFilePath;
-        private String dbName;
 
-        public Producter(String dbFilePath, String dbName) {
+        public Producter(String dbFilePath) {
             this.dbFilePath = dbFilePath;
-            this.dbName = dbName;
         }
 
         @Override
@@ -53,7 +46,7 @@ public class RocksDBWork {
             RocksDBUtil rocksDBUtil = null;
 //            Random random = new Random();
             try {
-                rocksDBUtil = new RocksDBUtil(dbFilePath, dbName);
+                rocksDBUtil = new RocksDBUtil(dbFilePath);
                 int cnt = 0;
                 int max = 100;
                 String lastkey = rocksDBUtil.getLastKey();
@@ -91,13 +84,10 @@ public class RocksDBWork {
     }
 
     class Consumer implements Runnable {
-
         private String dbFilePath;
-        private String dbName;
 
-        public Consumer(String dbFilePath, String dbName) {
+        public Consumer(String dbFilePath) {
             this.dbFilePath = dbFilePath;
-            this.dbName = dbName;
         }
 
         @Override
@@ -105,13 +95,13 @@ public class RocksDBWork {
             logger.info("start consumer.");
             RocksDBUtil rocksDBUtil = null;
             try {
-                rocksDBUtil = new RocksDBUtil(dbFilePath, dbName, true);
+                rocksDBUtil = new RocksDBUtil(dbFilePath, true);
                 int cnt = 0;
                 while (cnt < 250) {
                     cnt++;
                     SleepUtil.sleepMilliSecond(100);
                     if (cnt % 50 == 0) {
-                        rocksDBUtil = new RocksDBUtil(dbFilePath, dbName, true);
+                        rocksDBUtil = new RocksDBUtil(dbFilePath, true);
                         logger.info("Consumer getCount：{}", rocksDBUtil.getCount());
                     }
                 }
@@ -125,13 +115,10 @@ public class RocksDBWork {
     }
 
     class MyTimerTask extends TimerTask {
-
         private String dbFilePath;
-        private String dbName;
 
-        public MyTimerTask(String dbFilePath, String dbName) {
+        public MyTimerTask(String dbFilePath) {
             this.dbFilePath = dbFilePath;
-            this.dbName = dbName;
         }
 
         @Override
@@ -139,7 +126,7 @@ public class RocksDBWork {
             logger.info("start clear.");
             RocksDBUtil rocksDBUtil = null;
             try {
-                rocksDBUtil = new RocksDBUtil(dbFilePath, dbName);
+                rocksDBUtil = new RocksDBUtil(dbFilePath);
                 rocksDBUtil.deleteFile();
             } catch (RocksDBException e) {
                 e.printStackTrace();

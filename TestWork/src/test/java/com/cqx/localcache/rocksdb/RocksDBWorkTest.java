@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RocksDBWorkTest {
-
     private static final Logger logger = LoggerFactory.getLogger(RocksDBWorkTest.class);
     private RocksDBWork rocksDBWork;
     private RocksDBUtil rocksDBUtil;
@@ -16,14 +15,13 @@ public class RocksDBWorkTest {
 
     @Before
     public void setUp() throws Exception {
-        String dbFilePath = "d:\\tmp\\data\\rocksdb\\";
-        String dbName = "1";
+        String dbFilePath = "d:\\tmp\\data\\rocksdb\\1";
         isThread = System.getenv("isThread");
         logger.info("isThread {}", isThread);
         //初始化工具
-        if (isThread == null || !isThread.equals("1")) rocksDBUtil = new RocksDBUtil(dbFilePath, dbName);
+        if (isThread == null || !isThread.equals("1")) rocksDBUtil = new RocksDBUtil(dbFilePath);
         //初始化RocksDBWork
-        rocksDBWork = new RocksDBWork(dbFilePath, dbName);
+        rocksDBWork = new RocksDBWork(dbFilePath);
     }
 
     @After

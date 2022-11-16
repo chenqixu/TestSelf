@@ -30,81 +30,29 @@ public class FileUtil {
     protected OutputStream outputStream;
     protected InputStream inputStream;
 
-    public static File[] listFiles(String filePath) {
-        File file = new File(filePath);
-        if (file.exists() && file.isDirectory()) {
-            return file.listFiles();
-        }
-        return null;
-    }
-
-    public static String[] listFile(String path) {
-        return listFile(path, null);
-    }
-
-    public static String[] listFile(String path, final String keyword) {
-        File file = new File(path);
-        if (file.exists() && file.isDirectory()) {
-            if (keyword != null && keyword.length() > 0) {
-                logger.info("listFile use keyword：{}.", keyword);
-                return file.list(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.contains(keyword);
-                    }
-                });
-            } else {
-                logger.info("listFile not use keyword.");
-                return file.list();
-            }
-        } else {
-            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
-        }
-        return new String[0];
-    }
-
-    public static String[] listFileEndWith(String path, final String endWith) {
-        File file = new File(path);
-        if (file.exists() && file.isDirectory()) {
-            return file.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(endWith);
-                }
-            });
-        } else {
-            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
-        }
-        return new String[0];
+    public static FileUtil builder() {
+        return new FileUtil();
     }
 
     /**
-     * 通过关键字和文件后缀来过滤文件
+     * 如果文件夹不以\结尾则加上
      *
      * @param path
-     * @param keyword
-     * @param endWith
      * @return
      */
-    public static String[] listFile(String path, final String keyword, final String endWith) {
-        File file = new File(path);
-        if (file.exists() && file.isDirectory()) {
-            if (keyword != null && keyword.length() > 0) {
-                logger.info("listFile use keyword：{}，endWith：{}.", keyword, endWith);
-                return file.list(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.contains(keyword) && name.endsWith(endWith);
-                    }
-                });
-            } else {
-                logger.info("listFile not use keyword.");
-                return file.list();
-            }
-        } else {
-            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
-        }
-        return new String[0];
+    public static String endWith(String path) {
+        if (path.endsWith(fileSparator)) return path;
+        else return path + fileSparator;
+    }
+
+    /**
+     * 文件是否存在
+     *
+     * @param fileName
+     * @return
+     */
+    public static boolean isExists(String fileName) {
+        return new File(fileName).exists();
     }
 
     /**
@@ -255,6 +203,83 @@ public class FileUtil {
         else return false;
     }
 
+    public static File[] listFiles(String filePath) {
+        File file = new File(filePath);
+        if (file.exists() && file.isDirectory()) {
+            return file.listFiles();
+        }
+        return null;
+    }
+
+    public static String[] listFile(String path) {
+        return listFile(path, null);
+    }
+
+    public static String[] listFile(String path, final String keyword) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            if (keyword != null && keyword.length() > 0) {
+                logger.info("listFile use keyword：{}.", keyword);
+                return file.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.contains(keyword);
+                    }
+                });
+            } else {
+                logger.info("listFile not use keyword.");
+                return file.list();
+            }
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
+    }
+
+    public static String[] listFileEndWith(String path, final String endWith) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            return file.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(endWith);
+                }
+            });
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
+    }
+
+    /**
+     * 通过关键字和文件后缀来过滤文件
+     *
+     * @param path
+     * @param keyword
+     * @param endWith
+     * @return
+     */
+    public static String[] listFile(String path, final String keyword, final String endWith) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            if (keyword != null && keyword.length() > 0) {
+                logger.info("listFile use keyword：{}，endWith：{}.", keyword, endWith);
+                return file.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.contains(keyword) && name.endsWith(endWith);
+                    }
+                });
+            } else {
+                logger.info("listFile not use keyword.");
+                return file.list();
+            }
+        } else {
+            logger.warn("path：{}，file not exists：{} or file is not Directory：{}", path, file.exists(), file.isDirectory());
+        }
+        return new String[0];
+    }
+
     /**
      * 创建软链接
      *
@@ -270,17 +295,6 @@ public class FileUtil {
 //		PosixFileAttributes attrs = Files.readAttributes(target, PosixFileAttributes.class);
 //		FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(attrs.permissions());
         Files.createSymbolicLink(link, target); // , attr
-    }
-
-    /**
-     * 如果文件夹不以\结尾则加上
-     *
-     * @param path
-     * @return
-     */
-    public static String endWith(String path) {
-        if (path.endsWith(fileSparator)) return path;
-        else return path + fileSparator;
     }
 
     /**
@@ -331,16 +345,6 @@ public class FileUtil {
         String sourceClass = "classes/";
         if (path.endsWith(sourceTargetClass)) path = path.substring(0, path.length() - sourceClass.length());
         return path;
-    }
-
-    /**
-     * 文件是否存在
-     *
-     * @param fileName
-     * @return
-     */
-    public static boolean isExists(String fileName) {
-        return new File(fileName).exists();
     }
 
     /**

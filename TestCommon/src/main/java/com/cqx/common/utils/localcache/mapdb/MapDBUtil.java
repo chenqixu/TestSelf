@@ -5,6 +5,7 @@ import org.mapdb.DBMaker;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -27,6 +28,10 @@ public class MapDBUtil implements Closeable {
 
     public String get(String key) {
         return map.get(key).toString();
+    }
+
+    public Map<String, String> getMap(String mapName) {
+        return db.get(mapName);
     }
 
     @Override
