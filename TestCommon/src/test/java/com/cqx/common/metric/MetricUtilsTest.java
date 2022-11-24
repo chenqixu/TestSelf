@@ -1,6 +1,8 @@
 package com.cqx.common.metric;
 
+import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
+import com.codahale.metrics.Snapshot;
 import com.cqx.common.utils.system.SleepUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -21,6 +23,7 @@ public class MetricUtilsTest {
     private final Object lock = new Object();
     private Meter producer = MetricUtils.getMeter("producer");
     private Meter consumer = MetricUtils.getMeter("consumer");
+    private Histogram h1 = MetricUtils.getHistogram("h1");
 
     @Before
     public void setUp() throws Exception {
@@ -105,6 +108,8 @@ public class MetricUtilsTest {
                 try {
                     int r = random.nextInt(10);
                     producer.mark(r);
+                    int h = r < 4 ? 1 : r < 7 ? 2 : 3;
+                    h1.update(h);
                     logger.info("random={}, count={}, mean_rate={}, m1={}, m5={}, m15={}, rate_unit={}",
                             r,
                             producer.getCount(),
@@ -113,6 +118,21 @@ public class MetricUtilsTest {
                             convertRate(producer.getFiveMinuteRate(), rateFactor),
                             convertRate(producer.getFifteenMinuteRate(), rateFactor),
                             "events/" + unit);
+
+                    final Snapshot snapshot = h1.getSnapshot();
+                    logger.info("type=HISTOGRAM, count={}, min={}, max={}, mean={}, stddev={}, " +
+                                    "median={}, p75={}, p95={}, p98={}, p99={}, p999={}",
+                            h1.getCount(),
+                            snapshot.getMin(),
+                            snapshot.getMax(),
+                            snapshot.getMean(),
+                            snapshot.getStdDev(),
+                            snapshot.getMedian(),
+                            snapshot.get75thPercentile(),
+                            snapshot.get95thPercentile(),
+                            snapshot.get98thPercentile(),
+                            snapshot.get99thPercentile(),
+                            snapshot.get999thPercentile());
                 } catch (RuntimeException ex) {
                     logger.error("RuntimeException thrown from {}#report. Exception was suppressed."
                             , MetricUtilsTest.this.getClass().getSimpleName(), ex);

@@ -77,8 +77,8 @@ public class RocksDBUtil implements AutoCloseable {
             dbOptions.setCreateIfMissing(true);
             // 如果列族不存在就创建
             dbOptions.setCreateMissingColumnFamilies(true);
-            // 设置LOG.old保留个数
-            dbOptions.setKeepLogFileNum(1);
+//            // 设置LOG.old保留个数
+//            dbOptions.setKeepLogFileNum(1);
             if (isReadOnly) {
                 rocksDB = RocksDB.openReadOnly(dbOptions, dbFilePath, cfDescriptors, columnFamilyHandleList);
             } else {
@@ -162,6 +162,47 @@ public class RocksDBUtil implements AutoCloseable {
         return values;
     }
 
+    /**
+     * 获取对应列族下和关键字匹配上的值，返回一个Map对象<br/>
+     * 注意：值太多内存可能会爆
+     *
+     * @param columnFamilyHandleName
+     * @param keyWord
+     * @return
+     * @throws RocksDBException
+     */
+    public Map<String, String> getColumnFamilyByKeyWord(String columnFamilyHandleName, String keyWord) throws RocksDBException {
+        Map<String, String> values = new HashMap<>();
+        RocksIterator iter = rocksDB.newIterator(checkColumnFamily(columnFamilyHandleName));
+        for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+            String _key = new String(iter.key());
+            if (_key.contains(keyWord)) {
+                values.put(_key, new String(iter.value()));
+            }
+        }
+        return values;
+    }
+
+    /**
+     * 获取对应列族下和关键字匹配上的最后一条记录
+     *
+     * @param columnFamilyHandleName
+     * @param keyWord
+     * @return
+     * @throws RocksDBException
+     */
+    public String getColumnFamilyLastValue(String columnFamilyHandleName, String keyWord) throws RocksDBException {
+        String lastValue = null;
+        RocksIterator iter = rocksDB.newIterator(checkColumnFamily(columnFamilyHandleName));
+        for (iter.seekToFirst(); iter.isValid(); iter.next()) {
+            String _key = new String(iter.key());
+            if (_key.contains(keyWord)) {
+                lastValue = new String(iter.value());
+            }
+        }
+        return lastValue;
+    }
+
     public void printAllColumnFamilyAllValue() throws RocksDBException {
         for (ColumnFamilyHandle _columnFamilyHandle : columnFamilyHandleMap.values()) {
             printColumnFamilyAllValue(new String(_columnFamilyHandle.getName()));
@@ -169,10 +210,12 @@ public class RocksDBUtil implements AutoCloseable {
     }
 
     public void dropColumnFamily(String columnFamilyHandleName) throws RocksDBException {
-        ColumnFamilyHandle _columnFamilyHandle = checkColumnFamily(columnFamilyHandleName);
-        rocksDB.dropColumnFamily(_columnFamilyHandle);
-        _columnFamilyHandle.close();
-        columnFamilyHandleMap.remove(columnFamilyHandleName);
+        ColumnFamilyHandle _columnFamilyHandle = checkColumnFamily(columnFamilyHandleName, false);
+        if (_columnFamilyHandle != null) {
+            rocksDB.dropColumnFamily(_columnFamilyHandle);
+            _columnFamilyHandle.close();
+            columnFamilyHandleMap.remove(columnFamilyHandleName);
+        }
     }
 
     public void dropAllColumnFamily() throws RocksDBException {
@@ -284,13 +327,30 @@ public class RocksDBUtil implements AutoCloseable {
      *
      * @param columnFamilyHandleName 列族名称
      * @return
+     * @throws RocksDBException
      */
     public ColumnFamilyHandle checkColumnFamily(String columnFamilyHandleName) throws RocksDBException {
+        return checkColumnFamily(columnFamilyHandleName, true);
+    }
+
+    /**
+     * 检查列族
+     *
+     * @param columnFamilyHandleName 列族名称
+     * @param isThrow                是否抛出异常
+     * @return
+     */
+    public ColumnFamilyHandle checkColumnFamily(String columnFamilyHandleName, boolean isThrow) throws RocksDBException {
         ColumnFamilyHandle columnFamilyHandle = getColumnFamilyHandleByName(columnFamilyHandleName);
         if (columnFamilyHandle != null) {
             return columnFamilyHandle;
         } else {
-            throw new RocksDBException(String.format("列族[%s]不存在!", columnFamilyHandleName));
+            if (isThrow) {
+                throw new RocksDBException(String.format("列族[%s]不存在!", columnFamilyHandleName));
+            } else {
+                logger.warn(String.format("列族[%s]不存在!", columnFamilyHandleName));
+                return null;
+            }
         }
     }
 

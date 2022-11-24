@@ -157,8 +157,8 @@ public class RocksDBUtilTest {
         list.add(4);
         list.add(5);
         list.add(3);
-        logger.info("顺序，从小到到");
         Collections.sort(list);
+        logger.info("顺序，从小到到，最大={}", list.get(list.size() - 1));
         for (int i : list) {
             logger.info("{}", i);
         }
@@ -246,5 +246,72 @@ public class RocksDBUtilTest {
             map.put("scan_add_queue_cnt", String.valueOf(random.nextInt(100)));
             rocksDBUtil.putColumnFamilyValue(sum_date, String.valueOf(start), JSON.toJSONString(map));
         }
+    }
+
+    @Test
+    public void dropSdtpClientColumnFamily() throws Exception {
+        changeSdtpDB();
+        assert rocksDBUtil != null;
+        String cf = "20221116";
+        // 删掉cf列族
+        rocksDBUtil.dropColumnFamily(cf);
+        // 打印所有列族
+        // 打印所有列族的所有值
+        printColumnFamilyAllValue();
+    }
+
+    /**
+     * 切换数据库到sdtp manager路径下
+     *
+     * @throws Exception
+     */
+    private void changeSdtpManagerDB() throws Exception {
+        tearDown();
+        dbFilePath = "d:\\tmp\\data\\rocksdb\\sdtpmanager";
+        setUp();
+    }
+
+    @Test
+    public void printSdtpManagerData() throws Exception {
+        changeSdtpManagerDB();
+        printColumnFamilyAllValue();
+    }
+
+    @Test
+    public void dropSdtpManagerColumnFamily() throws Exception {
+        changeSdtpManagerDB();
+        assert rocksDBUtil != null;
+        // 删掉cf列族
+        rocksDBUtil.dropColumnFamily("20221124");
+        // 打印所有列族
+        // 打印所有列族的所有值
+        printColumnFamilyAllValue();
+    }
+
+    /**
+     * 构造类型、主机
+     *
+     * @throws Exception
+     */
+    @Test
+    public void buildSdtpClientType() throws Exception {
+        changeSdtpManagerDB();
+        assert rocksDBUtil != null;
+        // 往默认列族写入数据
+        // 类型
+//        rocksDBUtil.putValue("type", "MC");
+        // 主机
+        rocksDBUtil.putValue("host_MC", "192.168.1.51:19090,192.168.1.52:19090");
+        // 删除
+        rocksDBUtil.delete("fetch_MC_127.0.0.1:19090");
+        rocksDBUtil.delete("fetch_MC_127.0.0.2:19090");
+        // 删掉列族
+        rocksDBUtil.dropColumnFamily("20221124");
+        // 打印所有列族
+        // 打印所有列族的所有值
+        printColumnFamilyAllValue();
+        // 获取MC监控最后一条记录
+//        String lastValue = rocksDBUtil.getColumnFamilyLastValue("20221121", "monitor_MC_127.0.0.1:19090");
+//        logger.info("lastValue: {}", lastValue);
     }
 }
