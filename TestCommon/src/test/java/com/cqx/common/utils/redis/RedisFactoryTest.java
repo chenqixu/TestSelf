@@ -388,6 +388,17 @@ public class RedisFactoryTest {
         logger.info("end: {}", TimeUtil.getNow());
     }
 
+    @Test
+    public void setexTest() {
+        String key = "123ex";
+        String ret = redisClient.setex(key, 3, "---");
+        logger.info("ret: {}", ret);
+        for (int i = 0; i < 4; i++) {
+            SleepUtil.sleepSecond(1);
+            logger.info("sleep 1 get: {}", redisClient.get(key));
+        }
+    }
+
     private List<Slot> discover() {
         //轮询缓存，ping不通过的移除
         //重新获取集群

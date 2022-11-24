@@ -3,11 +3,12 @@ package com.cqx.common.utils.redis.client;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class RedisClient {
+public abstract class RedisClient implements Closeable {
     protected static final int DEFAULT_MAX_REDIRECTIONS = 5;
     protected static final int DEFAULT_PIPELINE_COMMIT = 500;
     protected static final int DEFAULT_GET_CHCHE_SIZE = 10000;
@@ -26,6 +27,10 @@ public abstract class RedisClient {
     public abstract boolean setnx(String key, String value);
 
     public abstract boolean setnx(String key, String value, Integer seconds);
+
+    public abstract String setex(String key, int seconds, String value);
+
+    public abstract Long expire(String key, int seconds);
 
     public abstract String get(String key);
 

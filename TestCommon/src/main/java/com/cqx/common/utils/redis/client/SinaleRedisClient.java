@@ -55,6 +55,16 @@ public class SinaleRedisClient extends RedisClient {
     }
 
     @Override
+    public String setex(String key, int seconds, String value) {
+        return jedis.setex(key, seconds, value);
+    }
+
+    @Override
+    public Long expire(String key, int seconds) {
+        return jedis.expire(key, seconds);
+    }
+
+    @Override
     public String get(String key) {
         return jedis.get(key);
     }

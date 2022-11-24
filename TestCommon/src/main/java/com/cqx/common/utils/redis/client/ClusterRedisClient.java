@@ -100,6 +100,16 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public String setex(String key, int seconds, String value) {
+        return cluster.setex(key, seconds, value);
+    }
+
+    @Override
+    public Long expire(String key, int seconds) {
+        return cluster.expire(key, seconds);
+    }
+
+    @Override
     public String get(String key) {
         return cluster.get(key);
     }
