@@ -16,7 +16,7 @@ public class ArraysUtilTest {
         list.add("t1");
         list.add("t2");
         list.add("t3");
-        System.out.println(ArraysUtil.collectionToStr(list, ','));
+        System.out.println(ArrayUtil.collectionToStr(list, ','));
     }
 
     @Test

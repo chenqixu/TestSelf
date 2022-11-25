@@ -1,5 +1,6 @@
 package com.cqx.common.utils.file;
 
+import com.cqx.common.utils.file.reader.FileInputStreamLVReader;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.thread.ThreadTool;
 import org.junit.Before;
@@ -406,5 +407,25 @@ public class FileUtilTest {
         byteBuffer.put((byte) 5);
         position = byteBuffer.position();
         logger.info("pos: {}, remaining: {}", position, byteBuffer.remaining());
+    }
+
+    @Test
+    public void LVReadAndWrite() throws IOException {
+        fileUtil.setLVReader("I:\\Document\\Workspaces\\Git\\FujianBI\\edc-bigdata-comm\\edc-bigdata-comm-sdtp\\edc-bigdata-comm-sdtpServer\\target\\test-classes\\reverse1.data");
+        fileUtil.read(new IFileRead() {
+            @Override
+            public void run(String s) throws IOException {
+                logger.info("read: {}", s);
+            }
+
+            @Override
+            public void run(byte[] content) throws IOException {
+            }
+
+            @Override
+            public void tearDown() throws IOException {
+            }
+        });
+        fileUtil.closeRead();
     }
 }

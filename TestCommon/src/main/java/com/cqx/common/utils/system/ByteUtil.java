@@ -1,7 +1,7 @@
 package com.cqx.common.utils.system;
 
 import com.cqx.common.utils.Constant;
-import com.cqx.common.utils.coder.TBCDUtils;
+import com.cqx.common.utils.coder.TBCDUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
@@ -206,6 +206,10 @@ public class ByteUtil {
         return new BigInteger(bytes).longValue();
     }
 
+    public static int unsignedBytesToInt(byte[] bytes) {
+        return new BigInteger(bytes).intValue();
+    }
+
     public static byte[] numberToBytes(short data) {
         return numberToBytes(String.valueOf(data), 2);
     }
@@ -233,7 +237,7 @@ public class ByteUtil {
             for (int i = 0; i < diff; i++) {
                 newbytes[i] = 0x00;
             }
-            bytes = ArraysUtil.arrayAdd(newbytes, bytes, bytes.length);
+            bytes = ArrayUtil.arrayAdd(newbytes, bytes, bytes.length);
         } else if (bytes.length > size) {
             // 取低位
             int diff = bytes.length - size;
@@ -481,7 +485,7 @@ public class ByteUtil {
         }
         try {
             bytes = removeFF(bytes);
-            return TBCDUtils.toTBCD(bytes).toString();
+            return TBCDUtil.toTBCD(bytes).toString();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             logger.error("tbcd error. data = {}", bytesToHexStringH(bytes, " "));
@@ -506,7 +510,7 @@ public class ByteUtil {
      * @param <T>
      * @return
      */
-    public static <T> long bit_xor_vals_sets(java.util.Set<T> vals) {
+    public static <T> long bit_xor_vals_sets(Set<T> vals) {
         long rtn = 0L;
         for (T n : vals) {
             rtn = bit_xor(rtn, n);

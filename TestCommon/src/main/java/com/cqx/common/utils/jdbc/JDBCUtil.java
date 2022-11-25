@@ -3,7 +3,7 @@ package com.cqx.common.utils.jdbc;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.jdbc.declare.AbstractDeclare;
 import com.cqx.common.utils.jdbc.declare.DeclareHelper;
-import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.ArrayUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import oracle.sql.CLOB;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -1080,8 +1080,8 @@ public class JDBCUtil implements IJDBCUtil {
         if (pks.length != pks_type.length) throw new SQLException("pks长度和pks_type不一致！");
 
         //插入的字段、字段类型由 field+pks 组成
-        String[] insert_fields_type = ArraysUtil.arrayCopy(fields_type, pks_type);
-        String insert_fields = ArraysUtil.arrayToStr(ArraysUtil.arrayCopy(fields, pks), ",");
+        String[] insert_fields_type = ArrayUtil.arrayCopy(fields_type, pks_type);
+        String insert_fields = ArrayUtil.arrayToStr(ArrayUtil.arrayCopy(fields, pks), ",");
         //具体处理
         for (IQueryResultBean iQueryResultBean : iQueryResultBeanList) {
             String op_type = iQueryResultBean.getOp_type();
@@ -1173,8 +1173,8 @@ public class JDBCUtil implements IJDBCUtil {
         if (pks.length != pks_type.length) throw new SQLException("pks长度和pks_type不一致！");
 
         //插入的字段、字段类型由 field+pks 组成
-        String[] insert_fields_type = ArraysUtil.arrayCopy(fields_type, pks_type);
-        String insert_fields = ArraysUtil.arrayToStr(ArraysUtil.arrayCopy(fields, pks), ",");
+        String[] insert_fields_type = ArrayUtil.arrayCopy(fields_type, pks_type);
+        String insert_fields = ArrayUtil.arrayToStr(ArrayUtil.arrayCopy(fields, pks), ",");
         //具体处理
         for (int op_type_index = 0; op_type_index < op_types.size(); op_type_index++) {
             String op_type = op_types.get(op_type_index);
@@ -1222,8 +1222,8 @@ public class JDBCUtil implements IJDBCUtil {
         if (pks.length != pks_type.length) throw new SQLException("pks长度和pks_type不一致！");
 
         //插入的字段、字段类型由 field+pks 组成
-        String[] insert_fields_type = ArraysUtil.arrayCopy(fields_type, pks_type);
-        String insert_fields = ArraysUtil.arrayToStr(ArraysUtil.arrayCopy(fields, pks), ",");
+        String[] insert_fields_type = ArrayUtil.arrayCopy(fields_type, pks_type);
+        String insert_fields = ArrayUtil.arrayToStr(ArrayUtil.arrayCopy(fields, pks), ",");
         //具体处理
         for (int op_type_index = 0; op_type_index < op_types.size(); op_type_index++) {
             String op_type = op_types.get(op_type_index);

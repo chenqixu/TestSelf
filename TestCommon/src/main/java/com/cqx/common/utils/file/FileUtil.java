@@ -1,5 +1,13 @@
 package com.cqx.common.utils.file;
 
+import com.cqx.common.utils.file.reader.BufferedExReader;
+import com.cqx.common.utils.file.reader.FileInputStreamExReader;
+import com.cqx.common.utils.file.reader.FileInputStreamLVReader;
+import com.cqx.common.utils.file.reader.IFileReader;
+import com.cqx.common.utils.file.writer.BufferedExWriter;
+import com.cqx.common.utils.file.writer.FileOutputStreamExWriter;
+import com.cqx.common.utils.file.writer.FileOutputStreamLVWriter;
+import com.cqx.common.utils.file.writer.IFileWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +29,12 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author chenqixu
  */
 public class FileUtil {
-    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     protected static final String valueSplit = "\\|";
     protected static final int BUFF_SIZE = 4096;
     protected static final String fileSparator = File.separator;
-    protected BufferedWriter writer;
-    protected BufferedReader reader;
-    protected OutputStream outputStream;
-    protected InputStream inputStream;
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+    protected IFileReader reader;
+    protected IFileWriter writer;
 
     public static FileUtil builder() {
         return new FileUtil();
@@ -391,7 +397,7 @@ public class FileUtil {
     public void getFile(String filename, String read_code)
             throws FileNotFoundException, UnsupportedEncodingException {
         File readFile = new File(filename);
-        reader = new BufferedReader(new InputStreamReader(new FileInputStream(readFile), read_code));
+        reader = new BufferedExReader(new InputStreamReader(new FileInputStream(readFile), read_code));
     }
 
     /**
@@ -411,7 +417,7 @@ public class FileUtil {
 
     public void readInputStream(IFileRead iFileRead, int off, int len) throws IOException {
         byte[] b = new byte[len];
-        int ret = inputStream.read(b, off, len);
+        int ret = reader.read(b, off, len);
         if (ret > 0) {
             iFileRead.run(b);
         }
@@ -522,7 +528,7 @@ public class FileUtil {
     public void createFile(String filename, String write_code, boolean append)
             throws FileNotFoundException, UnsupportedEncodingException {
         File writeFile = new File(filename);
-        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(writeFile, append), write_code));
+        writer = new BufferedExWriter(new OutputStreamWriter(new FileOutputStream(writeFile, append), write_code));
     }
 
     public void createFile(String filename, String write_code)
@@ -537,27 +543,36 @@ public class FileUtil {
 
     public void createOutputStreamFile(String filename, boolean append) throws FileNotFoundException {
         File writeFile = new File(filename);
-        outputStream = new FileOutputStream(writeFile, append);
+        writer = new FileOutputStreamExWriter(writeFile, append);
     }
 
     public void createOutputStreamFile(String filename) throws FileNotFoundException {
         createOutputStreamFile(filename, false);
     }
 
-    public void os_write(byte[] bytes) {
-        if (outputStream != null) {
+    public void createLVFile(String filename, boolean append) throws FileNotFoundException {
+        File writeFile = new File(filename);
+        writer = new FileOutputStreamLVWriter(writeFile, append);
+    }
+
+    public void createLVFile(String filename) throws FileNotFoundException {
+        createLVFile(filename, false);
+    }
+
+    public void write(byte[] bytes) {
+        if (writer != null) {
             try {
-                outputStream.write(bytes);
+                writer.write(bytes);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             }
         }
     }
 
-    public void os_write(byte[] bytes, int off, int len) {
-        if (outputStream != null) {
+    public void write(byte[] bytes, int off, int len) {
+        if (writer != null) {
             try {
-                outputStream.write(bytes, off, len);
+                writer.write(bytes, off, len);
             } catch (IOException e) {
                 logger.error(e.getMessage(), e);
             }
@@ -565,8 +580,8 @@ public class FileUtil {
     }
 
     public void os_newline() {
-        if (isWindow()) os_write("\r\n".getBytes());
-        else os_write("\n".getBytes());
+        if (isWindow()) write("\r\n".getBytes());
+        else write("\n".getBytes());
     }
 
     public void newline() {
@@ -615,17 +630,6 @@ public class FileUtil {
         }
     }
 
-    public void closeInputStream() {
-        if (inputStream != null) {
-            try {
-                inputStream.close();
-                inputStream = null;
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-    }
-
     public void closeWrite() {
         try {
             writer.flush();
@@ -645,31 +649,12 @@ public class FileUtil {
         }
     }
 
-    public void closeOutputStream() {
-        try {
-            outputStream.flush();
-            outputStream.close();
-            outputStream = null;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                    outputStream = null;
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-        }
-    }
-
-    public void setReader(BufferedReader reader) {
-        this.reader = reader;
+    public void setIFileReader(IFileReader iFileReader) {
+        this.reader = iFileReader;
     }
 
     public void setReader(InputStream is, String read_code) throws UnsupportedEncodingException {
-        setReader(new BufferedReader(new InputStreamReader(is, read_code)));
+        setIFileReader(new BufferedExReader(new InputStreamReader(is, read_code)));
     }
 
     public void setReader(InputStream is) throws UnsupportedEncodingException {
@@ -685,7 +670,11 @@ public class FileUtil {
     }
 
     public void setInputStreamReader(String fileName) throws FileNotFoundException {
-        this.inputStream = new FileInputStream(new File(fileName));
+        setIFileReader(new FileInputStreamExReader(new File(fileName)));
+    }
+
+    public void setLVReader(String fileName) throws FileNotFoundException {
+        setIFileReader(new FileInputStreamLVReader(new File(fileName)));
     }
 
     public boolean isWindow() {

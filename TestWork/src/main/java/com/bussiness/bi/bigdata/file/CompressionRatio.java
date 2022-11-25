@@ -298,7 +298,7 @@ public class CompressionRatio {
                         if (isRAF) {
                             baseRandomAccessFile.write(bytes);
                         } else {
-                            fileUtil.os_write(bytes);
+                            fileUtil.write(bytes);
                             fileUtil.os_newline();
                         }
                     }
@@ -323,7 +323,7 @@ public class CompressionRatio {
                             if (isRAF) {
                                 baseRandomAccessFile.write(bytes);
                             } else {
-                                fileUtil.os_write(bytes);
+                                fileUtil.write(bytes);
                             }
                         }
                     }
@@ -340,7 +340,7 @@ public class CompressionRatio {
                     if (isRAF) {
                         baseRandomAccessFile.close();
                     } else {
-                        fileUtil.closeOutputStream();
+                        fileUtil.closeWrite();
                     }
                     break;
             }

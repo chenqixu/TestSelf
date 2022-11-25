@@ -3,7 +3,7 @@ package com.cqx.common.utils.file;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.serialize.ISerialization;
 import com.cqx.common.utils.serialize.impl.StringSerializationImpl;
-import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,9 +73,9 @@ public class RAFFileMangerCenter<T> implements Closeable {
                 + fillZero(bytes.length, header_half_len);
         try {
             // header + data
-            byte[] _content = ArraysUtil.arrayCopy(header.getBytes(), bytes);
+            byte[] _content = ArrayUtil.arrayCopy(header.getBytes(), bytes);
             // 末尾写个8位CRC32校验码
-            byte[] content = ArraysUtil.arrayCopy(_content, getCrc32Bytes(bytes));
+            byte[] content = ArrayUtil.arrayCopy(_content, getCrc32Bytes(bytes));
             if (baseRandomAccessFile.write(header_pos, content)) {
                 header_pos_next = header_pos + content.length;
                 // 长度等于header+body

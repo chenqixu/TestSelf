@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author chenqixu
  */
-public class ArraysUtil {
+public class ArrayUtil {
     public static final String ISMISSING = "_ismissing";
     public static final String ISMISSING_TYPE = "java.lang.Boolean";
 

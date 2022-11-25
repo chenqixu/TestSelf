@@ -2,7 +2,7 @@ package com.cqx.common.utils.coder;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class TBCDUtils {
+public class TBCDUtil {
     private static final String cTBCDSymbolString = "0123456789*#abc";
     private static final byte[] HEX_CHAR = new byte[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private static final StringBuilder EMPTY_STIRNG = new StringBuilder(StringUtils.EMPTY);

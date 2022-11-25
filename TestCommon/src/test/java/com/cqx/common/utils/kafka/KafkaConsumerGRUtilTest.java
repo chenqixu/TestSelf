@@ -4,7 +4,7 @@ import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.list.IKVList;
-import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.ArrayUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -269,8 +269,8 @@ public class KafkaConsumerGRUtilTest extends TestBase {
                 "subscription_id",
                 "user_id",
                 "product_id"};
-        String[] send_pks_before_array = ArraysUtil.arrayAddPrefix(pks, "before_");
-        String[] send_pks_after_array = ArraysUtil.arrayAddPrefix(pks, "after_");
+        String[] send_pks_before_array = ArrayUtil.arrayAddPrefix(pks, "before_");
+        String[] send_pks_after_array = ArrayUtil.arrayAddPrefix(pks, "after_");
         // 从配置文件解析参数
         Map param = (Map) getParam("kafka.yaml").get("param");
         // 从配置中获取话题工具URL

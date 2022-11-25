@@ -5,7 +5,7 @@ import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.hdfs.HdfsBean;
 import com.cqx.common.utils.hdfs.HdfsTool;
 import com.cqx.common.utils.jdbc.IJDBCUtilCall.IQueryResultBean;
-import com.cqx.common.utils.system.ArraysUtil;
+import com.cqx.common.utils.system.ArrayUtil;
 import com.cqx.common.utils.system.ByteUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
@@ -658,9 +658,9 @@ public class JDBCUtilTest extends TestBase {
 
         String[] tab_fields_array = tab_fields.split(",", -1);
         String[] pks_array = pks.split(",", -1);
-        String[] fields_array = ArraysUtil.arrayRemove(tab_fields_array, pks_array);
+        String[] fields_array = ArrayUtil.arrayRemove(tab_fields_array, pks_array);
 
-        String fields = ArraysUtil.arrayToStr(fields_array, ",");
+        String fields = ArrayUtil.arrayToStr(fields_array, ",");
 
         String query = "select %s,%s from %s";
         List<List<QueryResult>> queryResults = jdbcUtil.executeQuery(String.format(query, fields, pks, table));
