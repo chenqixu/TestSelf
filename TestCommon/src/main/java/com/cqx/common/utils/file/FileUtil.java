@@ -631,19 +631,21 @@ public class FileUtil {
     }
 
     public void closeWrite() {
-        try {
-            writer.flush();
-            writer.close();
-            writer = null;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                    writer = null;
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
+        if (writer != null) {
+            try {
+                writer.flush();
+                writer.close();
+                writer = null;
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            } finally {
+                if (writer != null) {
+                    try {
+                        writer.close();
+                        writer = null;
+                    } catch (IOException e) {
+                        logger.error(e.getMessage(), e);
+                    }
                 }
             }
         }
