@@ -35,6 +35,8 @@ public class FileUtil {
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
     protected IFileReader reader;
     protected IFileWriter writer;
+    protected String readerName;
+    protected String writerName;
 
     public static FileUtil builder() {
         return new FileUtil();
@@ -527,6 +529,7 @@ public class FileUtil {
 
     public void createFile(String filename, String write_code, boolean append)
             throws FileNotFoundException, UnsupportedEncodingException {
+        this.writerName = filename;
         File writeFile = new File(filename);
         writer = new BufferedExWriter(new OutputStreamWriter(new FileOutputStream(writeFile, append), write_code));
     }
@@ -542,6 +545,7 @@ public class FileUtil {
     }
 
     public void createOutputStreamFile(String filename, boolean append) throws FileNotFoundException {
+        this.writerName = filename;
         File writeFile = new File(filename);
         writer = new FileOutputStreamExWriter(writeFile, append);
     }
@@ -551,6 +555,7 @@ public class FileUtil {
     }
 
     public void createLVFile(String filename, boolean append) throws FileNotFoundException {
+        this.writerName = filename;
         File writeFile = new File(filename);
         writer = new FileOutputStreamLVWriter(writeFile, append);
     }
@@ -664,6 +669,7 @@ public class FileUtil {
     }
 
     public void setReader(String fileName, String read_code) throws FileNotFoundException, UnsupportedEncodingException {
+        this.readerName = fileName;
         setReader(new FileInputStream(new File(fileName)), read_code);
     }
 
@@ -672,10 +678,12 @@ public class FileUtil {
     }
 
     public void setInputStreamReader(String fileName) throws FileNotFoundException {
+        this.readerName = fileName;
         setIFileReader(new FileInputStreamExReader(new File(fileName)));
     }
 
     public void setLVReader(String fileName) throws FileNotFoundException {
+        this.readerName = fileName;
         setIFileReader(new FileInputStreamLVReader(new File(fileName)));
     }
 
@@ -686,6 +694,14 @@ public class FileUtil {
         } else {
             return false;
         }
+    }
+
+    public String getReaderName() {
+        return readerName;
+    }
+
+    public String getWriterName() {
+        return writerName;
     }
 
     class ReaderThread extends Monitor {

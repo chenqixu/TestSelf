@@ -1,6 +1,5 @@
 package com.cqx.common.utils.file;
 
-import com.cqx.common.utils.file.reader.FileInputStreamLVReader;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.thread.ThreadTool;
 import org.junit.Before;
@@ -411,21 +410,20 @@ public class FileUtilTest {
 
     @Test
     public void LVReadAndWrite() throws IOException {
-        fileUtil.setLVReader("I:\\Document\\Workspaces\\Git\\FujianBI\\edc-bigdata-comm\\edc-bigdata-comm-sdtp\\edc-bigdata-comm-sdtpServer\\target\\test-classes\\reverse1.data");
-        fileUtil.read(new IFileRead() {
-            @Override
-            public void run(String s) throws IOException {
-                logger.info("read: {}", s);
-            }
-
-            @Override
-            public void run(byte[] content) throws IOException {
-            }
-
-            @Override
-            public void tearDown() throws IOException {
-            }
-        });
-        fileUtil.closeRead();
+        String path = "I:\\Document\\Workspaces\\Git\\FujianBI\\edc-bigdata-comm\\edc-bigdata-comm-sdtp\\edc-bigdata-comm-sdtpServer\\target\\test-classes\\";
+        path = "d:\\tmp\\data\\sdtp\\byte_noparser\\";
+        for (String _fileName : FileUtil.listFileEndWith(path, ".dat")) {
+            fileUtil.setLVReader(FileUtil.endWith(path) + _fileName);
+            FileCount fc = new FileCount() {
+                @Override
+                public void run(String content) throws IOException {
+                    count("CNT");
+                    logger.info("read: {}", content);
+                }
+            };
+            fileUtil.read(fc);
+            fileUtil.closeRead();
+            logger.info("read: {}, CNT: {}", fileUtil.getReaderName(), fc.getCount("CNT"));
+        }
     }
 }
