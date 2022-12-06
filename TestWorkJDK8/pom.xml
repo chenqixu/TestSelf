@@ -28,6 +28,7 @@
         <hadoop.version>3.1.1-hw-ei-302002</hadoop.version>
         <hadoop.ext.version>8.0.2-302002</hadoop.ext.version>
         <hive.version>3.1.0-hw-ei-302002</hive.version>
+        <jedis.version>2.9.0</jedis.version>
     </properties>
 
     <build>
@@ -364,5 +365,19 @@
             <artifactId>fastjson</artifactId>
             <version>1.1.41</version>
         </dependency>
+
+        <!-- memory -->
+        <!--<dependency>-->
+            <!--<groupId>redis.clients</groupId>-->
+            <!--<artifactId>jedis</artifactId>-->
+            <!--<version>${jedis.version}</version>-->
+            <!--<optional>true</optional>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.lettuce</groupId>-->
+            <!--<artifactId>lettuce-core</artifactId>-->
+            <!--<version>6.2.0.RELEASE</version>-->
+        <!--</dependency>-->
     </dependencies>
 </project>
