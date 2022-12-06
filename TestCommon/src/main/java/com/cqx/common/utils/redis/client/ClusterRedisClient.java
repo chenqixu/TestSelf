@@ -155,6 +155,11 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public Set<String> smembers(String key) {
+        return cluster.smembers(key);
+    }
+
+    @Override
     public void flushDB() {
         for (Map.Entry<String, JedisPool> entry : cluster.getClusterNodes().entrySet()) {
             entry.getValue().getResource().flushDB();

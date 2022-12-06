@@ -130,6 +130,11 @@ public class SinaleRedisClient extends RedisClient {
     }
 
     @Override
+    public Set<String> smembers(String key) {
+        return jedis.smembers(key);
+    }
+
+    @Override
     public void close() {
         jedis.close();
     }

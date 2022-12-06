@@ -58,6 +58,8 @@ public abstract class RedisClient implements Closeable {
 
     public abstract Long hincrBy(String key, String field, Long value);
 
+    public abstract Set<String> smembers(String key);
+
     public abstract void close();
 
     public abstract void flushDB();

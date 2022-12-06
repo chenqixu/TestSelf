@@ -198,16 +198,22 @@ public class ByteUtil {
      * @param bytes
      * @return
      */
+    public static BigInteger unsignedBytesToBigInteger(byte[] bytes) {
+        byte[] _header = {0x00};
+        byte[] _short_bytes = ArrayUtil.arrayCopy(_header, bytes);
+        return new BigInteger(_short_bytes);
+    }
+
     public static String unsignedBytes(byte[] bytes) {
-        return new BigInteger(bytes).toString();
+        return unsignedBytesToBigInteger(bytes).toString();
     }
 
     public static long unsignedBytesToLong(byte[] bytes) {
-        return new BigInteger(bytes).longValue();
+        return unsignedBytesToBigInteger(bytes).longValue();
     }
 
     public static int unsignedBytesToInt(byte[] bytes) {
-        return new BigInteger(bytes).intValue();
+        return unsignedBytesToBigInteger(bytes).intValue();
     }
 
     public static byte[] numberToBytes(short data) {

@@ -64,6 +64,26 @@ public class FileUtil {
     }
 
     /**
+     * 是否是文件
+     *
+     * @param fileName
+     * @return
+     */
+    public static boolean isFile(String fileName) {
+        return new File(fileName).isFile();
+    }
+
+    /**
+     * 是否是目录
+     *
+     * @param fileName
+     * @return
+     */
+    public static boolean isDirectory(String fileName) {
+        return new File(fileName).isDirectory();
+    }
+
+    /**
      * 文件合并
      *
      * @param srcList
