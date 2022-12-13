@@ -1,5 +1,7 @@
 package com.cqx.common.utils.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.net.util.IPAddressUtil;
 
 import java.math.BigInteger;
@@ -13,6 +15,34 @@ import java.util.BitSet;
  * @author chenqixu
  */
 public class IpUtil {
+    private static final Logger logger = LoggerFactory.getLogger(IpUtil.class);
+    private static volatile String ip = null;
+    private static volatile String hostName = null;
+
+    static {
+        init();
+    }
+
+    private static void init() {
+        InetAddress addr;
+        try {
+            addr = InetAddress.getLocalHost();
+            ip = addr.getHostAddress();
+            hostName = addr.getHostAddress();
+        } catch (Exception e) {
+            logger.error("无法获取IP地址、主机名称", e);
+            ip = "获取IP地址出错，" + e.getMessage();
+            hostName = "获取主机名称出错，" + e.getMessage();
+        }
+    }
+
+    public static String getIp() {
+        return ip;
+    }
+
+    public static String getHostName() {
+        return hostName;
+    }
 
     /**
      * byte数组转BitSet

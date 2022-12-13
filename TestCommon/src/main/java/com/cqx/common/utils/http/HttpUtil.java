@@ -141,39 +141,44 @@ public class HttpUtil implements Serializable {
                 StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
                 ((HttpPut) httpRequestBase).setEntity(httpEntity);
             }
-            // 取出所有的头信息
-            Header[] allHeaderArr = httpRequestBase.getAllHeaders();
-            Map<String, String> allHeaderMap = new HashMap<>();
-            for (Header header : allHeaderArr) {
-                allHeaderMap.put(header.getName(), header.getValue());
-            }
-            // 设置请求头信息，鉴权
-            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-                if (allHeaderMap.get(entry.getKey()) != null) {
-                    httpRequestBase.setHeader(entry.getKey(), entry.getValue());
-                } else {
-                    httpRequestBase.addHeader(entry.getKey(), entry.getValue());
+            // 请求类型不为空
+            if (httpRequestBase != null) {
+                // 取出所有的头信息
+                Header[] allHeaderArr = httpRequestBase.getAllHeaders();
+                Map<String, String> allHeaderMap = new HashMap<>();
+                for (Header header : allHeaderArr) {
+                    allHeaderMap.put(header.getName(), header.getValue());
                 }
+                // 设置请求头信息，鉴权
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    if (allHeaderMap.get(entry.getKey()) != null) {
+                        httpRequestBase.setHeader(entry.getKey(), entry.getValue());
+                    } else {
+                        httpRequestBase.addHeader(entry.getKey(), entry.getValue());
+                    }
+                }
+                // 设置配置请求参数
+                RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(ConnectTimeout)// 连接主机服务超时时间
+                        .setConnectionRequestTimeout(ConnectionRequestTimeout)// 请求超时时间
+                        .setSocketTimeout(SocketTimeout)// 数据读取超时时间
+                        .build();
+                // 为实例设置配置
+                httpRequestBase.setConfig(requestConfig);
+                // 执行请求得到返回对象
+                response = httpClient.execute(httpRequestBase);
+                // 通过返回对象获取返回的headers，并设置到Map中
+                Header[] allHeaders = response.getAllHeaders();
+                Map<String, String> responseHeaderMap = new HashMap<>();
+                for (Header header : allHeaders) {
+                    responseHeaderMap.put(header.getName(), header.getValue());
+                }
+                // 通过返回对象获取返回数据
+                HttpEntity entity = response.getEntity();
+                // 通过公共接口对entity进行处理
+                iHttpEntityDeal.deal(responseHeaderMap, entity);
+            } else {
+                logger.warn("未知的请求类型：{}", httpRequest.getName());
             }
-            // 设置配置请求参数
-            RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(ConnectTimeout)// 连接主机服务超时时间
-                    .setConnectionRequestTimeout(ConnectionRequestTimeout)// 请求超时时间
-                    .setSocketTimeout(SocketTimeout)// 数据读取超时时间
-                    .build();
-            // 为实例设置配置
-            httpRequestBase.setConfig(requestConfig);
-            // 执行请求得到返回对象
-            response = httpClient.execute(httpRequestBase);
-            // 通过返回对象获取返回的headers，并设置到Map中
-            Header[] allHeaders = response.getAllHeaders();
-            Map<String, String> responseHeaderMap = new HashMap<>();
-            for (Header header : allHeaders) {
-                responseHeaderMap.put(header.getName(), header.getValue());
-            }
-            // 通过返回对象获取返回数据
-            HttpEntity entity = response.getEntity();
-            // 通过公共接口对entity进行处理
-            iHttpEntityDeal.deal(responseHeaderMap, entity);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         } finally {
@@ -217,39 +222,44 @@ public class HttpUtil implements Serializable {
                 StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
                 ((HttpPut) httpRequestBase).setEntity(httpEntity);
             }
-            // 取出所有的头信息
-            Header[] allHeaderArr = httpRequestBase.getAllHeaders();
-            Map<String, String> allHeaderMap = new HashMap<>();
-            for (Header header : allHeaderArr) {
-                allHeaderMap.put(header.getName(), header.getValue());
-            }
-            // 设置请求头信息，鉴权
-            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-                if (allHeaderMap.get(entry.getKey()) != null) {
-                    httpRequestBase.setHeader(entry.getKey(), entry.getValue());
-                } else {
-                    httpRequestBase.addHeader(entry.getKey(), entry.getValue());
+            // 请求类型不为空
+            if (httpRequestBase != null) {
+                // 取出所有的头信息
+                Header[] allHeaderArr = httpRequestBase.getAllHeaders();
+                Map<String, String> allHeaderMap = new HashMap<>();
+                for (Header header : allHeaderArr) {
+                    allHeaderMap.put(header.getName(), header.getValue());
                 }
+                // 设置请求头信息，鉴权
+                for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                    if (allHeaderMap.get(entry.getKey()) != null) {
+                        httpRequestBase.setHeader(entry.getKey(), entry.getValue());
+                    } else {
+                        httpRequestBase.addHeader(entry.getKey(), entry.getValue());
+                    }
+                }
+                // 设置配置请求参数
+                RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(ConnectTimeout)// 连接主机服务超时时间
+                        .setConnectionRequestTimeout(ConnectionRequestTimeout)// 请求超时时间
+                        .setSocketTimeout(SocketTimeout)// 数据读取超时时间
+                        .build();
+                // 为实例设置配置
+                httpRequestBase.setConfig(requestConfig);
+                // 执行请求得到返回对象
+                response = httpClient.execute(httpRequestBase);
+                // 通过返回对象获取返回的headers，并设置到Map中
+                Header[] allHeaders = response.getAllHeaders();
+                Map<String, String> responseHeaderMap = new HashMap<>();
+                for (Header header : allHeaders) {
+                    responseHeaderMap.put(header.getName(), header.getValue());
+                }
+                // 通过返回对象获取返回数据
+                HttpEntity entity = response.getEntity();
+                // 通过公共接口对entity进行处理
+                iHttpEntityDealThrowException.deal(responseHeaderMap, entity);
+            } else {
+                logger.warn("未知的请求类型：{}", httpRequest.getName());
             }
-            // 设置配置请求参数
-            RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(ConnectTimeout)// 连接主机服务超时时间
-                    .setConnectionRequestTimeout(ConnectionRequestTimeout)// 请求超时时间
-                    .setSocketTimeout(SocketTimeout)// 数据读取超时时间
-                    .build();
-            // 为实例设置配置
-            httpRequestBase.setConfig(requestConfig);
-            // 执行请求得到返回对象
-            response = httpClient.execute(httpRequestBase);
-            // 通过返回对象获取返回的headers，并设置到Map中
-            Header[] allHeaders = response.getAllHeaders();
-            Map<String, String> responseHeaderMap = new HashMap<>();
-            for (Header header : allHeaders) {
-                responseHeaderMap.put(header.getName(), header.getValue());
-            }
-            // 通过返回对象获取返回数据
-            HttpEntity entity = response.getEntity();
-            // 通过公共接口对entity进行处理
-            iHttpEntityDealThrowException.deal(responseHeaderMap, entity);
         } finally {
             // 关闭资源
             if (null != response) {
