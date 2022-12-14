@@ -239,6 +239,32 @@ public class FileUtil {
         return null;
     }
 
+    public static File[] listFilesEndWith(String filePath, String endWith) {
+        File file = new File(filePath);
+        if (file.exists() && file.isDirectory()) {
+            return file.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(endWith);
+                }
+            });
+        }
+        return new File[]{};
+    }
+
+    public static File[] listFilesEndWith(String filePath, String endWith, String exclusionKey) {
+        File file = new File(filePath);
+        if (file.exists() && file.isDirectory()) {
+            return file.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(endWith) && !name.contains(exclusionKey);
+                }
+            });
+        }
+        return new File[]{};
+    }
+
     public static String[] listFile(String path) {
         return listFile(path, null);
     }

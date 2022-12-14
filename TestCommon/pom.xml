@@ -447,6 +447,10 @@
                     <artifactId>libthrift</artifactId>
                     <groupId>org.apache.thrift</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>datanucleus-rdbms-fi</artifactId>
+                    <groupId>org.datanucleus</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -989,6 +993,14 @@
             <groupId>com.dm</groupId>
             <artifactId>DmJdbcDriver18</artifactId>
             <version>18</version>
+        </dependency>
+
+        <!-- 调用python -->
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython-standalone</artifactId>
+            <!--python版本是2.x还是3.x在这里指定-->
+            <version>2.7.0</version>
         </dependency>
     </dependencies>
 
