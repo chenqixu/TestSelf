@@ -1282,7 +1282,7 @@ public class JDBCUtil implements IJDBCUtil {
                                 || "oracle.jdbc.OracleClob".equals(qr.getColumnClassName())
                                 || "oracle.sql.CLOB".equals(qr.getColumnClassName())
                         ) {
-						    if (qr.getValue() != null) {// 可能为空，缺陷修复
+                            if (qr.getValue() != null) {// 可能为空，缺陷修复
                                 String content = qr.getValue().toString();
                                 qr.setValue(buildClob(conn, content));
                             }
@@ -2267,7 +2267,7 @@ public class JDBCUtil implements IJDBCUtil {
                                 String _value = clob.getSubString(1, (int) clob.length());
                                 setter.invoke(t, _value);
                             } else {
-                                setter.invoke(t, value);
+                                setter.invoke(t, value.toString());
                             }
                         }
                     } else {

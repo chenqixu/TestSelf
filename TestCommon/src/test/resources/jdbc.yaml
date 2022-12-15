@@ -71,6 +71,11 @@ dbbeans:
     pass_word: "xdload"
     tns: "jdbc:oracle:thin:@10.1.8.205:1521/cbass"
     dbType: "ORACLE"
+  - name: oracle11g_xdmart205_Bean
+    user_name: "xdmart"
+    pass_word: "xdmart"
+    tns: "jdbc:oracle:thin:@10.1.8.205:1521/cbass"
+    dbType: "ORACLE"
   - name: localoracleBean
     user_name: "bishow"
     pass_word: "bishow"

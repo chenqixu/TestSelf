@@ -147,6 +147,7 @@ public class CoordinateTransform {
      * @return 坐标是否在国内
      */
     public static boolean outOfChina(double lng, double lat) {
-        return (lng < 72.004 || lng > 137.8347) || (lat < 0.8293 || lat > 55.8271);
+//        return (lng < 72.004 || lng > 137.8347) || (lat < 0.8293 || lat > 55.8271);
+        return false;
     }
 }
