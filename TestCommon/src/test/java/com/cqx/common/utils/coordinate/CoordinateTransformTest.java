@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.script.ScriptException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public class CoordinateTransformTest extends TestBase {
 
     @Test
     public void transformWGS84ToGCJ02() {
-        double[] lngLat = CoordinateTransform.transformWGS84ToGCJ02(lng, lat);
+        Double[] lngLat = CoordinateTransform.transformWGS84ToGCJ02(lng, lat);
         for (double d : lngLat) {
             logger.info("{}", d);
         }
@@ -109,11 +110,19 @@ public class CoordinateTransformTest extends TestBase {
 
     @Test
     public void transformWGS84ToBD09() throws ScriptException, NoSuchMethodException, FileNotFoundException {
-        double[] lngLat = CoordinateTransform.transformWGS84ToBD09(lng, lat);
+        Double[] lngLat = CoordinateTransform.transformWGS84ToBD09(lng, lat);
         for (double d : lngLat) {
             logger.info("{}", d);
         }
-        // 114.22539195427781   29.5815853675143
+        // 114.23074697114104   29.5790799569647
+    }
+
+    @Test
+    public void outOfChina() {
+        double _lng = -180;
+        double _lat = -90;
+        logger.info("{}", Arrays.asList(CoordinateTransform.transformWGS84ToGCJ02(_lng, _lat)));
+        logger.info("{}", Arrays.asList(CoordinateTransform.transformWGS84ToBD09(_lng, _lat)));
     }
 
     @Test

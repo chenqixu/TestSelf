@@ -139,6 +139,24 @@ public class ArrayUtil {
     }
 
     /**
+     * 数组转字符，带分隔符
+     *
+     * @param arrays 数组
+     * @param affix  分隔符
+     * @param <T>    泛型
+     * @return
+     */
+    public static <T> String arrayToStr(T[] arrays, String affix) {
+        StringBuilder prepare = new StringBuilder();
+        int affix_len = affix.length();
+        for (T val : arrays) {
+            prepare.append(val.toString()).append(affix);
+        }
+        if (prepare.length() > 0) prepare.delete(prepare.length() - affix_len, prepare.length());
+        return prepare.toString();
+    }
+
+    /**
      * List转换成数组
      *
      * @param list
