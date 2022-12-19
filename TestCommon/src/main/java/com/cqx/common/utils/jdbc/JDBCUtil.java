@@ -584,6 +584,48 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
+     * 批量执行SQL，在同一会话内，回调函数用于循环获取查询结果<br>
+     * 比如set hive.xx=xx，然后执行查询的情况<br>
+     * 或者alter session set xx=xx，然后执行查询的情况
+     *
+     * @param sqls
+     * @param iCallBack
+     * @throws SQLException
+     */
+    @Override
+    public void execute(List<String> sqls, ICallBack iCallBack) throws SQLException {
+        Connection conn = null;
+        Statement stm = null;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            stm = conn.createStatement();
+            for (String sql : sqls) {
+                boolean executeFlag = stm.execute(sql);
+                if (sql.startsWith("select ")) {
+                    ResultSet resultSet = stm.getResultSet();
+                    logger.info("执行SQL: {}", sql);
+                    if (resultSet != null) {
+                        iCallBack.call(resultSet);
+                    }
+                } else if (sql.startsWith("update ") || sql.startsWith("insert into") || sql.startsWith("delete ")) {
+                    int updateCount = stm.getUpdateCount();
+                    logger.info("执行SQL: {}, 影响记录数: {}", sql, updateCount);
+                } else {
+                    int updateCount = stm.getUpdateCount();
+                    logger.info("执行SQL: {}, 执行结果: {}", sql, updateCount);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：execute异常，" + e.getMessage() + "，报错的SQL：" + sqls, e);
+            if (isThrow()) throw e;
+        } finally {
+            closeStm(stm);
+            closeConn(conn);
+        }
+    }
+
+    /**
      * 执行sql查询语句，使用回调接口
      *
      * @param sql

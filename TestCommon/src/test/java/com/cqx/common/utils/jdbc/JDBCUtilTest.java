@@ -963,6 +963,29 @@ public class JDBCUtilTest extends TestBase {
         }
     }
 
+    @Test
+    public void hiveTxTest() throws Exception {
+        // -Djdbc.bean=hiveHuaWeiBean
+        HdfsBean hdfsBean = paramsParserUtil.getHdfsBeanMap().get("hacluster");
+        hdfsBean.setHadoop_conf(getResourcePath(hdfsBean.getHadoop_conf()));
+        hdfsBean.setKeytab(getResourcePath(hdfsBean.getKeytab()));
+        hdfsBean.setKrb5(getResourcePath(hdfsBean.getKrb5()));
+        hdfsBean.setJaas(getResourcePath(hdfsBean.getJaas()));
+        HdfsTool.hiveInitKerberos(hdfsBean);
+
+        List<String> sqls = new ArrayList<>();
+        sqls.add("set hive.support.concurrency=true;");
+        sqls.add("select 1");
+        jdbcUtil.execute(sqls, new IJDBCUtilCall.ICallBack() {
+            @Override
+            public void call(ResultSet rs) throws SQLException {
+                while (rs.next()) {
+                    logger.info("{}", rs.getObject(1));
+                }
+            }
+        });
+    }
+
     interface Q1 {
         String getData();
     }

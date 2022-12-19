@@ -137,6 +137,17 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     void execute(List<String> sqls) throws SQLException;
 
     /**
+     * 批量执行SQL，在同一会话内，回调函数用于循环获取查询结果<br>
+     * 比如set hive.xx=xx，然后执行查询的情况<br>
+     * 或者alter session set xx=xx，然后执行查询的情况
+     *
+     * @param sqls
+     * @param iCallBack
+     * @throws SQLException
+     */
+    void execute(List<String> sqls, ICallBack iCallBack) throws SQLException;
+
+    /**
      * 根据sql查询，查询结果进行回调处理，用的是ResultSet
      *
      * @param sql
