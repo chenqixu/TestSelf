@@ -1002,6 +1002,13 @@
             <!--python版本是2.x还是3.x在这里指定-->
             <version>2.7.0</version>
         </dependency>
+
+        <!-- javax.mail -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>
     </dependencies>
 
     <build>
