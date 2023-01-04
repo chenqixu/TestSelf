@@ -225,11 +225,13 @@ public class EmailUtil {
         // 需要请求认证
         properties.put("mail.smtp.auth", "true");
         // 设置SSL加密
-        MailSSLSocketFactory sf = new MailSSLSocketFactory();
-        // 信任所有的地址
-        sf.setTrustAllHosts(true);
-        properties.put("mail.smtp.ssl.enable", "true");
-        properties.put("mail.smtp.ssl.socketFactory", sf);
+        if (serverBean.isIs_ssl()) {
+            MailSSLSocketFactory sf = new MailSSLSocketFactory();
+            // 信任所有的地址
+            sf.setTrustAllHosts(true);
+            properties.put("mail.smtp.ssl.enable", "true");
+            properties.put("mail.smtp.ssl.socketFactory", sf);
+        }
 
         // 创建一个session对象
         Session session = Session.getDefaultInstance(properties);
