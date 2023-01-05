@@ -54,6 +54,17 @@ public class EmailUtil {
     }
 
     /**
+     * 签名
+     *
+     * @return
+     */
+    private String buildSign() {
+        return "<hr style=\"width: 210px; height: 1px;\" color=\"#b5c4df\" size=\"1\" align=\"left\">"
+                + "<div><span><div style=\"MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt\">"
+                + "<div>Auto send from program</div></div></span></div>";
+    }
+
+    /**
      * 创建一封只包含文本的简单邮件
      *
      * @param session  和服务器交互的会话
@@ -76,7 +87,7 @@ public class EmailUtil {
         // 4. Subject: 邮件主题
         message.setSubject(subject, "UTF-8");
         // 5. Content: 邮件正文（可以使用html标签）
-        message.setContent(content, "text/html;charset=UTF-8");
+        message.setContent(content + buildSign(), "text/html;charset=UTF-8");
         // 6. 设置发件时间
         message.setSentDate(new Date());
         // 7. 保存设置
@@ -109,7 +120,7 @@ public class EmailUtil {
         message.setSubject(subject, "UTF-8");
         // 5. Content: 邮件正文
         MimeBodyPart contentText = new MimeBodyPart();
-        contentText.setContent(content, "text/html;charset=utf-8");
+        contentText.setContent(content + buildSign(), "text/html;charset=utf-8");
         // 6. Appendix: 邮件附件
         List<MimeBodyPart> appendixParts = new ArrayList<>();
         for (String _appendixs : appendixs) {

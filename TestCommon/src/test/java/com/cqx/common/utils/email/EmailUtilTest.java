@@ -8,7 +8,7 @@ public class EmailUtilTest {
 
     @Test
     public void sendMail() throws Exception {
-        EmailUtil emailUtil = new EmailUtil();
+        EmailUtil emailUtil = new EmailUtil(true);
         EmailServerBean serverBean = new EmailServerBean("10.46.180.90", "125", "smtp");
         EmailUserBean send = new EmailUserBean("cqx@fmcc.boss", "cqx123");
         EmailUserBean receive = new EmailUserBean("cqx@fmcc.boss");
@@ -17,7 +17,7 @@ public class EmailUtilTest {
 
     @Test
     public void sendMailHasFile() throws Exception {
-        EmailUtil emailUtil = new EmailUtil();
+        EmailUtil emailUtil = new EmailUtil(true);
         EmailServerBean serverBean = new EmailServerBean("10.46.180.90", "125", "smtp");
         EmailUserBean send = new EmailUserBean("cqx@fmcc.boss", "cqx123");
         EmailUserBean receive = new EmailUserBean("cqx@fmcc.boss");
@@ -26,7 +26,7 @@ public class EmailUtilTest {
 
     @Test
     public void sendMuReMailHasFiles() throws Exception {
-        EmailUtil emailUtil = new EmailUtil();
+        EmailUtil emailUtil = new EmailUtil(true);
         EmailServerBean serverBean = new EmailServerBean("10.46.180.90", "125", "smtp");
         EmailUserBean send = new EmailUserBean("cqx@fmcc.boss", "cqx123");
         EmailUserBean receive = new EmailUserBean("cqx@fmcc.boss");
