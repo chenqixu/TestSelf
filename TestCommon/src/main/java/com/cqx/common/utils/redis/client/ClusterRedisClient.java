@@ -8,6 +8,7 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClusterRedisClient extends RedisClient {
@@ -194,9 +195,10 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     class ClusterRedisPipeline extends RedisPipeline {
-        Map<String, Pipeline> pipelinePool = new HashMap<>();
+        ConcurrentHashMap<String, Pipeline> pipelinePool = new ConcurrentHashMap<>();
         AtomicInteger syncCount = new AtomicInteger(0);
         AtomicInteger syncAndReturnCount = new AtomicInteger(0);
+        ConcurrentHashMap<Pipeline, ConcurrentHashMap<String, Response<String>>> responsePipelineMap = new ConcurrentHashMap<>();
 
         public ClusterRedisPipeline(int commit_num, int get_cache_num) {
             super(commit_num, get_cache_num);
@@ -229,7 +231,7 @@ public class ClusterRedisClient extends RedisClient {
                     throw new UnsupportedOperationException("客户端初始化异常，非自定义集群！" + cluster.getClass());
                 }
             } else {
-                return null;
+                throw new NullPointerException("初始化的时候未指定为管道模式，管道不可用！");
             }
         }
 
@@ -285,6 +287,11 @@ public class ClusterRedisClient extends RedisClient {
         }
 
         @Override
+        protected void setex_inside(String key, int seconds, String value) {
+            if (isPipeline()) getPipeline(key).setex(key, seconds, value);
+        }
+
+        @Override
         protected void del_inside(String key) {
             if (isPipeline()) getPipeline(key).del(key);
         }
@@ -329,6 +336,52 @@ public class ClusterRedisClient extends RedisClient {
                 }
             }
             pipelinePool.clear();
+        }
+
+        /**
+         * 需要额外的存储异步的返回对象，以便在管道进行sync后获取返回值
+         *
+         * @param key
+         * @param value
+         */
+        protected void set_inside_hasresponse(String key, String value) {
+            if (isPipeline()) {
+                Pipeline pipeline = getPipeline(key);
+                Response<String> response = pipeline.set(key, value);
+                ConcurrentHashMap<String, Response<String>> _response = responsePipelineMap.get(pipeline);
+                if (_response == null) {
+                    _response = new ConcurrentHashMap<>();
+                    responsePipelineMap.put(pipeline, _response);
+                }
+                _response.put(key, response);
+            }
+        }
+
+        /**
+         * 在管道进行sync后获取返回值
+         */
+        protected void sync_hasresponse() {
+            syncCount.set(0);
+            int i = 0;
+            for (Pipeline pipeline : pipelinePool.values()) {
+                i++;
+                try {
+                    pipeline.sync();
+                    // 循环结果，对非OK的结果进行告警
+                    ConcurrentHashMap<String, Response<String>> _response = responsePipelineMap.get(pipeline);
+                    if (_response != null) {
+                        for (Map.Entry<String, Response<String>> entry : _response.entrySet()) {
+                            if (!"OK".equals(entry.getValue().get())) {
+                                logger.warn("response_is_not_OK，key: {}, response: {}", entry.getKey(), entry.getValue().get());
+                            }
+                        }
+                        _response.clear();
+                    }
+                } catch (JedisConnectionException connectionException) {
+                    syncCount.set(i);
+                    throw connectionException;
+                }
+            }
         }
     }
 }

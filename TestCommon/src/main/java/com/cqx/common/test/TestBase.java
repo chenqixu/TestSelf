@@ -78,4 +78,19 @@ public class TestBase {
         String confPath = getResourceClassPath(fileName);
         return YamlParser.builder().parserConfToMap(confPath);
     }
+
+    /**
+     * 从JVM参数中获取，使用方式：-Dkey=xxx
+     *
+     * @param key 关键字
+     * @return
+     */
+    protected String getValueFromJVMParam(String key) {
+        String value = System.getProperty(key);
+        if (value == null || value.length() == 0) {
+            throw new NullPointerException(String.format("值为空，请设置-D%s=xxx", key));
+        } else {
+            return value;
+        }
+    }
 }

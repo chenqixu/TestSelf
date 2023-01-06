@@ -51,6 +51,13 @@ public abstract class RedisPipeline implements Closeable {
         autoCommit("set");
     }
 
+    protected abstract void setex_inside(String key, int seconds, String value);
+
+    public void setex(String key, int seconds, String value) {
+        setex_inside(key, seconds, value);
+        autoCommit("setex");
+    }
+
     protected abstract void del_inside(String key);
 
     public void del(String key) {

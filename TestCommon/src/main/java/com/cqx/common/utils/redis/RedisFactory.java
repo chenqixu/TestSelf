@@ -17,7 +17,8 @@ public class RedisFactory {
         private String ip;
         private int port;
         private String ip_ports;
-        private boolean isPipeline = true;
+        // 默认不开启管道，必须手工设置
+        private boolean isPipeline = false;
 
         public Builder setMode(int mode_type) {
             this.mode_type = mode_type;

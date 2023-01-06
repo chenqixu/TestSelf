@@ -1,10 +1,11 @@
 package com.cqx.common.utils.email;
 
+import com.cqx.common.test.TestBase;
 import org.junit.Test;
 
 import java.util.stream.Stream;
 
-public class EmailUtilTest {
+public class EmailUtilTest extends TestBase {
 
     @Test
     public void sendMail() throws Exception {
@@ -38,8 +39,7 @@ public class EmailUtilTest {
     @Test
     public void send139MailNoSSL() throws Exception {
         // 从JVM参数中获取，使用方式：-Demail.password=xxx
-        String password = System.getProperty("email.password");
-        if (password == null || password.length() == 0) throw new NullPointerException("密码为空，请设置-Demail.password=xxx");
+        String password = getValueFromJVMParam("email.password");
         EmailUtil emailUtil = new EmailUtil(true);
         EmailServerBean serverBean = new EmailServerBean("smtp.139.com", "25", "smtp", false);
         EmailUserBean send = new EmailUserBean("13509323824@139.com", password);
@@ -50,8 +50,7 @@ public class EmailUtilTest {
     @Test
     public void send139MailSSL() throws Exception {
         // 从JVM参数中获取，使用方式：-Demail.password=xxx
-        String password = System.getProperty("email.password");
-        if (password == null || password.length() == 0) throw new NullPointerException("密码为空，请设置-Demail.password=xxx");
+        String password = getValueFromJVMParam("email.password");
         EmailUtil emailUtil = new EmailUtil(true);
         EmailServerBean serverBean = new EmailServerBean("smtp.139.com", "465", "smtp");
         EmailUserBean send = new EmailUserBean("13509323824@139.com", password);

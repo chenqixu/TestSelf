@@ -172,6 +172,11 @@ public class SinaleRedisClient extends RedisClient {
         }
 
         @Override
+        protected void setex_inside(String key, int seconds, String value) {
+            pipe.setex(key, seconds, value);
+        }
+
+        @Override
         protected void del_inside(String key) {
             pipe.del(key);
         }

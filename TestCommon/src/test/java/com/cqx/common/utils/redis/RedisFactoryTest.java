@@ -34,7 +34,7 @@ public class RedisFactoryTest {
 //                .setMode(RedisFactory.SINGLE_MODE_TYPE)
                 .setIp_ports("10.1.8.200:10000,10.1.8.201:10000,10.1.8.202:10000")
                 .setMode(RedisFactory.CLUSTER_MODE_TYPE)
-                .setPipeline(false)
+                .setPipeline(true)
                 .build();
     }
 
@@ -177,6 +177,21 @@ public class RedisFactoryTest {
         try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
             while (add <= num) {
                 redisPipeline.set(add + "", add++ + "");
+            }
+        }
+        logger.info("cost：{}", costUtil.stopAndGet());
+        isShowResult = false;//查询结果不显示
+        //查询
+//        redisQuery();
+    }
+
+    @Test
+    public void pipelineSetex() {
+        TimeCostUtil costUtil = new TimeCostUtil();
+        costUtil.start();
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            while (add <= num) {
+                redisPipeline.setex(add + "", 10, add++ + "");
             }
         }
         logger.info("cost：{}", costUtil.stopAndGet());
