@@ -12,7 +12,30 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * RedisPipeline
+ * <h2>redis管道工具类</h2>
+ * <p>
+ * <h3>示范：</h3>
+ * <pre>
+ *     // 构造
+ *     RedisClient redisClient = RedisFactory.builder()
+ *         // 设置ip:端口
+ *         .setIp_ports("10.1.8.200:10000,10.1.8.201:10000,10.1.8.202:10000")
+ *         // 设置集群模式
+ *         .setMode(RedisFactory.CLUSTER_MODE_TYPE)
+ *         // 主动开启管道
+ *         .setPipeline(true)
+ *         .build();
+ *
+ *     // 默认是500条记录提交一次
+ *     try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+ *         循环 {
+ *             redisPipeline.setex(key, seconds, value);
+ *         }
+ *     }
+ *     // 或者手工指定，值不宜太大，可能导致性能下降或数据丢失
+ *     // 第二个参数是get的缓存个数
+ *     try (RedisPipeline redisPipeline = redisClient.openPipeline(1000, 5000))
+ * </pre>
  *
  * @author chenqixu
  */

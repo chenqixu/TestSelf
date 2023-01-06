@@ -188,6 +188,11 @@ public class ClusterRedisClient extends RedisClient {
         }
     }
 
+    /**
+     * 释放连接
+     *
+     * @param connection
+     */
     private void releaseConnection(Jedis connection) {
         if (connection != null) {
             connection.close();
