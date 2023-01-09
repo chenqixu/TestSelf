@@ -12,6 +12,7 @@ import org.apache.poi.xwpf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 /**
@@ -54,26 +55,117 @@ public class WordUtil implements Closeable {
     }
 
     /**
-     * 写入图像，200x200 points
+     * 厘米转成EMU
      *
-     * @param imageFile
-     * @throws IOException
-     * @throws InvalidFormatException
+     * @param centimeter
+     * @return
      */
-    public void writeImage(String imageFile) throws IOException, InvalidFormatException {
-        writeImage(imageFile, 200, 200);
+    public int centimeterToEMU(double centimeter) {
+        return (int) Math.rint(centimeter * Units.EMU_PER_CENTIMETER);
     }
 
     /**
-     * 写入图像
+     * 写入图片，单位是像素，原图大小
      *
      * @param imageFile
-     * @param width
-     * @param height
      * @throws IOException
      * @throws InvalidFormatException
      */
-    public void writeImage(String imageFile, double width, double height) throws IOException, InvalidFormatException {
+    public void writeImageByOriginalPixel(String imageFile) throws IOException, InvalidFormatException {
+        try (FileInputStream is = new FileInputStream(imageFile)) {
+            int len = is.available();
+            if (len > 0) {
+                byte[] bytes = new byte[len];
+                int ret = is.read(bytes);
+                try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
+                    BufferedImage img = javax.imageio.ImageIO.read(bis);
+                    // 获取的单位是像素
+                    int width = img.getWidth();
+                    int height = img.getHeight();
+                    logger.info("读取图片: {}, 大小: {}, 宽: {} 像素, 高: {} 像素", imageFile, ret, width, height);
+                    // 重置，因为下面还要用
+                    bis.reset();
+                    writeImage(imageFile, bis, Units.pixelToEMU(width), Units.pixelToEMU(height));
+                }
+            } else {
+                logger.warn("图片 {} 大小为0！", imageFile);
+            }
+        }
+    }
+
+    /**
+     * 写入图片，单位是厘米，宽固定，高度等比例缩放<br>
+     * 360000 EMUs per centimeter
+     *
+     * @param imageFile
+     * @param fixCentimeterWidth
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void writeImageByFixCentimeterWidth(String imageFile, double fixCentimeterWidth) throws IOException, InvalidFormatException {
+        try (FileInputStream is = new FileInputStream(imageFile)) {
+            int len = is.available();
+            if (len > 0) {
+                byte[] bytes = new byte[len];
+                int ret = is.read(bytes);
+                try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes)) {
+                    BufferedImage img = javax.imageio.ImageIO.read(bis);
+                    // 获取的单位是像素
+                    int _width = img.getWidth();
+                    int _height = img.getHeight();
+                    double centimeterHeight = fixCentimeterWidth * _height / _width;
+                    logger.info("读取图片: {}, 大小: {}, 宽: {} 像素, 高: {} 像素, 等比例宽: {} 厘米, 等比例高: {} 厘米"
+                            , imageFile, ret, _width, _height, fixCentimeterWidth, centimeterHeight);
+                    bis.reset();
+                    writeImage(imageFile, bis, centimeterToEMU(fixCentimeterWidth), centimeterToEMU(centimeterHeight));
+                }
+            }
+        }
+    }
+
+    /**
+     * 写入图片，单位是point<br>
+     * 12700 EMUs per point
+     *
+     * @param imageFile
+     * @param pointWidth
+     * @param pointHeight
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void writeImageByPoint(String imageFile, double pointWidth, double pointHeight) throws IOException, InvalidFormatException {
+        try (FileInputStream is = new FileInputStream(imageFile)) {
+            writeImage(imageFile, is, Units.toEMU(pointWidth), Units.toEMU(pointHeight));
+        }
+    }
+
+    /**
+     * 写入图片，单位是厘米<br>
+     * 360000 EMUs per centimeter
+     *
+     * @param imageFile
+     * @param centimeterWidth
+     * @param centimeterHeight
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void writeImageByCentimeter(String imageFile, double centimeterWidth, double centimeterHeight) throws IOException, InvalidFormatException {
+        try (FileInputStream is = new FileInputStream(imageFile)) {
+            writeImage(imageFile, is, centimeterToEMU(centimeterWidth), centimeterToEMU(centimeterHeight));
+        }
+    }
+
+    /**
+     * 写入图片，单位是原始的emu，像素、厘米、英寸、points都有一套转换关系，参考Units
+     *
+     * @param imageFile
+     * @param is
+     * @param emuWidth
+     * @param emuHeight
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void writeImage(String imageFile, InputStream is, int emuWidth, int emuHeight) throws IOException, InvalidFormatException {
         int format;
         if (imageFile.endsWith(".emf")) {
             format = Document.PICTURE_TYPE_EMF;
@@ -98,13 +190,11 @@ public class WordUtil implements Closeable {
         } else if (imageFile.endsWith(".wpg")) {
             format = Document.PICTURE_TYPE_WPG;
         } else {
-            System.err.println("Unsupported picture: " + imageFile +
+            logger.error("Unsupported picture: " + imageFile +
                     ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
             return;
         }
-        try (FileInputStream is = new FileInputStream(imageFile)) {
-            runX.addPicture(is, format, imageFile, Units.toEMU(width), Units.toEMU(height));
-        }
+        runX.addPicture(is, format, imageFile, emuWidth, emuHeight);
     }
 
     /**
@@ -139,7 +229,6 @@ public class WordUtil implements Closeable {
 
     public void readDoc(String path) throws IOException {
         if (path == null || ExcelCommons.EMPTY.equals(path)) {
-//            return null;
         } else {
             String postfix = ExcelUtils.getPostfix(path);
             if (!ExcelCommons.EMPTY.equals(postfix)) {
@@ -148,7 +237,6 @@ public class WordUtil implements Closeable {
                 logger.info("{}", path + ExcelCommons.NOT_DOC_FILE);
             }
         }
-//        return null;
     }
 
     private void read(String path, String postfix) throws IOException {

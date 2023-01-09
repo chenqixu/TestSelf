@@ -2,6 +2,9 @@ package com.cqx.common.utils.pdf;
 
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.slf4j.Logger;
@@ -161,5 +164,46 @@ public class PdfUtil {
             logger.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * 合并图片到PDF中
+     *
+     * @param imgs
+     * @param pdfFile
+     * @throws IOException
+     */
+    public void mergerImgToPDF(List<String> imgs, String pdfFile) throws IOException {
+        int write_cnt = 0;
+        // 创建空白文档
+        try (PDDocument pdDocument = new PDDocument()) {
+            for (String img : imgs) {
+                // 先判断是否是文件
+                File imgFile = new File(img);
+                if (imgFile.isFile()) {
+                    // 创建空白页面
+                    PDPage page = new PDPage();
+                    pdDocument.addPage(page);
+                    // 通过图片路径和PDF文档对象创建PDF图片image对象
+                    PDImageXObject image = PDImageXObject.createFromFile(img, pdDocument);
+                    // 创建pageStream对象
+                    try (PDPageContentStream pageStream = new PDPageContentStream(pdDocument, page
+                            , PDPageContentStream.AppendMode.APPEND, false, false)) {
+                        // pageStream对象绘制图片位置及大小
+                        // 以PDF文件右下角为原点（x,y）是图片左下角左边
+                        // width、height是图片的长和宽
+                        pageStream.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+                        write_cnt++;
+                        logger.info("写入图片{}，width: {}，height: {}", img, image.getWidth(), image.getHeight());
+                    }
+                } else {
+                    logger.warn("{} 不是一个文件，跳过！", img);
+                }
+            }
+            if (write_cnt > 0) {
+                // 保存PDF到指定路劲
+                pdDocument.save(pdfFile);
+            }
+        }
     }
 }

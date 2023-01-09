@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WordUtilTest {
     private static final Logger logger = LoggerFactory.getLogger(WordUtilTest.class);
@@ -46,7 +48,7 @@ public class WordUtilTest {
         String fileName = "d:\\tmp\\九色鹿\\test.docx";
         wordUtil.open();
         wordUtil.writeText("123");
-        wordUtil.writeImage("d:\\tmp\\九色鹿\\out.jpg", 400, 600);
+        wordUtil.writeImageByPoint("d:\\tmp\\九色鹿\\out.jpg", 400, 600);
         wordUtil.newPage();
         wordUtil.save(fileName);
     }
@@ -84,10 +86,50 @@ public class WordUtilTest {
                 logger.info("目录名：{}，文件名：{}", pathArray[0], pathArray[1]);
                 wordUtil.writeText(pathArray[0]);
                 wordUtil.writeText(pathArray[1].replace(".jpg", ""));
-                wordUtil.writeImage(picturePath + path, 400, 600);
+                wordUtil.writeImageByPoint(picturePath + path, 400, 600);
                 wordUtil.newPage();
             }
         }
         wordUtil.save(docxName);
+    }
+
+    @Test
+    public void imageToDoc() throws IOException, InvalidFormatException {
+        String picturePath = "e:\\Self\\课本\\小学\\英语四年级下(闽教)\\";
+        String docxName = "e:\\Self\\课本\\小学\\英语四年级下.docx";
+        try {
+            // 打开文件
+            wordUtil.open();
+            // 扫描图片
+            for (String path : FileUtil.listFileEndWith(picturePath, ".jpg")) {
+                // 原始像素
+//                wordUtil.writeImageByOriginalPixel(picturePath + path);
+                // 根据point
+//                wordUtil.writeImageByPoint(picturePath + path, 415, 596);
+                // 宽度固定，根据厘米
+                wordUtil.writeImageByFixCentimeterWidth(picturePath + path, 14.65d);
+                // 根据厘米，写入4
+                // A4大小: 宽 14.65, 高 21.05
+//                wordUtil.writeImageByCentimeter(picturePath + path, 14.65d, 21.05d);
+            }
+        } finally {
+            // 保存
+            wordUtil.save(docxName);
+        }
+    }
+
+    @Test
+    public void imageToPDF() throws IOException {
+        String picturePath = "e:\\Self\\课本\\小学\\英语四年级下(闽教)\\";
+        String pdfName = "e:\\Self\\课本\\小学\\英语四年级下.pdf";
+        List<String> imgs = new ArrayList<>();
+        PdfUtil pdfUtil = new PdfUtil();
+        // 扫描PDF
+        for (String path : FileUtil.listFileEndWith(picturePath, ".jpg")) {
+            String newPath = FileUtil.endWith(picturePath) + path;
+            logger.info("文件全路径：{}", newPath);
+            imgs.add(newPath);
+        }
+        pdfUtil.mergerImgToPDF(imgs, pdfName);
     }
 }
