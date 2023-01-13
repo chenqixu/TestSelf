@@ -293,13 +293,29 @@ public class HdfsTool {
      * @param hdfsBean
      * @param isLogin
      * @return
+     * @throws IOException
      */
     public Configuration getConf(String conf_path, HdfsBean hdfsBean, boolean isLogin) throws IOException {
+        return getConf(conf_path, hdfsBean, false, true);
+    }
+
+    /**
+     * 获取配置文件
+     *
+     * @param conf_path
+     * @param hdfsBean
+     * @param isLogin
+     * @return
+     */
+    public Configuration getConf(String conf_path, HdfsBean hdfsBean, boolean addYarn, boolean isLogin) throws IOException {
         Configuration hadoopConfig = new Configuration();
         String _conf_path = FileUtil.endWith(conf_path);
         hadoopConfig.addResource(new Path(_conf_path + "core-site.xml"));
         hadoopConfig.addResource(new Path(_conf_path + "hdfs-site.xml"));
         hadoopConfig.addResource(new Path(_conf_path + "mapred-site.xml"));
+        if (addYarn) {
+            hadoopConfig.addResource(new Path(_conf_path + "yarn-site.xml"));
+        }
         hadoopConfig.set("fs.hdfs.impl", DistributedFileSystem.class.getName());
         //认证
         if (hdfsBean.getAuth_type().equals("default")) {//普通无认证

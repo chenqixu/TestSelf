@@ -11,8 +11,17 @@
     <version>1.0.0</version>
     <artifactId>TestCommon</artifactId>
 
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>bd-hw</id>-->
+            <!--<name>bd-hw</name>-->
+            <!--<url>http://10.1.4.161:8085/repository/bd-hw/</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
+
     <properties>
         <!--<hadoop.version>2.6.0-cdh5.14.2</hadoop.version>-->
+        <hw.hadoop.version>8.0.2-302002</hw.hadoop.version>
         <hadoop.version>3.1.1-hw-ei-302002</hadoop.version>
         <hive.version>3.1.0-hw-ei-302002</hive.version>
         <!--<hadoop.version>2.6.0-cdh5.7.2</hadoop.version>-->
@@ -393,6 +402,12 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- yarn cli 需要使用 -->
+        <dependency>
+            <groupId>com.huawei.mrs</groupId>
+            <artifactId>hadoop-plugins</artifactId>
+            <version>${hw.hadoop.version}</version>
         </dependency>
 
         <!-- hive -->

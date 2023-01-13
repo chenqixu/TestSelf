@@ -12,7 +12,7 @@ import java.util.List;
  * <pre>
  *     <I>simple code：</I>
  *     <b>write：</b>
- *         BeanIOUtil<Bean> beanIOUtil = new BeanIOUtil<>(file_name "UTF-8", Bean.class);
+ *         BeanIOUtil<Bean> beanIOUtil = new BeanIOUtil<>(file_name,"UTF-8", Bean.class);
  *         beanIOUtil.start_save();
  *         beanIOUtil.saveBeanToFile(new Bean(xxx));
  *         beanIOUtil.stop_save();
