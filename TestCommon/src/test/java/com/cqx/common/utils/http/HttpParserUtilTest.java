@@ -3,6 +3,8 @@ package com.cqx.common.utils.http;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.list.ListHelper;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HttpParserUtilTest {
     private static final Logger logger = LoggerFactory.getLogger(HttpParserUtilTest.class);
@@ -341,6 +344,31 @@ public class HttpParserUtilTest {
             }
         }
         return ret;
+    }
+
+    @Test
+    public void flinkDataParser() throws IOException {
+        final int timeout = 15000;// 超时，单位毫秒
+        HttpParserUtil httpParserUtil = new HttpParserUtil();
+        String url = "file:///d:\\Work\\实时\\实时中台\\data\\data.html";
+        // 选择class=el-table__row的tr
+        Elements trs = httpParserUtil.parserGetElements(url, timeout, ".el-table__row");
+        // 选择div下的所有class=el-tooltip的div
+        for (Element tr : trs) {
+            Elements el_tooltips = tr.select(".el-tooltip");
+            StringBuilder rows = new StringBuilder();
+            AtomicBoolean first = new AtomicBoolean(true);
+            for (Element element : el_tooltips) {
+                // 跳过第一个
+                if (first.getAndSet(false)) continue;
+                for (Node node : element.childNodes()) {
+                    String value = node.toString();
+                    rows.append(value.replace("\n", "")).append("|");
+                }
+            }
+            if (rows.length() > 0) rows.deleteCharAt(rows.length() - 1);
+            System.out.println(rows);
+        }
     }
 
     class APIBean {

@@ -278,6 +278,17 @@ public class RocksDBUtilTest {
     }
 
     @Test
+    public void dropSdtpManagerAllColumnFamily() throws Exception {
+        changeSdtpManagerDB();
+        assert rocksDBUtil != null;
+        // 删除所有的列族
+        rocksDBUtil.dropAllColumnFamily();
+        // 打印所有列族
+        // 打印所有列族的所有值
+        printColumnFamilyAllValue();
+    }
+
+    @Test
     public void dropSdtpManagerColumnFamily() throws Exception {
         changeSdtpManagerDB();
         assert rocksDBUtil != null;
