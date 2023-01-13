@@ -100,7 +100,7 @@ public class JDBCUtil implements IJDBCUtil {
     private int batchNum = 2000;
     private int fetchSize = DEFAULT_FETCH_SIZE;
     // 是否抛出异常，默认抛出
-    private boolean isThrow = true;
+    protected boolean isThrow = true;
     // 写入合并
     private AbstractDeclare declare;
 
@@ -2040,6 +2040,11 @@ public class JDBCUtil implements IJDBCUtil {
                     if (dbBean.getDbType().equals(DBType.POSTGRESQL) && _tmpValue.contains("$$")) {
                         _tmpValue = _tmpValue.replaceAll(Matcher.quoteReplacement("$$")
                                 , Matcher.quoteReplacement("\\$\\$"));
+                        // 针对$$$的处理
+                        if (_tmpValue.contains("$$")) {
+                            _tmpValue = _tmpValue.replaceAll(Matcher.quoteReplacement("$$")
+                                    , Matcher.quoteReplacement("\\$\\$"));
+                        }
                     }
                     result = "'" + _tmpValue.replaceAll("'", "''") + "'";
                 }

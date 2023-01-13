@@ -931,8 +931,13 @@ public class JDBCUtilTest extends TestBase {
 
     @Test
     public void replaceDollar() {
-        String _tmpValue = "aa$$bb";
-        logger.info(_tmpValue.replaceAll(Matcher.quoteReplacement("$$"), Matcher.quoteReplacement("\\$\\$")));
+        String _tmpValue = "aa$$$bb";
+        _tmpValue = _tmpValue.replaceAll(Matcher.quoteReplacement("$$"), Matcher.quoteReplacement("\\$\\$"));
+        logger.info(_tmpValue);
+        if (_tmpValue.contains("$$")) {
+            _tmpValue = _tmpValue.replaceAll(Matcher.quoteReplacement("$$"), Matcher.quoteReplacement("\\$\\$"));
+            logger.info(_tmpValue);
+        }
     }
 
     @Test

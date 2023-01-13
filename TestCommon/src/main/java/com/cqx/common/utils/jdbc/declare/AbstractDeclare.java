@@ -120,7 +120,7 @@ public abstract class AbstractDeclare {
     public String declare(String tableName, String insert_fields, FiledUtil insert_values
             , String where_values, String[] pks, MergeEnum mergeEnum) {
         String pgdeclareInsertUpdate = setPgdeclareInsertUpdate();
-         String pgdeclareInsertOnly = setPgdeclareInsertOnly();
+        String pgdeclareInsertOnly = setPgdeclareInsertOnly();
         String _insertSql = formatInsertSql(tableName, insert_fields, insert_values, where_values, pks);
         String _selectSql = formatSelectSql(tableName, insert_fields, insert_values, where_values, pks);
         String _updateSql = formatUpdateSql(tableName, insert_fields, insert_values, where_values, pks);

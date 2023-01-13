@@ -3,6 +3,10 @@ package com.cqx.common.utils.jdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -67,6 +71,15 @@ public class JDBCRetryUtil extends JDBCUtil {
     }
 
     /**
+     * 是否抛出异常，不用异常计数
+     *
+     * @return
+     */
+    public boolean isRetryThrow() {
+        return isThrow;
+    }
+
+    /**
      * 主要实现
      * <p>判断：错误计数 大于等于 允许的错误次数
      * <ul>
@@ -126,27 +139,40 @@ public class JDBCRetryUtil extends JDBCUtil {
     }
 
     @Override
-    public List<List<QueryResult>> executeQuery(final String sql) {
-        return iCallBackReturnProxy.done(new ICallBackReturn() {
-            @Override
-            public List<List<QueryResult>> call() throws Exception {
-                return JDBCRetryUtil.super.executeQuery(sql);
-            }
-        });
+    public List<List<QueryResult>> executeQuery(final String sql) throws SQLException {
+        try {
+            return iCallBackReturnProxy.done(new ICallBackReturn() {
+                @Override
+                public List<List<QueryResult>> call() throws Exception {
+                    return JDBCRetryUtil.super.executeQuery(sql);
+                }
+            });
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception e) {
+            // 其他异常吃掉
+            return new ArrayList<>();
+        }
     }
 
     @Override
-    public void executeQuery(final String sql, final ICallBack iCallBack) {
-        iCallBackReturnProxy.doneNotReturn(new ICallBackReturn() {
-            @Override
-            public void callNotReturn() throws Exception {
-                JDBCRetryUtil.super.executeQuery(sql, iCallBack);
-            }
-        });
+    public void executeQuery(final String sql, final ICallBack iCallBack) throws SQLException {
+        try {
+            iCallBackReturnProxy.doneNotReturn(new ICallBackReturn() {
+                @Override
+                public void callNotReturn() throws Exception {
+                    JDBCRetryUtil.super.executeQuery(sql, iCallBack);
+                }
+            });
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception e) {
+            // 其他异常吃掉
+        }
     }
 
     @Override
-    public <T> List<T> executeQuery(final String sql, final Class<T> beanCls) {
+    public <T> List<T> executeQuery(final String sql, final Class<T> beanCls) throws Exception {
         return iCallBackReturnProxy.done(new ICallBackReturn() {
             @Override
             public List<T> call() throws Exception {
@@ -156,33 +182,54 @@ public class JDBCRetryUtil extends JDBCUtil {
     }
 
     @Override
-    public List<Integer> executeBatch(final List<String> sqls) {
-        return iCallBackReturnProxy.done(new ICallBackReturn() {
-            @Override
-            public List<Integer> call() throws Exception {
-                return JDBCRetryUtil.super.executeBatch(sqls);
-            }
-        });
+    public List<Integer> executeBatch(final List<String> sqls) throws SQLException {
+        try {
+            return iCallBackReturnProxy.done(new ICallBackReturn() {
+                @Override
+                public List<Integer> call() throws Exception {
+                    return JDBCRetryUtil.super.executeBatch(sqls);
+                }
+            });
+        } catch (SQLException ex) {
+            throw ex;
+        } catch (Exception e) {
+            // 其他异常吃掉
+            return new ArrayList<>();
+        }
     }
 
     @Override
-    public <T> int executeBatch(final String sql, final List<T> tList, final Class<T> beanCls, final String fields) {
-        return iCallBackReturnProxy.done(new ICallBackReturn() {
-            @Override
-            public Integer call() throws Exception {
-                return JDBCRetryUtil.super.executeBatch(sql, tList, beanCls, fields);
-            }
-        });
+    public <T> int executeBatch(final String sql, final List<T> tList, final Class<T> beanCls, final String fields) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        try {
+            return iCallBackReturnProxy.done(new ICallBackReturn() {
+                @Override
+                public Integer call() throws Exception {
+                    return JDBCRetryUtil.super.executeBatch(sql, tList, beanCls, fields);
+                }
+            });
+        } catch (SQLException | IllegalAccessException | IntrospectionException | InvocationTargetException ex) {
+            throw ex;
+        } catch (Exception e) {
+            // 其他异常吃掉
+            return -1;
+        }
     }
 
     @Override
-    public <T> List<Integer> executeBatch(final String sql, final List<T> tList, final Class<T> beanCls, final String fields, final boolean hasRet) {
-        return iCallBackReturnProxy.done(new ICallBackReturn() {
-            @Override
-            public List<Integer> call() throws Exception {
-                return JDBCRetryUtil.super.executeBatch(sql, tList, beanCls, fields, hasRet);
-            }
-        });
+    public <T> List<Integer> executeBatch(final String sql, final List<T> tList, final Class<T> beanCls, final String fields, final boolean hasRet) throws SQLException, IllegalAccessException, IntrospectionException, InvocationTargetException {
+        try {
+            return iCallBackReturnProxy.done(new ICallBackReturn() {
+                @Override
+                public List<Integer> call() throws Exception {
+                    return JDBCRetryUtil.super.executeBatch(sql, tList, beanCls, fields, hasRet);
+                }
+            });
+        } catch (SQLException | IllegalAccessException | IntrospectionException | InvocationTargetException ex) {
+            throw ex;
+        } catch (Exception e) {
+            // 其他异常吃掉
+            return new ArrayList<>();
+        }
     }
 
     private class ICallBackReturnProxy {
@@ -193,12 +240,14 @@ public class JDBCRetryUtil extends JDBCUtil {
          * @param <T>
          * @return
          */
-        <T> T done(ICallBackReturn iCallBackReturn) {
+        <T> T done(ICallBackReturn iCallBackReturn) throws Exception {
             T t = null;
             try {
                 if (checkAndReset()) t = iCallBackReturn.call();
             } catch (Exception e) {
-                //在super中已经进行error打印，这里就不做输出
+                // 在super中已经进行error打印，这里就不做输出
+                // 但是需要抛出异常
+                if (isRetryThrow()) throw e;
             }
             return t;
         }
@@ -208,11 +257,13 @@ public class JDBCRetryUtil extends JDBCUtil {
          *
          * @param iCallBackReturn
          */
-        void doneNotReturn(ICallBackReturn iCallBackReturn) {
+        void doneNotReturn(ICallBackReturn iCallBackReturn) throws Exception {
             try {
                 if (checkAndReset()) iCallBackReturn.callNotReturn();
             } catch (Exception e) {
-                //在super中已经进行error打印，这里就不做输出
+                // 在super中已经进行error打印，这里就不做输出
+                // 但是需要抛出异常
+                if (isRetryThrow()) throw e;
             }
         }
     }
