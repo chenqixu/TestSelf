@@ -35,7 +35,7 @@ public class JDBCUtilTest extends TestBase {
     private static final String ZOOKEEPER_DEFAULT_LOGIN_CONTEXT_NAME = "Client";
     private static final String ZOOKEEPER_SERVER_PRINCIPAL_KEY = "zookeeper.server.principal";
     private static final String ZOOKEEPER_DEFAULT_SERVER_PRINCIPAL = "zookeeper/hadoop";
-    private IJDBCUtil jdbcUtil;
+    private JDBCUtil jdbcUtil;
     private String jdbcBean;
     private ParamsParserUtil paramsParserUtil;
 
@@ -792,7 +792,12 @@ public class JDBCUtilTest extends TestBase {
             sqls.add("select count(1) from cqx_test3");
             sqls.add("select sum_date,load_time from cqx_test3");
             sqls.add("delete from cqx_test3");
-            jdbcUtil.execute(sqls);
+            jdbcUtil.execute(sqls, new IJDBCUtilCall.ICallBack() {
+                @Override
+                public void call(ResultSet rs) throws SQLException {
+                    jdbcUtil.getResultSet(rs);
+                }
+            });
 
             // 会话测试2
             logger.info("==会话测试2，使用alter session set time_zone方式==");
@@ -800,7 +805,12 @@ public class JDBCUtilTest extends TestBase {
             sqls.add("ALTER SESSION SET TIME_ZONE='+08:00'");
             sqls.add("select to_char(to_timestamp_tz('1986-05-04 00:00:00.000000+08','YYYY-MM-DD hh24:mi:ss.FFTZH'), 'YYYY-MM-DD hh24:mi:ss.FFTZH:TZM') from dual");
             sqls.add("select sessiontimezone from dual");
-            jdbcUtil.execute(sqls);
+            jdbcUtil.execute(sqls, new IJDBCUtilCall.ICallBack() {
+                @Override
+                public void call(ResultSet rs) throws SQLException {
+                    jdbcUtil.getResultSet(rs);
+                }
+            });
         } else if (jdbcBean.equals("oracle11g_xdload_Bean")) {
             //============================
             // JDBC配置
@@ -813,7 +823,12 @@ public class JDBCUtilTest extends TestBase {
 //            sqls.add("ALTER SESSION SET NLS_LANGUAGE='SIMPLIFIED CHINESE'");
 //            sqls.add("ALTER SESSION SET NLS_TERRITORY='CHINA'");
             sqls.add("select count(*) from ET_GROUP_DUTY_CUSTOMER_JH");
-            jdbcUtil.execute(sqls);
+            jdbcUtil.execute(sqls, new IJDBCUtilCall.ICallBack() {
+                @Override
+                public void call(ResultSet rs) throws SQLException {
+                    jdbcUtil.getResultSet(rs);
+                }
+            });
         }
         //============================
         // 任意oracle即可
@@ -826,7 +841,12 @@ public class JDBCUtilTest extends TestBase {
             TimeZone tc = TimeZone.getDefault();
             logger.info("tc: {}, user.timezone: {}", tc, userTimezone);
             sqls.add("select to_char(to_timestamp_tz('1986-05-04 00:00:00.0','YYYY-MM-DD hh24:mi:ss.FFTZH'), 'YYYY-MM-DD hh24:mi:ss.FFTZH:TZM') from dual");
-            jdbcUtil.execute(sqls);
+            jdbcUtil.execute(sqls, new IJDBCUtilCall.ICallBack() {
+                @Override
+                public void call(ResultSet rs) throws SQLException {
+                    jdbcUtil.getResultSet(rs);
+                }
+            });
         } else {
             // 时区测试2
             logger.info("==时区测试2，使用java代码中加载时区方式==");
@@ -834,7 +854,33 @@ public class JDBCUtilTest extends TestBase {
             TimeZone.setDefault(tc);
             logger.info("tc {}, user.timezone: {}", tc, userTimezone);
             sqls.add("select to_char(to_timestamp_tz('1986-05-04 00:00:00.0','YYYY-MM-DD hh24:mi:ss.FFTZH'), 'YYYY-MM-DD hh24:mi:ss.FFTZH:TZM') from dual");
-            jdbcUtil.execute(sqls);
+            jdbcUtil.execute(sqls, new IJDBCUtilCall.ICallBack() {
+                @Override
+                public void call(ResultSet rs) throws SQLException {
+                    jdbcUtil.getResultSet(rs);
+                }
+            });
+        }
+    }
+
+    /**
+     * 会话测试1
+     */
+    @Test
+    public void sessionTest1() throws Exception {
+        List<String> sqls = new ArrayList<>();
+        if (jdbcBean.equals("oracle242bishowBean")) {
+            //============================
+            // JDBC配置
+            // -Djdbc.bean=oracle242bishowBean
+            //============================
+            // 会话测试1
+            sqls.add("alter session enable parallel dml");
+            sqls.add("alter session force parallel query parallel 8");
+            sqls.add("alter session force parallel dml parallel 8");
+            sqls.add("insert into cqx_test3(sum_date,load_time) values(20220708,sysdate)");
+            int ret = jdbcUtil.execute(sqls);
+            logger.info("执行结果: {}", ret);
         }
     }
 

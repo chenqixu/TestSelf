@@ -129,14 +129,6 @@ public interface IJDBCUtil extends IJDBCUtilCall {
     BeanUtil generateBeanByTabeName(String table_name) throws SQLException, ClassNotFoundException;
 
     /**
-     * 批量执行SQL，在同一会话内
-     *
-     * @param sqls
-     * @throws SQLException
-     */
-    void execute(List<String> sqls) throws SQLException;
-
-    /**
      * 批量执行SQL，在同一会话内，回调函数用于循环获取查询结果<br>
      * 比如set hive.xx=xx，然后执行查询的情况<br>
      * 或者alter session set xx=xx，然后执行查询的情况
@@ -146,6 +138,16 @@ public interface IJDBCUtil extends IJDBCUtilCall {
      * @throws SQLException
      */
     void execute(List<String> sqls, ICallBack iCallBack) throws SQLException;
+
+    /**
+     * 批量执行SQL，在同一会话内，不支持查询，仅支持更新和删除<br>
+     * 比如set hive.xx=xx，然后执行更新和删除的情况<br>
+     * 或者alter session set xx=xx，然后执行更新和删除的情况
+     *
+     * @param sqls
+     * @throws SQLException
+     */
+    int execute(List<String> sqls) throws SQLException;
 
     /**
      * 根据sql查询，查询结果进行回调处理，用的是ResultSet

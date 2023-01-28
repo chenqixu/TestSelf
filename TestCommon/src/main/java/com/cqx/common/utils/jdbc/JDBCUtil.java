@@ -93,14 +93,14 @@ public class JDBCUtil implements IJDBCUtil {
     private final String insert = "insert into %s(%s) values(%s)";
     private final String update = "update %s set %s where %s";
     private final String delete = "delete from %s where %s";
+    // 是否抛出异常，默认抛出
+    protected boolean isThrow = true;
     private DataSource dataSource;
     private DBBean dbBean;
     private List<String> keyList = new ArrayList<>();
     private List<String> endList = new ArrayList<>();
     private int batchNum = 2000;
     private int fetchSize = DEFAULT_FETCH_SIZE;
-    // 是否抛出异常，默认抛出
-    protected boolean isThrow = true;
     // 写入合并
     private AbstractDeclare declare;
 
@@ -545,45 +545,6 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
-     * 批量执行SQL，在同一会话内
-     *
-     * @param sqls
-     * @throws SQLException
-     */
-    @Override
-    public void execute(List<String> sqls) throws SQLException {
-        Connection conn = null;
-        Statement stm = null;
-        try {
-            conn = getConnection();
-            assert conn != null;
-            stm = conn.createStatement();
-            for (String sql : sqls) {
-                boolean executeFlag = stm.execute(sql);
-                if (sql.startsWith("select ")) {
-                    ResultSet resultSet = stm.getResultSet();
-                    logger.info("执行SQL: {}", sql);
-                    if (resultSet != null) {
-                        getResultSet(resultSet);
-                    }
-                } else if (sql.startsWith("update ") || sql.startsWith("insert into") || sql.startsWith("delete ")) {
-                    int updateCount = stm.getUpdateCount();
-                    logger.info("执行SQL: {}, 影响记录数: {}", sql, updateCount);
-                } else {
-                    int updateCount = stm.getUpdateCount();
-                    logger.info("执行SQL: {}, 执行结果: {}", sql, (updateCount > -1));
-                }
-            }
-        } catch (Exception e) {
-            logger.error("JDBCUtilException：execute异常，" + e.getMessage() + "，报错的SQL：" + sqls, e);
-            if (isThrow()) throw e;
-        } finally {
-            closeStm(stm);
-            closeConn(conn);
-        }
-    }
-
-    /**
      * 批量执行SQL，在同一会话内，回调函数用于循环获取查询结果<br>
      * 比如set hive.xx=xx，然后执行查询的情况<br>
      * 或者alter session set xx=xx，然后执行查询的情况
@@ -623,6 +584,45 @@ public class JDBCUtil implements IJDBCUtil {
             closeStm(stm);
             closeConn(conn);
         }
+    }
+
+    /**
+     * 批量执行SQL，在同一会话内，不支持查询，仅支持更新和删除<br>
+     * 比如set hive.xx=xx，然后执行更新和删除的情况<br>
+     * 或者alter session set xx=xx，然后执行更新和删除的情况
+     *
+     * @param sqls
+     * @throws SQLException
+     */
+    @Override
+    public int execute(List<String> sqls) throws SQLException {
+        Connection conn = null;
+        Statement stm = null;
+        int result = -1;
+        try {
+            conn = getConnection();
+            assert conn != null;
+            stm = conn.createStatement();
+            for (String sql : sqls) {
+                boolean executeFlag = stm.execute(sql);
+                if (sql.startsWith("select ")) {
+                    throw new SQLException("不支持select语句！");
+                } else if (sql.startsWith("update ") || sql.startsWith("insert into") || sql.startsWith("delete ")) {
+                    result = stm.getUpdateCount();
+                    logger.info("执行SQL: {}, 影响记录数: {}", sql, result);
+                } else {
+                    result = stm.getUpdateCount();
+                    logger.info("执行SQL: {}, 执行结果: {}", sql, result);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("JDBCUtilException：execute异常，" + e.getMessage() + "，报错的SQL：" + sqls, e);
+            if (isThrow()) throw e;
+        } finally {
+            closeStm(stm);
+            closeConn(conn);
+        }
+        return result;
     }
 
     /**
@@ -2283,19 +2283,13 @@ public class JDBCUtil implements IJDBCUtil {
                     Method setter = property.getWriteMethod();// Java中提供了用来访问某个属性的
                     String propertyName = property.getPropertyType().getName();// 获取bean字段的类型
                     // setter方法，oracle一般把数值型转换成BigDecimal，所以这里需要转换
-                    if (propertyName.equals("int")) {
+                    if (propertyName.equals("int") || propertyName.equals("java.lang.Integer")) {
                         if (value == null) {
                             setter.invoke(t, 0);
                         } else {
                             setter.invoke(t, Integer.valueOf(value.toString()));
                         }
-                    } else if (propertyName.equals("long")) {
-                        if (value == null) {
-                            setter.invoke(t, 0);
-                        } else {
-                            setter.invoke(t, Long.valueOf(value.toString()));
-                        }
-                    } else if (propertyName.equals("java.lang.Long")) {
+                    } else if (propertyName.equals("long") || propertyName.equals("java.lang.Long")) {
                         if (value == null) {
                             setter.invoke(t, 0L);
                         } else {
