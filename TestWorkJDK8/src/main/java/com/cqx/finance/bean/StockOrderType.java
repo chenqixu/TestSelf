@@ -8,5 +8,6 @@ package com.cqx.finance.bean;
 public enum StockOrderType {
     SELL,
     BUY,
+    COMPETED,
     ;
 }

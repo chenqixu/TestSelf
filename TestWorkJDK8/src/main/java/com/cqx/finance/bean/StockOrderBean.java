@@ -2,29 +2,57 @@ package com.cqx.finance.bean;
 
 import com.alibaba.fastjson.JSON;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * StockBean
  *
  * @author chenqixu
  */
 public class StockOrderBean implements BeanComparable {
-    private float hopePrice;
-    private float finalPrice;
-    private int count;
-    private long hopeTime;
-    private long finalTime;
+    // 订单号
+    private String orderId;
+    // 公司
+    private String companyName;
+    // 订单类型
     private StockOrderType type;
+    // 客户
     private String cusName;
+    // 下单价
+    private float hopePrice;
+    // 成交价
+    private float finalPrice;
+    // 下单量
+    private int hopeCount;
+    // 下单时间
+    private long hopeTime;
+    // 最新订单量
+    private int count;
+    // 成交时间
+    private long finalTime;
+    // 成交量
+    private int finalCount;
+    // 成交单号列表
+    private List<String> finalOrderList = new ArrayList<>();
 
-    public StockOrderBean(float hopePrice, int count) {
-        this("测试用户", StockOrderType.BUY, hopePrice, count);
+    public StockOrderBean(float hopePrice, int hopeCount) {
+        this("测试用户", StockOrderType.BUY, hopePrice, hopeCount);
     }
 
-    public StockOrderBean(String cusName, StockOrderType type, float hopePrice, int count) {
+    public StockOrderBean(String cusName, StockOrderType type, float hopePrice, int hopeCount) {
+        this(cusName, "000001", type, hopePrice, hopeCount);
+    }
+
+    public StockOrderBean(String cusName, String companyName, StockOrderType type, float hopePrice, int hopeCount) {
         setCusName(cusName);
+        setCompanyName(companyName);
         setType(type);
         setHopePrice(hopePrice);
-        setCount(count);
+        setHopeCount(hopeCount);
+        setCount(hopeCount);
+        this.orderId = UUID.randomUUID().toString();
     }
 
     @Override
@@ -106,5 +134,33 @@ public class StockOrderBean implements BeanComparable {
 
     public void setCusName(String cusName) {
         this.cusName = cusName;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public int getHopeCount() {
+        return hopeCount;
+    }
+
+    public void setHopeCount(int hopeCount) {
+        this.hopeCount = hopeCount;
+    }
+
+    public int getFinalCount() {
+        return finalCount;
+    }
+
+    public void setFinalCount(int finalCount) {
+        this.finalCount = finalCount;
     }
 }

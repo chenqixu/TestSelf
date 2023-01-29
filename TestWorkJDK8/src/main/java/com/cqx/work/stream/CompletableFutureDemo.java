@@ -4,8 +4,11 @@ import com.cqx.common.utils.system.SleepUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * CompletableFutureDemo
@@ -41,6 +44,7 @@ public class CompletableFutureDemo implements AutoCloseable {
             demo.handleAsync();
             demo.whenComplete();
             demo.exceptionally();
+            demo.retryTask();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -501,5 +505,56 @@ public class CompletableFutureDemo implements AutoCloseable {
             logger.info("executorService.shutdown");
             executorService.shutdown();
         }
+    }
+
+    /**
+     * 重试第二个任务，第一个完成了才能运行第二个
+     */
+    public void retryTask() throws ExecutionException, InterruptedException {
+        List<CompletableFuture> completableFutures = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            logger.info("[allOf{}] start task", i);
+            CompletableFuture<Integer> task = CompletableFuture.supplyAsync(() -> {
+                logger.info("[allOf.task1] now thread: {}", Thread.currentThread().getName());
+                int ret = random.nextInt(10);
+                logger.info("[allOf.task1] random: {}", ret);
+                SleepUtil.sleepSecond(ret);
+                logger.info("[allOf.task1] task stop");
+                return ret;
+            }, executorService).thenApplyAsync(result -> {
+                logger.info("第一个任务执行完成，结果：{}", result);
+                logger.info("[allOf.task2] now thread: {}", Thread.currentThread().getName());
+                int ret = random.nextInt(10);
+                logger.info("[allOf.task2] random: {}", ret);
+                SleepUtil.sleepSecond(ret);
+                logger.info("[allOf.task2] task stop");
+                return ret;
+            }, executorService);
+
+            // 如果发生了错误，重试3次
+            for (AtomicInteger rerunTimes = new AtomicInteger(1);
+                 rerunTimes.get() < 3;
+                 rerunTimes.incrementAndGet()) {
+                task = task.thenApplyAsync(result -> {
+                    if (result % 2 == 0) {
+                        // 失败，重试
+                        logger.info("[allOf.task2.retry] now thread: {}", Thread.currentThread().getName());
+                        int ret = random.nextInt(10);
+                        logger.info("[allOf.task2.retry] random: {}", ret);
+                        SleepUtil.sleepSecond(ret);
+                        logger.info("[allOf.task2.retry] task stop");
+                        return ret;
+                    } else {
+                        // 成功
+                        logger.info("[{}]执行成功，结果：{}", rerunTimes.get(), result);
+                        return result;
+                    }
+                }, executorService);
+            }
+            completableFutures.add(task);
+        }
+
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0])).join();
+        logger.info("[allOf] stop task");
     }
 }

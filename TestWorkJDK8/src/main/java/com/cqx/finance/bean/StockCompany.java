@@ -1,5 +1,7 @@
 package com.cqx.finance.bean;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * StockCompany
  *
@@ -11,6 +13,9 @@ public class StockCompany {
     private float currentPrice;
     private float maxUpPrice;
     private float maxDownPrice;
+    private int maxCount = 0;
+    private int minCount = 0;
+    private AtomicBoolean first = new AtomicBoolean(true);
 
     public StockCompany(String companyName, float openPrice) {
         this.companyName = companyName;
@@ -57,6 +62,25 @@ public class StockCompany {
     public boolean isMaxDown() {
         synchronized (lock) {
             return currentPrice == maxDownPrice;
+        }
+    }
+
+    public int getMaxCount() {
+        return maxCount;
+    }
+
+    public int getMinCount() {
+        return minCount;
+    }
+
+    public void setCount(int count) {
+        if (first.getAndSet(false)) {
+            this.minCount = count;
+            this.maxCount = count;
+        } else if (count > this.maxCount) {
+            this.maxCount = count;
+        } else if (count < this.minCount) {
+            this.minCount = count;
         }
     }
 }

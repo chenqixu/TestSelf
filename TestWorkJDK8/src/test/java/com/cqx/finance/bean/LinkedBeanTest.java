@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -36,13 +38,29 @@ public class LinkedBeanTest {
         StockOrderBean sc = linkedBean.peek();
         logger.info("{}", sc);
         logger.info("{}", linkedBean.getElements());
+    }
 
+    @Test
+    public void price() {
+        DecimalFormat df = new DecimalFormat("#0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
         Random random = new Random(System.currentTimeMillis());
+        float currentPrice = 15.00f;
+        float currentPriceRN = 15.00f;
         for (int i = 0; i < 10; i++) {
             float rn = random.nextFloat();
-            logger.info("{} {} {}", rn
-                    , Math.round(rn * 100) / 100f
-                    , Float.valueOf(String.format("%.2f", Math.round(rn * 100) / 1000f)));
+            currentPrice += (rn * 100) / 1000f;
+            currentPriceRN += Float.valueOf(String.format("%.2f", Math.round(rn * 100) / 1000f));
+            // float={}, String.format={},
+            logger.info("rn={}, 1={}, 2={}, 3={}"
+                    , rn
+                    , (rn * 100) / 1000f
+                    , df.format((rn * 100) / 1000f)
+//                    , Math.round(rn * 100) / 100f
+//                    , Float.valueOf(String.format("%.2f", Math.round(rn * 100) / 1000f))
+//                    , currentPriceRN
+                    , df.format(currentPrice)
+            );
         }
     }
 
@@ -227,19 +245,23 @@ public class LinkedBeanTest {
 
         @Override
         public void exec() throws Exception {
-            if (quotaion) {
-                float currentPrice = s1.getCurrentPrice();
-                float decimal = Math.round((currentPrice + random.nextFloat()) * 100) / 100f;
-                // 不能超过涨停价格
-                if (decimal > s1.getMaxUpPrice()) decimal = s1.getMaxUpPrice();
-                int count = random.nextInt(10) * 1000;
-                if (count == 0) count = 1000;
-                StockOrderBean stockBean = new StockOrderBean("apple", StockOrderType.BUY, decimal, count);
-                buyQueue.add(stockBean);
-                logger.info("[用户]{} 申请买入价格：{}，申请买入数量：{}"
-                        , stockBean.getCusName(), stockBean.getHopePrice(), stockBean.getCount());
+            if (quotaion || random.nextBoolean()) {
+                buy();
             }
             SleepUtil.sleepMilliSecond(100);
+        }
+
+        private void buy() {
+            float currentPrice = s1.getCurrentPrice();
+            float decimal = Math.round((currentPrice + random.nextFloat()) * 100) / 100f;
+            // 不能超过涨停价格
+            if (decimal > s1.getMaxUpPrice()) decimal = s1.getMaxUpPrice();
+            int count = random.nextInt(10) * 1000;
+            if (count == 0) count = 1000;
+            StockOrderBean stockBean = new StockOrderBean("apple", StockOrderType.BUY, decimal, count);
+            buyQueue.add(stockBean);
+            logger.info("[用户]{} 申请买入价格：{}，申请买入数量：{}"
+                    , stockBean.getCusName(), stockBean.getHopePrice(), stockBean.getCount());
         }
     }
 
@@ -247,7 +269,7 @@ public class LinkedBeanTest {
      * 模拟卖出
      */
     class SellThread extends BaseRunable {
-        Random random = new Random();
+        Random random = new Random(System.currentTimeMillis());
         LinkedBean<StockOrderBean> sellQueue;
 
         SellThread(LinkedBean<StockOrderBean> sellQueue) {
@@ -256,19 +278,23 @@ public class LinkedBeanTest {
 
         @Override
         public void exec() throws Exception {
-            if (!quotaion) {
-                float currentPrice = s1.getCurrentPrice();
-                float decimal = Math.round((currentPrice - random.nextFloat()) * 100) / 100f;
-                // 不能超过跌停价格
-                if (decimal < s1.getMaxDownPrice()) decimal = s1.getMaxDownPrice();
-                int count = random.nextInt(10) * 1000;
-                if (count == 0) count = 1000;
-                StockOrderBean stockBean = new StockOrderBean("windows", StockOrderType.SELL, decimal, count);
-                sellQueue.add(stockBean);
-                logger.info("[用户]{} 申请卖出价格：{}，申请卖出数量：{}"
-                        , stockBean.getCusName(), stockBean.getHopePrice(), stockBean.getCount());
+            if (!quotaion || random.nextBoolean()) {
+                sell();
             }
             SleepUtil.sleepMilliSecond(100);
+        }
+
+        private void sell() {
+            float currentPrice = s1.getCurrentPrice();
+            float decimal = Math.round((currentPrice - random.nextFloat()) * 100) / 100f;
+            // 不能超过跌停价格
+            if (decimal < s1.getMaxDownPrice()) decimal = s1.getMaxDownPrice();
+            int count = random.nextInt(10) * 1000;
+            if (count == 0) count = 1000;
+            StockOrderBean stockBean = new StockOrderBean("windows", StockOrderType.SELL, decimal, count);
+            sellQueue.add(stockBean);
+            logger.info("[用户]{} 申请卖出价格：{}，申请卖出数量：{}"
+                    , stockBean.getCusName(), stockBean.getHopePrice(), stockBean.getCount());
         }
     }
 }

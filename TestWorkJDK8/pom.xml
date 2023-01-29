@@ -9,18 +9,19 @@
     </parent>
     <artifactId>TestWorkJDK8</artifactId>
 
-    <distributionManagement>
-        <repository>
-            <id>huawei-releases</id>
-            <name>huawei-releases</name>
-            <url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-        </repository>
-        <snapshotRepository>
-            <id>huawei-snapshots</id>
-            <name>huawei-snapshots</name>
-            <url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <!-- 注意，这个是打包发布的，不是下载的，有点尴尬 -->
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>huawei-releases</id>-->
+            <!--<name>huawei-releases</name>-->
+            <!--<url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>huawei-snapshots</id>-->
+            <!--<name>huawei-snapshots</name>-->
+            <!--<url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
 
     <properties>
         <logback.version>1.0.13</logback.version>
