@@ -19,6 +19,8 @@ public class RedisFactory {
         private String ip_ports;
         // 默认不开启管道，必须手工设置
         private boolean isPipeline = false;
+        // 6.2.7 支持密码
+        private String password;
 
         public Builder setMode(int mode_type) {
             this.mode_type = mode_type;
@@ -66,6 +68,15 @@ public class RedisFactory {
 
         public Builder setPipeline(boolean pipeline) {
             isPipeline = pipeline;
+            return this;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public Builder setPassword(String password) {
+            this.password = password;
             return this;
         }
     }

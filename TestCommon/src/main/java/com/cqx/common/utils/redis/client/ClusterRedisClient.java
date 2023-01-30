@@ -1,6 +1,7 @@
 package com.cqx.common.utils.redis.client;
 
 import com.cqx.common.utils.redis.RedisFactory;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
@@ -19,10 +20,19 @@ public class ClusterRedisClient extends RedisClient {
     public ClusterRedisClient(RedisFactory.Builder builder) {
         addHostAndPort(builder);
         if (builder.isPipeline()) {
-            cluster = new MyJedisCluster(HostAndPort_set);
+            if (builder.getPassword() != null && builder.getPassword().length() > 0) {
+                cluster = new MyJedisCluster(HostAndPort_set, builder.getPassword());
+            } else {
+                cluster = new MyJedisCluster(HostAndPort_set);
+            }
             setPipeline(true);
         } else {
-            cluster = new JedisCluster(HostAndPort_set);
+            if (builder.getPassword() != null && builder.getPassword().length() > 0) {
+                cluster = new JedisCluster(HostAndPort_set, DEFAULT_MAX_WAIT_MILLIS, DEFAULT_MAX_WAIT_MILLIS
+                        , DEFAULT_MAX_REDIRECTIONS, builder.getPassword(), new GenericObjectPoolConfig());
+            } else {
+                cluster = new JedisCluster(HostAndPort_set);
+            }
         }
     }
 

@@ -18,7 +18,28 @@ public class SinaleRedisClient extends RedisClient {
     private Jedis jedis;
 
     public SinaleRedisClient(RedisFactory.Builder builder) {
-        jedis = new Jedis(builder.getIp(), builder.getPort());
+        if (builder.getIp() == null && builder.getIp_ports() != null) {
+            for (String str : builder.getIp_ports().split(",")) {
+                String[] arr = str.split(":");
+                if (arr != null && arr.length == 2) {
+                    String ip = arr[0];
+                    int port = Integer.valueOf(arr[1]);
+                    jedis = new Jedis(ip, port);
+                    break;
+                }
+            }
+        } else if (builder.getIp() != null) {
+            jedis = new Jedis(builder.getIp(), builder.getPort());
+        } else {
+            throw new NullPointerException("传入的ip、端口为空！");
+        }
+        if (jedis == null) {
+            throw new NullPointerException("传入的配置不正确，请检查！");
+        }
+        String password = builder.getPassword();
+        if (password != null && password.length() > 0) {
+            jedis.auth(password);
+        }
     }
 
     public Set<String> keys(String pattern) {

@@ -875,10 +875,12 @@ public class JDBCUtilTest extends TestBase {
             // -Djdbc.bean=oracle242bishowBean
             //============================
             // 会话测试1
+            sqls.add("commit");
             sqls.add("alter session enable parallel dml");
             sqls.add("alter session force parallel query parallel 8");
             sqls.add("alter session force parallel dml parallel 8");
-            sqls.add("insert into cqx_test3(sum_date,load_time) values(20220708,sysdate)");
+            sqls.add("drop table cqx_test4");
+            sqls.add("create table cqx_test4(sum_date varchar2(10),load_time date)");
             int ret = jdbcUtil.execute(sqls);
             logger.info("执行结果: {}", ret);
         }

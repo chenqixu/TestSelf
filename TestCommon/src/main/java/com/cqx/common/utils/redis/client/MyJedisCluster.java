@@ -11,6 +11,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.util.JedisClusterCRC16;
 import redis.clients.util.SafeEncoder;
 
@@ -31,14 +32,27 @@ public class MyJedisCluster extends JedisCluster {
     private final TwoWayHashMap<Integer, String> slotsNode = new TwoWayHashMap<>();
     private AtomicBoolean first = new AtomicBoolean(true);
     private Lock w = new ReentrantLock();
+    private String password;
+    private Set<HostAndPort> _hostAndPortSet;
 
     public MyJedisCluster(Set<HostAndPort> nodes) {
         super(nodes);
+        this._hostAndPortSet = nodes;
         renewCache();
     }
 
     public MyJedisCluster(Set<HostAndPort> nodes, final GenericObjectPoolConfig poolConfig) {
         super(nodes, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
+        this._hostAndPortSet = nodes;
+        renewCache();
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, String password) {
+        // todo: soTimeout使用了DEFAULT_TIMEOUT，不知道是否有问题
+        super(nodes, DEFAULT_TIMEOUT, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS
+                , password, new GenericObjectPoolConfig());
+        this._hostAndPortSet = nodes;
+        this.password = password;
         renewCache();
     }
 
@@ -64,11 +78,89 @@ public class MyJedisCluster extends JedisCluster {
     }
 
     /**
+     * 认证检查，只有在有密码的集群才需要进行<br>
+     * 如果第一个节点就异常，MyJedisCluster根本无法构造成功，自然不会执行到这里
+     */
+    private void checkAuth() {
+        if (this.password != null && this.password.length() > 0) {
+            Iterator<HostAndPort> it = _hostAndPortSet.iterator();
+            if (it.hasNext()) {
+                HostAndPort _hostAndPort = it.next();
+                try (Jedis jedis = new Jedis(_hostAndPort.getHost(), _hostAndPort.getPort())) {
+                    String clusterNodes = jedis.clusterNodes();
+                    List<String> clusterNodeList = parserClusterNodes(clusterNodes);
+                    checkClusterNodes(clusterNodeList);
+                } catch (JedisDataException e) {
+                    if (e.getMessage().contains("NOAUTH")) {
+                        try (Jedis jedis = new Jedis(_hostAndPort.getHost(), _hostAndPort.getPort())) {
+                            jedis.auth(this.password);
+                            String clusterNodes = jedis.clusterNodes();
+                            List<String> clusterNodeList = parserClusterNodes(clusterNodes);
+                            checkClusterNodes(clusterNodeList);
+                        }
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 解析cluster nodes结果
+     *
+     * @param clusterNodes
+     * @return
+     */
+    private List<String> parserClusterNodes(String clusterNodes) {
+        List<String> hostAndPortList = new ArrayList<>();
+        String[] line = clusterNodes.split("\n", -1);
+        for (String info : line) {
+            if (info.trim().length() > 0) {
+                String[] infos = info.split(" ", -1);
+                if (infos.length > 1) {
+                    String[] hostAndPort = infos[1].split("@", -1);
+                    hostAndPortList.add(hostAndPort[0]);
+                }
+            }
+        }
+        return hostAndPortList;
+    }
+
+    /**
+     * 针对cluster nodes进行认证校验，输出校验结果
+     *
+     * @param clusterNodeList
+     */
+    private void checkClusterNodes(List<String> clusterNodeList) {
+        List<String> checkFailNodeList = new ArrayList<>();
+        int checkCnt = 0;
+        int failCnt = 0;
+        for (String node : clusterNodeList) {
+            String[] ipAndPortArr = node.split(":", -1);
+            if (ipAndPortArr.length == 2) {
+                checkCnt++;
+                try (Jedis nodeJedis = new Jedis(ipAndPortArr[0], Integer.valueOf(ipAndPortArr[1]))) {
+                    nodeJedis.connect();
+                    nodeJedis.auth(this.password);
+                } catch (Exception e) {
+                    failCnt++;
+                    checkFailNodeList.add(node + ", Error: " + e.getMessage());
+                }
+            }
+        }
+        logger.info("clusterNodes: {}, checkCnt: {}, failCnt: {}, checkFailNodeList:  {}"
+                , clusterNodeList, checkCnt, failCnt, checkFailNodeList);
+    }
+
+    /**
      * 分配slot到cluster
      */
     public void renewCache() {
         if (w.tryLock()) {
             try {
+                // 认证检查
+                checkAuth();
                 //第一次，从getClusterNodes获取
                 if (first.getAndSet(false)) {
                     for (JedisPool jedisPool : getClusterNodes().values()) {
@@ -184,6 +276,9 @@ public class MyJedisCluster extends JedisCluster {
         if (existingJedis != null) return nodeKey;
 
         Jedis nodePool = new Jedis(node.getHost(), node.getPort());
+        if (password != null && password.length() > 0) {
+            nodePool.auth(password);
+        }
         nodes.put(nodeKey, nodePool);
         return nodeKey;
     }
@@ -421,8 +516,12 @@ public class MyJedisCluster extends JedisCluster {
         SlotNumAndHostAndPortPool(List<SlotNumAndHostAndPort> slotNumAndHostAndPorts) {
             this.slotNumAndHostAndPorts = slotNumAndHostAndPorts;
             for (SlotNumAndHostAndPort slotNumAndHostAndPort : slotNumAndHostAndPorts) {
-                this.jedisList.add(new Jedis(slotNumAndHostAndPort.getHostAndPort().getHost(),
-                        slotNumAndHostAndPort.getHostAndPort().getPort()));
+                Jedis _jedis = new Jedis(slotNumAndHostAndPort.getHostAndPort().getHost(),
+                        slotNumAndHostAndPort.getHostAndPort().getPort());
+                if (password != null && password.length() > 0) {
+                    _jedis.auth(password);
+                }
+                this.jedisList.add(_jedis);
             }
         }
 
