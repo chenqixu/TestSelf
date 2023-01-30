@@ -1,5 +1,6 @@
 package com.cqx.common.utils.system;
 
+import com.cqx.common.utils.file.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,13 +137,66 @@ public class ClassUtil<T extends Annotation, K> {
     }
 
     /**
+     * 获取指定类的字节码
+     *
+     * @param name
+     * @param simpleName
+     * @return
+     */
+    public byte[] getClassfileBuffer(String name, String simpleName) {
+        String packageNamePath1 = name.replace(".", "/");
+        String packageNamePath2 = packageNamePath1.substring(0, packageNamePath1.lastIndexOf("/"));
+        logger.info("name: {}, packageNamePath1: {}, packageNamePath2: {}"
+                , name, packageNamePath1, packageNamePath2);
+        try {
+            Enumeration<URL> urls = getClassLoader().getResources(packageNamePath2);
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                if (url != null) {
+                    String protocol = url.getProtocol();
+                    if (protocol.equals("file")) {
+                        String path = FileUtil.endWith(url.getPath()) + simpleName + ".class";
+                        logger.info("protocol.file url: {}, isFile: {}, isExists: {}", path, FileUtil.isFile(path), FileUtil.isExists(path));
+                        if (FileUtil.isFile(path) && FileUtil.isExists(path)) {
+                            return FileUtil.getClassBytes(path);
+                        }
+                    } else if (protocol.equals("jar")) {
+                        logger.info("protocol.jar url: {}", url);
+                        JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        if (jarURLConnection != null) {
+                            JarFile jarFile = jarURLConnection.getJarFile();
+                            if (jarFile != null) {
+                                Enumeration<JarEntry> jarEntries = jarFile.entries();
+                                while (jarEntries.hasMoreElements()) {
+                                    JarEntry jarEntry = jarEntries.nextElement();
+                                    String jarEntryName = jarEntry.getName();
+                                    if (jarEntryName.endsWith(".class") && jarEntryName.contains(packageNamePath1)) {
+                                        logger.info("扫描到 jarEntryName: {}", jarEntryName);
+                                        if (FileUtil.isFile(jarEntryName) && FileUtil.isExists(jarEntryName)) {
+                                            return FileUtil.getClassBytes(jarEntryName);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.error(String.format("获取%s的字节码失败！", name), e);
+        }
+        return null;
+    }
+
+    /**
      * 扫描package路径，添加符合条件的Class到SET集合
      *
      * @param classSet
      * @param packagePath
      * @param packageName
      */
-    private void addClass(Set<Class<?>> classSet, String packagePath, String packageName, Class<T> annotationClazz) {
+    private void addClass(Set<Class<?>> classSet, String packagePath, String
+            packageName, Class<T> annotationClazz) {
         File[] files = new File(packagePath).listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {

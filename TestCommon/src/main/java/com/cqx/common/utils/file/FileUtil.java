@@ -750,6 +750,30 @@ public class FileUtil {
         return writerName;
     }
 
+    /**
+     * 获取类的字节码
+     *
+     * @param fileName
+     * @return
+     */
+    public static byte[] getClassBytes(String fileName) {
+        File file = new File(fileName);
+        try (InputStream is = new FileInputStream(file);
+             ByteArrayOutputStream bs = new ByteArrayOutputStream()) {
+            long length = file.length();
+            byte[] bytes = new byte[(int) length];
+
+            int n;
+            while ((n = is.read(bytes)) != -1) {
+                bs.write(bytes, 0, n);
+            }
+            return bytes;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     class ReaderThread extends Monitor {
         private BlockingQueue<String> contentQueue;
         private boolean flag = false;

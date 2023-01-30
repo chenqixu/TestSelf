@@ -1,5 +1,6 @@
 package com.bussiness.bi.bigdata.utils.system;
 
+import com.cqx.common.utils.jdbc.JDBCUtil;
 import com.cqx.common.utils.system.ClassUtil;
 import com.bussiness.bi.mobilebox.parse.AbstractBodyParse;
 import com.bussiness.bi.mobilebox.utils.BodyImpl;
@@ -31,5 +32,10 @@ public class ClassUtilTest {
         for (Class<?> cls : classSet) {
             logger.info("cls：{}", cls);
         }
+    }
+
+    @Test
+    public void getClassfileBuffer() {
+        classUtil.getClassfileBuffer(JDBCUtil.class.getName(), JDBCUtil.class.getSimpleName());
     }
 }

@@ -42,5 +42,6 @@
         <module>TestPool</module>
         <module>TestCommon</module>
         <module>TestCalcite</module>
+        <module>TestJVMAgent</module>
     </modules>
 </project>
