@@ -21,9 +21,9 @@ public class ClusterRedisClient extends RedisClient {
         addHostAndPort(builder);
         if (builder.isPipeline()) {
             if (builder.getPassword() != null && builder.getPassword().length() > 0) {
-                cluster = new MyJedisCluster(HostAndPort_set, builder.getPassword());
+                cluster = new MyJedisCluster(HostAndPort_set, builder.getPassword(), builder.getMax_wait_millis());
             } else {
-                cluster = new MyJedisCluster(HostAndPort_set);
+                cluster = new MyJedisCluster(HostAndPort_set, builder.getMax_wait_millis());
             }
             setPipeline(true);
         } else {

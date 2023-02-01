@@ -21,6 +21,8 @@ public class RedisFactory {
         private boolean isPipeline = false;
         // 6.2.7 支持密码
         private String password;
+        // 最大等待时长
+        private int max_wait_millis = RedisClient.DEFAULT_MAX_WAIT_MILLIS;
 
         public Builder setMode(int mode_type) {
             this.mode_type = mode_type;
@@ -77,6 +79,15 @@ public class RedisFactory {
 
         public Builder setPassword(String password) {
             this.password = password;
+            return this;
+        }
+
+        public int getMax_wait_millis() {
+            return max_wait_millis;
+        }
+
+        public Builder setMax_wait_millis(int max_wait_millis) {
+            this.max_wait_millis = max_wait_millis;
             return this;
         }
     }

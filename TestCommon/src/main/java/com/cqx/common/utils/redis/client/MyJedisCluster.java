@@ -36,7 +36,11 @@ public class MyJedisCluster extends JedisCluster {
     private Set<HostAndPort> _hostAndPortSet;
 
     public MyJedisCluster(Set<HostAndPort> nodes) {
-        super(nodes);
+        this(nodes, DEFAULT_TIMEOUT);
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, int timeout) {
+        super(nodes, timeout);
         this._hostAndPortSet = nodes;
         renewCache();
     }
@@ -48,8 +52,11 @@ public class MyJedisCluster extends JedisCluster {
     }
 
     public MyJedisCluster(Set<HostAndPort> nodes, String password) {
-        // todo: soTimeout使用了DEFAULT_TIMEOUT，不知道是否有问题
-        super(nodes, DEFAULT_TIMEOUT, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS
+        this(nodes, password, DEFAULT_TIMEOUT);
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, String password, int timeout) {
+        super(nodes, timeout, timeout, DEFAULT_MAX_REDIRECTIONS
                 , password, new GenericObjectPoolConfig());
         this._hostAndPortSet = nodes;
         this.password = password;

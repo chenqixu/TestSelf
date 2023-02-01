@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class RedisClient implements Closeable {
-    protected static final int DEFAULT_MAX_REDIRECTIONS = 5;
-    protected static final int DEFAULT_PIPELINE_COMMIT = 500;
-    protected static final int DEFAULT_GET_CHCHE_SIZE = 10000;
-    protected static final int DEFAULT_MAX_IDLE = 8;
-    protected static final int DEFAULT_MAX_TOTAL = 8;
-    protected static final int DEFAULT_MAX_WAIT_MILLIS = 2000;
+    public static final int DEFAULT_MAX_REDIRECTIONS = 5;
+    public static final int DEFAULT_PIPELINE_COMMIT = 500;
+    public static final int DEFAULT_GET_CHCHE_SIZE = 10000;
+    public static final int DEFAULT_MAX_IDLE = 8;
+    public static final int DEFAULT_MAX_TOTAL = 8;
+    public static final int DEFAULT_MAX_WAIT_MILLIS = 2000;
     protected RedisPipeline redisPipeline;
     protected boolean isPipeline = true;
 

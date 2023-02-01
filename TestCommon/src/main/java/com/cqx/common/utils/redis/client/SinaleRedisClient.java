@@ -95,6 +95,14 @@ public class SinaleRedisClient extends RedisClient {
         return jedis.del(key);
     }
 
+    public ScanResult<String> scan(String cursor) {
+        return jedis.scan(cursor);
+    }
+
+    public ScanResult<String> scan(String cursor, ScanParams params) {
+        return jedis.scan(cursor, params);
+    }
+
     @Override
     public Long hdel(String key, String field) {
         return jedis.hdel(key, field);
