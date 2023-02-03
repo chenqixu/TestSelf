@@ -1,5 +1,5 @@
 param:
-  kafkaconf.bootstrap.servers: "10.1.8.200:9093,10.1.8.201:9093,10.1.8.202:9093"
+  kafkaconf.bootstrap.servers: "10.1.8.200:9094,10.1.8.201:9094,10.1.8.202:9094"
   kafkaconf.key.deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
   kafkaconf.value.deserializer: "org.apache.kafka.common.serialization.ByteArrayDeserializer"
   kafkaconf.key.serializer: "org.apache.kafka.common.serialization.StringSerializer"
@@ -15,9 +15,10 @@ param:
 #  kafkaconf.newland.consumer.fromTime: "2021-04-06 16:00:00"
 #  kafkaconf.newland.consumer.mode: "fromOffset"
 #  kafkaconf.newland.consumer.fromOffset: "0,20467"#0,20408
+  kafkaconf.newland.schema.mode: "NOAVRO"
   kafkaconf.acks: "1"
   kafkaconf.batch.size: "1048576"
-  kafkaconf.newland.kafka_username: newland
-  kafkaconf.newland.kafka_password: 123456
+  kafkaconf.newland.kafka_username: admin
+  kafkaconf.newland.kafka_password: admin
   schema_url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
   topic: test1
