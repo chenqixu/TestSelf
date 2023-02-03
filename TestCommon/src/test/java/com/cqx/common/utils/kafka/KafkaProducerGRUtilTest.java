@@ -5,6 +5,7 @@ import com.cqx.common.bean.kafka.DefaultBean;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.common.utils.system.TimeCostUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
@@ -502,6 +503,34 @@ public class KafkaProducerGRUtilTest extends TestBase {
             Future<RecordMetadata> metadataFuture = kafkaProducerGRUtil.send(topic, key, value.getBytes());//随机产生数据
             RecordMetadata recordMetadata = metadataFuture.get();
             logger.info("recordMetadata:{}", recordMetadata);
+        }
+    }
+
+    /**
+     * 随机发送300条记录，以此验证监控界面的数据是否包含副本数据<br>
+     * 由于缓存以及机器性能的问题，mean不是很高
+     *
+     * @throws Exception
+     */
+    @Test
+    public void sendScramRandom300() throws Exception {
+        Map param = (Map) getParam("kafka_scram.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerUtil<String, byte[]> kafkaProducerGRUtil = new KafkaProducerUtil<>(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            String value = System.currentTimeMillis() + "";
+            String key = String.valueOf(value.hashCode());
+            TimeCostUtil tc = new TimeCostUtil();
+            int cnt = 3600, i = 0;
+            while (i < cnt) {
+                if (tc.tag(1000L)) {
+                    // 一次发送500条
+                    for (int j = 0; j < 250; j++) {
+                        kafkaProducerGRUtil.send(topic, key, value.getBytes());//随机产生数据
+                    }
+                    logger.info("send");
+                    i++;
+                }
+            }
         }
     }
 
