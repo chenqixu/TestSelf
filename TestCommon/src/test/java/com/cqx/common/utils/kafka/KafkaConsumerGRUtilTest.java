@@ -6,6 +6,7 @@ import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.list.IKVList;
 import com.cqx.common.utils.system.ArrayUtil;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.common.utils.system.TimeUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -31,10 +32,37 @@ public class KafkaConsumerGRUtilTest extends TestBase {
             kafkaConsumerUtil.subscribe(topic);//订阅
             for (IKVList.Entry<String, GenericRecord> entry : kafkaConsumerUtil.pollsHasKey(1000L).entrySet()) {
                 Object value = entry.getValue();
-                logger.info("【key】{}，【value】{}，【value.class】{}",
-                        entry.getKey(), value, value != null ? value.getClass() : null);
+                logger.info("【key】{}，【value】{}，【value.class】{}"
+                        , entry.getKey()
+                        , value
+                        , value != null ? value.getClass() : null);
             }
             kafkaConsumerUtil.commitSync();
+        }
+    }
+
+    @Test
+    public void pollsNoAvro() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        param.put("kafkaconf.newland.consumer.mode", "fromBeginning");//强制从头消费
+        logger.info("{}", param);
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            kafkaConsumerUtil.subscribe(topic);//订阅
+            int i = 0;
+            while (i++ < 10) {
+                for (ConsumerRecord<String, byte[]> entry : kafkaConsumerUtil.pollHasConsumerRecord(1000L)) {
+                    byte[] value = entry.value();
+                    logger.info("【topic】{}，【offset】{}，【timestamp】{}，【partition】{},【key】{}，【value】{}"
+                            , entry.topic()
+                            , entry.offset()
+                            , TimeUtil.formatTime(entry.timestamp())
+                            , entry.partition()
+                            , entry.key()
+                            , new String(value)
+                    );
+                }
+            }
         }
     }
 

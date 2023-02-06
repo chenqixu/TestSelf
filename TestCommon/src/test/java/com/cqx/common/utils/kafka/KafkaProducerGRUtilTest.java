@@ -30,6 +30,19 @@ public class KafkaProducerGRUtilTest extends TestBase {
     }
 
     @Test
+    public void sendRandomNoAvro() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            for (int i = 0; i < 10; i++) {
+                String value = System.currentTimeMillis() + "";
+                String key = String.valueOf(value.hashCode());
+                kafkaProducerGRUtil.send(topic, key, value.getBytes());
+            }
+        }
+    }
+
+    @Test
     public void sendUSER_PRODUCT() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
