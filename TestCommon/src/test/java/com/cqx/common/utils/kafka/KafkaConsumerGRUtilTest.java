@@ -6,6 +6,7 @@ import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.list.IKVList;
 import com.cqx.common.utils.system.ArrayUtil;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.common.utils.system.TimeUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -383,6 +384,34 @@ public class KafkaConsumerGRUtilTest extends TestBase {
                     cnt--;
                 }
             }
+        }
+    }
+
+    /**
+     * 从kafka_2.13-3.2.0版本scram认证模式下的kafka话题进行消费
+     *
+     * @throws Exception
+     */
+    @Test
+    public void poll_213_320_Scram() throws Exception {
+        Map param = (Map) getParam("kafka_2.13-3.2.0-scram.yaml").get("param");// 从配置文件解析参数
+        param.put("kafkaconf.newland.consumer.mode", "fromBeginning");// 强制从头开始消费
+        logger.info("{}", param);
+
+        try (KafkaConsumerGRUtil kafkaConsumerUtil = new KafkaConsumerGRUtil(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            kafkaConsumerUtil.subscribe(topic);//订阅
+            for (ConsumerRecord<String, byte[]> entry : kafkaConsumerUtil.pollHasConsumerRecord(1000L)) {
+                byte[] value = entry.value();
+                logger.info("【topic】{}，【offset】{}，【timestamp】{}，【key】{}，【value】{}"
+                        , entry.topic()
+                        , entry.offset()
+                        , TimeUtil.formatTime(entry.timestamp())
+                        , entry.key()
+                        , new String(value)
+                );
+            }
+            kafkaConsumerUtil.commitSync(0, 0);
         }
     }
 

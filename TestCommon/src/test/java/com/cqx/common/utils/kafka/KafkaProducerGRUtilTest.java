@@ -506,6 +506,24 @@ public class KafkaProducerGRUtilTest extends TestBase {
     }
 
     /**
+     * 往kafka_2.13-3.2.0版本scram认证模式下的kafka话题发送随机数据
+     *
+     * @throws Exception
+     */
+    @Test
+    public void send213_320_ScramRandom() throws Exception {
+        Map param = (Map) getParam("kafka_2.13-3.2.0-scram.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerUtil<String, byte[]> kafkaProducerGRUtil = new KafkaProducerUtil<>(param)) {
+            String topic = (String) param.get("topic");//获取话题
+            String value = System.currentTimeMillis() + "";
+            String key = String.valueOf(value.hashCode());
+            Future<RecordMetadata> metadataFuture = kafkaProducerGRUtil.send(topic, key, value.getBytes());//随机产生数据
+            RecordMetadata recordMetadata = metadataFuture.get();
+            logger.info("recordMetadata:{}", recordMetadata);
+        }
+    }
+
+    /**
      * 构造NMC_TB_B_DUN_NOTIFY_RESULT_R_I_V1
      *
      * @param msisdn
