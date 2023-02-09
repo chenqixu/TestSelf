@@ -1,5 +1,7 @@
 package com.cqx.sync;
 
+import com.bussiness.bi.bigdata.time.TimeCostUtil;
+import com.cqx.common.utils.compress.zip.ZipUtils;
 import com.cqx.common.utils.ftp.FtpParamCfg;
 import com.cqx.common.utils.jdbc.*;
 import com.cqx.common.utils.jdbc.lob.DefaultLobHandler;
@@ -10,8 +12,6 @@ import com.cqx.common.utils.sftp.SftpUtil;
 import com.cqx.common.utils.xml.XMLParser;
 import com.cqx.common.utils.xml.XMLParserElement;
 import com.cqx.sync.bean.*;
-import com.bussiness.bi.bigdata.compress.ZipUtils;
-import com.bussiness.bi.bigdata.time.TimeCostUtil;
 import org.apache.avro.Schema;
 import org.junit.After;
 import org.junit.Before;
@@ -21,18 +21,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class JDBCUtilTest {
 
     private static Logger logger = LoggerFactory.getLogger(JDBCUtilTest.class);
     private JDBCUtil jdbcUtil;
+    private String jdbcBean;
 
     private DBBean mysqlConfig(String type) {
         DBBean srcdbBean = new DBBean();
@@ -68,9 +65,9 @@ public class JDBCUtilTest {
                 srcdbBean.setPass_word("TyM*2CnEm");
                 break;
             case "local":
-//                srcdbBean.setTns("jdbc:mysql://127.0.0.1:3306/jutap?useUnicode=true");
-//                srcdbBean.setUser_name("udap");
-//                srcdbBean.setPass_word("udap");
+                srcdbBean.setTns("jdbc:mysql://127.0.0.1:3306/jutap?useUnicode=true");
+                srcdbBean.setUser_name("udap");
+                srcdbBean.setPass_word("udap");
                 break;
             case "jutap":
                 srcdbBean.setTns("jdbc:oracle:thin:@10.1.0.242:1521:ywxx");
@@ -123,13 +120,44 @@ public class JDBCUtilTest {
     @Before
     public void setUp() throws Exception {
         DBBean srcdbBean;
+        // 从JVM参数中获取，使用方式：-Djdbc.bean=mysql79Bean
+        final String INFO = "[格式]name@type, type in [oracle, mysql, postgresql]";
+        jdbcBean = System.getProperty("jdbc.bean");
+        if (jdbcBean != null && jdbcBean.trim().length() > 0) {
+            logger.info("获取到-Djdbc.bean={}", jdbcBean);
+            String[] _jdbcBeanArray = jdbcBean.split("@", -1);
+            String jdbcName;
+            String dbType;
+            if (_jdbcBeanArray.length == 2) {
+                jdbcName = _jdbcBeanArray[0];
+                dbType = _jdbcBeanArray[1];
+                logger.info("-Djdbc.bean其中jdbcName={}, dbType={}", jdbcName, dbType);
+                switch (dbType) {
+                    case "oracle":
+                        srcdbBean = oracleConfig(jdbcName);
+                        break;
+                    case "mysql":
+                        srcdbBean = mysqlConfig(jdbcName);
+                        break;
+                    case "postgresql":
+                        srcdbBean = postgresqlConfig(jdbcName);
+                        break;
+                    default:
+                        throw new NullPointerException("-Djdbc.bean中的dbType格式不正确！" + INFO);
+                }
+            } else {
+                throw new NullPointerException("-Djdbc.bean格式不正确！" + INFO);
+            }
+        } else {
+            throw new NullPointerException("需要设置-Djdbc.bean, " + INFO);
+        }
 //        srcdbBean = oracleConfig("jutap_tenant");
 //        srcdbBean = oracleConfig("frtbase_dblink");
 //        srcdbBean = oracleConfig("jutap");
 //        srcdbBean = oracleConfig("dev");
 //        srcdbBean = oracleConfig("web");
 //        srcdbBean = oracleConfig("bishow");
-        srcdbBean = oracleConfig("receng");
+//        srcdbBean = oracleConfig("receng");
 //        srcdbBean = mysqlConfig("local");
 //        srcdbBean = mysqlConfig("flink");
 //        srcdbBean = postgresqlConfig("dev");
@@ -138,7 +166,7 @@ public class JDBCUtilTest {
 
     @After
     public void tearDown() throws Exception {
-        jdbcUtil.close();
+        if (jdbcUtil != null) jdbcUtil.close();
     }
 
     @Test
@@ -297,32 +325,43 @@ public class JDBCUtilTest {
 
     @Test
     public void queryBlob() throws Exception {
-        List<List<QueryResult>> result = jdbcUtil.executeQuery("select fstream from extern_flowtask_cfg where id='102604273664'");
-        for (List<QueryResult> queryResults : result) {
-            for (QueryResult queryResult : queryResults) {
-                logger.info("{}", queryResult);
-                Object value = queryResult.getValue();
-                InputStream is = null;
-                try {
-                    if (value instanceof Blob) {
-                        is = ((Blob) value).getBinaryStream();
-                        ZipUtils zipUtils = new ZipUtils();
-                        String xml = zipUtils.unZip(is, "node");
-                        logger.info("xmlData：{}", xml);
-                        XMLParser xmlParser = new XMLParser();
-                        xmlParser.setXmlData(xml);
-                        xmlParser.init();
-                        List<XMLParserElement> actionList = xmlParser.parseRootChildElement("action");
-                        List<XMLParserElement> dogList = xmlParser.getChildElement(actionList, "dog");
-                        for (XMLParserElement xmlParserElement : dogList) {
-                            logger.info("dogXml：{}", xmlParserElement.toXml());
+        final LobHandler lobHandler = new DefaultLobHandler();
+        jdbcUtil.executeQuery(
+                "select fstream from extern_flowtask_cfg where id='102604273664'"
+                , new IJDBCUtilCall.ICallBack() {
+                    @Override
+                    public void call(ResultSet rs) throws SQLException {
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = lobHandler.getBlobAsBinaryStream(rs, 1);
+                            ZipUtils zipUtils = new ZipUtils();
+                            Map<String, String> paramFileMap = zipUtils.unZip(inputStream);
+                            logger.info("paramFileMap：{}", paramFileMap.keySet());
+                            inputStream.reset();
+                            String xml = zipUtils.unZip(inputStream, "node");
+                            logger.info("xmlData：{}", xml);
+                            XMLParser xmlParser = new XMLParser();
+                            xmlParser.setXmlData(xml);
+                            xmlParser.init();
+                            List<XMLParserElement> actionList = xmlParser.parseRootChildElement("action");
+                            List<XMLParserElement> dogList = xmlParser.getChildElement(actionList, "dog");
+                            for (XMLParserElement xmlParserElement : dogList) {
+                                logger.info("dogXml：{}", xmlParserElement.toXml());
+                            }
+                        } catch (IOException e) {
+                            logger.error(e.getMessage(), e);
+                        } finally {
+                            if (inputStream != null) {
+                                try {
+                                    inputStream.close();
+                                } catch (IOException e) {
+                                    logger.error(e.getMessage(), e);
+                                }
+                            }
                         }
                     }
-                } finally {
-                    if (is != null) is.close();
                 }
-            }
-        }
+        );
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.bussiness.bi.bigdata.compress;
 
-import com.bussiness.bi.bigdata.compress.Zip4jUtils;
-import com.bussiness.bi.bigdata.compress.ZipUtils;
+import com.cqx.common.utils.compress.zip.Zip4jUtils;
+import com.cqx.common.utils.compress.zip.ZipUtils;
 import net.lingala.zip4j.exception.ZipException;
 import org.junit.Before;
 import org.junit.Test;

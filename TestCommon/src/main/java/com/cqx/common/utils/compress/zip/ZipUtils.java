@@ -2,6 +2,8 @@ package com.cqx.common.utils.compress.zip;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -96,22 +98,33 @@ public class ZipUtils {
     }
 
     public String unZip(InputStream is, String filename_rule) throws IOException {
+        Map<String, String> muFile = unZip(is);
+        for (Map.Entry<String, String> entry : muFile.entrySet()) {
+            if (entry.getKey().contains(filename_rule)) {
+                return entry.getValue();
+            }
+        }
+        return "";
+    }
+
+    public Map<String, String> unZip(InputStream is) throws IOException {
+        Map<String, String> map = new HashMap<>();
         ZipInputStream zis = null;
         ZipEntry zipEntry;
         if (is != null) zis = new ZipInputStream(is);
         while (zis != null && (zipEntry = zis.getNextEntry()) != null) {
             String filename = zipEntry.getName();
-            if (filename.contains(filename_rule)) {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                byte[] byte_s = new byte[BUFFER_SIZE];
-                int num;
-                while ((num = zis.read(byte_s, 0, byte_s.length)) > -1) {//通过read方法来读取文件内容
-                    byteArrayOutputStream.write(byte_s, 0, num);
-                }
-                byte[] byte_s_result = byteArrayOutputStream.toByteArray();
-                return new String(byte_s_result, StandardCharsets.UTF_8);//将字节数组转化为字符串，UTF-8格式（容许中文）
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] byte_s = new byte[BUFFER_SIZE];
+            int num;
+            // 通过read方法来读取文件内容
+            while ((num = zis.read(byte_s, 0, byte_s.length)) > -1) {
+                byteArrayOutputStream.write(byte_s, 0, num);
             }
+            byte[] byte_s_result = byteArrayOutputStream.toByteArray();
+            // 将字节数组转化为字符串，UTF-8格式（容许中文）
+            map.put(filename, new String(byte_s_result, StandardCharsets.UTF_8));
         }
-        return "";
+        return map;
     }
 }

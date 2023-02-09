@@ -3,6 +3,8 @@ package com.cqx.common.utils.jdbc.lob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -76,6 +78,28 @@ public class DefaultLobHandler extends AbstractLobHandler {
      */
     public void setCreateTemporaryLob(boolean createTemporaryLob) {
         this.createTemporaryLob = createTemporaryLob;
+    }
+
+    @Override
+    public byte[] getBlobAsBytes(ResultSet rs, int columnIndex) throws SQLException {
+        logger.debug("Returning BLOB as bytes");
+        if (this.wrapAsLob) {
+            Blob blob = rs.getBlob(columnIndex);
+            return blob.getBytes(1, (int) blob.length());
+        } else {
+            return rs.getBytes(columnIndex);
+        }
+    }
+
+    @Override
+    public InputStream getBlobAsBinaryStream(ResultSet rs, int columnIndex) throws SQLException {
+        logger.debug("Returning BLOB as binary stream");
+        if (this.wrapAsLob) {
+            Blob blob = rs.getBlob(columnIndex);
+            return blob.getBinaryStream();
+        } else {
+            return rs.getBinaryStream(columnIndex);
+        }
     }
 
     @Override

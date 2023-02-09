@@ -272,9 +272,9 @@ public class CVSUtilTest {
                     }
                     // -Dfile.encoding=GBK
                     // 注意下logger的编码问题
-                    logger.info("{}, readLen: {}", new String(result), readLen);
+//                    logger.info("{}, readLen: {}", new String(result), readLen);
                     // 读到字节数组，可能已经有一定的编码方式了，这里我们需要按需要的编码进行解码
-//                    logger.info("{}, readLen: {}", new String(result, "GBK"), readLen);
+                    logger.info("{}, readLen: {}", new String(result, "GBK"), readLen);
                 }
                 SleepUtil.sleepMilliSecond(10);
             }
