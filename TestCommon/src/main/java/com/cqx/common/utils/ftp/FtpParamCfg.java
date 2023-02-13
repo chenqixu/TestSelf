@@ -19,6 +19,11 @@ public class FtpParamCfg {
     public FtpParamCfg() {
     }
 
+    public FtpParamCfg(FtpBean ftpBean) {
+        this(ftpBean.getHost(), ftpBean.getPort(), ftpBean.getUser_name(), ftpBean.getPass_word()
+                , FtpTypeEnum.SFTP.equals(ftpBean.getType()));
+    }
+
     public FtpParamCfg(String host, Integer port, String user, String password) {
         this(host, port, user, password, true);
     }

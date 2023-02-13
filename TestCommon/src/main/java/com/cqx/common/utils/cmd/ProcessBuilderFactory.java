@@ -5,10 +5,7 @@ import com.cqx.common.utils.system.SleepUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,9 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author chenqixu
  */
-public class ProcessBuilderFactory {
-    private static final Logger logger = LoggerFactory.getLogger(ProcessBuilderFactory.class);
+public class ProcessBuilderFactory implements Closeable {
     private static final String separator = System.getProperty("line.separator");
+    private Logger logger;
     private int resultcode = 0;
     private String successkey = null;// 成功关键字
     private boolean isLogErrDeal = false;// 是否需要错误日志辅助判断结果
@@ -46,12 +43,34 @@ public class ProcessBuilderFactory {
     }
 
     public ProcessBuilderFactory(boolean isPrint, String logCoding) {
-        this.isPrint = isPrint;
-        this.logCoding = logCoding;
+        this(isPrint, logCoding, null, null);
+    }
+
+    public ProcessBuilderFactory(Logger logger) {
+        this(true, OtherUtil.getFileEncoding(), logger, null);
+    }
+
+    public ProcessBuilderFactory(Logger logger, String tag_name) {
+        this(true, OtherUtil.getFileEncoding(), logger, tag_name);
     }
 
     public ProcessBuilderFactory(String tag_name) {
-        this.tag_name = tag_name;
+        this(true, OtherUtil.getFileEncoding(), null, tag_name);
+    }
+
+    public ProcessBuilderFactory(boolean isPrint, String logCoding, Logger logger, String tag_name) {
+        this.isPrint = isPrint;
+        this.logCoding = logCoding;
+        if (logger == null) {
+            this.logger = LoggerFactory.getLogger(getClass());
+        } else {
+            this.logger = logger;
+        }
+        if (tag_name == null || tag_name.trim().length() == 0) {
+            this.tag_name = "default";
+        } else {
+            this.tag_name = tag_name;
+        }
     }
 
     public String getTag_name() {
@@ -129,7 +148,7 @@ public class ProcessBuilderFactory {
             successLogThread.join();
             errorLogThread.join();
         } catch (IOException | InterruptedException e) {
-            logger.error(e.getMessage(), e);
+            logger.error(getTag_name() + e);
         } finally {
             release();
         }
@@ -191,6 +210,11 @@ public class ProcessBuilderFactory {
 
     public BlockingQueue<String> getError_log_queue() {
         return error_log_queue;
+    }
+
+    @Override
+    public void close() {
+        release();
     }
 
     /**

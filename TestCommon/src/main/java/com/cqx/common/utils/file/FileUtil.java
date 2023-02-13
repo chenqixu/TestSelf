@@ -442,6 +442,49 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 根据结束符来扫描
+     *
+     * @param path
+     * @param endWith
+     * @return
+     */
+    public List<File> listFiles(String path, String endWith) {
+        return listFiles(path, null, endWith);
+    }
+
+    /**
+     * 根据关键字，结束符来扫描
+     *
+     * @param path
+     * @param keyWord
+     * @param endWith
+     * @return
+     */
+    public List<File> listFiles(String path, String keyWord, String endWith) {
+        File file = new File(path);
+        List<File> fileList = new ArrayList<>();
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File tmp : files) {
+                boolean flag = false;
+                if (keyWord != null) {
+                    if (!tmp.getName().contains(keyWord)) {
+                        continue;
+                    }
+                }
+                if (endWith != null) {
+                    flag = tmp.getName().endsWith(endWith);
+                }
+                if (flag) {
+                    logger.debug("扫描到文件：{}", tmp.getName());
+                    fileList.add(tmp);
+                }
+            }
+        }
+        return fileList;
+    }
+
     public void getFile(String filename, String read_code)
             throws FileNotFoundException, UnsupportedEncodingException {
         File readFile = new File(filename);
@@ -638,6 +681,11 @@ public class FileUtil {
     public void newline() {
         if (isWindow()) write("\r\n");
         else write("\n");
+    }
+
+    public void newline(String tag) {
+        if (isWindow()) write(tag + "\r\n");
+        else write(tag + "\n");
     }
 
     public void write(String str) {

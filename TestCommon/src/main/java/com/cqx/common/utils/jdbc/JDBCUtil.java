@@ -115,6 +115,19 @@ public class JDBCUtil implements IJDBCUtil {
     }
 
     /**
+     * 为了兼容CliTool
+     *
+     * @param dbBean
+     * @param isPool
+     */
+    public JDBCUtil(DBBean dbBean, boolean isPool) {
+        dbBean.setPool(isPool);
+        this.dbBean = dbBean;
+        this.declare = DeclareHelper.builder(dbBean.getDbType());
+        init(-1, -1, -1);
+    }
+
+    /**
      * 初始化
      *
      * @param MaxActive
