@@ -28,4 +28,9 @@ public class KafkaAPIUtilTest extends TestBase {
                 , "new_consumer_api"
         );
     }
+
+    @Test
+    public void topicCommand() {
+        kafkaAPIUtil.listTopic("10.1.8.200:9094");
+    }
 }

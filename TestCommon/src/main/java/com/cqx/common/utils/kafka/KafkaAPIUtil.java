@@ -2,6 +2,7 @@ package com.cqx.common.utils.kafka;
 
 import kafka.admin.AclCommand;
 import kafka.admin.ConsumerGroupCommand;
+import kafka.admin.TopicCommand;
 
 import javax.security.auth.login.Configuration;
 import java.util.Map;
@@ -81,5 +82,19 @@ public class KafkaAPIUtil {
                 , group
         };
         AclCommand.main(args);
+    }
+
+    /**
+     * 查看所有话题清单
+     *
+     * @param bootstrap_servers
+     */
+    public void listTopic(String bootstrap_servers) {
+        String[] args = {
+                "--bootstrap-server"
+                , bootstrap_servers
+                , "--list"
+        };
+        TopicCommand.main(args);
     }
 }
