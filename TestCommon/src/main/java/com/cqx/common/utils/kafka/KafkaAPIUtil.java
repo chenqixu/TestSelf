@@ -2,10 +2,15 @@ package com.cqx.common.utils.kafka;
 
 import kafka.admin.AclCommand;
 import kafka.admin.ConsumerGroupCommand;
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.ListTopicsResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.Configuration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 /**
  * API工具
@@ -13,13 +18,15 @@ import java.util.Properties;
  * @author chenqixu
  */
 public class KafkaAPIUtil {
+    private static final Logger logger = LoggerFactory.getLogger(KafkaAPIUtil.class);
+    private Properties properties;
     private String bootstrap_servers;
     private String kafka_username;
     private String kafka_password;
     private String kafkaSecurityProtocol;
 
     public KafkaAPIUtil(Map conf) {
-        Properties properties = KafkaPropertiesUtil.initConf(conf);
+        properties = KafkaPropertiesUtil.initConf(conf);
         bootstrap_servers = properties.getProperty("bootstrap.servers");
         kafka_username = properties.getProperty("newland.kafka_username");
         kafka_password = properties.getProperty("newland.kafka_password");
@@ -81,5 +88,36 @@ public class KafkaAPIUtil {
                 , group
         };
         AclCommand.main(args);
+    }
+
+    /**
+     * 调用API列出话题清单<br>
+     * 执行需要加上-Djava.security.auth.login.config=I:\Document\Workspaces\Git\TestSelf\TestCommon\src\test\resources\jaas\kafka_server_scram_jaas.conf
+     *
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public void listTopicByAPI() throws ExecutionException, InterruptedException {
+        ListTopicsResult result = Admin.create(properties).listTopics();
+        logger.info("{}", result.names().get());
+    }
+
+    /**
+     * 调用scala命令列出话题清单<br>
+     * 注意：需要使用--command-config加载认证方式<br>
+     * 执行需要加上-Djava.security.auth.login.config=I:\Document\Workspaces\Git\TestSelf\TestCommon\src\test\resources\jaas\kafka_server_scram_jaas.conf
+     *
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public void listTopicByCommand() throws ExecutionException, InterruptedException {
+        String[] args = {
+                "--bootstrap-server"
+                , bootstrap_servers
+                , "--list"
+                , "--command-config"
+                , "I:\\Document\\Workspaces\\Git\\TestSelf\\TestCommon\\src\\test\\resources\\consumer.properties"
+        };
+        kafka.admin.TopicCommand.main(args);
     }
 }
