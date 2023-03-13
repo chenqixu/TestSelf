@@ -3,6 +3,8 @@ package com.cqx.calcite.example;
 import org.apache.calcite.config.Lex;
 import org.apache.calcite.sql.*;
 import org.apache.calcite.sql.parser.SqlParser;
+import org.apache.calcite.sql.validate.SqlValidator;
+import org.apache.calcite.sql.validate.SqlValidatorUtil;
 
 import java.util.List;
 
@@ -43,27 +45,27 @@ public class Demo1 {
                 "and ci is not null " +
                 "and code is not null ";
         //实时位置
-        sql = "merge into realtime_location as a " +
-                "using (" +
-                "select  msisdn,id " +
-                "from nmc_app_nl_loc_mix_v1 t1 " +
-                "inner join heapUserLacCiCache /*+ putLacCi(msisdn, lacCi, btime) */ t2 " +
-                "on (t1.msisdn=t2.msisdn and t2.msisdn is null) " +
-                "or (t1.msisdn=t2.msisdn and t2.msisdn is not null " +
-                "and (" +
-                "(t2.btime<t1.btime) " +
-                "or (t2.lacci=t1.lacci and t1.btime-t2.btime>=2000)" +
-                "or (t2.lacci<>t1.lacci)" +
-                "))" +
-                "left join UserInfoCache t3 on t1.msisdn=t3.msisdn" +
-                "left join RegionConfigCache t4 on t1.msisdn=t4.msisdn " +
-                "left join ResidentCache t5 on t1.msisdn=t5.msisdn " +
-                "where length(t1.msisdn)=15" +
-                ") as b on a.msisdn=b.msisdn " +
-                "WHEN MATCHED THEN " +
-                "UPDATE set a.id=b.id " +
-                "WHEN NOT MATCHED THEN " +
-                "insert values(b.msisdn)";
+//        sql = "merge into realtime_location as a " +
+//                "using (" +
+//                "select  msisdn,id " +
+//                "from nmc_app_nl_loc_mix_v1 t1 " +
+//                "inner join heapUserLacCiCache /*+ putLacCi(msisdn, lacCi, btime) */ t2 " +
+//                "on (t1.msisdn=t2.msisdn and t2.msisdn is null) " +
+//                "or (t1.msisdn=t2.msisdn and t2.msisdn is not null " +
+//                "and (" +
+//                "(t2.btime<t1.btime) " +
+//                "or (t2.lacci=t1.lacci and t1.btime-t2.btime>=2000)" +
+//                "or (t2.lacci<>t1.lacci)" +
+//                "))" +
+//                "left join UserInfoCache t3 on t1.msisdn=t3.msisdn" +
+//                "left join RegionConfigCache t4 on t1.msisdn=t4.msisdn " +
+//                "left join ResidentCache t5 on t1.msisdn=t5.msisdn " +
+//                "where length(t1.msisdn)=15" +
+//                ") as b on a.msisdn=b.msisdn " +
+//                "WHEN MATCHED THEN " +
+//                "UPDATE set a.id=b.id " +
+//                "WHEN NOT MATCHED THEN " +
+//                "insert values(b.msisdn)";
 //        //实时轨迹
 //        sql = "";
 
@@ -74,6 +76,11 @@ public class Demo1 {
         SqlParser parser = SqlParser.create(sql, config);
         SqlNode node = parser.parseStmt();
         System.out.println("node.getClass：" + node.getClass());
+//        SqlValidator sqlValidator = SqlValidatorUtil.newValidator();
+//        for (List<String> fo : sqlValidator.getFieldOrigins(node)) {
+//            System.out.println(fo);
+//        }
+
         //解析join
         switch (node.getKind()) {
             case SELECT:
