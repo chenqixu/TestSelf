@@ -5,14 +5,18 @@ import com.cqx.common.bean.kafka.DefaultBean;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.common.utils.system.TimeCostUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class KafkaProducerGRUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerGRUtilTest.class);
@@ -25,6 +29,77 @@ public class KafkaProducerGRUtilTest extends TestBase {
             kafkaProducerGRUtil.setTopic(topic);//设置话题
             for (int i = 0; i < 10; i++)
                 kafkaProducerGRUtil.sendRandom();//随机产生数据
+        }
+    }
+
+    @Test
+    public void sendTest1() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            for (int i = 0; i < 10; i++)
+                kafkaProducerGRUtil.send("test1", ("{\"message\":\"" + System.currentTimeMillis() + "\"}").getBytes());
+        }
+    }
+
+    @Test
+    public void sendRandomAndCheck() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");// 从配置文件解析参数
+        param.put("kafkaconf.newland.schema.mode", "NOAVRO");
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            final String topic = "test1";
+            StringBuilder value = new StringBuilder();
+            for (int x = 0; x < 500; x++) {
+                value.append("a");
+            }
+
+            AtomicInteger down = new AtomicInteger(0);
+            Map<String, List<Future<RecordMetadata>>> map = new HashMap<>();
+            TimeCostUtil tc = new TimeCostUtil();
+            // 模拟fileNum个文件
+            final int fileNum = 10;
+            final int fileCount = 20000;
+            for (int j = 0; j < fileNum; j++) {
+                String fileName = "batch-" + j;
+                map.put(fileName, new ArrayList<>());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Future<RecordMetadata>> list = map.get(fileName);
+                        tc.start();
+                        // 每个文件fileCount条记录
+                        for (int i = 0; i < fileCount; i++) {
+                            // 随机产生数据
+                            Future<RecordMetadata> recordMetadataFuture = kafkaProducerGRUtil.send(topic, value.toString().getBytes(StandardCharsets.UTF_8));
+                            list.add(recordMetadataFuture);
+                        }
+                        logger.info("fileName={}, cost={} ms", fileName, tc.stopAndGet());
+
+                        // 启动校验线程
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int check = 0;
+                                TimeCostUtil tc = new TimeCostUtil();
+                                tc.start();
+                                logger.info("启动校验线程, fileName={}", fileName);
+                                for (Future<RecordMetadata> future : list) {
+                                    try {
+                                        RecordMetadata recordMetadata = future.get();
+                                        check += recordMetadata.hasOffset() ? 1 : 0;
+                                    } catch (InterruptedException | ExecutionException e) {
+                                        logger.error(e.getMessage(), e);
+                                    }
+                                }
+                                logger.info("校验线程完成, fileName={}, check={}, cost={} ms", fileName, check, tc.stopAndGet());
+                                down.incrementAndGet();
+                            }
+                        }).start();
+                    }
+                }).start();
+            }
+            while (down.get() != fileNum) {
+                SleepUtil.sleepMilliSecond(500);
+            }
         }
     }
 
@@ -51,7 +126,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT");
             avroLevelData.putVal("op_type", "U");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);

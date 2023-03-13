@@ -1,5 +1,6 @@
 package com.cqx.common.utils.kafka;
 
+import com.alibaba.fastjson.JSON;
 import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
@@ -129,11 +130,16 @@ public class KafkaConsumerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         logger.info("{}", param);
         try (KafkaConsumerUtil<byte[], byte[]> kafkaConsumerUtil = new KafkaConsumerUtil<>(param)) {
-            String topic = "con1";
+            String topic = "test1";
             kafkaConsumerUtil.subscribe(topic);//订阅
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 20; i++) {
                 for (byte[] value : kafkaConsumerUtil.poll(1000L)) {
-                    logger.info("【【value】{}，【value.class】{}", value, value != null ? value.getClass() : null);
+                    if (value != null) {
+                        Map map = (Map) JSON.parse(new String(value));
+                        logger.info("【【value】{}，【value.class】{}"
+                                , TimeUtil.formatTime(Long.valueOf(map.get("message").toString()))
+                                , value.getClass());
+                    }
                 }
             }
         }

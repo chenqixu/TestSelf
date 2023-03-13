@@ -249,4 +249,34 @@ public class RedisFactory627Test {
             logger.info("keySize: {}, allValueSize: {}, cost: {} ms", keySize, allValueSize, tc.stopAndGet());
         }
     }
+
+    @Test
+    public void pipelineHSet() {
+        String key = "h1";
+        TimeCostUtil tc = new TimeCostUtil();
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            tc.start();
+            for (int i = 0; i < 1000000; i++) {
+                redisPipeline.hset(key, i + "", i + "");
+            }
+            // 最后剩余强制flush
+            redisPipeline.commit();
+            logger.info("cost: {} ms", tc.stopAndGet());
+        }
+    }
+
+    @Test
+    public void pipelineHDel() {
+        String key = "h1";
+        TimeCostUtil tc = new TimeCostUtil();
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            tc.start();
+            for (int i = 0; i < 1000000; i++) {
+                redisPipeline.hdel(key, i + "");
+            }
+            // 最后剩余强制flush
+            redisPipeline.commit();
+            logger.info("cost: {} ms", tc.stopAndGet());
+        }
+    }
 }
