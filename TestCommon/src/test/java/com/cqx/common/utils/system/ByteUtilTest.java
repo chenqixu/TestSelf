@@ -60,4 +60,11 @@ public class ByteUtilTest {
 
         logger.info("(byte) 0x12：{}，(byte) 12：{}", (byte) 0x12, (byte) 12);
     }
+
+    @Test
+    public void intToByte() {
+        logger.info(String.format("compare 0x02 & int 2, result=%s", 0x02 == ByteUtil.intToByte(2)));
+        logger.info(String.format("compare 0x01 & int 1, result=%s", 0x01 == ByteUtil.intToByte(1)));
+        logger.info(String.format("compare 0x00 & int 0, result=%s", 0x00 == ByteUtil.intToByte(0)));
+    }
 }

@@ -157,6 +157,16 @@ public class ByteUtil {
     }
 
     /**
+     * int转单字节
+     *
+     * @param i
+     * @return
+     */
+    public static byte intToByte(int i) {
+        return (byte) (i & 0xFF);
+    }
+
+    /**
      * 无符号byte
      *
      * @param b
