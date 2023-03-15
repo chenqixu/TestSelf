@@ -142,6 +142,23 @@ public class MetricUtilsTest {
         SleepUtil.sleepSecond(120);
     }
 
+    /**
+     * 计数器重置测试
+     */
+    @Test
+    public void meterReRegisterText() {
+        MetricUtils.build(3, TimeUnit.SECONDS);
+        for (int i = 1; i < 31; i++) {
+            logger.info("i={}, i%10={}", i, i % 10);
+            if (i % 10 == 0) {
+                producer = MetricUtils.reRegisterMeter("producer");
+            } else {
+                SleepUtil.sleepSecond(1);
+                producer.mark();
+            }
+        }
+    }
+
     private double convertRate(double rate, double rateFactor) {
         return rate * rateFactor;
     }
