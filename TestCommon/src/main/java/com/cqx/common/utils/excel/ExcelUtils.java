@@ -325,4 +325,59 @@ public class ExcelUtils {
         }
         return -1;
     }
+
+    /**
+     * 克隆sheet
+     *
+     * @param path          要克隆的excel文件
+     * @param cloneSheetNum 要克隆的sheet序号，从0开始
+     * @param newSheetsName 克隆后的sheet名称
+     * @throws IOException
+     */
+    public void cloneSheet(String path, int cloneSheetNum, List<String> newSheetsName) throws IOException {
+        if (path == null || ExcelCommons.EMPTY.equals(path)) {
+            logger.info("path={} is null, please check.", path);
+        } else {
+            String postfix = getPostfix(path);
+            if (!ExcelCommons.EMPTY.equals(postfix)) {
+                // 创建一个文件
+                String newPath = path.replace("." + postfix, "_new." + postfix);
+                File file = new File(newPath);
+                boolean create_file_status = file.createNewFile();
+                FileOutputStream stream = null;
+
+                // 读取原文件
+                try (InputStream is = new FileInputStream(path)) {
+                    Workbook workbook = createWorkbook(postfix, is);
+                    // 判断工作簿是否创建成功
+                    if (workbook == null)
+                        throw new IOException(String.format("创建工作簿失败，path：%s，postfix：%s", path, postfix));
+                    if (workbook instanceof XSSFWorkbook) {
+                        XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
+                        for (String _sheetName : newSheetsName) {
+                            xssfWorkbook.cloneSheet(cloneSheetNum, _sheetName);
+                        }
+                        if (create_file_status) {
+                            stream = FileUtils.openOutputStream(file);
+                            xssfWorkbook.write(stream);
+                        }
+                    } else {
+                        for (String _sheetName : newSheetsName) {
+                            workbook.cloneSheet(cloneSheetNum);
+                            int numberOfSheets = workbook.getNumberOfSheets();
+                            workbook.setSheetName(numberOfSheets - 1, _sheetName);
+                        }
+                        if (create_file_status) {
+                            stream = FileUtils.openOutputStream(file);
+                            workbook.write(stream);
+                        }
+                    }
+                } finally {
+                    if (stream != null) stream.close();
+                }
+            } else {
+                logger.info("{}", path + ExcelCommons.NOT_EXCEL_FILE);
+            }
+        }
+    }
 }
