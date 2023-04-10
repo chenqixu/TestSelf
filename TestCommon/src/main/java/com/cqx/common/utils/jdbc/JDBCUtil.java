@@ -2171,13 +2171,25 @@ public class JDBCUtil implements IJDBCUtil {
                 break;
             case "java.lang.Integer":
             case "int":
-                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue))
-                    pstmt.setInt(parameterIndex, (Integer) fieldValue);
+                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue)) {
+                    // 来源可能是BigDecimal
+                    if (srcFieldType.equals("java.math.BigDecimal")) {
+                        pstmt.setLong(parameterIndex, ((BigDecimal) fieldValue).intValue());
+                    } else {
+                        pstmt.setInt(parameterIndex, (Integer) fieldValue);
+                    }
+                }
                 break;
             case "java.lang.Long":
             case "long":
-                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue))
-                    pstmt.setBigDecimal(parameterIndex, BigDecimal.valueOf((Long) fieldValue));
+                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue)) {
+                    // 来源可能是BigDecimal
+                    if (srcFieldType.equals("java.math.BigDecimal")) {
+                        pstmt.setLong(parameterIndex, ((BigDecimal) fieldValue).longValue());
+                    } else {
+                        pstmt.setLong(parameterIndex, (Long) fieldValue);
+                    }
+                }
                 break;
             case "java.math.BigDecimal":
                 if (srcFieldType != null && !srcFieldType.equals(dstFieldType)) {
@@ -2202,7 +2214,14 @@ public class JDBCUtil implements IJDBCUtil {
                 pstmt.setTime(parameterIndex, (Time) fieldValue);
                 break;
             case "java.sql.Date":
-                pstmt.setDate(parameterIndex, (Date) fieldValue);
+                if (!ifNullSet(pstmt, parameterIndex, dstFieldType, fieldValue)) {
+                    // 来源可能是Timestamp
+                    if (srcFieldType.equals("java.sql.Timestamp")) {
+                        pstmt.setDate(parameterIndex, new java.sql.Date(((Timestamp) fieldValue).getTime()));
+                    } else {
+                        pstmt.setDate(parameterIndex, (Date) fieldValue);
+                    }
+                }
                 break;
             case "java.util.Date":
                 pstmt.setDate(parameterIndex, fieldValue == null ? null : new Date(((java.util.Date) fieldValue).getTime()));
