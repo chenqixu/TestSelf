@@ -1,0 +1,146 @@
+{
+  "respResult": "1",
+  "respData": [
+    {
+      "columnId": "ccb4155892ba40cb9b516c501f8b280f",
+      "columnName": "需求",
+      "planId": "de8531c6e2e5472cba283b248f5faa89",
+      "sort": 1,
+      "frozen": 1,
+      "columnStatusNum": 1,
+      "objStatus": 0,
+      "createTime": 1681694172745,
+      "createUser": "55ce2a2f421c42f8bba9a7168680590b",
+      "typeId": 1,
+      "columnType": 1,
+      "wip": 0,
+      "visible": 1,
+      "appId": "aff2569093394b63b145fb664fbb84e5",
+      "teamId": "5837efa8fe8a4503a56cba64e0e6fa82",
+      "children": [
+        {
+          "statusColumnId": "1",
+          "statusColumnName": "就绪",
+          "typeId": 1
+        }
+      ]
+    },
+    {
+      "columnId": "297bf1e466ef4a6595f892f074784cc3",
+      "columnName": "任务",
+      "planId": "de8531c6e2e5472cba283b248f5faa89",
+      "sort": 2,
+      "frozen": 1,
+      "columnStatusNum": 1,
+      "objStatus": 0,
+      "createTime": 1681694172747,
+      "createUser": "55ce2a2f421c42f8bba9a7168680590b",
+      "typeId": 2,
+      "columnType": 1,
+      "wip": 0,
+      "visible": 1,
+      "appId": "aff2569093394b63b145fb664fbb84e5",
+      "teamId": "5837efa8fe8a4503a56cba64e0e6fa82",
+      "children": [
+        {
+          "statusColumnId": "2",
+          "statusColumnName": "待办任务",
+          "typeId": 2
+        }
+      ]
+    },
+    {
+      "columnId": "e00d2e8c07ad46af9474a2f65f2d0d46",
+      "columnName": "开发",
+      "planId": "de8531c6e2e5472cba283b248f5faa89",
+      "sort": 3,
+      "frozen": 0,
+      "columnStatusNum": 2,
+      "objStatus": 0,
+      "createTime": 1681694172748,
+      "createUser": "55ce2a2f421c42f8bba9a7168680590b",
+      "typeId": 2,
+      "columnType": 2,
+      "wip": 0,
+      "visible": 1,
+      "appId": "aff2569093394b63b145fb664fbb84e5",
+      "teamId": "5837efa8fe8a4503a56cba64e0e6fa82",
+      "children": [
+        {
+          "statusColumnId": "3",
+          "statusColumnName": "进行中",
+          "typeId": 2
+        },
+        {
+          "statusColumnId": "4",
+          "statusColumnName": "已完成",
+          "typeId": 2
+        }
+      ]
+    },
+    {
+      "columnId": "411625364d1b478a9c6df82420d4913b",
+      "columnName": "测试",
+      "planId": "de8531c6e2e5472cba283b248f5faa89",
+      "sort": 4,
+      "frozen": 0,
+      "columnStatusNum": 2,
+      "objStatus": 0,
+      "createTime": 1681694172749,
+      "createUser": "55ce2a2f421c42f8bba9a7168680590b",
+      "typeId": 2,
+      "columnType": 2,
+      "wip": 0,
+      "visible": 1,
+      "appId": "aff2569093394b63b145fb664fbb84e5",
+      "teamId": "5837efa8fe8a4503a56cba64e0e6fa82",
+      "children": [
+        {
+          "statusColumnId": "3",
+          "statusColumnName": "进行中",
+          "typeId": 2
+        },
+        {
+          "statusColumnId": "4",
+          "statusColumnName": "已完成",
+          "typeId": 2
+        }
+      ]
+    },
+    {
+      "columnId": "581399a6ad4649e3a46fcefc95fbc49f",
+      "columnName": "运维",
+      "planId": "de8531c6e2e5472cba283b248f5faa89",
+      "sort": 5,
+      "frozen": 0,
+      "columnStatusNum": 3,
+      "objStatus": 0,
+      "createTime": 1681694172749,
+      "createUser": "55ce2a2f421c42f8bba9a7168680590b",
+      "typeId": 1,
+      "columnType": 3,
+      "wip": 0,
+      "visible": 1,
+      "appId": "aff2569093394b63b145fb664fbb84e5",
+      "teamId": "5837efa8fe8a4503a56cba64e0e6fa82",
+      "children": [
+        {
+          "statusColumnId": "5",
+          "statusColumnName": "待验收",
+          "typeId": 1
+        },
+        {
+          "statusColumnId": "6",
+          "statusColumnName": "待交付",
+          "typeId": 1
+        },
+        {
+          "statusColumnId": "7",
+          "statusColumnName": "已交付",
+          "typeId": 1
+        }
+      ]
+    }
+  ],
+  "succ": true
+}

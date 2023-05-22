@@ -426,4 +426,36 @@ public class FileUtilTest {
             logger.info("read: {}, CNT: {}", fileUtil.getReaderName(), fc.getCount("CNT"));
         }
     }
+
+    @Test
+    public void FileParallelReadTest() throws Exception {
+        String path = "d:\\tmp\\data\\sdtp\\text\\202303251645_LTE_591_0591_FJ163_S1-MME_20230325165512_0000.txt";
+        AtomicInteger parallelNum = new AtomicInteger(0);
+        AtomicInteger consumerNum = new AtomicInteger(0);
+        FileParallelRead fileParallelRead = new FileParallelRead(3) {
+            @Override
+            public byte[] parallelDeal(String content) throws Exception {
+                int p = parallelNum.incrementAndGet();
+                if (p % 10000 == 0) {
+                    logger.info("parallelNum={}", p);
+                    throw new Exception("test");
+                }
+                return content.getBytes();
+            }
+
+            @Override
+            public void consumer(byte[] bytes) throws Exception {
+                int c = consumerNum.incrementAndGet();
+                if (c % 10000 == 0) {
+                    logger.info("consumerNum={}", c);
+                }
+            }
+        };
+        try {
+            fileUtil.setReader(path);
+            fileUtil.read(fileParallelRead);
+        } finally {
+            fileUtil.closeRead();
+        }
+    }
 }

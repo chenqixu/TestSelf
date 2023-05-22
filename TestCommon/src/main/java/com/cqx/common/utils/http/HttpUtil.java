@@ -47,6 +47,22 @@ public class HttpUtil implements Serializable {
         return result[0];
     }
 
+    public String doGet(String url, Map<String, String> headerMap) {
+        final String[] result = {""};
+        doSend(url, null, UTF8_CODE, HttpGet.class, headerMap, new IHttpEntityDeal() {
+            @Override
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
+                try {
+                    // 通过EntityUtils中的toString方法将结果转换为字符串
+                    result[0] = EntityUtils.toString(entity, UTF8_CODE);
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        });
+        return result[0];
+    }
+
     public String doGetThrowException(String url) throws IOException {
         Map<String, String> headerMap = new HashMap<>();
         final String[] result = {""};
