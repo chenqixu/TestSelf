@@ -3,6 +3,7 @@ package com.cqx.common.utils.system;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -67,6 +68,23 @@ public class ArraysUtilTest {
         queue.offer("3");
         while ((tmp = queue.pollLast()) != null) {
             System.out.println(tmp);
+        }
+    }
+
+    /**
+     * 数组比较，只要d2包含d1的某个元素，就为真
+     */
+    @Test
+    public void arrayCompare() {
+        String d1 = "1,2,3";
+        String d2 = "4,5,6,3";
+        String[] a1 = d1.split(",", -1);
+        String[] a2 = d2.split(",", -1);
+        List<String> l1 = Arrays.asList(a1);
+        for (String s2 : a2) {
+            boolean ret = l1.contains(s2);
+            System.out.println(String.format("s2=%s, ret=%s", s2, ret));
+            if (ret) break;
         }
     }
 }

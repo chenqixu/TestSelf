@@ -67,4 +67,33 @@ public class ByteUtilTest {
         logger.info(String.format("compare 0x01 & int 1, result=%s", 0x01 == ByteUtil.intToByte(1)));
         logger.info(String.format("compare 0x00 & int 0, result=%s", 0x00 == ByteUtil.intToByte(0)));
     }
+
+    @Test
+    public void buildTLV() {
+        byte[] bytes = {1};
+        logger.info("{}", ByteUtil.bytesToHexStringH(ByteUtil.buildTLV(0, bytes)));
+        logger.info("{}", ByteUtil.bytesToHexStringH(new byte[]{ByteUtil.getLowBit((byte) 1)}));
+        logger.info("{}", ByteUtil.byteToBit(ByteUtil.getLowBit((byte) 1)));
+        logger.info("{}", ByteUtil.bytesToHexStringH(new byte[]{ByteUtil.getLowBitToHigh((byte) 1)}));
+        logger.info("{}", ByteUtil.byteToBit(ByteUtil.getLowBitToHigh((byte) 1)));
+        logger.info("format={}", ByteUtil.byteToFormat(ByteUtil.getHighBit(ByteUtil.getLowBitToHigh((byte) 1))));
+        logger.info("[hexStringToBytes]10460070FFF00008601424501={}", ByteUtil.hexStringToBytes("10460070FFF00008601424501"));
+        logger.info("[bytesToHexStringH]={}", ByteUtil.bytesToHexStringH(ByteUtil.hexStringToBytes("10460070FFF00008601424501")));
+        logger.info("[bytesToHexStringH]={}", ByteUtil.bytesToHexStringH1(ByteUtil.hexStringToBytes("10460070FFF00008601424501")));
+        logger.info("[bytesToHexStringH]={}", ByteUtil.bytesToHexStringH2(ByteUtil.hexStringToBytes("10460070FFF00008601424501")));
+        logger.info("[bytesToHexStringH]={}", ByteUtil.bytesToHexStringH3(ByteUtil.hexStringToBytes("10460070FFF00008601424501")));
+
+        logger.info("getLowBitToHigh={}", ByteUtil.byteToBit((byte) 8));
+        logger.info("getLowBitToHigh={}", ByteUtil.byteToBit(ByteUtil.getLowBitToHigh((byte) 8)));
+        logger.info("getHighBit={}", ByteUtil.getHighBit(ByteUtil.getLowBitToHigh((byte) 8)));
+        logger.info("unsignedByte={}", ByteUtil.unsignedByte(ByteUtil.getLowBitToHigh((byte) 8)));
+        logger.info("format={}", ByteUtil.byteToFormat(ByteUtil.getHighBit(ByteUtil.getLowBitToHigh((byte) 8))));
+        logger.info("getLowBitToHigh={}", ByteUtil.byteToBit((byte) 12));
+        logger.info("getLowBitToHigh={}", ByteUtil.byteToBit(ByteUtil.getLowBitToHigh((byte) 12)));
+    }
+
+    @Test
+    public void HexTest() {
+        logger.info("{}", ByteUtil.unsignedBytesToInt(ByteUtil.hexStringToBytes("2e20006f")));
+    }
 }

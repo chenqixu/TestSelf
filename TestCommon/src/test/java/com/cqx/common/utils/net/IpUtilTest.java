@@ -5,6 +5,7 @@ import org.junit.Test;
 import sun.net.util.IPAddressUtil;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class IpUtilTest {
 
@@ -27,5 +28,23 @@ public class IpUtilTest {
         ipbytes[15] = ipv4_bytes[3];
 
         System.out.println(InetAddress.getByAddress(ipbytes));
+    }
+
+    @Test
+    public void isIPv4InRange() throws UnknownHostException {
+        Rule rule = new Rule();
+        System.out.println(IpUtil.isIPv4InRange("10.1.8.203", "10.1.8.204", rule.getMask()));
+    }
+
+    class Rule {
+        int mask;
+
+        public int getMask() {
+            return mask;
+        }
+
+        public void setMask(int mask) {
+            this.mask = mask;
+        }
     }
 }

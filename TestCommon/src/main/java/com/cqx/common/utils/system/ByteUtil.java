@@ -24,6 +24,7 @@ import java.util.Set;
 public class ByteUtil {
     private static final Logger logger = LoggerFactory.getLogger(ByteUtil.class);
     private static final char[] BToA = "0123456789abcdef&".toCharArray();
+    private static final char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final Random random = new Random();
 
     /**
@@ -424,6 +425,47 @@ public class ByteUtil {
     }
 
     /**
+     * 字节数组转16进制
+     *
+     * @param bytes
+     * @return
+     */
+    public static String bytesToHexStringH1(byte[] bytes) {
+        return new BigInteger(1, bytes).toString(16);
+    }
+
+    /**
+     * 字节数组转16进制
+     *
+     * @param bytes
+     * @return
+     */
+    public static String bytesToHexStringH2(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 字节数组转16进制
+     *
+     * @param bytes
+     * @return
+     */
+    public static String bytesToHexStringH3(byte[] bytes) {
+        // 一个字节对应两个16进制数，所以长度为字节数组乘2
+        char[] resultCharArray = new char[bytes.length * 2];
+        int index = 0;
+        for (byte b : bytes) {
+            resultCharArray[index++] = hexDigits[b >>> 4 & 0xf];
+            resultCharArray[index++] = hexDigits[b & 0xf];
+        }
+        return new String(resultCharArray);
+    }
+
+    /**
      * bcd转asc码
      *
      * @param bytes
@@ -685,7 +727,8 @@ public class ByteUtil {
         } else {// 退化为T(2)V(F)格式
             result = new byte[format + 2];
             // 获取Format的低四位，因为索引块是预留字段，全部为0即可
-            common[1] = (byte) (value << 4 >>> 4);
+            // 本字节的低四位是Tag的高四位，全为0，所以直接Format左移4位
+            common[1] = (byte) (value << 4);
 //            //==============================
 //            StringBuilder builder = new StringBuilder();
 //            // 获取Format的低四位
@@ -724,6 +767,16 @@ public class ByteUtil {
     }
 
     /**
+     * 转换低四位byte到高四位
+     *
+     * @param value
+     * @return
+     */
+    public static byte getLowBitToHigh(byte value) {
+        return (byte) (value << 4);
+    }
+
+    /**
      * 获取低四位byte
      *
      * @param value
@@ -731,6 +784,16 @@ public class ByteUtil {
      */
     public static byte getLowBit(byte value) {
         return (byte) (value << 4 >>> 4);
+    }
+
+    /**
+     * 获取高四位byte，可能会有负数的情况，所以先转int
+     *
+     * @param value
+     * @return
+     */
+    public static byte getHighBit(byte value) {
+        return (byte) (unsignedByteToInt(value) >>> 4);
     }
 
     /**

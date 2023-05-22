@@ -36,8 +36,43 @@ public class KafkaProducerGRUtilTest extends TestBase {
     public void sendTest1() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1000000; i++)
                 kafkaProducerGRUtil.send("test1", ("{\"message\":\"" + System.currentTimeMillis() + "\"}").getBytes());
+        }
+    }
+
+    @Test
+    public void sendTest1WithWatermark() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.send("test1", ("{\"user_id\":\"12345\"" +
+                    ",\"create_time\":\"" + Utils.formatTime(System.currentTimeMillis() - 10000, "yyyy-MM-dd HH:mm:ss") + "\"}").getBytes());
+            kafkaProducerGRUtil.send("test1", ("{\"user_id\":\"12345\"" +
+                    ",\"create_time\":\"" + Utils.getNow("yyyy-MM-dd HH:mm:ss") + "\"}").getBytes());
+            kafkaProducerGRUtil.send("test2", ("{\"user_id\":\"12345\"" +
+                    ",\"request_source\":\"34001\"" +
+                    ",\"rec_create_time\":\"" + Utils.getNow("yyyy-MM-dd HH:mm:ss") + "\"}").getBytes());
+        }
+    }
+
+    @Test
+    public void sendTest1Avro() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("test1");//设置话题
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("ogg_schema");
+            avroLevelData.putVal("city", "福州");
+            avroLevelData.putVal("xdr_id", "12345");
+            avroLevelData.putVal("imsi", "0x00");
+            avroLevelData.putVal("imei", "0x01");
+            avroLevelData.putVal("msisdn", "13500000000");
+            kafkaProducerGRUtil.sendRandom(avroLevelData);
+
+            byte[] message = kafkaProducerGRUtil.getGenericRecordUtil()
+                    .genericRandomRecordByAvroRecord("test1", avroLevelData);
+            for (byte b : message) {
+                System.out.println(b);
+            }
         }
     }
 
@@ -108,7 +143,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT");
             avroLevelData.putVal("op_type", "U");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);
@@ -160,7 +195,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT");
             avroLevelData.putVal("op_type", "I");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);
@@ -184,7 +219,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT");
             avroLevelData.putVal("op_type", "U");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);
@@ -221,7 +256,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("USER_PRODUCT");//设置话题
-            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_TEST_USER_PRODUCT");
+            AvroLevelData avroLevelData = AvroLevelData.newInstance("TB_SER_OGG_USER_PRODUCT");
             avroLevelData.putVal("op_type", "D");
             String now = Utils.getNow("yyyy-MM-dd'T'HH:mm:ss.SSS") + "000";
             avroLevelData.putVal("current_ts", now);

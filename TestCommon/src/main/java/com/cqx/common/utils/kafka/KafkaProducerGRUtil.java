@@ -124,4 +124,8 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
     public void setDefaultBean(DefaultBean defaultBean) {
         genericRecordUtil.setDefaultBean(defaultBean);
     }
+
+    public GenericRecordUtil getGenericRecordUtil() {
+        return genericRecordUtil;
+    }
 }
