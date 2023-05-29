@@ -13,8 +13,18 @@ public class FtpParamCfg {
     private String user;
     private String password;
     private boolean isSftp;
-    private int fileType = FTP.BINARY_FILE_TYPE;// 文件传输方式，默认二进制
-    private boolean isPassiveMode = true;// 是否被动模式，默认是
+    /**
+     * 文件件传输方式，默认二进制
+     */
+    private int fileType = FTP.BINARY_FILE_TYPE;
+    /**
+     * 是否被动模式，默认是
+     */
+    private boolean isPassiveMode = true;
+    /**
+     * 启用或禁用验证参与数据连接的远程主机是否与连接控制连接的主机相同。默认情况下，将启用验证。
+     */
+    private boolean RemoteVerificationEnabled = true;
 
     public FtpParamCfg() {
     }
@@ -95,5 +105,13 @@ public class FtpParamCfg {
 
     public void setPassiveMode(boolean passiveMode) {
         isPassiveMode = passiveMode;
+    }
+
+    public boolean isRemoteVerificationEnabled() {
+        return RemoteVerificationEnabled;
+    }
+
+    public void setRemoteVerificationEnabled(boolean remoteVerificationEnabled) {
+        RemoteVerificationEnabled = remoteVerificationEnabled;
     }
 }

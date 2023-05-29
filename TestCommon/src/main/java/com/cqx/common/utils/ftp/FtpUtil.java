@@ -14,7 +14,6 @@ import java.util.List;
  * @author chenqixu
  */
 public class FtpUtil {
-
     private static final Logger logger = LoggerFactory.getLogger(FtpUtil.class);
 
     /**
@@ -27,20 +26,25 @@ public class FtpUtil {
         FTPClient ftpClient = null;
         try {
             ftpClient = new FTPClient();
-            //设置连接超时时间
+            // 设置连接超时时间
             ftpClient.setConnectTimeout(30000);
             ftpClient.connect(ftpParamCfg.getHost(), ftpParamCfg.getPort());
             ftpClient.login(ftpParamCfg.getUser(), ftpParamCfg.getPassword());
-            //验证是否登陆成功
+            // 验证是否登陆成功
             int replyCode = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(replyCode)) {
                 throw new FTPConnectionClosedException("FtpUtilException：FTP连接登录失败,应答码为:" + replyCode);
             }
-            //设置文件传输方式
+            // 设置文件传输方式
             ftpClient.setFileType(ftpParamCfg.getFileType());
-            //被动模式
+            // 被动模式
             if (ftpParamCfg.isPassiveMode()) {
                 ftpClient.enterLocalPassiveMode();
+            }
+            // 验证参与数据连接的远程主机是否与连接控制连接的主机相同，默认是true
+            // 如果设置了代理，必须设置成false
+            if (!ftpParamCfg.isRemoteVerificationEnabled()) {
+                ftpClient.setRemoteVerificationEnabled(ftpParamCfg.isRemoteVerificationEnabled());
             }
         } catch (Exception e) {
             if (ftpClient != null && ftpClient.isConnected()) {
@@ -142,7 +146,6 @@ public class FtpUtil {
         return fileList;
     }
 
-
     /**
      * FTP获取文件流
      *
@@ -175,22 +178,22 @@ public class FtpUtil {
         TimeCostUtil timeCostUtil = new TimeCostUtil();
         timeCostUtil.start();
         File file = new File(save_file_path + file_name);
-        //本地文件如果存在就删除
+        // 本地文件如果存在就删除
         if (file.exists()) {
             boolean delete_result = file.delete();
             logger.info("delete：{}，result：{}", file, delete_result);
         }
         try (OutputStream outputStream = new FileOutputStream(file); InputStream inputStream = ftpFileDownload(ftpClient, ftp_file_path, file_name)) {
-            //设置FTP下载缓冲区
+            // 设置FTP下载缓冲区
             byte[] buffer = new byte[1048576];
             int c;
             while ((c = inputStream.read(buffer)) != -1) {
-                //本地流写文件
+                // 本地流写文件
                 outputStream.write(buffer, 0, c);
                 outputStream.flush();
             }
         } finally {
-            //结束数据连接
+            // 结束数据连接
             ftpClient.getReply();
         }
         timeCostUtil.stop();
@@ -198,7 +201,7 @@ public class FtpUtil {
     }
 
     /**
-     * 转移文件
+     * 移动文件
      *
      * @param ftpClient
      * @param newPath
@@ -212,11 +215,8 @@ public class FtpUtil {
         String oldFilePath = oldFile + fileName;//文件路径+文件名
         if (ftpClient != null) {
             try {
-//                logger.info("aaaanew "+newPath);
-//                logger.info("aaaaold "+oldFilePath);
-//                logger.info("aaa "+(!ftpClient.changeWorkingDirectory(newPath)));
                 if (!ftpClient.changeWorkingDirectory(newPath)) {
-//            文件转移路径不存在 创文件夹
+                    // 文件转移路径不存在 创文件夹
                     String pathArry[] = newPath.split("/");
                     StringBuffer filePath = new StringBuffer("/");
                     for (String path : pathArry) {
@@ -230,15 +230,10 @@ public class FtpUtil {
                         }
                     }
                 }
-//                ftpClient.rename(oldFile, newFilePath); //移动文件到新目录
-//                ftpClient.rename(oldFilePath, newFilePath);
-//                flag = true;
                 flag = ftpClient.rename(oldFilePath, newFilePath);
-//                logger.info(">>>>" + flag + "<<<<");
                 logger.info(">>>>" + oldFilePath + "文件成功转移到目录：" + newFilePath + "<<<");
             } catch (IOException e) {
                 logger.error(">>>" + oldFilePath + "转移文件失败");
-//            e.printStackTrace();
                 logger.error(e.getMessage(), e);
             }
         }
@@ -255,13 +250,10 @@ public class FtpUtil {
      */
     public static boolean isFileExit(FTPClient ftpClient, String file_path) {
         boolean flag = false;
-//        String sourceFile="";
         if (ftpClient != null) {
             try {
                 //精确匹配单个文件并获取属性等信息
-//                logger.info(">>>>file<<<" + file_path);
                 FTPFile[] ftpFilesArr = ftpClient.listFiles(file_path);
-//                logger.info(">>>>length<<<" + ftpFilesArr.length);
                 if (ftpFilesArr.length == 1) {
                     flag = true;
                 } else {
@@ -293,7 +285,6 @@ public class FtpUtil {
                     flag = true;
                     logger.info(">>>>源文件删除成功<<<" + fullName);
                 } catch (IOException e) {
-//                e.printStackTrace();
                     logger.error(e.getMessage(), e);
                 }
             } else {
@@ -303,7 +294,16 @@ public class FtpUtil {
         return flag;
     }
 
-
+    /**
+     * 上报数据
+     *
+     * @param ftpClient
+     * @param localFilePath
+     * @param remoteFilePath
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
     public static boolean upload(FTPClient ftpClient, String localFilePath, String remoteFilePath, String fileName) throws IOException {
         boolean storeRet = false;
         if (ftpClient != null) {
