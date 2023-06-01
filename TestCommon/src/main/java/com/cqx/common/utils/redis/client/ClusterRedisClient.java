@@ -28,10 +28,10 @@ public class ClusterRedisClient extends RedisClient {
             setPipeline(true);
         } else {
             if (builder.getPassword() != null && builder.getPassword().length() > 0) {
-                cluster = new JedisCluster(HostAndPort_set, DEFAULT_MAX_WAIT_MILLIS, DEFAULT_MAX_WAIT_MILLIS
+                cluster = new JedisCluster(HostAndPort_set, builder.getMax_wait_millis(), builder.getMax_wait_millis()
                         , DEFAULT_MAX_REDIRECTIONS, builder.getPassword(), new GenericObjectPoolConfig());
             } else {
-                cluster = new JedisCluster(HostAndPort_set);
+                cluster = new JedisCluster(HostAndPort_set, builder.getMax_wait_millis());
             }
         }
     }

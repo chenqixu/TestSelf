@@ -85,6 +85,46 @@ public class MyJedisCluster extends JedisCluster {
     }
 
     /**
+     * 分配slot到cluster
+     */
+    public void renewCache() {
+        if (w.tryLock()) {
+            try {
+                // 认证检查
+                checkAuth();
+                //第一次，从getClusterNodes获取
+                if (first.getAndSet(false)) {
+                    for (JedisPool jedisPool : getClusterNodes().values()) {
+                        //注意，这里是取一个，用一个，释放一个，如果都取出来，就会有连接无法释放
+                        Jedis jedis = jedisPool.getResource();
+                        try {
+                            if (renewCache(jedis)) return;
+                        } catch (Exception e) {
+                            logger.error("renewCache异常：" + e.getMessage(), e);
+                        }
+                    }
+                } else {//后面都从缓存nodes获取，所以要维护好nodes
+                    for (Jedis jedis : nodes.values()) {
+                        try {
+                            //先重置一下，再renew
+                            //renewCache异常：Cannot use Jedis when in Pipeline. Please use Pipeline or reset jedis state
+                            jedis.resetState();
+                            if (renewCache(jedis)) return;
+                        } catch (Exception e) {
+                            logger.error("renewCache异常：" + e.getMessage(), e);
+                        }
+                    }
+                }
+            } finally {
+                w.unlock();
+            }
+        } else {
+            logger.warn("renewCache没有获取到锁");
+        }
+        throw new RuntimeException("没有可用的redis连接：" + nodes + "，请联系管理员！");
+    }
+
+    /**
      * 认证检查，只有在有密码的集群才需要进行<br>
      * 如果第一个节点就异常，MyJedisCluster根本无法构造成功，自然不会执行到这里
      */
@@ -158,46 +198,6 @@ public class MyJedisCluster extends JedisCluster {
         }
         logger.info("clusterNodes: {}, checkCnt: {}, failCnt: {}, checkFailNodeList:  {}"
                 , clusterNodeList, checkCnt, failCnt, checkFailNodeList);
-    }
-
-    /**
-     * 分配slot到cluster
-     */
-    public void renewCache() {
-        if (w.tryLock()) {
-            try {
-                // 认证检查
-                checkAuth();
-                //第一次，从getClusterNodes获取
-                if (first.getAndSet(false)) {
-                    for (JedisPool jedisPool : getClusterNodes().values()) {
-                        //注意，这里是取一个，用一个，释放一个，如果都取出来，就会有连接无法释放
-                        Jedis jedis = jedisPool.getResource();
-                        try {
-                            if (renewCache(jedis)) return;
-                        } catch (Exception e) {
-                            logger.error("renewCache异常：" + e.getMessage(), e);
-                        }
-                    }
-                } else {//后面都从缓存nodes获取，所以要维护好nodes
-                    for (Jedis jedis : nodes.values()) {
-                        try {
-                            //先重置一下，再renew
-                            //renewCache异常：Cannot use Jedis when in Pipeline. Please use Pipeline or reset jedis state
-                            jedis.resetState();
-                            if (renewCache(jedis)) return;
-                        } catch (Exception e) {
-                            logger.error("renewCache异常：" + e.getMessage(), e);
-                        }
-                    }
-                }
-            } finally {
-                w.unlock();
-            }
-        } else {
-            logger.warn("renewCache没有获取到锁");
-        }
-        throw new RuntimeException("没有可用的redis连接：" + nodes + "，请联系管理员！");
     }
 
     /**
