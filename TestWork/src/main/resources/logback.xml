@@ -10,32 +10,32 @@
 		<!-- encoder 默认配置为PatternLayoutEncoder -->
 		<encoder>
 			<charset>UTF-8</charset>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{50}] - %msg%n</pattern>
 		</encoder>
 	</appender>
 
-	<appender name="A1" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>d:/tmp/logs/${logfile.name}.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!--
-			参考ch.qos.logback.core.rolling.helper.RollingCalendarTest
-			yyyy-MM-dd_HH_mm_ss
-			yyyy-MM-dd_HH_mm
-			yyyy-MM-dd_HH
-			yyyy-MM-dd_hh
-			yyyy-MM-dd
-			yyyy-MM
-			yyyy-ww
-			yyyy-WW
-			-->
-			<fileNamePattern>d:/tmp/logs/${logfile.name}.%d{yyyy-MM-dd}.log</fileNamePattern>
-			<maxHistory>7</maxHistory>
-		</rollingPolicy>
-		<encoder>
-			<charset>UTF-8</charset>
-			<pattern>[%p %d{yyyy-MM-dd HH:mm:ss} %c{1}:%L %t] %m%n</pattern>
-		</encoder>
-	</appender>
+	<!--<appender name="A1" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+		<!--<file>d:/tmp/logs/${logfile.name}.log</file>-->
+		<!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+			<!--&lt;!&ndash;-->
+			<!--参考ch.qos.logback.core.rolling.helper.RollingCalendarTest-->
+			<!--yyyy-MM-dd_HH_mm_ss-->
+			<!--yyyy-MM-dd_HH_mm-->
+			<!--yyyy-MM-dd_HH-->
+			<!--yyyy-MM-dd_hh-->
+			<!--yyyy-MM-dd-->
+			<!--yyyy-MM-->
+			<!--yyyy-ww-->
+			<!--yyyy-WW-->
+			<!--&ndash;&gt;-->
+			<!--<fileNamePattern>d:/tmp/logs/${logfile.name}.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+			<!--<maxHistory>7</maxHistory>-->
+		<!--</rollingPolicy>-->
+		<!--<encoder>-->
+			<!--<charset>UTF-8</charset>-->
+			<!--<pattern>[%p %d{yyyy-MM-dd HH:mm:ss} %c{1}:%L %t] %m%n</pattern>-->
+		<!--</encoder>-->
+	<!--</appender>-->
 
 <!--	<appender name="A1" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>/tmp/test.log</file>
@@ -57,8 +57,8 @@
 		</encoder>
 	</appender> -->
 
-	<root level="info">
+	<root level="INFO">
 		<appender-ref ref="stdout" />
-		<appender-ref ref="A1" />
+		<!--<appender-ref ref="A1" />-->
 	</root>
 </configuration>
