@@ -41,10 +41,10 @@ import java.util.concurrent.LinkedBlockingDeque;
  * @author chenqixu
  */
 public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
+    public static final String schemaMode_URL = "URL";
+    public static final String schemaMode_FILE = "FILE";
+    public static final String schemaMode_NOAVRO = "NOAVRO";
     private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerGRUtil.class);
-    private final String schemaMode_URL = "URL";
-    private final String schemaMode_FILE = "FILE";
-    private final String schemaMode_NOAVRO = "NOAVRO";
     private SchemaUtil schemaUtil;
     private RecordConvertor recordConvertor = null;
     private Schema schema;
@@ -505,7 +505,7 @@ public class KafkaConsumerGRUtil extends KafkaConsumerUtil<String, byte[]> {
      * @return
      * @throws IOException
      */
-    public String avscFromFile(String file_name) throws IOException {
+    public static String avscFromFile(String file_name) throws IOException {
         // 读取文件
         FileCount fileCount;
         FileUtil fileUtils = new FileUtil();

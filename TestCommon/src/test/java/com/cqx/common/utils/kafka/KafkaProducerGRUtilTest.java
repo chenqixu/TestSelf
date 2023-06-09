@@ -42,6 +42,37 @@ public class KafkaProducerGRUtilTest extends TestBase {
     }
 
     @Test
+    public void sendTest1WithBtime() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            for (int i = 0; i < 1000; i++) {
+                // 时间戳
+//                kafkaProducerGRUtil.send("test1", ("{\"btime\":\"" + System.currentTimeMillis() + "\"}").getBytes());
+                // 字符串
+                kafkaProducerGRUtil.send("test1", ("{\"btime\":\"" + Utils.formatTime(System.currentTimeMillis(), "yyyyMMddHHmmss") + "\"}").getBytes());
+            }
+        }
+    }
+
+    @Test
+    public void sendTest1AvroWithBtime() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        param.put("kafkaconf.newland.schema.mode", "FILE");
+        param.put("kafkaconf.newland.schema.file", "d:/tmp/data/avro/test1.avsc");
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("test1");
+            for (int i = 0; i < 1000; i++) {
+                // 时间戳
+                Map<String, String> map = new HashMap<>();
+//                map.put("btime", "" + System.currentTimeMillis());
+                // 字符串
+                map.put("btime", Utils.formatTime(System.currentTimeMillis(), "yyyyMMddHHmmss"));
+                kafkaProducerGRUtil.sends(map);
+            }
+        }
+    }
+
+    @Test
     public void sendTest1WithWatermark() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {

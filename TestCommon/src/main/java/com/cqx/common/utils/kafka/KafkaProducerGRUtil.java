@@ -2,11 +2,16 @@ package com.cqx.common.utils.kafka;
 
 import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.bean.kafka.DefaultBean;
+import com.cqx.common.utils.file.FileUtil;
+import com.cqx.common.utils.param.ParamUtil;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -27,9 +32,13 @@ import java.util.concurrent.Future;
  * @author chenqixu
  */
 public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
+    private static final Logger logger = LoggerFactory.getLogger(KafkaProducerGRUtil.class);
     private GenericRecordUtil genericRecordUtil;
     private String topic;
     private Schema schema;
+    private String schemaMode;
+    private SchemaUtil schemaUtil;
+    private String avscStr;
 
     public KafkaProducerGRUtil(Map stormConf) throws IOException {
         super(stormConf);
@@ -46,16 +55,62 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
      *
      * @param stormConf
      */
-    private void initGR(Map stormConf) {
+    private void initGR(Map stormConf) throws IOException {
+        // 新增schema读取模式：[URL|FILE]，默认是URL
+        try {
+            schemaMode = ParamUtil.setValDefault(stormConf, SchemaUtil.SCHEMA_MODE, KafkaConsumerGRUtil.schemaMode_URL);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            // 默认是URL
+            schemaMode = KafkaConsumerGRUtil.schemaMode_URL;
+        }
+        // schema模式匹配
+        switch (schemaMode) {
+            // 非avro
+            case KafkaConsumerGRUtil.schemaMode_NOAVRO:
+                break;
+            // 本地文件模式
+            case KafkaConsumerGRUtil.schemaMode_FILE:
+                // 读取avsc文件
+                String avsc_file = (String) stormConf.get(SchemaUtil.SCHEAM_FILE);
+                if (avsc_file == null || avsc_file.trim().length() == 0 || !FileUtil.isExists(avsc_file)) {
+                    throw new RuntimeException(
+                            String.format("初始化失败，读取avsc文件异常！%s：%s", SchemaUtil.SCHEAM_FILE, avsc_file)
+                    );
+                }
+                avscStr = KafkaConsumerGRUtil.avscFromFile(avsc_file);
+                logger.info("从 {} 文件读取avsc文件内容：{}", avsc_file, avscStr);
+                schemaUtil = new SchemaUtil(null);
+                break;
+            // 远程服务、默认模式
+            case KafkaConsumerGRUtil.schemaMode_URL:
+            default:
+                //schema工具类
+                schemaUtil = new SchemaUtil(null, stormConf);
+                break;
+        }
         // 初始化GenericRecord工具类
-        genericRecordUtil = new GenericRecordUtil(null, stormConf);
+        genericRecordUtil = new GenericRecordUtil(schemaUtil);
     }
 
     public void setTopic(String topic) {
         //初始化schema
         this.topic = topic;
-        genericRecordUtil.addTopic(topic);
-        schema = genericRecordUtil.getSchema(topic);
+        // schema模式匹配
+        switch (schemaMode) {
+            case KafkaConsumerGRUtil.schemaMode_NOAVRO:
+                break;
+            case KafkaConsumerGRUtil.schemaMode_FILE:
+                // schema从本地文件获取
+                genericRecordUtil.addTopicBySchemaString(topic, avscStr);
+                schema = genericRecordUtil.getSchema(topic);
+                break;
+            case KafkaConsumerGRUtil.schemaMode_URL:
+            default:
+                // schema从远程服务器获取
+                genericRecordUtil.addTopic(topic);
+                schema = genericRecordUtil.getSchema(topic);
+                break;
+        }
     }
 
     public void setTopic(String topic, String schemaString) {

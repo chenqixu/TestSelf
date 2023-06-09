@@ -38,6 +38,11 @@ public class GenericRecordUtil {
         schemaUtil = new SchemaUtil(schemaUrl, stormConf);
     }
 
+    public GenericRecordUtil(SchemaUtil schemaUtil) {
+        // 初始化schema工具类
+        this.schemaUtil = schemaUtil;
+    }
+
     /**
      * 话题初始化，从远程服务获取话题的schema
      *
@@ -57,7 +62,7 @@ public class GenericRecordUtil {
      * @param schemaString schema
      */
     public void addTopicBySchemaString(String topic, String schemaString) {
-        // 从远程服务获取话题的schema
+        // 通过字符串解析话题的schema
         Schema schema = schemaUtil.getSchemaByString(schemaString);
         // 初始化话题和对应的schema
         init(topic, schema);
