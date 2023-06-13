@@ -38,7 +38,13 @@ public class GenericRecordUtil {
         schemaUtil = new SchemaUtil(schemaUrl, stormConf);
     }
 
-    public GenericRecordUtil(SchemaUtil schemaUtil) {
+    /**
+     * 避免和构造public GenericRecordUtil(String schemaUrl)冲突，加了一个不使用的参数
+     *
+     * @param schemaUtil
+     * @param no_use_param
+     */
+    public GenericRecordUtil(SchemaUtil schemaUtil, String no_use_param) {
         // 初始化schema工具类
         this.schemaUtil = schemaUtil;
     }

@@ -43,5 +43,6 @@
         <module>TestCommon</module>
         <module>TestCalcite</module>
         <module>TestJVMAgent</module>
+        <module>Kafka0.8</module>
     </modules>
 </project>

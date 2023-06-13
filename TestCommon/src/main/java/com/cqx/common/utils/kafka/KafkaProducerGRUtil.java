@@ -89,7 +89,7 @@ public class KafkaProducerGRUtil extends KafkaProducerUtil<String, byte[]> {
                 break;
         }
         // 初始化GenericRecord工具类
-        genericRecordUtil = new GenericRecordUtil(schemaUtil);
+        genericRecordUtil = new GenericRecordUtil(schemaUtil, null);
     }
 
     public void setTopic(String topic) {

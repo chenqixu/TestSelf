@@ -890,6 +890,29 @@ public class KafkaConsumerGRUtilTest extends TestBase {
         }
     }
 
+    @Test
+    public void polls08() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        param.put("kafkaconf.bootstrap.servers", "10.1.8.200:9195,10.1.8.201:9195,10.1.8.202:9195");
+        param.put("kafkaconf.newland.kafka_username", "");
+        param.put("kafkaconf.newland.kafka_password", "");
+        logger.info("{}", param);
+        try (KafkaConsumerUtil<byte[], byte[]> kafkaConsumerUtil = new KafkaConsumerUtil<>(param)) {
+            String topic = "test1";
+            kafkaConsumerUtil.subscribe(topic);//订阅
+            for (int i = 0; i < 5; i++) {
+                for (byte[] value : kafkaConsumerUtil.poll(1000L)) {
+                    if (value != null) {
+                        Map map = (Map) JSON.parse(new String(value));
+                        logger.info("【【value】{}，【value.class】{}"
+                                , TimeUtil.formatTime(Long.valueOf(map.get("message").toString()))
+                                , value.getClass());
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 构造Ogg数据
      *

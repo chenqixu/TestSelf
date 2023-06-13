@@ -779,6 +779,7 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>1.0.0</version>
+            <!--<version>0.8.2.1</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
@@ -790,6 +791,8 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.11</artifactId>
             <version>1.0.0</version>
+            <!--<artifactId>kafka_2.10</artifactId>-->
+            <!--<version>0.8.2.1</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>org.apache.kafka</artifactId>
@@ -834,6 +837,10 @@
                 <exclusion>
                     <artifactId>zookeeper</artifactId>
                     <groupId>org.apache.zookeeper</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>kafka-clients</artifactId>
+                    <groupId>org.apache.kafka</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
