@@ -35,11 +35,11 @@ import java.util.Set;
  * @author chenqixu
  */
 public class Krb5AuthAction {
+    private final String LoginContextName = "Krb5Login";
     private Logger LOG = LoggerFactory.getLogger(Krb5AuthAction.class);
     private String principal;
     private String keyTabLocation;
     private String password;
-    private final String LoginContextName = "Krb5Login";
     private HttpManager httpManager = new HttpManager();
 
     public Krb5AuthAction() {
@@ -62,18 +62,6 @@ public class Krb5AuthAction {
     public Krb5AuthAction(String principal, String keyTabLocation, String krb5Location, boolean isDebug) {
         this(principal, keyTabLocation, isDebug);
         System.setProperty("java.security.krb5.conf", krb5Location);
-    }
-
-    /**
-     * 设置密码
-     *
-     * @param password
-     */
-    public void kinit(String password) {
-//        String[] kinitParam = {principal, password};
-//        // todo 无法使用，不知道这里的Kinit.main把数据初始化到了哪里？
-//        Kinit.main(kinitParam);
-        this.password = password;
     }
 
     /**
@@ -120,6 +108,18 @@ public class Krb5AuthAction {
         // SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER：关闭了主机名验证，允许连接任何主机
         builder.setSSLHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         return builder.build();
+    }
+
+    /**
+     * 设置密码
+     *
+     * @param password
+     */
+    public void kinit(String password) {
+//        String[] kinitParam = {principal, password};
+//        // todo 无法使用，不知道这里的Kinit.main把数据初始化到了哪里？
+//        Kinit.main(kinitParam);
+        this.password = password;
     }
 
     /**
@@ -253,7 +253,7 @@ public class Krb5AuthAction {
                         , url
                         , operationName);
             }
-        }, keyTabLocation != null);
+        }, keyTabLocation != null && keyTabLocation.trim().length() > 0);
     }
 
     /**
@@ -275,7 +275,7 @@ public class Krb5AuthAction {
                         , jsonString
                         , operationName);
             }
-        }, keyTabLocation != null);
+        }, keyTabLocation != null && keyTabLocation.trim().length() > 0);
     }
 
     /**
@@ -297,7 +297,7 @@ public class Krb5AuthAction {
                         , jsonString
                         , operationName);
             }
-        }, keyTabLocation != null);
+        }, keyTabLocation != null && keyTabLocation.trim().length() > 0);
     }
 
     /**
