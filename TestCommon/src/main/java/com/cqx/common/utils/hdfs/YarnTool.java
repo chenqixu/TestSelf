@@ -47,6 +47,29 @@ public class YarnTool {
     }
 
     /**
+     * 获取正在运行的任务
+     *
+     * @throws Exception
+     */
+    public void getRunningJob() throws Exception {
+        String[] args = {"application", "-list", "-appStates", "RUNNING"};
+        ApplicationCLIEx cli = new ApplicationCLIEx(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, true));
+        cli.setSysOutPrintStream(MyByteArrayOutputStream.buildPrintStream(value -> {
+            if (value.startsWith("application_")) {
+                YarnApplicationBean yarnApplicationBean = new YarnApplicationBean(value, "\t");
+                if (yarnApplicationBean.isHasValue()) {
+                    logger.info("解析成功：{}", yarnApplicationBean);
+                } else {
+                    logger.info("未解析成功：{}", value);
+                }
+            }
+        }));
+        cli.setSysErrPrintStream(System.err);
+        ToolRunner.run(cli, ApplicationCLI.preProcessArgs(args));
+        cli.stop();
+    }
+
+    /**
      * 获取某个应用的日志<br>
      * 看所有日志<br>
      * yarn logs -applicationId application_1493700892407_0007<br>

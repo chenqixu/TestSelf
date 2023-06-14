@@ -38,6 +38,11 @@ public class YarnToolTest {
     }
 
     @Test
+    public void getRunningJob() throws Exception {
+        yarnTool.getRunningJob();
+    }
+
+    @Test
     public void streamTest() throws IOException {
         PrintStream ps = MyByteArrayOutputStream.buildPrintStream(value -> {
             System.out.println(value);
