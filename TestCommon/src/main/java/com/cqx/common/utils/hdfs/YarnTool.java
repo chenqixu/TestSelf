@@ -30,7 +30,7 @@ public class YarnTool {
      */
     public void getAllJob() throws Exception {
         String[] args = {"application", "-list", "-appStates", "ALL"};
-        ApplicationCLIEx cli = new ApplicationCLIEx(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, true));
+        ApplicationCLIEx cli = new ApplicationCLIEx(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, new String[]{"yarn-site.xml"}));
         cli.setSysOutPrintStream(MyByteArrayOutputStream.buildPrintStream(value -> {
             if (value.startsWith("application_")) {
                 YarnApplicationBean yarnApplicationBean = new YarnApplicationBean(value, "\t");
@@ -53,7 +53,7 @@ public class YarnTool {
      */
     public void getRunningJob() throws Exception {
         String[] args = {"application", "-list", "-appStates", "RUNNING"};
-        ApplicationCLIEx cli = new ApplicationCLIEx(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, true));
+        ApplicationCLIEx cli = new ApplicationCLIEx(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, new String[]{"yarn-site.xml"}));
         cli.setSysOutPrintStream(MyByteArrayOutputStream.buildPrintStream(value -> {
             if (value.startsWith("application_")) {
                 YarnApplicationBean yarnApplicationBean = new YarnApplicationBean(value, "\t");
@@ -87,7 +87,7 @@ public class YarnTool {
     public void queryJobLog(String job_id) throws Exception {
         String[] args = {"logs", "-applicationId", job_id};
         LogsCLI logDumper = new LogsCLI();
-        logDumper.setConf(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, true));
+        logDumper.setConf(hdfsTool.getConf(hdfsBean.getHadoop_conf(), hdfsBean, true, new String[]{"yarn-site.xml"}));
         logDumper.run(args);
     }
 }

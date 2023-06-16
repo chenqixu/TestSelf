@@ -296,7 +296,7 @@ public class HdfsTool {
      * @throws IOException
      */
     public Configuration getConf(String conf_path, HdfsBean hdfsBean, boolean isLogin) throws IOException {
-        return getConf(conf_path, hdfsBean, false, true);
+        return getConf(conf_path, hdfsBean, isLogin, null);
     }
 
     /**
@@ -305,16 +305,20 @@ public class HdfsTool {
      * @param conf_path
      * @param hdfsBean
      * @param isLogin
+     * @param otherXmls
      * @return
      */
-    public Configuration getConf(String conf_path, HdfsBean hdfsBean, boolean addYarn, boolean isLogin) throws IOException {
+    public Configuration getConf(String conf_path, HdfsBean hdfsBean, boolean isLogin, String[] otherXmls) throws IOException {
         Configuration hadoopConfig = new Configuration();
         String _conf_path = FileUtil.endWith(conf_path);
         hadoopConfig.addResource(new Path(_conf_path + "core-site.xml"));
         hadoopConfig.addResource(new Path(_conf_path + "hdfs-site.xml"));
         hadoopConfig.addResource(new Path(_conf_path + "mapred-site.xml"));
-        if (addYarn) {
-            hadoopConfig.addResource(new Path(_conf_path + "yarn-site.xml"));
+        if (otherXmls != null && otherXmls.length > 0) {
+            for (String xml : otherXmls) {
+                logger.info("[add other xml] {}", conf_path + xml);
+                hadoopConfig.addResource(new Path(_conf_path + xml));
+            }
         }
         hadoopConfig.set("fs.hdfs.impl", DistributedFileSystem.class.getName());
         //认证
