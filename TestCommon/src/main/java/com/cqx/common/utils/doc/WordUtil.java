@@ -45,6 +45,15 @@ public class WordUtil implements Closeable {
     }
 
     /**
+     * 初始化
+     *
+     * @throws IOException
+     */
+    public void openSingle() throws IOException {
+        docxDocument = new XWPFDocument();
+    }
+
+    /**
      * 写入文本并换行
      *
      * @param text
@@ -227,33 +236,38 @@ public class WordUtil implements Closeable {
             }
     }
 
-    public void readDoc(String path) throws IOException {
+    public WordDocumentBean readDoc(String path) throws IOException {
         if (path == null || ExcelCommons.EMPTY.equals(path)) {
         } else {
             String postfix = ExcelUtils.getPostfix(path);
             if (!ExcelCommons.EMPTY.equals(postfix)) {
-                read(path, postfix);
+                return read(path, postfix);
             } else {
                 logger.info("{}", path + ExcelCommons.NOT_DOC_FILE);
             }
         }
+        return null;
     }
 
-    private void read(String path, String postfix) throws IOException {
+    private WordDocumentBean read(String path, String postfix) throws IOException {
         InputStream is = null;
-        HWPFDocument document = null;
-//        XWPFDocument xwpfDocument =null;
         try {
             is = new FileInputStream(path);
-            document = new HWPFDocument(is);
+            if (WordCommons.OFFICE_WORD_2003_POSTFIX.equals(postfix)) {
+                return new WordDocumentBean(new HWPFDocument(is));
+            } else if (WordCommons.OFFICE_WORD_2010_POSTFIX.equals(postfix)) {
+                return new WordDocumentBean(new XWPFDocument(is));
+            } else {
+                return null;
+            }
+//            document = new HWPFDocument(is);
 //            printInfo(document.getRange());
 //            printInfo(document.getBookmarks());
 //            readTable(document.getRange());
 //            readList(document.getRange());
-            readPicture(document.getPicturesTable());
+//            readPicture(document.getPicturesTable());
         } finally {
             if (is != null) is.close();
-            if (document != null) document.close();
         }
     }
 
@@ -356,5 +370,9 @@ public class WordUtil implements Closeable {
             logger.info("{}", section.getPageHeight());
             logger.info("{}", section.text());
         }
+    }
+
+    public XWPFDocument getDocxDocument() {
+        return docxDocument;
     }
 }

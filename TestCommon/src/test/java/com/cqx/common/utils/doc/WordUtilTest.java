@@ -4,9 +4,14 @@ import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.pdf.PdfUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.xmlbeans.XmlException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,5 +136,53 @@ public class WordUtilTest {
             imgs.add(newPath);
         }
         pdfUtil.mergerImgToPDF(imgs, pdfName);
+    }
+
+    @Test
+    public void wordCreate() throws IOException, XmlException {
+        WordDocumentBean wordDocumentBean = null;
+        String modelName = "d:\\tmp\\data\\word\\model.docx";
+        String docxName = "d:\\tmp\\data\\word\\1.docx";
+        try {
+            // 打开文件
+            wordUtil.openSingle();
+
+            // 模板读取
+            wordDocumentBean = wordUtil.readDoc(modelName);
+            CTStyles ctStyles = wordDocumentBean.getXwDocument().getStyle();
+            wordUtil.getDocxDocument().createStyles().setStyles(ctStyles);
+
+            // 创建段落
+            for (int i = 1; i <= 4; i++) {
+                XWPFParagraph title = wordUtil.getDocxDocument().createParagraph();
+                // 设置段落的样式
+                title.setStyle("" + i);
+                XWPFRun run = title.createRun();
+                run.setText("Level " + i + " Heading");
+            }
+
+            for (XWPFParagraph paragraph : wordUtil.getDocxDocument().getParagraphs()) {
+                String style = paragraph.getStyle();
+                CTString pStyle = paragraph.getCTP().getPPr().getPStyle();
+                System.out.println(String.format("style=%s, pstyle=%s", style, pStyle));
+            }
+        } finally {
+            // 保存
+            wordUtil.save(docxName);
+            if (wordDocumentBean != null) wordDocumentBean.close();
+        }
+    }
+
+    @Test
+    public void wordRead() throws IOException {
+        String docxName = "d:\\tmp\\data\\word\\1.docx";
+        // 打开文件
+        try (WordDocumentBean wordDocumentBean = wordUtil.readDoc(docxName)) {
+            for (XWPFParagraph paragraph : wordDocumentBean.getXwDocument().getParagraphs()) {
+                String style = paragraph.getStyle();
+                CTString pStyle = paragraph.getCTP().getPPr().getPStyle();
+                System.out.println(String.format("style=%s, pstyle=%s", style, pStyle));
+            }
+        }
     }
 }
