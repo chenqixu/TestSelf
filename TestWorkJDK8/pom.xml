@@ -375,10 +375,10 @@
             <!--<optional>true</optional>-->
             <!--<scope>provided</scope>-->
         <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>io.lettuce</groupId>-->
-            <!--<artifactId>lettuce-core</artifactId>-->
-            <!--<version>6.2.0.RELEASE</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.2.0.RELEASE</version>
+        </dependency>
     </dependencies>
 </project>
