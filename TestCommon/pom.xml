@@ -175,6 +175,13 @@
             <!--<scope>provided</scope>-->
         </dependency>
 
+        <!-- log4j 2.x -->
+        <!--<dependency>-->
+            <!--<groupId>org.apache.logging.log4j</groupId>-->
+            <!--<artifactId>log4j-iostreams</artifactId>-->
+            <!--<version>2.17.0</version>-->
+        <!--</dependency>-->
+
         <!-- guava -->
         <dependency>
             <groupId>com.google.guava</groupId>

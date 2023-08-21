@@ -568,6 +568,37 @@ public class HdfsTool {
         }
     }
 
+    /**
+     * 从HDFS下载文件到本地
+     *
+     * @param fs
+     * @param inputFile
+     * @param outputFile
+     * @throws Exception
+     */
+    public void getHdfsFile(FileSystem fs, String inputFile, String outputFile) throws Exception {
+        if (fs != null && isExist(inputFile)) {
+            logger.info("getHdfsFile, HDFS={}, Local={}.", inputFile, outputFile);
+            FileOutputStream fos = new FileOutputStream(new File(outputFile), false);
+            InputStream in = openFile(inputFile);
+            IOUtils.copyBytes(in, fos, fs.getConf());
+            IOUtils.closeStream(in);
+            IOUtils.closeStream(fos);
+            logger.info("getHdfsFile closeStream.");
+        }
+    }
+
+    /**
+     * 从HDFS下载文件到本地
+     *
+     * @param inputFile
+     * @param outputFile
+     * @throws Exception
+     */
+    public void getHdfsFile(String inputFile, String outputFile) throws Exception {
+        getHdfsFile(fs, inputFile, outputFile);
+    }
+
     public boolean delete(String path) throws IOException {
         return delete(fs, path);
     }
