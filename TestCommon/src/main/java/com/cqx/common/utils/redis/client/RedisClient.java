@@ -36,6 +36,8 @@ public abstract class RedisClient implements Closeable {
 
     public abstract Long del(String key);
 
+    public abstract void scan(ScanParams params, IScan iScan);
+
     public abstract Long hdel(String key, String field);
 
     public abstract Long hset(String key, String field, String value);
@@ -91,5 +93,9 @@ public abstract class RedisClient implements Closeable {
      */
     public void setPipeline(boolean pipeline) {
         this.isPipeline = isPipeline;
+    }
+
+    public interface IScan {
+        void scanGet(ScanResult<String> resp);
     }
 }

@@ -131,6 +131,35 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public void scan(ScanParams params, IScan iScan) {
+        cluster.getClusterNodes().values().forEach(pool -> {
+            boolean done = true;
+            String cur = ScanParams.SCAN_POINTER_START;
+            try (Jedis jedisNode = pool.getResource()) {
+                // 判断是否是主节点
+                String currentNode = jedisNode.getClient().getHost() + ":" + jedisNode.getClient().getPort();
+                String[] clusterNodes = jedisNode.clusterNodes().split("\n", -1);
+                for (String _cn : clusterNodes) {
+                    if (_cn != null && _cn.contains("master") && _cn.contains(currentNode)) {
+                        logger.debug("currentNode={}, is_master={}", currentNode, _cn);
+                        done = false;
+                        break;
+                    }
+                }
+                // 如果是主节点才循环扫描
+                while (!done) {
+                    ScanResult<String> resp = jedisNode.scan(cur, params);
+                    iScan.scanGet(resp);
+                    cur = resp.getStringCursor();
+                    if (cur.equals(ScanParams.SCAN_POINTER_START)) {
+                        done = true;
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
     public Long hdel(String key, String field) {
         return cluster.hdel(key, field);
     }
