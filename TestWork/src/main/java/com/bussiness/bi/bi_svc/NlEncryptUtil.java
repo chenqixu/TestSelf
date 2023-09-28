@@ -2,6 +2,9 @@ package com.bussiness.bi.bi_svc;
 
 /**
  * NlEncryptUtil
+ * <pre>
+ *     新版本的连接密码的加密解密
+ * </pre>
  *
  * @author chenqixu
  */
