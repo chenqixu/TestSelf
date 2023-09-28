@@ -130,15 +130,18 @@ public class KafkaConsumerGRUtilTest extends TestBase {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         logger.info("{}", param);
         try (KafkaConsumerUtil<byte[], byte[]> kafkaConsumerUtil = new KafkaConsumerUtil<>(param)) {
-            String topic = "test1";
+            String topic = (String) param.get("topic");//获取话题
             kafkaConsumerUtil.subscribe(topic);//订阅
-            for (int i = 0; i < 20; i++) {
-                for (byte[] value : kafkaConsumerUtil.poll(1000L)) {
-                    if (value != null) {
-                        Map map = (Map) JSON.parse(new String(value));
-                        logger.info("【【value】{}，【value.class】{}"
-                                , TimeUtil.formatTime(Long.valueOf(map.get("message").toString()))
-                                , value.getClass());
+            kafkaConsumerUtil.fromBeginning();
+            for (int i = 0; i < 3; i++) {
+                for (ConsumerRecord<byte[], byte[]> record : kafkaConsumerUtil.pollHasConsumerRecord(1000L)) {
+                    if (record != null) {
+                        logger.info("【topic】{}，【partition】{}，【offset】{}，【timestamp】{}，【value】{}"
+                                , record.topic(), record.partition(), record.offset(), record.timestamp(), new String(record.value()));
+//                        Map map = (Map) JSON.parse(new String(value));
+//                        logger.info("【【value】{}，【value.class】{}"
+//                                , TimeUtil.formatTime(Long.valueOf(map.get("message").toString()))
+//                                , value.getClass());
                     }
                 }
             }

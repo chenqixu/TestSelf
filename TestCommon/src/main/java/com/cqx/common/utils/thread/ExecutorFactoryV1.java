@@ -1,13 +1,11 @@
 package com.cqx.common.utils.thread;
 
 import com.cqx.common.utils.system.SleepUtil;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * ExecutorFactoryV1
@@ -38,6 +36,12 @@ public class ExecutorFactoryV1 {
         }
     }
 
+    public void joinAndClean() throws ExecutionException, InterruptedException {
+        join();
+        futureList.clear();
+        baseCallableList.clear();
+    }
+
     public void stop() {
         for (BaseCallableV1 baseCallable : baseCallableList) {
             baseCallable.stop();
@@ -47,5 +51,19 @@ public class ExecutorFactoryV1 {
         while (!executor.isTerminated()) {
             SleepUtil.sleepMilliSecond(200);
         }
+    }
+
+    /**
+     * 打印线程池状态
+     */
+    public void printPoolStatus(Logger logger) {
+        logger.info("ActiveCount：{}，CorePoolSize：{}，PoolSize：{}，Queue.size：{}，TaskCount：{}，CompletedTaskCount：{}，KeepAliveTime：{}",
+                ((ThreadPoolExecutor) executor).getActiveCount(),
+                ((ThreadPoolExecutor) executor).getCorePoolSize(),
+                ((ThreadPoolExecutor) executor).getPoolSize(),
+                ((ThreadPoolExecutor) executor).getQueue().size(),
+                ((ThreadPoolExecutor) executor).getTaskCount(),
+                ((ThreadPoolExecutor) executor).getCompletedTaskCount(),
+                ((ThreadPoolExecutor) executor).getKeepAliveTime(TimeUnit.MILLISECONDS));
     }
 }

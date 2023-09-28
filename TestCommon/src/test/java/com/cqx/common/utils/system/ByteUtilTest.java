@@ -1,9 +1,11 @@
 package com.cqx.common.utils.system;
 
+import com.cqx.common.utils.io.MyByteArrayOutputStream;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintStream;
 import java.util.BitSet;
 
 public class ByteUtilTest {
@@ -95,5 +97,40 @@ public class ByteUtilTest {
     @Test
     public void HexTest() {
         logger.info("{}", ByteUtil.unsignedBytesToInt(ByteUtil.hexStringToBytes("2e20006f")));
+    }
+
+    @Test
+    public void ECGIToECI() {
+        // 460-00-278387-64	71267136
+        String eNBId = Integer.toHexString(278387);
+        String CellId = Integer.toHexString(64);
+        long ECI = Long.valueOf(eNBId + CellId, 16);
+        logger.info("eNBId={}, CellId={}, ECI={}", eNBId, CellId, ECI);
+    }
+
+    @Test
+    public void systemOut() {
+        PrintStream out = System.out;
+        PrintStream sysout = MyByteArrayOutputStream.buildPrintStream(value -> {
+            if (value.contains("test123")) {
+                System.setOut(out);
+//                logger.info("catch!");
+                System.out.println("catch!");
+            }
+        });
+        System.setOut(sysout);
+        for (int i = 0; i < 200; i++) {
+//            System.out.println("test" + i);
+            logger.info("test" + i);
+//            sysout.println("test" + i);
+        }
+    }
+
+    @Test
+    public void stringPrint() {
+        String str = "\n";
+        for (char c : str.toCharArray()) {
+            logger.info("char {}", (int) c);
+        }
     }
 }

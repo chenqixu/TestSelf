@@ -4,6 +4,7 @@ import com.cqx.common.bean.kafka.AvroLevelData;
 import com.cqx.common.bean.kafka.DefaultBean;
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
+import com.cqx.common.utils.string.StringUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -45,11 +46,11 @@ public class KafkaProducerGRUtilTest extends TestBase {
     public void sendTest1WithBtime() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 5; i++) {
                 // 时间戳
 //                kafkaProducerGRUtil.send("test1", ("{\"btime\":\"" + System.currentTimeMillis() + "\"}").getBytes());
                 // 字符串
-                kafkaProducerGRUtil.send("test1", ("{\"btime\":\"" + Utils.formatTime(System.currentTimeMillis(), "yyyyMMddHHmmss") + "\"}").getBytes());
+                kafkaProducerGRUtil.send("test1", ("{\"msisdn\":\"13500000001\", \"btime\":\"" + Utils.formatTime(System.currentTimeMillis(), "yyyyMMddHHmmss") + "\"}").getBytes());
             }
         }
     }
@@ -89,6 +90,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
     @Test
     public void sendTest1Avro() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        Random random = new Random(System.currentTimeMillis());
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
             kafkaProducerGRUtil.setTopic("test1");//设置话题
             AvroLevelData avroLevelData = AvroLevelData.newInstance("ogg_schema");
@@ -96,7 +98,7 @@ public class KafkaProducerGRUtilTest extends TestBase {
             avroLevelData.putVal("xdr_id", "12345");
             avroLevelData.putVal("imsi", "0x00");
             avroLevelData.putVal("imei", "0x01");
-            avroLevelData.putVal("msisdn", "13500000000");
+            avroLevelData.putVal("msisdn", "135" + StringUtil.fillZero(random.nextInt(99999999), 8));
             kafkaProducerGRUtil.sendRandom(avroLevelData);
 
             byte[] message = kafkaProducerGRUtil.getGenericRecordUtil()
@@ -104,6 +106,41 @@ public class KafkaProducerGRUtilTest extends TestBase {
             for (byte b : message) {
                 System.out.println(b);
             }
+        }
+    }
+
+    @Test
+    public void sendTest1Json() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        Random random = new Random(System.currentTimeMillis());
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("test1");//设置话题
+            // json
+            for (int i = 0; i < 10; i++) {
+                kafkaProducerGRUtil.send("test1", ("{\"xdr_id\":\"12345\",\"msisdn\":\"135"
+                        + StringUtil.fillZero(random.nextInt(99999999), 8) + "\"}").getBytes());
+            }
+        }
+    }
+
+    @Test
+    public void sendTest1OggJson() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("test1");//设置话题
+            // ogg json
+            kafkaProducerGRUtil.send("test1", "{\"table\":\"FRTBASE.TB_SER_OGG_USERS\",\"op_type\":\"I\",\"op_ts\":\"2023-08-01 01:17:17.063199\",\"current_ts\":\"2023-08-01T09:17:21.979003\",\"pos\":\"00000033390570320959\",\"after\":{\"HOME_CITY\":592,\"USER_ID\":592500345139683,\"NETWORK_TYPE\":3,\"CUSTOMER_ID\":592100448808481,\"TYPE\":1,\"SERVICE_TYPE\":1,\"MSISDN\":18950094952,\"IMSI\":460076524086874,\"USER_BRAND\":1000,\"HOME_COUNTY\":206,\"CREATOR\":149418,\"CREATE_TIME\":null,\"CREATE_SITE\":2060971,\"SERVICE_STATUS\":0,\"PASSWORD\":\"8EF7178E286B757C\",\"TRANSFER_TIME\":null,\"STOP_TIME\":null,\"MODIFY_ID\":149418,\"MODIFY_SITE\":2060971,\"MODIFY_TIME\":\"2023-08-01 09:17:11\",\"MODIFY_CONTENT\":\"用户创建\",\"RC_SN\":null,\"RC_EXPIRE_TIME\":\"2023-08-01 09:17:11\",\"ORDER_SEQ\":287989661259,\"BROKER_ID\":null,\"HISTORY_SEQ\":215437636818,\"LOCK_FLAG\":\"0\",\"BILL_TYPE\":5,\"BILL_CREDIT\":99999999,\"BILL_TIME\":null,\"EXPIRE_TIME\":null,\"ARCHIVES_CREATE_TIME\":\"2023-08-01 09:17:11\",\"PASSWORD_GET_TYPE\":0,\"PASSWORD_GET_TIME\":null,\"PASSWORD_RESET_TIME\":null,\"SUB_TYPE\":0}}".getBytes());
+        }
+    }
+
+    @Test
+    public void sendTest1CSV() throws Exception {
+        Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("test1");//设置话题
+            // ogg json
+            kafkaProducerGRUtil.send("test1", "123,test".getBytes());
+            kafkaProducerGRUtil.send("test1", "1234,test1".getBytes());
         }
     }
 

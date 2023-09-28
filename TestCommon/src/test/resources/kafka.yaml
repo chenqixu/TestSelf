@@ -6,10 +6,10 @@ param:
   kafkaconf.value.serializer: "org.apache.kafka.common.serialization.ByteArraySerializer"
   kafkaconf.security.protocol: "SASL_PLAINTEXT"
   kafkaconf.sasl.mechanism: "PLAIN"
-  kafkaconf.group.id: "test"
+  kafkaconf.group.id: "group_1"
 #  kafkaconf.group.id: "REALTIME_LOCATION_J_ALTIBASE"
   kafkaconf.enable.auto.commit: "true"
-#  kafkaconf.newland.consumer.mode: "fromBeginning"
+  kafkaconf.newland.consumer.mode: "fromBeginning"
 #  kafkaconf.newland.consumer.mode: "fromEnd"
 #    kafkaconf.newland.consumer.mode: "fromTime"
 #    kafkaconf.newland.consumer.fromTime: "2021-04-06 16:00:00"
@@ -19,13 +19,16 @@ param:
 #  kafkaconf.batch.size: "1048576"
   kafkaconf.newland.kafka_username: admin
   kafkaconf.newland.kafka_password: admin
+#  kafkaconf.newland.schema.mode: "URL"
   kafkaconf.newland.schema.mode: "NOAVRO"
   #alice
   #schema_url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
+  kafkaconf.newland.schema.cluster.name: "kafka"
+  kafkaconf.newland.schema.group.id: "default"
   kafkaconf.newland.schema.url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
   #  topic: NMC_TB_O_LOG_5G_N1N2_R_I_V1
 #  topic: nmc_app_nl_loc_mix_v1
 #  topic: nmc_etl_hw_lte_s1mme_v1
 #  topic: BROADBAND_RESERVATION
 #  topic: USER_ADDITIONAL_INFO
-  topic: test2
+  topic: test1

@@ -98,10 +98,16 @@ public class WordUtilTest {
         wordUtil.save(docxName);
     }
 
+    /**
+     * 把英语课本的图片转成word文档
+     *
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
     @Test
     public void imageToDoc() throws IOException, InvalidFormatException {
-        String picturePath = "e:\\Self\\课本\\小学\\英语四年级下(闽教)\\";
-        String docxName = "e:\\Self\\课本\\小学\\英语四年级下.docx";
+        String picturePath = "e:\\Self\\课本\\小学\\英语五年级上\\";
+        String docxName = "e:\\Self\\课本\\小学\\英语五年级上.docx";
         try {
             // 打开文件
             wordUtil.open();
@@ -116,6 +122,30 @@ public class WordUtilTest {
                 // 根据厘米，写入4
                 // A4大小: 宽 14.65, 高 21.05
 //                wordUtil.writeImageByCentimeter(picturePath + path, 14.65d, 21.05d);
+            }
+        } finally {
+            // 保存
+            wordUtil.save(docxName);
+        }
+    }
+
+    /**
+     * 把语文课本的图片转成word文档
+     *
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    @Test
+    public void imageToDocYuWen() throws IOException, InvalidFormatException {
+        String picturePath = "e:\\Self\\课本\\小学\\语文五年级上\\";
+        String docxName = "e:\\Self\\课本\\小学\\语文五年级上.docx";
+        try {
+            // 打开文件
+            wordUtil.open();
+            // 扫描图片
+            for (String path : FileUtil.listFileEndWith(picturePath, ".jpg")) {
+                // 宽度固定，根据厘米
+                wordUtil.writeImageByFixCentimeterWidth(picturePath + path, 14.65d);
             }
         } finally {
             // 保存

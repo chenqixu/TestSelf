@@ -443,6 +443,30 @@ public class FileUtil {
     }
 
     /**
+     * 获取类的字节码
+     *
+     * @param fileName
+     * @return
+     */
+    public static byte[] getClassBytes(String fileName) {
+        File file = new File(fileName);
+        try (InputStream is = new FileInputStream(file);
+             ByteArrayOutputStream bs = new ByteArrayOutputStream()) {
+            long length = file.length();
+            byte[] bytes = new byte[(int) length];
+
+            int n;
+            while ((n = is.read(bytes)) != -1) {
+                bs.write(bytes, 0, n);
+            }
+            return bytes;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
      * 根据结束符来扫描
      *
      * @param path
@@ -501,6 +525,30 @@ public class FileUtil {
         String _tmp;
         while ((_tmp = reader.readLine()) != null) {
             iFileRead.run(_tmp);
+        }
+        //结束
+        iFileRead.tearDown();
+    }
+
+    /**
+     * 逐行处理，只读取limit行
+     *
+     * @param iFileRead
+     * @param limit
+     * @throws IOException
+     */
+    public void readByLimit(IFileRead iFileRead, int limit) throws IOException {
+        String _tmp;
+        int cnt = 0;
+        if (limit <= 0) {
+            limit = 1;
+        }
+        while ((_tmp = reader.readLine()) != null) {
+            iFileRead.run(_tmp);
+            cnt++;
+            if (cnt == limit) {
+                break;
+            }
         }
         //结束
         iFileRead.tearDown();
@@ -796,30 +844,6 @@ public class FileUtil {
 
     public String getWriterName() {
         return writerName;
-    }
-
-    /**
-     * 获取类的字节码
-     *
-     * @param fileName
-     * @return
-     */
-    public static byte[] getClassBytes(String fileName) {
-        File file = new File(fileName);
-        try (InputStream is = new FileInputStream(file);
-             ByteArrayOutputStream bs = new ByteArrayOutputStream()) {
-            long length = file.length();
-            byte[] bytes = new byte[(int) length];
-
-            int n;
-            while ((n = is.read(bytes)) != -1) {
-                bs.write(bytes, 0, n);
-            }
-            return bytes;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
     }
 
     class ReaderThread extends Monitor {
