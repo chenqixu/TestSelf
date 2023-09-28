@@ -14,8 +14,8 @@ public class English {
     public static void main(String[] args) throws Exception {
         final int timeout = 15000;// 超时，单位毫秒
         HttpParserUtil httpParserUtil = new HttpParserUtil();
-        String url = "file:///e:\\Self\\课本\\小学\\英语四年级下.html";
-        final String saveImgPath = "e:\\Self\\课本\\小学\\英语四年级下\\%s.jpg";
+        String url = "file:///e:\\Self\\课本\\小学\\英语五年级上.htm";
+        final String saveImgPath = "e:\\Self\\课本\\小学\\英语五年级上\\%s.jpg";
         // div
         Elements elements = httpParserUtil.parserGetElements(url, timeout, ".rich_media_content");
         // 选择div下的所有img

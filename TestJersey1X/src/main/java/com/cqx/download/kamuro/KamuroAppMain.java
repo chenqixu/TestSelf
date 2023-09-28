@@ -23,7 +23,11 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 启动入口
+ * 启动入口<br>
+ *     <pre>
+ *         https://nukemanga.com/awols/latest/page/1667/
+ *         https://nukemanga.com/tag-list
+ *     </pre>
  *
  * @author chenqixu
  */
