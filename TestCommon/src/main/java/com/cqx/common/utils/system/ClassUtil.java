@@ -24,8 +24,12 @@ import java.util.jar.JarFile;
  *
  * @author chenqixu
  */
-public class ClassUtil<T extends Annotation, K> {
+public class ClassUtil<T extends Annotation, K> {// T extends Annotation, K
     private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+    /**
+     * 类的识别类型默认是注解
+     */
+    private ClassType classType = ClassType.Annotation;
 
     /**
      * 获取类加载器
@@ -90,7 +94,7 @@ public class ClassUtil<T extends Annotation, K> {
      * @param packageName
      * @return
      */
-    public Set<Class<?>> getClassSet(String packageName, Class<T> annotationClazz) {
+    public Set<Class<?>> getClassSet(String packageName, Class<T> annotationClazz, Class<K> extendsClazz) {
         Set<Class<?>> classSet = new HashSet<>();
         try {
             String packageNamePath = packageName.replace(".", "/");
@@ -106,7 +110,7 @@ public class ClassUtil<T extends Annotation, K> {
                         String packagePath = URLDecoder.decode(url.getFile(), "UTF-8");
                         // String packagePath =url.getPath().replaceAll("%20", "");
                         // 添加
-                        addClass(classSet, packagePath, packageName, annotationClazz);
+                        addClass(classSet, packagePath, packageName, annotationClazz, extendsClazz);
                     } else if (protocol.equals("jar")) {
                         logger.debug("protocol.jar url: {}", url);
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
@@ -121,7 +125,7 @@ public class ClassUtil<T extends Annotation, K> {
                                         logger.debug("扫描到 jarEntryName: {}", jarEntryName);
                                         String className = jarEntryName.substring(0, jarEntryName.lastIndexOf("."))
                                                 .replaceAll("/", ".");
-                                        doAddClass(classSet, className, annotationClazz);
+                                        doAddClass(classSet, className, annotationClazz, extendsClazz);
                                     }
                                 }
                             }
@@ -134,6 +138,16 @@ public class ClassUtil<T extends Annotation, K> {
             logger.error("查找包下的类失败{}", e);
         }
         return classSet;
+    }
+
+    /**
+     * 加载指定包下的所有类
+     *
+     * @param packageName
+     * @return
+     */
+    public Set<Class<?>> getClassSet(String packageName, Class<T> annotationClazz) {
+        return getClassSet(packageName, annotationClazz, null);
     }
 
     /**
@@ -196,7 +210,7 @@ public class ClassUtil<T extends Annotation, K> {
      * @param packageName
      */
     private void addClass(Set<Class<?>> classSet, String packagePath, String
-            packageName, Class<T> annotationClazz) {
+            packageName, Class<T> annotationClazz, Class<K> extendsClazz) {
         File[] files = new File(packagePath).listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -213,7 +227,7 @@ public class ClassUtil<T extends Annotation, K> {
                         logger.debug("扫描到 className: {}", className);
                     }
                     // 添加
-                    doAddClass(classSet, className, annotationClazz);
+                    doAddClass(classSet, className, annotationClazz, extendsClazz);
                 } else {
                     // 子目录
                     String subPackagePath = fileName;
@@ -224,7 +238,7 @@ public class ClassUtil<T extends Annotation, K> {
                     if (StringUtils.isNotEmpty(packageName)) {
                         subPackageName = packageName + "." + subPackageName;
                     }
-                    addClass(classSet, subPackagePath, subPackageName, annotationClazz);
+                    addClass(classSet, subPackagePath, subPackageName, annotationClazz, extendsClazz);
                 }
             }
         }
@@ -236,15 +250,43 @@ public class ClassUtil<T extends Annotation, K> {
      * @param classSet
      * @param className
      */
-    private void doAddClass(Set<Class<?>> classSet, String className, Class<T> annotationClazz) {
+    private void doAddClass(Set<Class<?>> classSet, String className, Class<T> annotationClazz, Class<K> extendsClazz) {
         //类加载
         Class<?> cls = loadClass(className, false);
-        //尝试通过注解获取对象
-        T body = cls.getAnnotation(annotationClazz);
-        //对象不为空即属于这个注解
-        if (body != null) {
-            classSet.add(cls);
-            logger.debug("增加 {} 类到集合", className);
+        switch (getClassType()) {
+            case Annotation:
+                //尝试通过注解获取对象
+                T body = cls.getAnnotation(annotationClazz);
+                //对象不为空即属于这个注解
+                if (body != null) {
+                    classSet.add(cls);
+                    logger.debug("增加 {} 类到集合", className);
+                }
+                break;
+            case Extends:
+                if (extendsClazz == null) {
+                    throw new NullPointerException("输入的extendsClazz为空，请调用public Set<Class<?>> getClassSet(String packageName, Class<T> annotationClazz, Class<K> extendsClazz)这个方法！");
+                }
+                if (cls.getGenericSuperclass() != null &&
+                        extendsClazz.getName().equals(cls.getGenericSuperclass().getTypeName())) {
+                    classSet.add(cls);
+                    logger.debug("增加 {} 类到集合", className);
+                }
+                break;
+            default:
+                break;
         }
+    }
+
+    public ClassType getClassType() {
+        return classType;
+    }
+
+    public void setClassType(ClassType classType) {
+        this.classType = classType;
+    }
+
+    public enum ClassType {
+        Annotation, Extends;
     }
 }
