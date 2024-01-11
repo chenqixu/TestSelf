@@ -1,13 +1,18 @@
 package com.cqx.common.utils.xml;
 
+import com.cqx.common.utils.file.FileCount;
+import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.log.MyLogger;
 import com.cqx.common.utils.log.MyLoggerFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class XMLParserTest {
 
@@ -68,5 +73,84 @@ public class XMLParserTest {
         for (XMLParserElement xmlParserElement : paramList) {
             logger.info("param.put(\"{}\", \"{}\");", xmlParserElement.getAttributeName(), xmlParserElement.getElementText());
         }
+    }
+
+    @Test
+    public void parserOrder() throws Exception {
+        xmlParser.setFileName("d:\\Work\\实时\\实时中台\\B域需求\\2023年关于实时运营场景的搭建需求\\10210023.xml");
+        xmlParser.init();
+        Map<String, Map<String, String>> productMap = new HashMap<>();
+        List<XMLParserElement> order_param_infoList = xmlParser.parseRootChildElement("order_param_info");
+        for (XMLParserElement order_param_info : order_param_infoList) {
+            for (XMLParserElement _x : order_param_info.getChildElementList()) {
+                if (_x.getElementName().equals("biz_info")) {
+                    List<XMLParserElement> user_productList = xmlParser.getChildElement(_x.getChildElementList(), "user_product");
+                    // 多个user_product
+                    for (XMLParserElement user_product : user_productList) {
+                        Map<String, String> user_productMap = new HashMap<>();
+                        for (XMLParserElement _u : user_product.getChildElementList()) {
+                            String key = _u.getElementName();
+                            String value = _u.getElementText();
+                            if (key.equals("product_id")) {
+                                productMap.put(value, user_productMap);
+                            }
+                            user_productMap.put(key, value);
+                        }
+                    }
+                }
+            }
+        }
+        for (Map.Entry<String, Map<String, String>> entry : productMap.entrySet()) {
+            logger.info("{}", entry);
+        }
+    }
+
+    @Test
+    public void parserOrderList() throws Exception {
+        AtomicInteger s1 = new AtomicInteger();
+        AtomicInteger s2 = new AtomicInteger();
+        FileUtil fileUtil = new FileUtil();
+        fileUtil.setReader("d:\\Work\\实时\\实时中台\\B域需求\\2023年关于实时运营场景的搭建需求\\oc_user_order0.txt");
+        try {
+            fileUtil.read(new FileCount() {
+                @Override
+                public void run(String content) throws IOException {
+                    xmlParser.setXmlData(content);
+                    xmlParser.init();
+                    Map<String, Map<String, String>> productMap = new HashMap<>();
+                    List<String> productList = new ArrayList<>();
+                    List<XMLParserElement> order_param_infoList = xmlParser.parseRootChildElement("order_param_info");
+                    for (XMLParserElement order_param_info : order_param_infoList) {
+                        for (XMLParserElement _x : order_param_info.getChildElementList()) {
+                            if (_x.getElementName().equals("biz_info")) {
+                                List<XMLParserElement> user_productList = xmlParser.getChildElement(_x.getChildElementList(), "user_product");
+                                // 多个user_product
+                                for (XMLParserElement user_product : user_productList) {
+                                    Map<String, String> user_productMap = new HashMap<>();
+                                    for (XMLParserElement _u : user_product.getChildElementList()) {
+                                        String key = _u.getElementName();
+                                        String value = _u.getElementText();
+                                        if (key.equals("product_id")) {
+                                            productList.add(value);
+                                            productMap.put(value, user_productMap);
+                                        }
+                                        user_productMap.put(key, value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    logger.info("size={}, {}", productList.size(), productList);
+                    if (productList.size() == 1) {
+                        s1.incrementAndGet();
+                    } else {
+                        s2.incrementAndGet();
+                    }
+                }
+            });
+        } finally {
+            fileUtil.closeRead();
+        }
+        logger.info("s1={} s2={}", s1.get(), s2.get());
     }
 }

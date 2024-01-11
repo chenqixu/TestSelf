@@ -40,7 +40,7 @@ public class RedisFactory627Test {
                 .setMode(RedisFactory.CLUSTER_MODE_TYPE)
                 .setPipeline(true)
                 .setPassword("by7JqR_k")
-                .setMax_wait_millis(10000)
+//                .setMax_wait_millis(10000)
                 .build();
     }
 
@@ -277,6 +277,17 @@ public class RedisFactory627Test {
             // 最后剩余强制flush
             redisPipeline.commit();
             logger.info("cost: {} ms", tc.stopAndGet());
+        }
+    }
+
+    @Test
+    public void pipelineTimeOut() {
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            for (int i = 0; i < 30; i++) {
+                redisPipeline.set("1", "1");
+                SleepUtil.sleepMilliSecond(60000L);
+                redisPipeline.set("1", "1");
+            }
         }
     }
 }

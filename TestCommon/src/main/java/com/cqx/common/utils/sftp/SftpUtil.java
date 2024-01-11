@@ -31,7 +31,12 @@ public class SftpUtil {
         SftpConnection sftpConnection = new SftpConnection();
         try {
             JSch jsch = new JSch();
-            jsch.getSession(ftpParamCfg.getUser(), ftpParamCfg.getHost(), ftpParamCfg.getPort());
+            // -Dserver_host_key=ssh-rsa,ssh-dss
+            String server_host_key_p = System.getProperty("server_host_key");
+            if (server_host_key_p != null && server_host_key_p.trim().length() > 0) {
+                logger.info("[参数] -Dserver_host_key={}", server_host_key_p);
+                JSch.setConfig("server_host_key", JSch.getConfig("server_host_key") + "," + server_host_key_p);
+            }
             Session sshSession = jsch.getSession(ftpParamCfg.getUser(), ftpParamCfg.getHost(), ftpParamCfg.getPort());
             sshSession.setPassword(ftpParamCfg.getPassword());
             Properties sshConfig = new Properties();

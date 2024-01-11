@@ -1039,6 +1039,30 @@ public class JDBCUtilTest extends TestBase {
         });
     }
 
+    @Test
+    public void callToReidsTest() throws SQLException {
+        TimeCostUtil tc = new TimeCostUtil();
+        tc.start();
+        StringBuilder sql = new StringBuilder();
+        sql.append("select a.prog_group_id , a.msisdn, ");
+        sql.append("       nvl(a.attach_info, ' ') attach_info         ");
+        sql.append("  from cmm_target_msisdn_result a                  ");
+        jdbcUtil.executeQuery(sql.toString(), new IJDBCUtilCall.ICallBack() {
+            int count = 0;
+
+            @Override
+            public void call(ResultSet rs) throws SQLException {
+                count++;
+            }
+
+            @Override
+            public void close() {
+                logger.info("num={}", count);
+            }
+        });
+        logger.info("cost={}", tc.stopAndGet());
+    }
+
     interface Q1 {
         String getData();
     }

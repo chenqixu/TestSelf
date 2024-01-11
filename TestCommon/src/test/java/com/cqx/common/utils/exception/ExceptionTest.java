@@ -34,7 +34,8 @@ public class ExceptionTest {
     }
 
     @Test
-    public void kafkaClose() {long threadId = Thread.currentThread().getId();
+    public void kafkaClose() {
+        long threadId = Thread.currentThread().getId();
         logger.info("threadId：{}，currentThread.get()：{}，equal：{}"
                 , threadId, currentThread.get(), threadId != currentThread.get());
         logger.info("!compareAndSet：{}", !currentThread.compareAndSet(NO_CURRENT_THREAD, threadId));
@@ -43,8 +44,32 @@ public class ExceptionTest {
         }
     }
 
+    @Test
+    public void classNotFindTest() {
+        String className = "com.t.t.t.t.t.t1";
+        try {
+            try {
+                Class headerCls = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+//                Exception e1 = new Exception(e);
+//                throw e1;
+//                RuntimeException npe = new RuntimeException(String.format("header构造异常！使用的构造类：%s", className));
+//                npe.addSuppressed(e);
+//                throw npe;
+                RuntimeExceptionTest ret = new RuntimeExceptionTest(
+                        String.format("header构造异常！使用的构造类：%s", className), e);
+//                ret.addSuppressed(e);
+                throw ret;
+            }
+        } catch (Exception ex) {
+//            ex.printStackTrace();
+            logger.error(ex.getMessage(), ex);
+//            errorPrint("[test]", ex);
+        }
+    }
+
     private void errorPrint(String msg, Exception e) {
-        logger.warn("{}-异常，cause：{}", msg, e.getCause().toString());
+//        logger.warn("{}-异常，cause：{}", msg, e.getCause().toString());
         logger.warn("{}-异常，message：{}", msg, e.getMessage());
         StringWriter stack = new StringWriter();
         e.printStackTrace(new PrintWriter(stack));
