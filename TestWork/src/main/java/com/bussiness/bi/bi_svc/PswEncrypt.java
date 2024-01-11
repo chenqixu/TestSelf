@@ -240,6 +240,10 @@ public class PswEncrypt {
         PswEncrypt.PswDecrypt("9990306", "bIagb0aQaabbbsaObCbBa3bWbZaNaqbfbhaDaAalaWbNa7bsafacaYa2bpbmaeaN");//Qwe123@@
         PswEncrypt.PswDecrypt("9990122", "bEacbwaMcaaXboaKb8b7azbSbVaJambbbda9a6ahaSbJa3boabccaUayblbiaaaJ");//Qwe123@@
         PswEncrypt.PswDecrypt("5004936", "bBbrbuaabjbHbVaDaIb6aZbNbPaCbyakaVa0a6bwagaPbJbmbmaHaHbDasbebWaH");
+        PswEncrypt.PswDecrypt("5003824", "b4bWbmaCbQaNbeaAbybxapbIbLa9acaRaTazawcbaIb9atbebVbSaKaobbaYbUa9");
+        PswEncrypt.PswDecrypt("5003824", "b6bnbZaFbdaObabQbvagaibJbIbsbqaOaTbFbnbmcdaLbAbfbhbYbzb5bbbha5a7");
+        // 29ae1402ab2c0d0b53e2534c36a5e9a1
+        // newland123
 
 //		System.out.println("update sm_user set passwd='"+PswEncrypt.MD5PswEncrypt(md5passwd,"9990122")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990122);");
 //		System.out.println("update sm_user set passwd='"+PswEncrypt.MD5PswEncrypt(md5passwd,"9990424")+"',passwd_repeat_cnt=0,lock_flag=0 where user_id in (9990424);");
