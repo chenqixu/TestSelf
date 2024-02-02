@@ -61,6 +61,7 @@ public class ByteUtil {
      *     (b >> 1) & 0x1：00000000 00000000 00000000 00000001 变成 00000000 00000000 00000000 00000001
      *     (byte) ((b >> 1) & 0x1)：00000000 00000000 00000000 00000000 变成 00000001
      * </pre>
+     * 也可以参考Integer.toBinaryString(n);
      */
     public static String byteToBit(byte b) {
         return "" + (byte) ((b >> 7) & 0x1) +
@@ -497,7 +498,7 @@ public class ByteUtil {
     }
 
     /**
-     * 移除字节数组中有FF的字节
+     * 移除字节数组中有FF的字节，从前面开始移除
      *
      * @param bytes 源字节数组
      * @return 处理后的字节数组
@@ -505,7 +506,7 @@ public class ByteUtil {
     public static final byte[] removeFF(byte[] bytes) {
         int size = bytes.length;
         int realsize = size;
-        for (int i = size - 1; i >= 0; i--) {
+        for (int i = 0; i < size; i++) {
             if (bytes[i] == Constant.BYTE_DEFAULT) {
                 realsize = i;
             } else {
@@ -517,9 +518,9 @@ public class ByteUtil {
         if (size == realsize) {
             return bytes;
         } else {
-            byte[] bytesDest = new byte[realsize];
-            for (int j = 0; j < realsize; j++) {
-                bytesDest[j] = bytes[j];
+            byte[] bytesDest = new byte[size - realsize - 1];
+            for (int j = realsize + 1, i = 0; j < size; j++, i++) {
+                bytesDest[i] = bytes[j];
             }
             return bytesDest;
         }
@@ -548,6 +549,58 @@ public class ByteUtil {
             logger.error(e.getMessage(), e);
             logger.error("tbcd error. data = {}", bytesToHexStringH(bytes, " "));
             return StringUtils.EMPTY;
+        }
+    }
+
+    /**
+     * 字符格式化成TBCD编码，前面位数不足补0xFF<br>
+     * TBCD规则，只是把单字节的低四位和高四位互换，字节顺序不变
+     *
+     * @param data
+     * @param size
+     * @return
+     */
+    public static final byte[] strToTBCDBytes(String data, int size) {
+        if (data != null && data.trim().length() > 0) {
+            byte[] tbcd = TBCDUtil.parseTBCD(data);
+            // 要求的长度大于TBCD编码转换后的长度，需要在前面补FF
+            int diff = size - tbcd.length;
+            if (diff > 0) {
+                byte[] newbytes = new byte[diff];
+                for (int i = 0; i < diff; i++) {
+                    newbytes[i] = (byte) 0xFF;
+                }
+                return ArrayUtil.arrayAdd(newbytes, tbcd, tbcd.length);
+            } else {
+                return tbcd;
+            }
+        } else {
+            if (size == 1) {
+                return Constant.BYTE1_DEFAULT;
+            } else if (size == 2) {
+                return Constant.BYTE2_DEFAULT;
+            } else if (size == 4) {
+                return Constant.BYTE4_DEFAULT;
+            } else if (size == 8) {
+                return Constant.BYTE8_DEFAULT;
+            } else if (size == 16) {
+                return Constant.BYTE16_DEFAULT;
+            } else if (size == 32) {
+                return Constant.BYTE32_DEFAULT;
+            } else if (size == 44) {
+                return Constant.BYTE44_DEFAULT;
+            } else if (size == 55) {
+                return Constant.BYTE55_DEFAULT;
+            } else if (size == 64) {
+                return Constant.BYTE64_DEFAULT;
+            } else if (size == 128) {
+                return Constant.BYTE128_DEFAULT;
+            } else if (size == 256) {
+                return Constant.BYTE256_DEFAULT;
+            } else {
+                // 针对可变长度字段判断
+                return getEmptyByte(size);
+            }
         }
     }
 

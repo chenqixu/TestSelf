@@ -756,6 +756,24 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 需要在调用createOutputStreamFile之后，使用输入流InputStream写入数据
+     *
+     * @param is
+     * @throws IOException
+     */
+    public void write(InputStream is) throws IOException {
+        if (writer == null) throw new IOException("请初始化writer！");
+        if (!(writer instanceof FileOutputStreamExWriter))
+            throw new UnsupportedOperationException("请使用createOutputStreamFile方法进行初始化！");
+        if (is == null) throw new IOException("请初始化输入流InputStream！");
+        byte[] buf = new byte[BUFF_SIZE];
+
+        for (int bytesRead = is.read(buf); bytesRead >= 0; bytesRead = is.read(buf)) {
+            write(buf, 0, bytesRead);
+        }
+    }
+
     public void flush() {
         if (writer != null) {
             try {

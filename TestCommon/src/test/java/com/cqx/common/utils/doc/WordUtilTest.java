@@ -106,8 +106,8 @@ public class WordUtilTest {
      */
     @Test
     public void imageToDoc() throws IOException, InvalidFormatException {
-        String picturePath = "e:\\Self\\课本\\小学\\英语五年级上\\";
-        String docxName = "e:\\Self\\课本\\小学\\英语五年级上.docx";
+        String picturePath = "e:\\Self\\课本\\小学\\英语五年级下\\";
+        String docxName = "e:\\Self\\课本\\小学\\英语五年级下.docx";
         try {
             // 打开文件
             wordUtil.open();
@@ -155,8 +155,8 @@ public class WordUtilTest {
 
     @Test
     public void imageToPDF() throws IOException {
-        String picturePath = "e:\\Self\\课本\\小学\\英语四年级下(闽教)\\";
-        String pdfName = "e:\\Self\\课本\\小学\\英语四年级下.pdf";
+        String picturePath = "e:\\Self\\课本\\小学\\英语五年级下\\";
+        String pdfName = "e:\\Self\\课本\\小学\\英语五年级下.pdf";
         List<String> imgs = new ArrayList<>();
         PdfUtil pdfUtil = new PdfUtil();
         // 扫描PDF

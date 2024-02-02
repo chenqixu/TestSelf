@@ -1,5 +1,6 @@
 package com.cqx.common.utils.system;
 
+import com.cqx.common.utils.coder.TBCDUtil;
 import com.cqx.common.utils.io.MyByteArrayOutputStream;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -132,5 +133,19 @@ public class ByteUtilTest {
         for (char c : str.toCharArray()) {
             logger.info("char {}", (int) c);
         }
+    }
+
+    @Test
+    public void tbcdTest() {
+        // TBCD规则：把单字节的低四位和高四位互换，字节顺序不变
+        long val = 460009673508414L;
+        byte[] vals = ByteUtil.numberToBytes(val);
+        logger.info("val={}, bytes.len={}", val, vals.length);
+
+        // 转TBCD
+        byte[] tbcdBytes = TBCDUtil.bytesToTBCD(vals);
+        // TBCD反转
+        byte[] _tbcdBytes = TBCDUtil.TBCDToBytes(tbcdBytes);
+        logger.info("TBCD反转={}", ByteUtil.unsignedBytesToBigInteger(_tbcdBytes));
     }
 }

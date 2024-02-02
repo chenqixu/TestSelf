@@ -1,8 +1,15 @@
 package com.cqx.common.utils.coder;
 
+import com.cqx.common.utils.system.ByteUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * TBCD规则：把单字节的低四位和高四位互换，字节顺序不变
+ */
 public class TBCDUtil {
+    private static final Logger logger = LoggerFactory.getLogger(TBCDUtil.class);
     private static final String cTBCDSymbolString = "0123456789*#abc";
     private static final byte[] HEX_CHAR = new byte[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private static final StringBuilder EMPTY_STIRNG = new StringBuilder(StringUtils.EMPTY);
@@ -99,5 +106,53 @@ public class TBCDUtil {
         }
 
         return sb;
+    }
+
+    /**
+     * 字节数组转TBCD字节数组
+     *
+     * @param bytes
+     * @return
+     */
+    public static final byte[] bytesToTBCD(byte[] bytes) {
+        byte[] result = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            logger.info("[原始] byte={}, bit={}", bytes[i], ByteUtil.byteToBit(bytes[i]));
+            // 低四位左移
+            byte lowb = (byte) (bytes[i] << 4);
+            logger.info("[低四位左移] lowb.byte={}, bit={}", lowb, ByteUtil.byteToBit(lowb));
+            // 高四位右移，左边是符号位，需要& 0xf变为0
+            byte highb = (byte) (bytes[i] >> 4 & 0xf);
+            logger.info("[高四位右移] highb.byte={}, bit={}", highb, ByteUtil.byteToBit(highb));
+            // 高四位和低四位交换
+            byte nb = (byte) (lowb | highb);
+            logger.info("[高四位和低四位交换] nb.byte={}, bit={}", nb, ByteUtil.byteToBit(nb));
+            result[i] = nb;
+        }
+        return result;
+    }
+
+    /**
+     * TBCD字节数组还原
+     *
+     * @param bytes
+     * @return
+     */
+    public static final byte[] TBCDToBytes(byte[] bytes) {
+        byte[] result = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            logger.info("[原始] byte={}, bit={}", bytes[i], ByteUtil.byteToBit(bytes[i]));
+            // 高四位右移，还原低四位
+            byte lowb = (byte) (bytes[i] >> 4 & 0xf);
+            logger.info("[高四位右移，还原低四位] lowb.byte={}, bit={}", lowb, ByteUtil.byteToBit(lowb));
+            // 低四位左移，还原高四位
+            byte highb = (byte) (bytes[i] << 4);
+            logger.info("[低四位左移，还原高四位] highb.byte={}, bit={}", highb, ByteUtil.byteToBit(highb));
+            // 低四位和高四位交换
+            byte nb = (byte) (lowb | highb);
+            logger.info("[低四位和高四位交换] nb.byte={}, bit={}", nb, ByteUtil.byteToBit(nb));
+            result[i] = nb;
+        }
+        return result;
     }
 }

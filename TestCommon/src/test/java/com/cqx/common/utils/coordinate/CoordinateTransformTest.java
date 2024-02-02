@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +24,9 @@ public class CoordinateTransformTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(CoordinateTransformTest.class);
     private HttpUtil httpUtil;
     // 经度，Longtitude
-    private double lng = 114.21892734521;
+    private double lng = 117.3680000000;
     // 纬度，Latitude
-    private double lat = 29.575429778924;
+    private double lat = 25.9824000000;
     // 参数
     private Map param;
 
@@ -103,7 +104,8 @@ public class CoordinateTransformTest extends TestBase {
     public void transformWGS84ToGCJ02() {
         Double[] lngLat = CoordinateTransform.transformWGS84ToGCJ02(lng, lat);
         for (double d : lngLat) {
-            logger.info("{}", d);
+            BigDecimal b = new BigDecimal(d);
+            logger.info("double={} BigDecimal={} dbv={} toString={} float={}", d, b, b.doubleValue(), b.toString(), b.floatValue());
         }
         // 114.21892734521   29.575429778924
     }

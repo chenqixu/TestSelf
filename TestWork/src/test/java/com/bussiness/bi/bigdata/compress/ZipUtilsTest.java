@@ -2,13 +2,12 @@ package com.bussiness.bi.bigdata.compress;
 
 import com.cqx.common.utils.compress.zip.Zip4jUtils;
 import com.cqx.common.utils.compress.zip.ZipUtils;
+import com.cqx.common.utils.file.FileUtil;
 import net.lingala.zip4j.exception.ZipException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class ZipUtilsTest {
 
@@ -47,5 +46,22 @@ public class ZipUtilsTest {
         String dest = "d:\\tmp\\data\\zip\\uncompress\\";
         String password = "123456";
         Zip4jUtils.unzip(zip, dest, password);
+    }
+
+    @Test
+    public void findX9Conn() throws Exception {
+        int all_cnt = 0;
+        int is_x9_cnt = 0;
+        for (File file : FileUtil.listFilesEndWith("d:\\tmp\\data\\oracle_blob\\flowtask\\", ".zip")) {
+            all_cnt++;
+            try (FileInputStream fis = new FileInputStream(file)) {
+                String xml = zipUtils.unZip(fis, "node");
+//                boolean isX9 = xml.contains("cbass_");
+                boolean isX9 = xml.contains("dmbass");
+                if (isX9) is_x9_cnt++;
+                System.out.println(String.format("[fileName]%s [is cbass_]%s", file.getName(), isX9));
+            }
+        }
+        System.out.println(String.format("[all_cnt]%s [is_x9_cnt]%s", all_cnt, is_x9_cnt));
     }
 }

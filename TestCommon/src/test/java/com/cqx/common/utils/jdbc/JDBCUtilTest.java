@@ -1063,6 +1063,16 @@ public class JDBCUtilTest extends TestBase {
         logger.info("cost={}", tc.stopAndGet());
     }
 
+    @Test
+    public void queryFt_mid_sector_info_daily_mid() throws SQLException {
+        TimeCostUtil exec = new TimeCostUtil();
+        exec.start();
+        List<List<QueryResult>> results = jdbcUtil.executeQuery("select SITE_LON_GCJ02,SITE_LAT_GCJ02 from ft_mid_sector_info_daily_mid");
+        exec.stop();
+        logger.info("{} result.size：{}，cost：{}", Thread.currentThread().getName(),
+                (results != null ? results.size() : 0), exec.stopAndGet());
+    }
+
     interface Q1 {
         String getData();
     }
