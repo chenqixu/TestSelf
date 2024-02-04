@@ -141,6 +141,7 @@ public class ByteUtilTest {
         long val = 460009673508414L;
         byte[] vals = ByteUtil.numberToBytes(val);
         logger.info("val={}, bytes.len={}", val, vals.length);
+        logger.info("0xf={}", ByteUtil.byteToBit((byte) 0xf));
 
         // 转TBCD
         byte[] tbcdBytes = TBCDUtil.bytesToTBCD(vals);

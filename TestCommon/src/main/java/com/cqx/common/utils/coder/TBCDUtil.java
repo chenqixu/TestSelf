@@ -121,7 +121,7 @@ public class TBCDUtil {
             // 低四位左移
             byte lowb = (byte) (bytes[i] << 4);
             logger.info("[低四位左移] lowb.byte={}, bit={}", lowb, ByteUtil.byteToBit(lowb));
-            // 高四位右移，左边是符号位，需要& 0xf变为0
+            // 高四位右移，左边是符号位，需要& 0xf变为0，0xf=00001111
             byte highb = (byte) (bytes[i] >> 4 & 0xf);
             logger.info("[高四位右移] highb.byte={}, bit={}", highb, ByteUtil.byteToBit(highb));
             // 高四位和低四位交换
@@ -142,7 +142,7 @@ public class TBCDUtil {
         byte[] result = new byte[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
             logger.info("[原始] byte={}, bit={}", bytes[i], ByteUtil.byteToBit(bytes[i]));
-            // 高四位右移，还原低四位
+            // 高四位右移，还原低四位，需要& 0xf变为0，0xf=00001111
             byte lowb = (byte) (bytes[i] >> 4 & 0xf);
             logger.info("[高四位右移，还原低四位] lowb.byte={}, bit={}", lowb, ByteUtil.byteToBit(lowb));
             // 低四位左移，还原高四位
