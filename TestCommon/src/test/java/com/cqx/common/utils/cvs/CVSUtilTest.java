@@ -70,6 +70,11 @@ public class CVSUtilTest {
         logger.info("{}", Integer.valueOf("10110011", 2));
 
         logger.info("{}", Integer.valueOf("00C8", 16));
+
+        // int是4个字节，有符号位，所以最大是2的31次方-1，即：2147483647
+        // 而FFFFFFFF是无符号位的，4294967295，超过了int上限
+//        logger.info("{}", Integer.valueOf("FFFFFFFF", 16));
+        logger.info("{} {}", Long.valueOf("FFFFFFFF", 16), Integer.MAX_VALUE);
     }
 
     @Test
