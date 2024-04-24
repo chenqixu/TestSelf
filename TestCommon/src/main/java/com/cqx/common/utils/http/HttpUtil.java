@@ -117,6 +117,24 @@ public class HttpUtil implements Serializable {
         return doPost(url, headerMap, data);
     }
 
+    public String doPostThrowException(String url, Map<String, String> headerMap, String data) throws IOException {
+        final String[] result = {""};
+        doSendThrowException(url, data, UTF8_CODE, HttpPost.class, headerMap, new IHttpEntityDealThrowException() {
+            @Override
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) throws IOException {
+                // 通过EntityUtils中的toString方法将结果转换为字符串
+                result[0] = EntityUtils.toString(entity, UTF8_CODE);
+            }
+        });
+        return result[0];
+    }
+
+    public String doPostThrowException(String url, String data) throws IOException {
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("Content-Type", "application/json");
+        return doPostThrowException(url, headerMap, data);
+    }
+
     public String doPut(String url, String data) {
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");

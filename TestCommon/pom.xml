@@ -647,8 +647,8 @@
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc7</artifactId>
-            <!--<version>12.1.0.2</version>-->
-            <version>12.1.0.2-SNAPSHOT</version>
+            <version>12.1.0.2</version>
+            <!--<version>12.1.0.2-SNAPSHOT</version>-->
             <!-- <artifactId>ojdbc6</artifactId> -->
             <!-- <version>11.2.0.4.0</version> -->
             <!-- <artifactId>ojdbc14</artifactId> -->
@@ -954,7 +954,7 @@
 
         <!-- oceanbase -->
         <dependency>
-            <groupId>com.alipay.oceanbase</groupId>
+            <groupId>com.oceanbase</groupId>
             <artifactId>oceanbase-client</artifactId>
             <version>1.1.7</version>
             <exclusions>
@@ -1041,6 +1041,18 @@
         <dependency>
             <groupId>io.pkts</groupId>
             <artifactId>pkts-streams</artifactId>
+            <version>3.0.11-SNAPSHOT</version>
+        </dependency>
+        <dependency><groupId>io.pkts</groupId>
+            <artifactId>pkts-diameter</artifactId>
+            <version>3.0.11-SNAPSHOT</version>
+        </dependency>
+        <dependency><groupId>io.pkts</groupId>
+            <artifactId>pkts-core</artifactId>
+            <version>3.0.11-SNAPSHOT</version>
+        </dependency>
+        <dependency><groupId>io.pkts</groupId>
+            <artifactId>pkts-sip</artifactId>
             <version>3.0.11-SNAPSHOT</version>
         </dependency>
 
