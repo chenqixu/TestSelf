@@ -7,6 +7,9 @@
 		<version>1.0.0</version>
 	</parent>
 	<artifactId>TestRanger</artifactId>
+	<properties>
+		<JAVA_HOME>D:\Program Files\Java\jdk1.8.0_201</JAVA_HOME>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

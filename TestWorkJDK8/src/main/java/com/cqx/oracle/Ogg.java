@@ -7,6 +7,6 @@ package com.cqx.oracle;
  */
 public class Ogg {
     public void test() {
-        oracle.goldengate.handler.kafka.DefaultProducerRecord a;
+//        oracle.goldengate.handler.kafka.DefaultProducerRecord a;
     }
 }

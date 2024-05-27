@@ -70,8 +70,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.collections.map.UnmodifiableMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.classification.InterfaceAudience;
-import org.apache.hadoop.classification.InterfaceStability;
+//import org.apache.hadoop.classification.InterfaceAudience;
+//import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
@@ -161,8 +161,8 @@ import com.google.common.base.Preconditions;
  * <tt>log4j.logger.org.apache.hadoop.conf.Configuration.deprecation</tt> in
  * log4j.properties file.
  */
-@InterfaceAudience.Public
-@InterfaceStability.Stable
+//@InterfaceAudience.Public
+//@InterfaceStability.Stable
 public class Configuration implements Iterable<Map.Entry<String,String>>,
                                       Writable {
   private static final Log LOG =
@@ -1464,7 +1464,7 @@ public class Configuration implements Iterable<Map.Entry<String,String>>,
    * the second one would indicate the file that the new configuration was read
    * in from.
    */
-  @InterfaceStability.Unstable
+//  @InterfaceStability.Unstable
   public synchronized String[] getPropertySources(String name) {
     if (properties == null) {
       // If properties is null, it means a resource was newly added

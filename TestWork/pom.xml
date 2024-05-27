@@ -97,8 +97,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -1586,6 +1586,7 @@
             <groupId>com.newland.bi.component</groupId>
             <artifactId>nl-rtc-core-file</artifactId>
             <version>2.0</version>
+            <type>pom</type>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-compress</artifactId>
@@ -1791,9 +1792,9 @@
 
         <!-- pdi -->
         <!--<dependency>-->
-            <!--<groupId>pentaho</groupId>-->
-            <!--<artifactId>pentaho-big-data-kettle-plugins-kafka</artifactId>-->
-            <!--<version>8.0.0.0-28</version>-->
+        <!--<groupId>pentaho</groupId>-->
+        <!--<artifactId>pentaho-big-data-kettle-plugins-kafka</artifactId>-->
+        <!--<version>8.0.0.0-28</version>-->
         <!--</dependency>-->
 
         <!-- joda-time -->
@@ -2037,6 +2038,42 @@
             <groupId>org.rocksdb</groupId>
             <artifactId>rocksdbjni</artifactId>
             <version>6.10.2</version>
+        </dependency>
+
+        <!-- RoaringBitmap -->
+        <dependency>
+            <groupId>org.roaringbitmap</groupId>
+            <artifactId>RoaringBitmap</artifactId>
+            <version>0.7.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.newland.bd.utils</groupId>
+            <artifactId>nl-bd-model</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.newland.bd.utils</groupId>
+            <artifactId>nl-bd-utils</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.newland.bd.jstorm</groupId>
+            <artifactId>nl-udap-component-stream-file</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.newland.bd.jstorm</groupId>
+            <artifactId>nl-rtc-core-file</artifactId>
+            <version>2.0.0</version>
         </dependency>
     </dependencies>
 </project>

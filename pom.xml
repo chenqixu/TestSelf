@@ -6,7 +6,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <properties>
-        <JAVA_HOME>D:\Program Files\Java\jdk1.8.0_05</JAVA_HOME>
+        <JAVA_HOME>D:\Program Files\Java\jdk1.8.0_201</JAVA_HOME>
     </properties>
     <build>
         <plugins>

@@ -3,8 +3,8 @@ package org.apache.hadoop.io.nativeio;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.classification.InterfaceAudience;
-import org.apache.hadoop.classification.InterfaceStability;
+//import org.apache.hadoop.classification.InterfaceAudience;
+//import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.fs.HardLink;
@@ -28,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * These functions should generally be used alongside a fallback to another
  * more portable mechanism.
  */
-@InterfaceAudience.Private
-@InterfaceStability.Unstable
+//@InterfaceAudience.Private
+//@InterfaceStability.Unstable
 public class NativeIO {
     public static class POSIX {
         // Flags for open() call from bits/fcntl.h

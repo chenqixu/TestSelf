@@ -13,9 +13,9 @@
 
     <!--<repositories>-->
         <!--<repository>-->
-            <!--<id>bd-hw</id>-->
-            <!--<name>bd-hw</name>-->
-            <!--<url>http://10.1.4.161:8085/repository/bd-hw/</url>-->
+            <!--<id>huaweicloudsdk</id>-->
+            <!--<name>huaweicloudsdk</name>-->
+            <!--<url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>-->
         <!--</repository>-->
     <!--</repositories>-->
 
@@ -1161,6 +1161,13 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
+        </dependency>
+
+        <!-- redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.10.1</version>
         </dependency>
     </dependencies>
 </project>
