@@ -458,4 +458,56 @@ public class FileUtilTest {
             fileUtil.closeRead();
         }
     }
+
+    @Test
+    public void ouyuanTest() throws Exception {
+        try {
+            fileUtil.createFile("d:\\tmp\\data\\tag\\a_11100_2024060304_IOP-91072_00_001.txt", "UTF-8");
+//            fileUtil.write("11100");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("福建爱优腾活跃用户客户群");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("0102530510791700823623687733257");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("福建爱优腾活跃用户");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("M");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("ouyangfan");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("588582291");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("20240603040655");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("20250101120100");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("20240603040655");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("20250101120100");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("福建爱优腾活跃用户");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("爱优腾活跃用户");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+//            fileUtil.write("和 (符合全部条件)");
+//            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+            fileUtil.write("\u20AC".getBytes(StandardCharsets.UTF_8));
+        } finally {
+            fileUtil.closeWrite();
+        }
+        try (FileInputStream fis = new FileInputStream("d:\\tmp\\data\\tag\\a_11100_2024060304_IOP-91072_00_001.dat.txt")) {
+            int len = fis.available();
+            byte[] bytes = new byte[len];
+            int r = fis.read(bytes);
+            byte[] bs = "\u20AC".getBytes(StandardCharsets.UTF_8);
+            byte b1 = (byte) 0x80;
+            // -30 -126 -84
+            // -128 13 10
+            for (String str : fileUtil.read("d:\\tmp\\data\\tag\\a_11100_2024060304_IOP-91072_00_001.dat", "ms936")) {
+                logger.info("{}", str);
+            }
+        } finally {
+            fileUtil.closeRead();
+        }
+    }
 }

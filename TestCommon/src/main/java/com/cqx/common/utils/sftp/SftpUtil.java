@@ -2,6 +2,7 @@ package com.cqx.common.utils.sftp;
 
 import com.cqx.common.utils.ftp.FileInfo;
 import com.cqx.common.utils.ftp.FtpParamCfg;
+import com.cqx.common.utils.ftp.ProxyBean;
 import com.cqx.common.utils.system.TimeCostUtil;
 import com.jcraft.jsch.*;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
@@ -28,6 +29,16 @@ public class SftpUtil {
      * @return
      */
     public static SftpConnection getSftpConnection(FtpParamCfg ftpParamCfg) {
+        return getSftpConnection(ftpParamCfg, null);
+    }
+
+    /**
+     * 创建SFTP连接
+     *
+     * @param ftpParamCfg
+     * @return
+     */
+    public static SftpConnection getSftpConnection(FtpParamCfg ftpParamCfg, ProxyBean proxyBean) {
         SftpConnection sftpConnection = new SftpConnection();
         try {
             JSch jsch = new JSch();
@@ -38,6 +49,12 @@ public class SftpUtil {
                 JSch.setConfig("server_host_key", JSch.getConfig("server_host_key") + "," + server_host_key_p);
             }
             Session sshSession = jsch.getSession(ftpParamCfg.getUser(), ftpParamCfg.getHost(), ftpParamCfg.getPort());
+
+            // 设置HTTP代理
+            if (proxyBean != null) {
+                sshSession.setProxy(new ProxyHTTP(proxyBean.getProxyHost(), proxyBean.getProxyPort()));
+            }
+
             sshSession.setPassword(ftpParamCfg.getPassword());
             Properties sshConfig = new Properties();
             sshConfig.put("StrictHostKeyChecking", "no");

@@ -22,27 +22,27 @@
         </plugins>
     </build>
     <modules>
-        <module>TestShareClass</module>
-        <module>TestSFTPTool</module>
-        <module>TestHdfsTool</module>
-        <module>TestKafka</module>
+        <!--<module>TestShareClass</module>-->
+        <!--<module>TestSFTPTool</module>-->
+        <!--<module>TestHdfsTool</module>-->
+        <!--<module>TestKafka</module>-->
         <module>TestWork</module>
-        <module>TestFrameForm</module>
-        <module>TestJavaThinking</module>
-        <module>TestQuestions</module>
-        <module>TestMR</module>
+        <!--<module>TestFrameForm</module>-->
+        <!--<module>TestJavaThinking</module>-->
+        <!--<module>TestQuestions</module>-->
+        <!--<module>TestMR</module>-->
         <module>TestWorkJDK8</module>
-        <module>TestJMX</module>
-        <module>TestSpark</module>
-        <module>TestRanger</module>
-        <module>TestOozie</module>
-        <module>TestZookeeperTool</module>
-        <module>TestJersey2X</module>
-        <module>TestJersey1X</module>
-        <module>TestPool</module>
+        <!--<module>TestJMX</module>-->
+        <!--<module>TestSpark</module>-->
+        <!--<module>TestRanger</module>-->
+        <!--<module>TestOozie</module>-->
+        <!--<module>TestZookeeperTool</module>-->
+        <!--<module>TestJersey2X</module>-->
+        <!--<module>TestJersey1X</module>-->
+        <!--<module>TestPool</module>-->
         <module>TestCommon</module>
-        <module>TestCalcite</module>
-        <module>TestJVMAgent</module>
-        <module>Kafka0.8</module>
+        <!--<module>TestCalcite</module>-->
+        <!--<module>TestJVMAgent</module>-->
+        <!--<module>Kafka0.8</module>-->
     </modules>
 </project>

@@ -1,6 +1,7 @@
 package com.cqx.common.utils.sftp;
 
 import com.cqx.common.utils.ftp.FtpParamCfg;
+import com.cqx.common.utils.ftp.ProxyBean;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.thread.ThreadTool;
 import org.junit.After;
@@ -16,6 +17,7 @@ import java.util.Random;
 public class SftpUtilTest {
     private static final Logger logger = LoggerFactory.getLogger(SftpUtilTest.class);
     private SftpConnection sftpConnection;
+    private SftpConnection sftpConnectionProxy;
     private FtpParamCfg ftpParamCfg;
 
     @Before
@@ -24,11 +26,18 @@ public class SftpUtilTest {
         ftpParamCfg = new FtpParamCfg("10.1.8.203", 22, "edc_base", "fLyxp1s*");
 //        ftpParamCfg = new FtpParamCfg("10.1.8.204", 22, "edc_base", "fLyxp1s*");
         sftpConnection = SftpUtil.getSftpConnection(ftpParamCfg);
+
+        FtpParamCfg ftpParamCfg213 = new FtpParamCfg("10.47.248.213", 22, "edc_base", "aBc4Y5L6");
+        ProxyBean proxyBean = new ProxyBean();
+        proxyBean.setProxyHost("10.1.2.199");
+        proxyBean.setProxyPort(8123);
+        sftpConnectionProxy = SftpUtil.getSftpConnection(ftpParamCfg213, proxyBean);
     }
 
     @After
     public void tearDown() throws Exception {
         if (sftpConnection != null) SftpUtil.closeSftpConnection(sftpConnection);
+        if (sftpConnectionProxy != null) SftpUtil.closeSftpConnection(sftpConnectionProxy);
     }
 
     @Test
@@ -39,6 +48,14 @@ public class SftpUtilTest {
         SftpUtil.upload(sftpConnection, local_path + file, remote_path + file);
         file = "LTE_S1UOTHER_008388682002_20190411080100.txt";
         SftpUtil.upload(sftpConnection, local_path + file, remote_path + file);
+    }
+
+    @Test
+    public void uploadByProxy() {
+        String file = "LTE_S1UHTTP_010531112002_20190507000000.txt";
+        String local_path = "d:\\tmp\\data\\dpi\\dpi_ltedata\\";
+        String remote_path = "/bi/data/";
+        SftpUtil.upload(sftpConnectionProxy, local_path + file, remote_path + file);
     }
 
     @Test
