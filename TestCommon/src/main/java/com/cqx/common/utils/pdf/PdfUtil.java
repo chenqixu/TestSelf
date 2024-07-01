@@ -4,6 +4,7 @@ import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
@@ -25,6 +27,9 @@ public class PdfUtil {
     private static final Logger logger = LoggerFactory.getLogger(PdfUtil.class);
     // 分辨率
     private static final int DPI = 288;
+
+    private float page_with = 595;// A4 纸的宽度
+    private float page_height = 842;// A4 纸的高度
 
     public static void main(String[] args) throws IOException {
         PdfUtil pdfUtil = new PdfUtil();
@@ -185,7 +190,7 @@ public class PdfUtil {
                     PDPage page = new PDPage();
                     pdDocument.addPage(page);
                     // 通过图片路径和PDF文档对象创建PDF图片image对象
-                    PDImageXObject image = PDImageXObject.createFromFile(img, pdDocument);
+                    PDImageXObject image = zoom(img, pdDocument, true);
                     // 创建pageStream对象
                     try (PDPageContentStream pageStream = new PDPageContentStream(pdDocument, page
                             , PDPageContentStream.AppendMode.APPEND, false, false)) {
@@ -205,5 +210,49 @@ public class PdfUtil {
                 pdDocument.save(pdfFile);
             }
         }
+    }
+
+    /**
+     * 获得PDImageXObject
+     *
+     * @param img
+     * @param pdDocument
+     * @param isZoom     是否按A4比例缩放
+     * @return
+     * @throws IOException
+     */
+    public PDImageXObject zoom(String img, PDDocument pdDocument, boolean isZoom) throws IOException {
+        PDImageXObject image = PDImageXObject.createFromFile(img, pdDocument);
+        if (!isZoom) return image;
+
+        // 计算缩放比例
+        float scale = calculateScaleToFit(image.getWidth(), image.getHeight(), page_with, page_height);
+        float scaledWidth = image.getWidth() * scale;
+        float scaledHeight = image.getHeight() * scale;
+
+        // 创建图片缩放版本
+        BufferedImage resizedImage = new BufferedImage((int) scaledWidth, (int) scaledHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.drawImage(image.getImage(), 0, 0, (int) scaledWidth, (int) scaledHeight, null);
+        g2d.dispose();
+
+        // 创建缩放后的PDImageXObject
+        return LosslessFactory.createFromImage(pdDocument, resizedImage);
+    }
+
+    /**
+     * 计算缩放比例的辅助方法
+     *
+     * @param imageWidth
+     * @param imageHeight
+     * @param desiredWidth
+     * @param desiredHeight
+     * @return
+     */
+    public float calculateScaleToFit(float imageWidth, float imageHeight
+            , float desiredWidth, float desiredHeight) {
+        float scaleX = desiredWidth / imageWidth;
+        float scaleY = desiredHeight / imageHeight;
+        return Math.min(scaleX, scaleY);
     }
 }

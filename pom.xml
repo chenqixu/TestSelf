@@ -38,7 +38,7 @@
         <!--<module>TestOozie</module>-->
         <!--<module>TestZookeeperTool</module>-->
         <!--<module>TestJersey2X</module>-->
-        <!--<module>TestJersey1X</module>-->
+        <module>TestJersey1X</module>
         <!--<module>TestPool</module>-->
         <module>TestCommon</module>
         <!--<module>TestCalcite</module>-->

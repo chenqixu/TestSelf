@@ -14,8 +14,8 @@ public class Chinese {
     public static void main(String[] args) throws Exception {
         final int timeout = 15000;// 超时，单位毫秒
         HttpParserUtil httpParserUtil = new HttpParserUtil();
-        String url = "file:///e:\\Self\\课本\\小学\\语文五年级上.html";
-        final String saveImgPath = "e:\\Self\\课本\\小学\\语文五年级上\\%s.jpg";
+        String url = "file:///e:\\Self\\课本\\小学\\语文六年级上.html";
+        final String saveImgPath = "e:\\Self\\课本\\小学\\语文六年级上\\%s.jpg";
         Elements elements = httpParserUtil.parserGetElements(url, timeout, ".rich_pages");
         int name = 1000;
         for (Element element : elements) {
