@@ -5,6 +5,7 @@ import com.cqx.common.utils.Utils;
 import com.cqx.common.utils.hdfs.HdfsBean;
 import com.cqx.common.utils.hdfs.HdfsTool;
 import com.cqx.common.utils.jdbc.IJDBCUtilCall.IQueryResultBean;
+import com.cqx.common.utils.jdbc.bean.FloatBean;
 import com.cqx.common.utils.system.ArrayUtil;
 import com.cqx.common.utils.system.ByteUtil;
 import com.cqx.common.utils.system.SleepUtil;
@@ -1071,6 +1072,19 @@ public class JDBCUtilTest extends TestBase {
         exec.stop();
         logger.info("{} result.size：{}，cost：{}", Thread.currentThread().getName(),
                 (results != null ? results.size() : 0), exec.stopAndGet());
+    }
+
+    @Test
+    public void queryFloat() throws Exception {
+        String sql = "SELECT " +
+                "        COUNT(*) AS total," +
+                "       SUM(CASE WHEN team_id IS NULL THEN 0 ELSE 1 END) AS not_null_total," +
+                "        cast((SUM(CASE WHEN team_id IS NULL THEN 0 ELSE 1 END) / COUNT(*)) as float) AS percentage" +
+                "        FROM receng_dev.FT_MID_PACKAGE_OPTION_DAILY where sum_date=20220815";
+        // QueryResult没问题，因为里面是Object
+        List<List<QueryResult>> qr = jdbcUtil.executeQuery(sql);
+        // javabean里使用BigDecimal，也是没问题的
+        List<FloatBean> fbs = jdbcUtil.executeQuery(sql, FloatBean.class);
     }
 
     interface Q1 {
