@@ -1180,5 +1180,12 @@
             <artifactId>jsch</artifactId>
             <version>0.1.55</version>
         </dependency>
+
+        <!-- xjar -->
+        <dependency>
+            <groupId>com.github.core-lib</groupId>
+            <artifactId>xjar</artifactId>
+            <version>4.0.0</version>
+        </dependency>
     </dependencies>
 </project>
