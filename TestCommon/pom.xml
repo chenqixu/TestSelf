@@ -1187,5 +1187,12 @@
             <artifactId>xjar</artifactId>
             <version>4.0.0</version>
         </dependency>
+
+        <!-- jasypt -->
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.9.3</version>
+        </dependency>
     </dependencies>
 </project>

@@ -26,4 +26,9 @@ public class StringUtilTest {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         System.out.println(simpleDateFormat.parse(_time));
     }
+
+    @Test
+    public void getID() {
+        System.out.println(StringUtil.getID("select a.scene_id ,case when b.S00000001270_2 is null or b.S00000001270_2=9999 then 99 else b.S00000001270_2 end as sex ,case when b.S00000002518_2 is null then 99 else b.S00000002518_2 end as age_lev ,count(distinct a.msisdn) as real_cust_cnt from (select scene_id,msisdn from posi_scene_footprint where (out_time is null or out_time>=to_date(:SUM_TIME,'YYYYMMDDHH24MISS')) and update_time>(to_date(:SUM_TIME,'YYYYMMDDHH24MISS')-2/24) and in_time< to_date(:SUM_TIME,'YYYYMMDDHH24MISS') and length(scene_id)<30 and scene_id like 'fzgajk_%' ) a left join #locate_mart_1# b on a.msisdn=b.msisdn group by a.scene_id ,case when b.S00000001270_2 is null or b.S00000001270_2=9999 then 99 else b.S00000001270_2 end ,case when b.S00000002518_2 is null then 99 else b.S00000002518_2 end; ", "S"));
+    }
 }

@@ -309,4 +309,34 @@ public class StringUtil {
         }
         return list;
     }
+
+    public static List<String> getID(String content, String startStr) {
+        // 替换回车换行为空格
+        content = content.replaceAll("\r", " ");
+        content = content.replaceAll("\n", " ");
+        // 替换=为空格=空格
+        content = content.replaceAll("=", " = ");
+        // 使用空格做分割
+        String[] array = content.split(" ", -1);
+        // 去左右空格，判断是否关键字开头
+        Set<String> _result = new HashSet<>();
+        for (String _content : array) {
+            String _t = _content.trim();
+            // 使用逗号做分割
+            String[] array1 = _t.split(",", -1);
+            for (String _content1 : array1) {
+                // 可能有带别名引用，比如b.S0001
+                String[] bieming_array = _content1.split("\\.", -1);
+                String _compare_str = _content1;
+                if (bieming_array.length > 1) {
+                    _compare_str = bieming_array[1];
+                }
+                // 判断是否关键字开头
+                if (_compare_str.startsWith(startStr)) {
+                    _result.add(_compare_str);
+                }
+            }
+        }
+        return new ArrayList<>(_result);
+    }
 }
