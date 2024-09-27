@@ -31,14 +31,18 @@ public class HttpUtil implements Serializable {
     public int SocketTimeout = 60000;
 
     public String doGet(String url) {
+        return doGet(url, UTF8_CODE);
+    }
+
+    public String doGet(String url, String data_code) {
         Map<String, String> headerMap = new HashMap<>();
         final String[] result = {""};
-        doSend(url, null, UTF8_CODE, HttpGet.class, headerMap, new IHttpEntityDeal() {
+        doSend(url, null, data_code, HttpGet.class, headerMap, new IHttpEntityDeal() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
-                    result[0] = EntityUtils.toString(entity, UTF8_CODE);
+                    result[0] = EntityUtils.toString(entity, data_code);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -48,13 +52,17 @@ public class HttpUtil implements Serializable {
     }
 
     public String doGet(String url, Map<String, String> headerMap) {
+        return doGet(url, headerMap, UTF8_CODE);
+    }
+
+    public String doGet(String url, Map<String, String> headerMap, String data_code) {
         final String[] result = {""};
-        doSend(url, null, UTF8_CODE, HttpGet.class, headerMap, new IHttpEntityDeal() {
+        doSend(url, null, data_code, HttpGet.class, headerMap, new IHttpEntityDeal() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
-                    result[0] = EntityUtils.toString(entity, UTF8_CODE);
+                    result[0] = EntityUtils.toString(entity, data_code);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -64,32 +72,72 @@ public class HttpUtil implements Serializable {
     }
 
     public String doGetThrowException(String url) throws IOException {
+        return doGetThrowException(url, UTF8_CODE);
+    }
+
+    public String doGetThrowException(String url, String data_code) throws IOException {
         Map<String, String> headerMap = new HashMap<>();
         final String[] result = {""};
-        doSendThrowException(url, null, UTF8_CODE, HttpGet.class, headerMap, new IHttpEntityDealThrowException() {
+        doSendThrowException(url, null, data_code, HttpGet.class, headerMap, new IHttpEntityDealThrowException() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) throws IOException {
                 // 通过EntityUtils中的toString方法将结果转换为字符串
-                result[0] = EntityUtils.toString(entity, UTF8_CODE);
+                result[0] = EntityUtils.toString(entity, data_code);
             }
         });
         return result[0];
     }
 
-    public String doPost(String url, Map<String, String> headerMap, String data) {
+    public String doPost(String url, Map<String, String> headerMap, HttpEntity requestEntity) {
+        return doPost(url, headerMap, requestEntity, UTF8_CODE);
+    }
+
+    /**
+     * 发送带HttpEntity的Post请求
+     *
+     * @param url
+     * @param headerMap
+     * @param requestEntity
+     * @return
+     */
+    public String doPost(String url, Map<String, String> headerMap, HttpEntity requestEntity, String data_code) {
         final String[] result = {""};
-        doSend(url, data, UTF8_CODE, HttpPost.class, headerMap, new IHttpEntityDeal() {
+        doSend(url, null, data_code, HttpPost.class, headerMap, requestEntity, new IHttpEntityDeal() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
-                    result[0] = EntityUtils.toString(entity);
+                    result[0] = EntityUtils.toString(entity, data_code);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }
             }
         });
         return result[0];
+    }
+
+    public String doPost(String url, Map<String, String> headerMap, String data) {
+        return doPost(url, headerMap, data, UTF8_CODE);
+    }
+
+    public String doPost(String url, Map<String, String> headerMap, String data, String data_code) {
+        final String[] result = {""};
+        doSend(url, data, data_code, HttpPost.class, headerMap, new IHttpEntityDeal() {
+            @Override
+            public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
+                try {
+                    // 通过EntityUtils中的toString方法将结果转换为字符串
+                    result[0] = EntityUtils.toString(entity, data_code);
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        });
+        return result[0];
+    }
+
+    public HttpResponseBean doPostGetResponse(String url, Map<String, String> headerMap, String data) {
+        return doPostGetResponse(url, headerMap, data, UTF8_CODE);
     }
 
     /**
@@ -100,9 +148,9 @@ public class HttpUtil implements Serializable {
      * @param data
      * @return
      */
-    public HttpResponseBean doPostGetResponse(String url, Map<String, String> headerMap, String data) {
+    public HttpResponseBean doPostGetResponse(String url, Map<String, String> headerMap, String data, String data_code) {
         final HttpResponseBean[] result = {new HttpResponseBean()};
-        doSend(url, data, UTF8_CODE, HttpPost.class, headerMap, new IHttpEntityDeal() {
+        doSend(url, data, data_code, HttpPost.class, headerMap, new IHttpEntityDeal() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 result[0] = new HttpResponseBean(responseHeaderMap, entity);
@@ -118,12 +166,16 @@ public class HttpUtil implements Serializable {
     }
 
     public String doPostThrowException(String url, Map<String, String> headerMap, String data) throws IOException {
+        return doPostThrowException(url, headerMap, data, UTF8_CODE);
+    }
+
+    public String doPostThrowException(String url, Map<String, String> headerMap, String data, String data_code) throws IOException {
         final String[] result = {""};
-        doSendThrowException(url, data, UTF8_CODE, HttpPost.class, headerMap, new IHttpEntityDealThrowException() {
+        doSendThrowException(url, data, data_code, HttpPost.class, headerMap, new IHttpEntityDealThrowException() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) throws IOException {
                 // 通过EntityUtils中的toString方法将结果转换为字符串
-                result[0] = EntityUtils.toString(entity, UTF8_CODE);
+                result[0] = EntityUtils.toString(entity, data_code);
             }
         });
         return result[0];
@@ -136,15 +188,19 @@ public class HttpUtil implements Serializable {
     }
 
     public String doPut(String url, String data) {
+        return doPut(url, data, UTF8_CODE);
+    }
+
+    public String doPut(String url, String data, String data_code) {
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
         final String[] result = {""};
-        doSend(url, data, UTF8_CODE, HttpPut.class, headerMap, new IHttpEntityDeal() {
+        doSend(url, data, data_code, HttpPut.class, headerMap, new IHttpEntityDeal() {
             @Override
             public void deal(Map<String, String> responseHeaderMap, HttpEntity entity) {
                 try {
                     // 通过EntityUtils中的toString方法将结果转换为字符串
-                    result[0] = EntityUtils.toString(entity);
+                    result[0] = EntityUtils.toString(entity, data_code);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -155,6 +211,11 @@ public class HttpUtil implements Serializable {
 
     private void doSend(String url, String data, String data_code, Class<?> httpRequest,
                         Map<String, String> headerMap, IHttpEntityDeal iHttpEntityDeal) {
+        doSend(url, data, data_code, httpRequest, headerMap, null, iHttpEntityDeal);
+    }
+
+    private void doSend(String url, String data, String data_code, Class<?> httpRequest,
+                        Map<String, String> headerMap, HttpEntity requestEntity, IHttpEntityDeal iHttpEntityDeal) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         HttpRequestBase httpRequestBase = null;
@@ -166,9 +227,13 @@ public class HttpUtil implements Serializable {
                 httpRequestBase = new HttpGet(url);
             } else if (httpRequest.getName().equals(HttpPost.class.getName())) {
                 httpRequestBase = new HttpPost(url);
-                // 封装请求参数
-                StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
-                ((HttpPost) httpRequestBase).setEntity(httpEntity);
+                if (requestEntity != null) {
+                    ((HttpPost) httpRequestBase).setEntity(requestEntity);
+                } else {
+                    // 封装请求参数
+                    StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
+                    ((HttpPost) httpRequestBase).setEntity(httpEntity);
+                }
             } else if (httpRequest.getName().equals(HttpPut.class.getName())) {
                 httpRequestBase = new HttpPut(url);
                 // 封装请求参数
