@@ -4,6 +4,8 @@ import com.cqx.common.bean.kafka.AvroRecord;
 import com.cqx.common.utils.file.FileCount;
 import com.cqx.common.utils.file.FileUtil;
 import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -77,7 +79,7 @@ public class SchemaUtilTest {
     }
 
     @Test
-    public void dealFlatSchema() throws Exception{
+    public void dealFlatSchema() throws Exception {
         StringBuilder sb = new StringBuilder();
         Schema schema = null;// schemaUtil.getSchemaByTopic("USER_PRODUCT");
 
@@ -101,5 +103,59 @@ public class SchemaUtilTest {
         schema = schemaUtil.getSchemaByString(ogg.toString());
         AvroRecord avroRecord = schemaUtil.dealSchema(schema, null);
         System.out.println(schema);
+    }
+
+    /**
+     * avro上游调整，下游也必须调整，旧schema无法正常解析
+     */
+    @Test
+    public void avroTest20241105() {
+        byte[] bytes = {};
+        Schema schema1 = schemaUtil.getSchemaByString("{\"namespace\": \"com.bussiness.bi.bigdata.bean.avro\",\n" +
+                " \"type\": \"record\",\n" +
+                " \"name\": \"User\",\n" +
+                " \"fields\": [\n" +
+                "     {\"name\": \"name\", \"type\": \"string\", \"default\": \"\"},\n" +
+                "     {\"name\": \"favorite_number\",  \"type\": \"int\", \"default\": -1},\n" +
+                "     {\"name\": \"favorite_color\", \"type\": \"string\", \"default\": \"\"},\n" +
+                "     {\"name\": \"id\", \"type\": [\"long\", \"null\"]}\n" +
+                " ]\n" +
+                "}");
+        RecordConvertor recordConvertor1 = new RecordConvertor(schema1);
+        GenericRecord record1 = new GenericData.Record(schema1);
+        record1.put("name", "lili");
+        record1.put("favorite_number", 1350000);
+        record1.put("favorite_color", "yellow");
+        record1.put("id", 3500000001L);
+        bytes = recordConvertor1.recordToBinary(record1);
+        System.out.println("[record1]" + record1);
+
+        Schema schema2 = schemaUtil.getSchemaByString("{\"namespace\": \"com.bussiness.bi.bigdata.bean.avro\",\n" +
+                " \"type\": \"record\",\n" +
+                " \"name\": \"User\",\n" +
+                " \"fields\": [\n" +
+                "     {\"name\": \"name\", \"type\": \"string\", \"default\": \"\"},\n" +
+                "     {\"name\": \"favorite_number\",  \"type\": \"int\", \"default\": -1},\n" +
+                "     {\"name\": \"favorite_color\", \"type\": \"string\", \"default\": \"\"},\n" +
+                "     {\"name\": \"id\", \"type\": [\"long\", \"null\"]}," +
+                "     {\"name\": \"new_id\", \"type\": [\"long\", \"null\"]}" +
+                " ]\n" +
+                "}");
+
+        try {
+            RecordConvertor recordConvertor2 = new RecordConvertor(schema1);
+            GenericRecord record2 = recordConvertor2.binaryToRecord(bytes);
+            System.out.println("[使用schema1解析]" + record2);
+        } catch (Exception e) {
+            System.out.println("[使用schema1解析异常，异常信息：" + e.getMessage());
+        }
+
+        try {
+            RecordConvertor recordConvertor2 = new RecordConvertor(schema2);
+            GenericRecord record2 = recordConvertor2.binaryToRecord(bytes);
+            System.out.println("[使用schema2解析]" + record2);
+        } catch (Exception e) {
+            System.out.println("[使用schema2解析异常，异常信息：" + e.getMessage());
+        }
     }
 }
