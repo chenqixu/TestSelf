@@ -13,9 +13,9 @@ public class ServerA {
 	
 	public static void main(String[] args) {
 		//日志初始化
-		PropertyConfigurator.configure("H:/Work/WorkSpace/MyEclipse10/self/test/src/main/resources/conf/log4j.properties");
+		PropertyConfigurator.configure("D:\\Document\\Workspaces\\Git\\TestSelf\\TestWork\\src\\test\\resources\\log4j-1.properties");
 		
-		final String F_DIR = "H:/logs";// 根路径
+		final String F_DIR = "d:\\tmp\\logs\\msgsend\\";// 根路径
 		final int PORT = 21;// 监听端口号
 		try {
 			ServerSocket s = new ServerSocket(PORT);
