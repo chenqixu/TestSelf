@@ -41,6 +41,7 @@
         <module>TestJersey1X</module>
         <!--<module>TestPool</module>-->
         <module>TestCommon</module>
+        <module>TestLogs</module>
         <!--<module>TestCalcite</module>-->
         <!--<module>TestJVMAgent</module>-->
         <!--<module>Kafka0.8</module>-->
