@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HdfsToolTest {
 
     private static final MyLogger logger = MyLoggerFactory.getLogger(HdfsToolTest.class);
-    private static final String conf = "d:\\tmp\\etc\\hadoop\\conf75\\";
+    private static final String conf = "d:\\tmp\\etc\\hadoop\\conflocal\\";
     private HdfsTool hdfsTool;
 
     @Before

@@ -23,6 +23,10 @@ public abstract class BaseCallableV1 implements Callable<Integer> {
         runFlag.set(false);
     }
 
+    public void restart() {
+        runFlag.set(true);
+    }
+
     @Override
     public Integer call() throws Exception {
         logger.debug("{} start.", this);

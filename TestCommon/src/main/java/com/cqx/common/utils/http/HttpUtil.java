@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * HttpUtil
@@ -29,6 +30,48 @@ public class HttpUtil implements Serializable {
     public int ConnectTimeout = 35000;
     public int ConnectionRequestTimeout = 35000;
     public int SocketTimeout = 60000;
+
+    private boolean isKeepAlive = false;
+    private CloseableHttpClient httpClient = null;
+    private HttpRequestBase httpRequestBase = null;
+    private AtomicBoolean keepAliveCnt = new AtomicBoolean(true);
+
+    public void setKeepAlive() {
+        isKeepAlive = true;
+    }
+
+    public void close() {
+        if (null != httpClient && isKeepAlive) {
+            try {
+                httpClient.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    public void keepAlive(String url, String data, String data_code, Class<?> httpRequest, HttpEntity requestEntity) {
+        // 通过址默认配置创建一个httpClient实例
+        httpClient = HttpClients.createDefault();
+        // 创建远程连接实例
+        if (httpRequest.getName().equals(HttpGet.class.getName())) {
+            httpRequestBase = new HttpGet(url);
+        } else if (httpRequest.getName().equals(HttpPost.class.getName())) {
+            httpRequestBase = new HttpPost(url);
+            if (requestEntity != null) {
+                ((HttpPost) httpRequestBase).setEntity(requestEntity);
+            } else {
+                // 封装请求参数
+                StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
+                ((HttpPost) httpRequestBase).setEntity(httpEntity);
+            }
+        } else if (httpRequest.getName().equals(HttpPut.class.getName())) {
+            httpRequestBase = new HttpPut(url);
+            // 封装请求参数
+            StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
+            ((HttpPut) httpRequestBase).setEntity(httpEntity);
+        }
+    }
 
     public String doGet(String url) {
         return doGet(url, UTF8_CODE);
@@ -220,25 +263,33 @@ public class HttpUtil implements Serializable {
         CloseableHttpResponse response = null;
         HttpRequestBase httpRequestBase = null;
         try {
-            // 通过址默认配置创建一个httpClient实例
-            httpClient = HttpClients.createDefault();
-            // 创建远程连接实例
-            if (httpRequest.getName().equals(HttpGet.class.getName())) {
-                httpRequestBase = new HttpGet(url);
-            } else if (httpRequest.getName().equals(HttpPost.class.getName())) {
-                httpRequestBase = new HttpPost(url);
-                if (requestEntity != null) {
-                    ((HttpPost) httpRequestBase).setEntity(requestEntity);
-                } else {
+            if (isKeepAlive && keepAliveCnt.getAndSet(false)) {
+                keepAlive(url, data, data_code, httpRequest, requestEntity);
+            }
+            if (isKeepAlive) {
+                httpClient = this.httpClient;
+                httpRequestBase = this.httpRequestBase;
+            } else {
+                // 通过址默认配置创建一个httpClient实例
+                httpClient = HttpClients.createDefault();
+                // 创建远程连接实例
+                if (httpRequest.getName().equals(HttpGet.class.getName())) {
+                    httpRequestBase = new HttpGet(url);
+                } else if (httpRequest.getName().equals(HttpPost.class.getName())) {
+                    httpRequestBase = new HttpPost(url);
+                    if (requestEntity != null) {
+                        ((HttpPost) httpRequestBase).setEntity(requestEntity);
+                    } else {
+                        // 封装请求参数
+                        StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
+                        ((HttpPost) httpRequestBase).setEntity(httpEntity);
+                    }
+                } else if (httpRequest.getName().equals(HttpPut.class.getName())) {
+                    httpRequestBase = new HttpPut(url);
                     // 封装请求参数
                     StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
-                    ((HttpPost) httpRequestBase).setEntity(httpEntity);
+                    ((HttpPut) httpRequestBase).setEntity(httpEntity);
                 }
-            } else if (httpRequest.getName().equals(HttpPut.class.getName())) {
-                httpRequestBase = new HttpPut(url);
-                // 封装请求参数
-                StringEntity httpEntity = new StringEntity(data, Charset.forName(data_code));
-                ((HttpPut) httpRequestBase).setEntity(httpEntity);
             }
             // 请求类型不为空
             if (httpRequestBase != null) {
@@ -289,7 +340,7 @@ public class HttpUtil implements Serializable {
                     logger.error(e.getMessage(), e);
                 }
             }
-            if (null != httpClient) {
+            if (null != httpClient && !isKeepAlive) {
                 try {
                     httpClient.close();
                 } catch (IOException e) {
