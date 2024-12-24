@@ -1,26 +1,50 @@
 package com.cqx.logs;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 测试Logger是否会输出堆栈日志
+ * 测试Logger是否会输出堆栈日志<br>
+ * VM options：-Xms512m -Xmx512m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:d:/tmp/logs/msgsend/gc.log
  *
  * @author chenqixu
  */
 public class LogsTest {
-    private static final Logger logger = Logger.getLogger(LogsTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogsTest.class);
 
-    public static void main(String[] args) throws InterruptedException {
-        logger.info("info test.");
-        logger.warn("warn test.");
-        logger.error("error test.", new RuntimeException("runtimeEx."));
+    public static void main(String[] args) throws InterruptedException, FileNotFoundException {
+        // System.out输出
+        try (PrintStream ps = new PrintStream(new FileOutputStream("d:/tmp/logs/msgsend/stdout.log", true))) {
+            System.setOut(ps);
 
-        LogsTest lt = new LogsTest();
-        lt.monitor(lt.newThread());
-    }
+            // logger测试
+            logger.info("info test.");
+            logger.warn("warn test.");
+            logger.error("error test.", new RuntimeException("runtimeEx."));
 
-    public void init() {
+            LogsTest lt = new LogsTest();
+            lt.monitor(lt.newThread());
 
+            // 另一个类测试System.out输出
+            new SystemLogsTest().print();
+
+            // 不断创建对象并添加到列表中，模拟内存泄漏
+            List<Object> list = new ArrayList<>();
+            try {
+                while (true) {
+                    list.add(new Object());
+                }
+            } catch (Exception e) {
+                // 经测试，内存泄露，这里不会打压
+                logger.error(e.getMessage(), e);
+            }
+        }
     }
 
     public Thread newThread() {
