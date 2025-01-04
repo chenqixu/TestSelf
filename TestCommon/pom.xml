@@ -560,6 +560,10 @@
                     <artifactId>libthrift</artifactId>
                     <groupId>org.apache.thrift</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>gsjdbc4</artifactId>
+                    <groupId>com.huawei.gsjdbc4.bigdata</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -578,6 +582,10 @@
                 <exclusion>
                     <artifactId>datanucleus-rdbms-fi</artifactId>
                     <groupId>org.datanucleus</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>gsjdbc4</artifactId>
+                    <groupId>com.huawei.gsjdbc4.bigdata</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -886,7 +894,8 @@
             <artifactId>postgresql</artifactId>
             <!--<version>42.2.9</version>-->
             <!--<version>9.2-1003-jdbc4</version>-->
-            <version>9.4.1212.jre7</version>
+            <!--<version>9.4.1212.jre7</version>-->
+            <version>9.4.1212</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>

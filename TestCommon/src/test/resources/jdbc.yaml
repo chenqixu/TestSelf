@@ -99,6 +99,11 @@ dbbeans:
     tns: "jdbc:hive2://10.1.12.79:24002,10.1.12.78:24002,10.1.12.75:24002/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2;sasl.qop=auth-conf;auth=KERBEROS;principal=hive/hadoop.hadoop.com@HADOOP.COM"
     dbType: "HIVE3"
     isPool: true
+  - name: panweiBean
+    user_name: "subject"
+    pass_word: "H5ZRtF3f!qYycTkN"
+    tns: "jdbc:postgresql://10.1.4.8:5432/subject?currentSchema=subject"
+    dbType: "POSTGRESQL"
 hdfsbeans:
   - name: hacluster
     hadoop_conf: "hdfs/"

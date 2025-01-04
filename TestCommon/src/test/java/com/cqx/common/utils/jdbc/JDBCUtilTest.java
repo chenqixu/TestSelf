@@ -2,6 +2,8 @@ package com.cqx.common.utils.jdbc;
 
 import com.cqx.common.test.TestBase;
 import com.cqx.common.utils.Utils;
+import com.cqx.common.utils.doc.CellBean;
+import com.cqx.common.utils.doc.WordUtil;
 import com.cqx.common.utils.hdfs.HdfsBean;
 import com.cqx.common.utils.hdfs.HdfsTool;
 import com.cqx.common.utils.jdbc.IJDBCUtilCall.IQueryResultBean;
@@ -11,13 +13,17 @@ import com.cqx.common.utils.system.ByteUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import com.cqx.common.utils.thread.BaseRunableThread;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.postgresql.core.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -1085,6 +1091,96 @@ public class JDBCUtilTest extends TestBase {
         List<List<QueryResult>> qr = jdbcUtil.executeQuery(sql);
         // javabean里使用BigDecimal，也是没问题的
         List<FloatBean> fbs = jdbcUtil.executeQuery(sql, FloatBean.class);
+    }
+
+    /**
+     * 查询磐维所有表并生成word文档
+     *
+     * @throws SQLException
+     * @throws IOException
+     */
+    @Test
+    public void queryPanweiAllTables() throws SQLException, IOException {
+        try (WordUtil wordUtil = new WordUtil()) {
+            wordUtil.openSingle();
+
+            // 创建2个标题
+            wordUtil.createTitle("标题 1", "数据库逻辑模型设计", 22, 0);
+            wordUtil.createTitle("标题 2", "数据实体描述", 18, 1);
+
+            List<List<QueryResult>> rets = jdbcUtil.executeQuery("SELECT CURRENT_CATALOG AS datname,nsp.nspname,rel.relname,obj_description(rel.oid, 'pg_class') AS table_comment FROM pg_namespace nsp JOIN pg_class rel ON nsp.oid = rel.relnamespace WHERE nspname='subject' AND rel.relkind = 'r'");
+            for (List<QueryResult> ret : rets) {
+                String schema = ret.get(1).getValue().toString();
+                String tableName = ret.get(2).getValue().toString();
+                Object tableDesc = ret.get(3).getValue();
+                logger.info("[{}] {}.{}", tableDesc, schema, tableName);
+
+                // 创建1个标题
+                wordUtil.createTitle("标题 3", tableName, 15, 2);
+                // 创建一个新的表格
+                XWPFTable table = wordUtil.getDocxDocument().createTable(2, 2);
+                // 设置表格的列宽
+                CTTblWidth tblWidth = table.getCTTbl().addNewTblPr().addNewTblW();
+                tblWidth.setW(BigInteger.valueOf(9000));
+
+                LinkedHashMap<String, String> headers = new LinkedHashMap<>();
+                headers.put("表名", tableName);
+                headers.put("实体存放", "磐维");
+                headers.put("用户模式", schema);
+                headers.put("表类型", "实体表");
+                headers.put("分区字段", "");
+                headers.put("分区类型", "");
+                headers.put("分区开始时间", "");
+                headers.put("索引", "无");
+                headers.put("主键", "无");
+                headers.put("外键", "无");
+                headers.put("表是否压缩", "是");
+                headers.put("是否大表", "无");
+                headers.put("其他说明", "无");
+                int rowIndex = 0;
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    // 添加表头和数据列
+                    wordUtil.buildRow(table, rowIndex, wordUtil.getCellBeanHelp().newCellList()
+                            .addCell(new CellBean(entry.getKey(), "CCFFCC"))
+                            .addCell(new CellBean(entry.getValue(), "CCFFCC"))
+                            .getCellList());
+                    // 合并2,3,4列
+                    wordUtil.mergeCellsHorizontally(table, rowIndex, 1, 4);
+                    rowIndex++;
+                }
+
+                // 添加表头和数据列
+                wordUtil.buildRow(table, rowIndex, wordUtil.getCellBeanHelp().newCellList()
+                        .addCell(new CellBean("字段名称", "CCFFCC"))
+                        .addCell(new CellBean("数据类型", "CCFFCC"))
+                        .addCell(new CellBean("是否允许为空", "CCFFCC"))
+                        .addCell(new CellBean("字段描述", "CCFFCC"))
+                        .addCell(new CellBean("备注说明", "CCFFCC"))
+                        .getCellList());
+                rowIndex++;
+
+                try {
+                    List<QueryResult> metaData = jdbcUtil.getTableMetaData(tableName);
+                    for (QueryResult queryResult : metaData) {
+                        logger.info("{} {} {}", queryResult.getColumnName(), queryResult.getColumnTypeName(), queryResult.getREMARKS());
+
+                        // 添加数据行
+                        wordUtil.buildRow(table, rowIndex, wordUtil.getCellBeanHelp().newCellList()
+                                .addCell(new CellBean(queryResult.getColumnName(), null))//字段名称
+                                .addCell(new CellBean(queryResult.getColumnTypeName(), null))//数据类型
+                                .addCell(new CellBean("", null))//是否允许为空
+                                .addCell(new CellBean(queryResult.getREMARKS(), null))//字段描述
+                                .addCell(new CellBean("", null))//备注说明
+                                .getCellList());
+                        rowIndex++;
+                    }
+                } catch (Exception e) {
+                    logger.error(String.format("tableName=%s获取元数据有问题。具体错误信息=%s", tableName, e.getMessage()), e);
+                }
+            }
+
+            wordUtil.save("d:\\tmp\\doc\\table1.doc");
+        }
     }
 
     interface Q1 {

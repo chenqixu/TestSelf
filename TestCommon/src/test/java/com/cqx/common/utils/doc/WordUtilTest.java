@@ -215,4 +215,13 @@ public class WordUtilTest {
             }
         }
     }
+
+    @Test
+    public void tableTest() throws IOException {
+        wordUtil.openSingle();
+        wordUtil.createTable();
+        wordUtil.save("d:\\tmp\\doc\\table.doc");
+
+        System.out.println("1");
+    }
 }
