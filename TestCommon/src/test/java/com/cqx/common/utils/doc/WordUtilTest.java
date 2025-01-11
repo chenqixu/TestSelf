@@ -155,8 +155,8 @@ public class WordUtilTest {
 
     @Test
     public void imageToPDF() throws IOException {
-        String picturePath = "e:\\Self\\课本\\小学\\语文六年级上\\";
-        String pdfName = "e:\\Self\\课本\\小学\\语文六年级上.pdf";
+        String picturePath = "e:\\Self\\课本\\小学\\英语六年级下(闽教)\\";
+        String pdfName = "e:\\Self\\课本\\小学\\英语六年级下(闽教).pdf";
         List<String> imgs = new ArrayList<>();
         PdfUtil pdfUtil = new PdfUtil();
         // 扫描PDF

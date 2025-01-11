@@ -1108,7 +1108,10 @@ public class JDBCUtilTest extends TestBase {
             wordUtil.createTitle("标题 1", "数据库逻辑模型设计", 22, 0);
             wordUtil.createTitle("标题 2", "数据实体描述", 18, 1);
 
-            List<List<QueryResult>> rets = jdbcUtil.executeQuery("SELECT CURRENT_CATALOG AS datname,nsp.nspname,rel.relname,obj_description(rel.oid, 'pg_class') AS table_comment FROM pg_namespace nsp JOIN pg_class rel ON nsp.oid = rel.relnamespace WHERE nspname='subject' AND rel.relkind = 'r'");
+            StringBuilder querySQL = new StringBuilder();
+            querySQL.append("SELECT CURRENT_CATALOG AS datname,nsp.nspname,rel.relname,obj_description(rel.oid, 'pg_class') AS table_comment FROM pg_namespace nsp JOIN pg_class rel ON nsp.oid = rel.relnamespace WHERE nspname='subject' AND rel.relkind = 'r'");
+            querySQL.append(" and relname in ('st_entity_col_lineage','st_data_mart_rel','st_health_monitor_config','st_health_monitor_detail','st_health_monitor_info','st_data_mart_info','st_market_case_rule_rel','st_vo_entity_col','svc_service_chain_merge_list','st_data_mart_config','svc_merge_tag_rerun_list','svc_sum_tag_value_distribution','st_tab_struct','st_tab_ext','svc_tag_update_timeliness','svc_distribute_tag_metadata','st_vo_entity_info','svc_merge_tag_list_history','svc_distribute_tag_metadata_his','svc_merge_tag_widetab_md_history','st_tab_disposition','st_tab','edc_customer_groups','sm_api_log','st_attr_channel_run_count','svc_running_task','st_attr_detail','svc_credible_data_count_record','svc_merge_tag_extract_task','st_attr_warning_record','st_customer_group_count_run','edc_effect_list','svc_running_task_his','edc_customer_group_attr_ref','edc_channel_group_rel','svc_credible_data_quality_record','sm_user','label_4a_history','svc_analyse_task','st_portrait_count_run','st_portrait_count_tmp','st_portrait_count_portrait','svc_scheduling_task_reslut','sm2_conn_param','svc_task_run_time_result','st_attr','svc_credible_info_complete_record','sm_user_role','svc_customergrp_list','st_attr_version_his','st_customer_group_count_channel','sm_org','st_attr_count_base','st_portrait_count_base','st_customer_group_count_base','svc_credible_error_tag_record','st_portrait_count_channel','svc_ant_scheduling_task_info','svc_edc_label_query_service_log','sm2_resource_para','svc_customer_complete_rate','sm2_resource_conf','st_dim_value_dictionary','sm_points_srl','edc_task_info','st_attr_ext','svc_distribute_redis_sequence','svc_sum_tag_use_timeliness','st_attr_count_active','sm2_conn_manager','svc_distribute_task_control','edc_channel_group_cfg','st_customer_group_count_sub','edc_task_info_approve_log','sm_login_srl','st_attr_class_rel','st_rule_run_count','st_dim_level','sm_dim_key','edc_table_latest_cycle_log','edc_customer_groups_imp_conf','sm_user_priv','sm_priv','st_dim','st_channel_use_rel','svc_credible_blood_source_record','st_dim_level_rel','st_portrait_info','svc_sum_service_stability','edc_customer_groups_gen_list','svc_merge_tag_error_record','st_tag_rule','svc_merge_lab_rotate_tab','sm_role_priv','sm_user_channel','st_attr_channel_alias','st_attr_class','edc_effect_marketing_list','st_dict_code','sm_priv_path','svc_credible_summary_statistics','svc_config','st_rule_subscription','svc_distribute_redis_metadata','sm_role','st_scene_subscription','st_scene_info','st_channel_cfg','st_frame','st_channel','st_portrait_subscription','svc_var_config','svc_ant_task_config','edc_customer_groups_approval_log','st_dim_value_dic_var','edc_customer_groups_iop','st_service_chain_info','st_service_chain_link','st_attr_derived','st_attr_market_oper_log','edc_template_file','st_attr_version_check','st_channel_use_info','st_col_lineage','sm_user_priv_default','st_attr_dim_value_app_name','st_attr_import_log','st_customer_market_oper_log','st_frame_cross_rel','st_portrait_subscription_log','st_portrait_thumb_log','st_scene_portrait_rel','st_scene_subscription_log','st_tab_frame_key_rel','st_rule_subscription_log','st_attr_import_fail','st_attr_count_require','sm_region','sm_task_role','edc_business_lock','edc_effect_kpi_cfg','st_channel_maintain_info','edc_customergrp_postpone_info','svc_merge_tag_tmptable_metadata','svc_label_data_sync_info','svc_merge_tag_list_exec','edc_warning_config','edc_warning_info','st_portrait_attr_rel','st_attr_version')");
+            List<List<QueryResult>> rets = jdbcUtil.executeQuery(querySQL.toString());
             for (List<QueryResult> ret : rets) {
                 String schema = ret.get(1).getValue().toString();
                 String tableName = ret.get(2).getValue().toString();
@@ -1116,7 +1119,7 @@ public class JDBCUtilTest extends TestBase {
                 logger.info("[{}] {}.{}", tableDesc, schema, tableName);
 
                 // 创建1个标题
-                wordUtil.createTitle("标题 3", tableName, 15, 2);
+                wordUtil.createTitle("标题 3", tableDesc.toString(), 15, 2);
                 // 创建一个新的表格
                 XWPFTable table = wordUtil.getDocxDocument().createTable(2, 2);
                 // 设置表格的列宽
@@ -1179,7 +1182,7 @@ public class JDBCUtilTest extends TestBase {
                 }
             }
 
-            wordUtil.save("d:\\tmp\\doc\\table1.doc");
+            wordUtil.save("d:\\tmp\\doc\\table2.doc");
         }
     }
 
