@@ -617,13 +617,26 @@ public class JDBCUtil implements IJDBCUtil {
             assert conn != null;
             stm = conn.createStatement();
             for (String sql : sqls) {
-                boolean executeFlag = stm.execute(sql);
                 if (sql.startsWith("select ")) {
                     throw new SQLException("不支持select语句！");
                 } else if (sql.startsWith("update ") || sql.startsWith("insert into") || sql.startsWith("delete ")) {
+                    stm.execute(sql);
                     result = stm.getUpdateCount();
                     logger.info("执行SQL: {}, 影响记录数: {}", sql, result);
+                } else if (sql.startsWith("insert overwrite") || sql.startsWith("INSERT OVERWRITE")) {
+                    result = stm.executeUpdate(sql);
+                    logger.info("执行insert overwrite SQL: {}, 影响记录数: {}", sql, result);
+                } else if ((dbBean.getDbType().equals(DBType.HIVE1) || dbBean.getDbType().equals(DBType.HIVE3))
+                        && (sql.startsWith("set") || sql.startsWith("SET"))
+                        && !sql.contains("=")) {
+                    // 查询set的参数值：仅做验证是否是同个会话，仅支持hive
+                    try (ResultSet rs = stm.executeQuery(sql)) {
+                        while (rs.next()) {
+                            logger.info("参数值：{}", rs.getString(1));
+                        }
+                    }
                 } else {
+                    stm.execute(sql);
                     result = stm.getUpdateCount();
                     logger.info("执行SQL: {}, 执行结果: {}", sql, result);
                 }

@@ -893,6 +893,28 @@ public class JDBCUtilTest extends TestBase {
         }
     }
 
+    /**
+     * hive会话测试1
+     */
+    @Test
+    public void hiveSessionTest1() throws Exception {
+        // -Djdbc.bean=hiveHuaWeiBean
+        HdfsBean hdfsBean = paramsParserUtil.getHdfsBeanMap().get("hacluster");
+        hdfsBean.setHadoop_conf(getResourcePath(hdfsBean.getHadoop_conf()));
+        hdfsBean.setKeytab(getResourcePath(hdfsBean.getKeytab()));
+        hdfsBean.setKrb5(getResourcePath(hdfsBean.getKrb5()));
+        hdfsBean.setJaas(getResourcePath(hdfsBean.getJaas()));
+        HdfsTool.hiveInitKerberos(hdfsBean);
+
+        List<String> sqls = new ArrayList<>();
+        // 会话测试1
+        sqls.add("SET hive.auto.convert.join=false");
+        sqls.add("INSERT OVERWRITE DIRECTORY '/user/bdoc/7/services/hdfs/10/yz_newland/data/test1_io' ROW FORMAT DELIMITED FIELDS TERMINATED by '\\t' select id,name from test1");
+        sqls.add("SET hive.auto.convert.join");
+        int ret = jdbcUtil.execute(sqls);
+        logger.info("执行结果: {}", ret);
+    }
+
     @Test
     public void hexToStr() {
         String str = new String(ByteUtil.hexStringToBytes("17b4c94d7dfbbcf023ed720251c896e0aa787a070c0a2e0b0102010151020000817f01020000000000000001010103013100000000010707787a070c101a0100021fe801020102000622010100010a0000000702c10208010604da2f4ee2020f9801030000000001130001121253494d504c4946494544204348494e4553450110000105054348494e41010900010202a3a400000105054348494e410101000102022e2c0102000108085a4853313647424b010a00010909475245474f5249414e010c0001090944442d4d4f4e2d525201070001121253494d504c4946494544204348494e45534501080001060642494e415259010b00010e0e48482e4d492e535358464620414d01390001181844442d4d4f4e2d52522048482e4d492e535358464620414d013a0001121248482e4d492e535358464620414d20545a52013b00011c1c44442d4d4f4e2d52522048482e4d492e535358464620414d20545a52013c00010202a3a401340001060642494e41525901320001040442595445013d0001050546414c5345013e00010b0b800083e8bd3c3c8000000001a3000401010104010102057b0000010300030000000000000000000000000100010100000000214f52412d30313430333a20e69caae689bee588b0e4bbbbe4bd95e695b0e68dae0a"));
