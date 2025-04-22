@@ -57,9 +57,10 @@ public class ExcelUtilsTest {
     @Test
     public void readLabelRJZCJXList() throws IOException {
         String read_path = "D:\\Work\\CVS\\BI\\SSC\\项目管理\\工程项目(未立项)\\标签基础平台\\验收\\cosmic\\福建公司2024年企业级数据中台标签能力提升开发-软件资产解析清单.xlsx";
+        read_path = "D:\\tmp\\excel\\tmp_excel_20250327_1.xlsx";
         List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
         for (ExcelSheetList sheet : excelSheetLists) {
-            if (sheet.getSheetName().equals("软件资产清单")) {
+            if (sheet.getSheetName().equals("S1")) {
                 PCBean root = new PCBean("root");
 
                 PCBean pcBeanLv0 = new PCBean();
@@ -102,17 +103,30 @@ public class ExcelUtilsTest {
                         pcBeanLv3 = pcBeanLv2.addChild(currentLv3);
                     }
                 }
+                // 打印v3中有多少v4
+//                for (PCBean _pcBeanLv0 : root.getChildList()) {
+//                    System.out.println("Lv1=" + _pcBeanLv0);
+//                    for (PCBean _pcBeanLv1 : _pcBeanLv0.getChildList()) {
+//                        System.out.println("Lv2=" + _pcBeanLv1);
+//                        for (PCBean _pcBeanLv2 : _pcBeanLv1.getChildList()) {
+//                            StringBuilder sb = new StringBuilder();
+//                            for (PCBean _pcBeanLv3 : _pcBeanLv2.getChildList()) {
+//                                sb.append(_pcBeanLv3).append("、");
+//                            }
+//                            System.out.println("Lv3=" + _pcBeanLv2 + "：包含" + sb);
+//                        }
+//                    }
+//                }
+                // 打印v2中有多少v3
                 for (PCBean _pcBeanLv0 : root.getChildList()) {
                     System.out.println("Lv1=" + _pcBeanLv0);
                     for (PCBean _pcBeanLv1 : _pcBeanLv0.getChildList()) {
                         System.out.println("Lv2=" + _pcBeanLv1);
+                        StringBuilder sb = new StringBuilder();
                         for (PCBean _pcBeanLv2 : _pcBeanLv1.getChildList()) {
-                            StringBuilder sb = new StringBuilder();
-                            for (PCBean _pcBeanLv3 : _pcBeanLv2.getChildList()) {
-                                sb.append(_pcBeanLv3).append("、");
-                            }
-                            System.out.println("Lv3=" + _pcBeanLv2 + "：包含" + sb);
+                            sb.append(_pcBeanLv2).append("、");
                         }
+                        System.out.println("Lv2=" + _pcBeanLv1 + "：包含" + sb);
                     }
                 }
             }
