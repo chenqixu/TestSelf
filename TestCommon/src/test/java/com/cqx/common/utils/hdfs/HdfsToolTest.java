@@ -51,7 +51,10 @@ public class HdfsToolTest {
         try (OutputStream os = hdfsTool.createFile("/data/otherdata/code_test/gbk1.txt");){
 //             OutputStreamWriter osw = new OutputStreamWriter(os, "GBK")) {
 //            osw.write("你好");
-             os.write("你好".getBytes("GBK"));
+            os.write("你好GBK\n".getBytes("GBK"));
+            os.write("你好MS936\n".getBytes("MS936"));
+            os.write("\u20ACGBK\n".getBytes("GBK"));
+            os.write("\u20ACMS936\n".getBytes("MS936"));
         }
     }
 
