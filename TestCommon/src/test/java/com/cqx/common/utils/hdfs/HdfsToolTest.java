@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HdfsToolTest {
 
     private static final MyLogger logger = MyLoggerFactory.getLogger(HdfsToolTest.class);
-    private static final String conf = "d:\\tmp\\etc\\hadoop\\conflocal\\";
+    private static final String conf = "d:\\tmp\\etc\\hadoop\\conf75\\";
     private HdfsTool hdfsTool;
 
     @Before
@@ -43,6 +43,15 @@ public class HdfsToolTest {
             os.write("\r\n".getBytes(StandardCharsets.UTF_8));
             os.write("\u20AC".getBytes(StandardCharsets.UTF_8));
             os.write("\n".getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    @Test
+    public void createFileCodeTest() throws Exception {
+        try (OutputStream os = hdfsTool.createFile("/data/otherdata/code_test/gbk1.txt");){
+//             OutputStreamWriter osw = new OutputStreamWriter(os, "GBK")) {
+//            osw.write("你好");
+             os.write("你好".getBytes("GBK"));
         }
     }
 
