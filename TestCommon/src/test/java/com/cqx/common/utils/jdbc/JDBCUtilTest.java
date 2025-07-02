@@ -1142,11 +1142,8 @@ public class JDBCUtilTest extends TestBase {
 
                 // 创建1个标题
                 wordUtil.createTitle("标题 3", tableDesc.toString(), 15, 2);
-                // 创建一个新的表格
-                XWPFTable table = wordUtil.getDocxDocument().createTable(2, 2);
-                // 设置表格的列宽
-                CTTblWidth tblWidth = table.getCTTbl().addNewTblPr().addNewTblW();
-                tblWidth.setW(BigInteger.valueOf(9000));
+                // 创建一个新的表格，并设置表格的列宽
+                XWPFTable table = wordUtil.createTable(2, 2, BigInteger.valueOf(9000));
 
                 LinkedHashMap<String, String> headers = new LinkedHashMap<>();
                 headers.put("表名", tableName);

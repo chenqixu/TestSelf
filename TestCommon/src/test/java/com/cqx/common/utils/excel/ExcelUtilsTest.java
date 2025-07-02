@@ -132,4 +132,169 @@ public class ExcelUtilsTest {
             }
         }
     }
+
+    /**
+     * 信息补全
+     *
+     * @throws Exception
+     */
+    @Test
+    public void buquan() throws Exception {
+        String name = "标签一期-软件上线合格证书 - 副本.xlsx";
+        String read_path = "d:\\Work\\实时\\标签大宽表\\标签平台\\交维\\主要功能验证报告、软件上线合格证书\\" + name;
+        List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
+        for (ExcelSheetList sheet : excelSheetLists) {
+            if (sheet.getSheetName().equals("Sheet1")) {
+                String his = null;
+                String current = null;
+                for (int i = 2; i < sheet.getSheetList().size(); i++) {
+                    current = sheet.getSheetList().get(i).get(5);
+                    if (his == null) {
+                        his = current;
+                    }
+                    if (current == null) {
+                        current = his;
+                    } else {
+                        his = current;
+                    }
+//                    System.out.println(String.format("[5]%s[6]%s", sheet.getSheetList().get(i).get(5), sheet.getSheetList().get(i).get(6)));
+//                    System.out.println(String.format("[5]%s[6]%s", current, sheet.getSheetList().get(i).get(6)));
+                    System.out.println(current);
+                }
+            }
+        }
+    }
+
+    /**
+     * 提示词生成
+     *
+     * @throws Exception
+     */
+    @Test
+    public void buildPrompt() throws Exception {
+        String tmp = "请输出一份功能验证报告，需要输出如下4点：预置条件、测试步骤、界面预期输出、数据预期输出。\n" +
+                "注意1：有界面就不需要数据预期输出，此时数据预期输出填写为\"本功能仅涉及前端，不涉及数据输出\"，没界面就需要数据预期输出，此时界面预期输出填写为\"本功能仅涉及后端，不涉及界面输出\"。\n" +
+                "注意2：有几个功能就写几个功能，不要造功能。\n" +
+                "注意3：本功能仅涉及%s。\n" +
+                "输出格式如下：\n" +
+                "#xxxxx\n" +
+                "##预置条件\n" +
+                "xxxxx\n" +
+                "##测试步骤\n" +
+                "功能1：xxxxx\n" +
+                "功能2：xxxxx\n" +
+                "功能……：xxxxx\n" +
+                "##界面预期输出\n" +
+                "功能1：xxxxx\n" +
+                "功能2：xxxxx\n" +
+                "功能……：xxxxx\n" +
+                "##数据预期输出\n" +
+                "功能1：xxxxx\n" +
+                "功能2：xxxxx\n" +
+                "功能……：xxxxx\n" +
+                "参考如下：\n" +
+                "#菜单管理\n" +
+                "##预置条件\n" +
+                "用户拥有“菜单管理”菜单权限\n" +
+                "##测试步骤\n" +
+                "菜单查询：\n" +
+                "1、点击『菜单管理』\n" +
+                "2、页面左侧，填写[名称]关键字\n" +
+                "3、点击【查询】\n" +
+                "菜单增加：\n" +
+                "1、点击『菜单管理』\n" +
+                "2、页面左侧，对已有目录图标根菜单右击，【新建】\n" +
+                "3、配置菜单基本信息\n" +
+                "菜单编辑：\n" +
+                "1、点击『菜单管理』\n" +
+                "2、菜单栏选择点击新增的菜单，在右侧详细信息下，点击【编辑】\n" +
+                "3、配置该菜单基本信息，点击【保存】\n" +
+                "菜单删除：\n" +
+                "1、点击『菜单管理』\n" +
+                "2、对新增的子菜单目录右击，【删除】，【确定】\n" +
+                "##界面预期输出\n" +
+                "菜单查询：可以正常查询到菜单。\n" +
+                "菜单增加：可以正常增加菜单。\n" +
+                "菜单编辑：可以正常编辑菜单。\n" +
+                "菜单删除：可以正常删除菜单。\n" +
+                "##数据预期输出\n" +
+                "本功能仅涉及前端，不涉及数据输出。\n";
+
+        String name = "标签一期-软件上线合格证书 - 1.xlsx";
+//        name = "工作簿1.xlsx";
+        String read_path = "d:\\Work\\实时\\标签大宽表\\标签平台\\交维\\主要功能验证报告、软件上线合格证书\\" + name;
+        List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
+
+        String write_name = "工作簿2.xlsx";
+        String write_path = "d:\\Work\\实时\\标签大宽表\\标签平台\\交维\\主要功能验证报告、软件上线合格证书\\" + write_name;
+        List<ExcelSheetList> writeExcelSheetLists = new ArrayList<>();
+        ExcelSheetList writeExcelSheetList = new ExcelSheetList();
+        writeExcelSheetList.setSheetName("Sheet");
+        writeExcelSheetLists.add(writeExcelSheetList);
+
+        for (ExcelSheetList sheet : excelSheetLists) {
+            if (sheet.getSheetName().equals("Sheet1")) {
+                String his = null;
+                String current = null;
+                String his_type = null;
+                String current_type = null;
+                StringBuilder sb = new StringBuilder();
+                List<TypeBean> typelist = new ArrayList<>();
+                int j = 0;
+                for (int i = 2; i < sheet.getSheetList().size(); i++) {
+                    current = sheet.getSheetList().get(i).get(5);
+                    String gongneng = sheet.getSheetList().get(i).get(6);
+                    String gongnengdesc = sheet.getSheetList().get(i).get(7);
+
+                    current_type = sheet.getSheetList().get(i).get(8);
+                    if (his_type == null) {
+                        his_type = current_type;
+                    }
+                    if (current_type == null) {
+                        current_type = his_type;
+                    } else {
+                        his_type = current_type;
+                        typelist.add(new TypeBean(i, his_type, current));
+                    }
+
+                    if (his == null) {
+                        his = current;
+                    }
+                    if (current == null) {
+                        current = his;
+                        if (gongnengdesc.endsWith("。") || gongnengdesc.endsWith(".")) {
+                        } else {
+                            gongnengdesc = gongnengdesc + "。";
+                        }
+                        sb.append(gongneng).append("：\"").append(gongnengdesc).append("\"\n");
+                    } else {
+                        j++;
+                        his = current;
+                        if (sb.length() > 0) {
+//                            System.out.println(sb + String.format(tmp, typelist.get(j - 2).getType()));
+                            writeExcelSheetList
+                                    .newLine()
+                                    .addColumn(typelist.get(j - 2).getName())
+                                    .addColumn(sb + String.format(tmp, typelist.get(j - 2).getType()));
+                        }
+                        sb = new StringBuilder();
+                        sb.append(current).append("，实现了以下功能，\n");
+                        if (gongnengdesc.endsWith("。") || gongnengdesc.endsWith(".")) {
+                        } else {
+                            gongnengdesc = gongnengdesc + "。";
+                        }
+                        sb.append(gongneng).append("：\"").append(gongnengdesc).append("\"\n");
+                    }
+                }
+                if (sb.length() > 0) {
+//                    System.out.println(sb + String.format(tmp, typelist.get(typelist.size() - 1).getType()));
+                    writeExcelSheetList
+                            .newLine()
+                            .addColumn(typelist.get(typelist.size() - 1).getName())
+                            .addColumn(sb + String.format(tmp, typelist.get(typelist.size() - 1).getType()));
+                }
+                excelUtils.writeExcel(write_path, writeExcelSheetLists);
+            }
+        }
+    }
 }

@@ -520,6 +520,21 @@ public class WordUtil implements Closeable {
                 .getCellList());
     }
 
+    public XWPFTable createTable(int rows, int cols) {
+        return createTable(rows, cols, null);
+    }
+
+    public XWPFTable createTable(int rows, int cols, BigInteger weight) {
+        // 创建一个新的表格
+        XWPFTable table = getDocxDocument().createTable(rows, cols);
+        if (weight != null) {
+            // 设置表格的列宽
+            CTTblWidth tblWidth = table.getCTTbl().addNewTblPr().addNewTblW();
+            tblWidth.setW(weight);
+        }
+        return table;
+    }
+
     public XWPFTableRow buildRow(XWPFTable table, int rowIndex) {
         if (table.getRows().size() > rowIndex) {
             return table.getRow(rowIndex);
