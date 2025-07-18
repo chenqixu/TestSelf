@@ -87,12 +87,10 @@ dbbeans:
     tns: "jdbc:dm://10.1.8.204:5237"
     dbType: "DM8"
   - name: oceanbeanBean
-    user_name:
-    pass_word:
-    tns: ""
-    dbType: "OTHER"
-    driver: com.alipay.oceanbase.jdbc.Driver
-    validation_query: select 1 from dual
+    user_name: "label_core"
+    pass_word: "label_core"
+    tns: "jdbc:oceanbase://10.1.8.206:2881/test?allowLoadLocalInfile=true"
+    dbType: "OB_ORACLE"
   - name: hiveHuaWeiBean
     user_name: ""
     pass_word: ""

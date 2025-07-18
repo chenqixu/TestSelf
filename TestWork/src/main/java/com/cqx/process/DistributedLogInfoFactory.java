@@ -91,7 +91,7 @@ public class DistributedLogInfoFactory implements IDistributedLogger {
 		return null;
 	}
 
-	@Override
+//	@Override
 	public void setLogger(org.apache.log4j.Logger logger) {		
 	}
 

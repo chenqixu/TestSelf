@@ -17,7 +17,6 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.postgresql.core.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1202,6 +1201,23 @@ public class JDBCUtilTest extends TestBase {
             }
 
             wordUtil.save("d:\\tmp\\doc\\table2.doc");
+        }
+    }
+
+    /**
+     * Oceanbase测试
+     */
+    @Test
+    public void oceanbaseTest1() throws SQLException {
+        int flag = jdbcUtil.executeUpdate("load data local infile 'd:/tmp/data/oceanbase/1.txt' into table test1");
+        logger.info("load data local infile={}", flag);
+    }
+
+    @Test
+    public void oceanbaseShowTables() throws SQLException {
+        List<List<QueryResult>> result = jdbcUtil.executeQuery("show tables");
+        for (List<QueryResult> list : result) {
+            logger.info("{}", list);
         }
     }
 

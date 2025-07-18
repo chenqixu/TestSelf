@@ -1659,6 +1659,10 @@
                     <artifactId>zkclient</artifactId>
                     <groupId>com.101tec</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>nl-bd-expression-utils</artifactId>
+                    <groupId>com.newland.bd.utils</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -2069,11 +2073,24 @@
             <groupId>com.newland.bd.jstorm</groupId>
             <artifactId>nl-udap-component-stream-file</artifactId>
             <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>aviator</artifactId>
+                    <groupId>com.newland.bd.aviator</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.newland.bd.jstorm</groupId>
             <artifactId>nl-rtc-core-file</artifactId>
             <version>2.0.0</version>
+        </dependency>
+
+        <!-- aviator -->
+        <dependency>
+            <groupId>com.googlecode.aviator</groupId>
+            <artifactId>aviator</artifactId>
+            <version>5.4.1</version>
         </dependency>
     </dependencies>
 </project>
