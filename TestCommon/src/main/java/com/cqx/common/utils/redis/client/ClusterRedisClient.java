@@ -18,20 +18,31 @@ public class ClusterRedisClient extends RedisClient {
     private Set<HostAndPort> HostAndPort_set = new HashSet<>();
 
     public ClusterRedisClient(RedisFactory.Builder builder) {
+        // 把IP和PORT解析出来，设置到builder中
         addHostAndPort(builder);
+        // 连接池设置
+        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        // 如果最大比空闲小，需要调整下空闲值
+        if (builder.getMax_pool() < GenericObjectPoolConfig.DEFAULT_MAX_IDLE) {
+            poolConfig.setMaxIdle(builder.getMax_pool());
+        }
+        poolConfig.setMaxTotal(builder.getMax_pool());
+        // 使用管道
         if (builder.isPipeline()) {
+            // 有密码
             if (builder.getPassword() != null && builder.getPassword().length() > 0) {
-                cluster = new MyJedisCluster(HostAndPort_set, builder.getPassword(), builder.getMax_wait_millis());
-            } else {
-                cluster = new MyJedisCluster(HostAndPort_set, builder.getMax_wait_millis());
+                cluster = new MyJedisCluster(HostAndPort_set, builder.getPassword(), builder.getMax_wait_millis(), poolConfig);
+            } else {// 无密码
+                cluster = new MyJedisCluster(HostAndPort_set, builder.getMax_wait_millis(), poolConfig);
             }
             setPipeline(true);
-        } else {
+        } else {// 不使用管道
+            // 有密码
             if (builder.getPassword() != null && builder.getPassword().length() > 0) {
                 cluster = new JedisCluster(HostAndPort_set, builder.getMax_wait_millis(), builder.getMax_wait_millis()
-                        , DEFAULT_MAX_REDIRECTIONS, builder.getPassword(), new GenericObjectPoolConfig());
-            } else {
-                cluster = new JedisCluster(HostAndPort_set, builder.getMax_wait_millis());
+                        , DEFAULT_MAX_REDIRECTIONS, builder.getPassword(), poolConfig);
+            } else {// 无密码
+                cluster = new JedisCluster(HostAndPort_set, builder.getMax_wait_millis(), poolConfig);
             }
         }
     }
@@ -101,6 +112,11 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public String set(byte[] key, byte[] value) {
+        return cluster.set(key, value);
+    }
+
+    @Override
     public boolean setnx(String key, String value) {
         return false;
     }
@@ -122,6 +138,11 @@ public class ClusterRedisClient extends RedisClient {
 
     @Override
     public String get(String key) {
+        return cluster.get(key);
+    }
+
+    @Override
+    public byte[] get(byte[] key) {
         return cluster.get(key);
     }
 
@@ -170,6 +191,11 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public String hmset(String key, Map<String, String> params) {
+        return cluster.hmset(key, params);
+    }
+
+    @Override
     public Long hsetnx(String key, String field, String value) {
         return cluster.hsetnx(key, field, value);
     }
@@ -185,6 +211,11 @@ public class ClusterRedisClient extends RedisClient {
     }
 
     @Override
+    public Long hlen(String key) {
+        return cluster.hlen(key);
+    }
+
+    @Override
     public Long incr(String key) {
         return cluster.incr(key);
     }
@@ -197,6 +228,76 @@ public class ClusterRedisClient extends RedisClient {
     @Override
     public Set<String> smembers(String key) {
         return cluster.smembers(key);
+    }
+
+    @Override
+    public Object eval(String script, int keyCount, String... params) {
+        return cluster.eval(script, keyCount, params);
+    }
+
+    @Override
+    public Object eval(String script, List<String> keys, List<String> args) {
+        return cluster.eval(script, keys, args);
+    }
+
+    @Override
+    public Object eval(String script, String key) {
+        return cluster.eval(script, key);
+    }
+
+    @Override
+    public Object evalsha(String script, String key) {
+        return cluster.evalsha(script, key);
+    }
+
+    @Override
+    public Object evalsha(String sha1, List<String> keys, List<String> args) {
+        return cluster.evalsha(sha1, keys, args);
+    }
+
+    @Override
+    public Object evalsha(String sha1, int keyCount, String... params) {
+        return cluster.evalsha(sha1, keyCount, params);
+    }
+
+    @Override
+    public Boolean scriptExists(String sha1, String key) {
+        return cluster.scriptExists(sha1, key);
+    }
+
+    @Override
+    public List<Boolean> scriptExists(String key, String... sha1) {
+        return cluster.scriptExists(key, sha1);
+    }
+
+    @Override
+    public String scriptLoad(String script, String key) {
+        return cluster.scriptLoad(script, key);
+    }
+
+    @Override
+    public String mset(String... keysvalues) {
+        return cluster.mset(keysvalues);
+    }
+
+    @Override
+    public Long msetnx(String... keysvalues) {
+        return cluster.msetnx(keysvalues);
+    }
+
+    @Override
+    public List<byte[]> mget(byte[]... keys) {
+        return cluster.mget(keys);
+    }
+
+    @Override
+    public String mset(byte[]... keysvalues) {
+        return cluster.mset(keysvalues);
+    }
+
+    @Override
+    public Long msetnx(byte[]... keysvalues) {
+        return cluster.msetnx(keysvalues);
     }
 
     @Override
@@ -336,6 +437,11 @@ public class ClusterRedisClient extends RedisClient {
         }
 
         @Override
+        protected void mset_inside(String firstKey, String... keysvalues) {
+            if (isPipeline()) getPipeline(firstKey).mset(keysvalues);
+        }
+
+        @Override
         protected void del_inside(String key) {
             if (isPipeline()) getPipeline(key).del(key);
         }
@@ -358,6 +464,16 @@ public class ClusterRedisClient extends RedisClient {
         @Override
         protected void request_hget_inside(String key, String field) {
             if (isPipeline()) getPipeline(key).hget(key, field);
+        }
+
+        @Override
+        protected void hmset_inside(String key, Map<String, String> params) {
+            if (isPipeline()) getPipeline(key).hmset(key, params);
+        }
+
+        @Override
+        protected void expire_inside(String key, int seconds) {
+            if (isPipeline()) getPipeline(key).expire(key, seconds);
         }
 
         @Override

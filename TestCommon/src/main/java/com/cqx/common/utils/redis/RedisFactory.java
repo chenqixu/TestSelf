@@ -1,12 +1,18 @@
 package com.cqx.common.utils.redis;
 
 import com.cqx.common.utils.redis.client.ClusterRedisClient;
+import com.cqx.common.utils.redis.client.MyJedisCluster;
 import com.cqx.common.utils.redis.client.RedisClient;
 import com.cqx.common.utils.redis.client.SinaleRedisClient;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 public class RedisFactory {
     public static final int SINGLE_MODE_TYPE = 0;
     public static final int CLUSTER_MODE_TYPE = 1;
+
+    public static int getClusterSlotByKey(String key) {
+        return MyJedisCluster.getSlot(key);
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -23,6 +29,8 @@ public class RedisFactory {
         private String password;
         // 最大等待时长
         private int max_wait_millis = RedisClient.DEFAULT_MAX_WAIT_MILLIS;
+        // 连接池最大并发
+        private int max_pool = GenericObjectPoolConfig.DEFAULT_MAX_TOTAL;
 
         public Builder setMode(int mode_type) {
             this.mode_type = mode_type;
@@ -88,6 +96,15 @@ public class RedisFactory {
 
         public Builder setMax_wait_millis(int max_wait_millis) {
             this.max_wait_millis = max_wait_millis;
+            return this;
+        }
+
+        public int getMax_pool() {
+            return max_pool;
+        }
+
+        public Builder setMax_pool(int max_pool) {
+            this.max_pool = max_pool;
             return this;
         }
     }

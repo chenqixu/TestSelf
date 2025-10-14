@@ -42,6 +42,8 @@ import java.util.zip.*;
  */
 public class StringUtil {
     public static final String nullString = "null";
+    // 正则表达式匹配整数和小数（含正负数）
+    private static final String NUMBER_PATTERN = "^-?\\d+(\\.\\d+)?$";
 
     public StringUtil() {
     }
@@ -117,6 +119,19 @@ public class StringUtil {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 检查字符串是否表示有效的数字（整数或小数）
+     *
+     * @param str 要检查的字符串
+     * @return true表示有效数字，false表示无效
+     */
+    public static boolean isNumericS(String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        return Pattern.matches(NUMBER_PATTERN, str);
     }
 
     /**

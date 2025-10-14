@@ -224,4 +224,36 @@ public class WordUtilTest {
 
         System.out.println("1");
     }
+
+    @Test
+    public void savePDFImage() {
+        PdfUtil pdfUtil = new PdfUtil();
+        String scanPath = "d:\\Work\\AI\\202508材料\\pdf\\";
+        String picturePath = "d:\\Work\\AI\\202508材料\\img\\";
+        // 扫描PDF
+        if (new File(scanPath).isDirectory()) {
+            for (String pdf : FileUtil.listFile(scanPath, "pdf")) {
+                String pdfFile = scanPath + pdf;
+                String imgFile = picturePath + "##" + pdf.replace(".pdf", ".jpg");
+                // 截取PDF第一页，保存成图片
+                pdfUtil.pdfFileToImage(new File(pdfFile), imgFile);
+                logger.info("PDF文件：{}，保存成图片：{}", pdfFile, imgFile);
+            }
+        }
+    }
+
+    @Test
+    public void image1ToPDF() throws IOException {
+        String picturePath = "d:\\Work\\AI\\202508材料\\img1\\";
+        String pdfName = "d:\\Work\\AI\\202508材料\\pdf\\1.pdf";
+        List<String> imgs = new ArrayList<>();
+        PdfUtil pdfUtil = new PdfUtil();
+        // 扫描PDF
+        for (String path : FileUtil.listFileEndWith(picturePath, ".jpg")) {
+            String newPath = FileUtil.endWith(picturePath) + path;
+            logger.info("文件全路径：{}", newPath);
+            imgs.add(newPath);
+        }
+        pdfUtil.mergerImgToPDF(imgs, pdfName);
+    }
 }

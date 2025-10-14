@@ -7,16 +7,17 @@ import com.googlecode.aviator.lexer.token.OperatorType;
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;
 import com.googlecode.aviator.runtime.type.AviatorBoolean;
+import com.googlecode.aviator.runtime.type.AviatorJavaType;
 import com.googlecode.aviator.runtime.type.AviatorObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 /**
  * 规则工具
@@ -24,21 +25,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author chenqixu
  */
 public class RuleUtil {
-    private static final Logger logger = LoggerFactory.getLogger(RuleUtil.class);
-    private static final String vavlueLeftStr = "【";
-    private static final String valueRightStr = "】";
-    private static final String calcLeftStr = "(";
-    private static final String calcRightStr = ")";
-    private static List<String> keyList = new ArrayList<>();
-    private static List<String> calcList = new ArrayList<>();
+    // 正则表达式匹配整数和小数（含正负数）
+    private static final String NUMBER_PATTERN = "^-?\\d+(\\.\\d+)?$";
+    // 标签id和标签名称的映射
+    private Map<String, String> tagMap;
+    // 结果（是否有根因分析）
+    private AtomicBoolean result = new AtomicBoolean(true);
 
-    static {
-        keyList.add("包含");
-        keyList.add("大于等于");
-        keyList.add("小于等于");
-
-        calcList.add("或");
-        calcList.add("且");
+    /**
+     * 检查字符串是否表示有效的数字（整数或小数）
+     *
+     * @param str 要检查的字符串
+     * @return true表示有效数字，false表示无效
+     */
+    public static boolean isNumericS(String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+        return Pattern.matches(NUMBER_PATTERN, str);
     }
 
     /**
@@ -59,10 +63,15 @@ public class RuleUtil {
         // 每一层操作结果
         List<SubResultBean> srbList = new ArrayList<>();
 
+        // 具体日志
+        System.out.println("[具体日志]\n" + traceLog);
         // 解析每行日志
         for (String line : lines) {
-            // 跳过无意义行
-            if (line.trim().isEmpty() || line.startsWith("AVIATOR: [")) {
+            if (line.trim().contains("Result :")) {
+            } else if (line.trim().isEmpty() || // 跳过无意义行
+                    line.startsWith("AVIATOR: [") ||
+                    // 没有计算结果
+                    !line.contains("=> <Boolean")) {
                 continue;
             }
 
@@ -153,6 +162,8 @@ public class RuleUtil {
         }
         // 确认是主因还是要深入排查
         if (s1 != null) {
+            if (result.getAndSet(false)) {
+            }
             System.out.println("=== 根因分析 ===");
             rootCauseLookupCheck(s1);
         }
@@ -171,7 +182,7 @@ public class RuleUtil {
                 rootCauseLookupCheck(s1.getS2());
             }
         } else {
-            System.out.printf("%s%n", s1.getLeaf());
+            System.out.printf("%s%n", s1.getLeaf(this.tagMap));
         }
     }
 
@@ -181,6 +192,7 @@ public class RuleUtil {
             case "JavaType":
             case "Boolean":
             case "Long":
+            case "String":
                 return new SubTypeBean(arr);
             default:
                 return new SubTypeBean();
@@ -204,13 +216,14 @@ public class RuleUtil {
     /**
      * 翻译跟踪动作
      */
-    private String parseAction(String action) {
+    public static String parseAction(String action) {
         switch (action.trim()) {
             case ">":
                 return "大于";
             case "<":
                 return "小于";
             case "=":
+            case "==":
                 return "等于";
             case ">=":
                 return "大于等于";
@@ -222,8 +235,6 @@ public class RuleUtil {
                 return "或";
             case "=~":
                 return "匹配";
-            case "==":
-                return "等于";
             default:
                 return action;
         }
@@ -244,11 +255,42 @@ public class RuleUtil {
             @Override
             public AviatorObject call(final Map<String, Object> env, final AviatorObject arg1, final AviatorObject arg2) {
                 System.out.printf("arg1=%s, arg2=%s%n", arg1, arg2);
-                Number val = FunctionUtils.getNumberValue(arg1, env);
-                Object _listVal = FunctionUtils.getJavaObject(arg2, env);
-                List<Number> listVal = (List<Number>) _listVal;
-                boolean flag = listVal.contains(val);
-                System.out.printf("[操作符~=] arg1=%s, arg2=%s, arg1_val=%s, arg2_val=%s, calc=%s %n", arg1, arg2, val, listVal, flag);
+                boolean flag;
+                Object val1Obj = env.get(((AviatorJavaType) arg1).getName());
+                String val1 = val1Obj != null ? val1Obj.toString() : null;
+                if (isNumericS(val1)) {
+                    Number val = FunctionUtils.getNumberValue(arg1, env);
+                    Class valClass = val.getClass();
+                    Object _listVal = FunctionUtils.getJavaObject(arg2, env);
+                    List listVal = (List) _listVal;
+                    List<Number> val2 = new ArrayList<>();
+                    switch (valClass.getSimpleName()) {
+                        case "Integer":
+                            for (Object obj : listVal) {
+                                val2.add(Integer.valueOf(obj.toString().trim()));
+                            }
+                            break;
+                        case "Double":
+                            for (Object obj : listVal) {
+                                val2.add(Double.valueOf(obj.toString().trim()));
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    flag = val2.contains(val);
+                    System.out.printf("[操作符~=] arg1=%s, arg2=%s, arg1_val=%s, arg2_val=%s, calc=%s %n", arg1, arg2, val, listVal, flag);
+                } else {
+                    String val = FunctionUtils.getStringValue(arg1, env);
+                    Object _listVal = FunctionUtils.getJavaObject(arg2, env);
+                    List listVal = (List) _listVal;
+                    List<String> val2 = new ArrayList<>();
+                    for (Object obj : listVal) {
+                        val2.add(obj.toString().trim());
+                    }
+                    flag = val2.contains(val);
+                    System.out.printf("[操作符~=] arg1=%s, arg2=%s, arg1_val=%s, arg2_val=%s, calc=%s %n", arg1, arg2, val, listVal, flag);
+                }
                 return AviatorBoolean.valueOf(flag);
             }
 
@@ -267,5 +309,13 @@ public class RuleUtil {
         compiledExp.execute(env);
 
         return traceOutput;
+    }
+
+    public void setTagMap(Map<String, String> tagMap) {
+        this.tagMap = tagMap;
+    }
+
+    public Boolean getResult() {
+        return result.get();
     }
 }

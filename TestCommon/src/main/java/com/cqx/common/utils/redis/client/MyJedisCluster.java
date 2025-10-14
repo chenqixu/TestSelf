@@ -40,13 +40,19 @@ public class MyJedisCluster extends JedisCluster {
     }
 
     public MyJedisCluster(Set<HostAndPort> nodes, int timeout) {
-        super(nodes, timeout);
-        this._hostAndPortSet = nodes;
-        renewCache();
+        this(nodes, timeout, new GenericObjectPoolConfig());
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, int timeout, final GenericObjectPoolConfig poolConfig) {
+        this(nodes, timeout, DEFAULT_MAX_REDIRECTIONS, poolConfig);
     }
 
     public MyJedisCluster(Set<HostAndPort> nodes, final GenericObjectPoolConfig poolConfig) {
-        super(nodes, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
+        this(nodes, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, int timeout, int maxAttempts, final GenericObjectPoolConfig poolConfig) {
+        super(nodes, timeout, maxAttempts, poolConfig);
         this._hostAndPortSet = nodes;
         renewCache();
     }
@@ -56,8 +62,17 @@ public class MyJedisCluster extends JedisCluster {
     }
 
     public MyJedisCluster(Set<HostAndPort> nodes, String password, int timeout) {
-        super(nodes, timeout, timeout, DEFAULT_MAX_REDIRECTIONS
-                , password, new GenericObjectPoolConfig());
+        this(nodes, timeout, timeout, DEFAULT_MAX_REDIRECTIONS, password, new GenericObjectPoolConfig());
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, String password, int timeout, final GenericObjectPoolConfig poolConfig) {
+        this(nodes, timeout, timeout, DEFAULT_MAX_REDIRECTIONS, password, poolConfig);
+    }
+
+    public MyJedisCluster(Set<HostAndPort> nodes, int connectionTimeout, int soTimeout,
+                          int maxAttempts, String password, final GenericObjectPoolConfig poolConfig) {
+        super(nodes, connectionTimeout, soTimeout, maxAttempts
+                , password, poolConfig);
         this._hostAndPortSet = nodes;
         this.password = password;
         renewCache();
@@ -101,6 +116,7 @@ public class MyJedisCluster extends JedisCluster {
                             if (renewCache(jedis)) return;
                         } catch (Exception e) {
                             logger.error("renewCache异常：" + e.getMessage(), e);
+                            throw e;
                         }
                     }
                 } else {//后面都从缓存nodes获取，所以要维护好nodes
@@ -112,6 +128,7 @@ public class MyJedisCluster extends JedisCluster {
                             if (renewCache(jedis)) return;
                         } catch (Exception e) {
                             logger.error("renewCache异常：" + e.getMessage(), e);
+                            throw e;
                         }
                     }
                 }
@@ -462,7 +479,7 @@ public class MyJedisCluster extends JedisCluster {
      * @param key
      * @return
      */
-    public int getSlot(String key) {
+    public static int getSlot(String key) {
         return JedisClusterCRC16.getSlot(key);
     }
 

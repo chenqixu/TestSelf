@@ -81,6 +81,13 @@ public abstract class RedisPipeline implements Closeable {
         autoCommit("setex");
     }
 
+    protected abstract void mset_inside(String firstKey, String... keysvalues);
+
+    public void mset(String firstKey, String... keysvalues) {
+        mset_inside(firstKey, keysvalues);
+        autoCommit("mset");
+    }
+
     protected abstract void del_inside(String key);
 
     public void del(String key) {
@@ -123,6 +130,20 @@ public abstract class RedisPipeline implements Closeable {
         autoCommitAndGet(false);
     }
 
+    protected abstract void hmset_inside(String key, Map<String, String> params);
+
+    public void hmset(String key, Map<String, String> params) {
+        hmset_inside(key, params);
+        autoCommit("hmset");
+    }
+
+    protected abstract void expire_inside(String key, int seconds);
+
+    public void expire(String key, int seconds) {
+        expire_inside(key, seconds);
+        autoCommit("expire");
+    }
+
     private void autoCommit(String key) {
         PipelineCount pipelineCount = getPipelineCount(key);
         if (pipelineCount.incrementAndGet() % commit_num == 0) {
@@ -163,8 +184,13 @@ public abstract class RedisPipeline implements Closeable {
                 //We need this because if node is not reachable anymore - we need to finally initiate slots renewing,
                 //or we can stuck with cluster state without one node in opposite case.
                 logger.warn("attempts：{}，renewCache……", attempts);
-                renewCache();
-                throw connException;
+                try {
+                    renewCache();
+                } catch (Exception e) {
+                    logger.error("renewCache异常，重新分配连接异常");
+                    // renewCache异常，重新分配连接异常
+                    throw connException;
+                }
             }
             //递归，直到没有JedisConnectionException异常，或者
             flushGetCache(attempts - 1);
@@ -198,8 +224,13 @@ public abstract class RedisPipeline implements Closeable {
                 //We need this because if node is not reachable anymore - we need to finally initiate slots renewing,
                 //or we can stuck with cluster state without one node in opposite case.
                 logger.warn("attempts：{}，renewCache……", attempts);
-                renewCache();
-                throw connException;
+                try {
+                    renewCache();
+                } catch (Exception e) {
+                    logger.error("renewCache异常，重新分配连接异常");
+                    // renewCache异常，重新分配连接异常
+                    throw connException;
+                }
             }
             //递归，直到没有JedisConnectionException异常，或者
             commit(attempts - 1);

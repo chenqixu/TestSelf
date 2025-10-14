@@ -6,8 +6,12 @@ import com.cqx.common.utils.thread.ExecutorFactoryV1;
 import org.junit.Test;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
+import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
+import org.redisson.config.ClusterServersConfig;
 import org.redisson.config.Config;
+import org.redisson.config.ReadMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +42,20 @@ public class RedissonTest {
     @Test
     public void test2() {
         logger.info("test2");
+    }
+
+    @Test
+    public void mapTest() {
+        Config config = new Config();
+        ClusterServersConfig csc = config.useClusterServers();
+        config.setCodec(new StringCodec());// 值解析成字符串
+        csc.addNodeAddress("redis://10.1.8.201:10010");
+        csc.setPassword("by7JqR_k");
+        csc.setReadMode(ReadMode.MASTER);// 强制从主节点读取数据
+        RedissonClient client = Redisson.create(config);
+        RMap<String, String> queue_map = client.getMap("hm_test");
+        queue_map.put("a4", "111");
+        logger.info("{}", queue_map.get("a1"));
     }
 
     public class RMServer extends BaseCallableV1 {

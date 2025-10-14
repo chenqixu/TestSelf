@@ -143,6 +143,15 @@ public class JDBCUtilTest extends TestBase {
     }
 
     @Test
+    public void queryTest3() throws SQLException {
+        TimeCostUtil exec = new TimeCostUtil();
+        exec.start();
+        jdbcUtil.executeUpdate("select msisdn from customergrp1");
+        exec.stop();
+        logger.info("{} cost：{}", Thread.currentThread().getName(), exec.stopAndGet());
+    }
+
+    @Test
     public void executeBatchClob() throws Exception {
         String sql = "update nmc_schema set avsc=? where schema_name=?";
         QueryResultFactory qrf = QueryResultFactory.getInstance()

@@ -14,6 +14,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisDataException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -288,6 +289,47 @@ public class RedisFactory627Test {
                 SleepUtil.sleepMilliSecond(60000L);
                 redisPipeline.set("1", "1");
             }
+        }
+    }
+
+    @Test
+    public void msetTest() {
+        Map<String, String> map = new HashMap<>();
+        map.put("test1", "abc");
+        map.put("test2", "123");
+        map.put("test795", "abc10");
+        map.put("test2020", "abc11");
+        map.put("test7752", "abc12");
+//        for (int i = 1; i <= 10000; i++) {
+//            map.put("test" + i, "abc");
+//        }
+
+        Map<Integer, List<String>> slot_map = new HashMap<>();
+
+        // 给值分slot
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            int slotNum = RedisFactory.getClusterSlotByKey(key);
+            logger.info("key={}, slotNum={}", key, slotNum);
+            List<String> slot_map_value = slot_map.get(slotNum);
+            if (slot_map_value == null) {
+                slot_map_value = new ArrayList<>();
+                slot_map.put(slotNum, slot_map_value);
+            }
+            slot_map_value.add(key);
+            slot_map_value.add(value);
+        }
+//        System.exit(0);
+        // 保障相同的slot
+        for (Map.Entry<Integer, List<String>> entry : slot_map.entrySet()) {
+            int key = entry.getKey();
+            List<String> value = entry.getValue();
+            String[] array = value.toArray(new String[0]);
+//            if (value.size() >= 4) logger.info("key={}, value.length={}", key, value.size());
+            String ret = redisClient.mset(array);
+            logger.info("slot={}, value={}, array.length={}, ret={}", key, value, array.length, ret);
         }
     }
 }

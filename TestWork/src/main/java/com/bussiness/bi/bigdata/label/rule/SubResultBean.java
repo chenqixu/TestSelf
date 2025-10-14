@@ -1,5 +1,7 @@
 package com.bussiness.bi.bigdata.label.rule;
 
+import java.util.Map;
+
 /**
  * 控制层级
  *
@@ -41,6 +43,11 @@ public class SubResultBean {
 
     public String getLeaf() {
         return String.format("%s[%s] %s %s = %s", stb1.getName(), stb1.getVal(), op, stb2.getVal(), result);
+    }
+
+    public String getLeaf(Map<String, String> tagMap) {
+        return String.format("[规则]%s %s %s [用户标签值]%s [用户标签值代入规则计算结果]%s"
+                , tagMap.get(stb1.getName()), RuleUtil.parseAction(op), stb2.getVal(), stb1.getVal(), result);
     }
 
     public String getLevelAndRs() {

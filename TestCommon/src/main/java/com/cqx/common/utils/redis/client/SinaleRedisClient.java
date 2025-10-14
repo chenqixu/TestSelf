@@ -50,12 +50,22 @@ public class SinaleRedisClient extends RedisClient {
         return jedis.type(key);
     }
 
+    @Override
+    public String hmset(String key, Map<String, String> parmas) {
+        return jedis.hmset(key, parmas);
+    }
+
     public void flushDB() {
         jedis.flushDB();
     }
 
     @Override
     public String set(String key, String value) {
+        return jedis.set(key, value);
+    }
+
+    @Override
+    public String set(byte[] key, byte[] value) {
         return jedis.set(key, value);
     }
 
@@ -87,6 +97,11 @@ public class SinaleRedisClient extends RedisClient {
 
     @Override
     public String get(String key) {
+        return jedis.get(key);
+    }
+
+    @Override
+    public byte[] get(byte[] key) {
         return jedis.get(key);
     }
 
@@ -136,6 +151,11 @@ public class SinaleRedisClient extends RedisClient {
     }
 
     @Override
+    public Long hlen(String key) {
+        return jedis.hlen(key);
+    }
+
+    @Override
     public List<String> mget(String... keys) {
         return jedis.mget(keys);
     }
@@ -158,6 +178,76 @@ public class SinaleRedisClient extends RedisClient {
     @Override
     public Set<String> smembers(String key) {
         return jedis.smembers(key);
+    }
+
+    @Override
+    public Object eval(String script, int keyCount, String... params) {
+        return jedis.eval(script, keyCount, params);
+    }
+
+    @Override
+    public Object eval(String script, List<String> keys, List<String> args) {
+        return jedis.eval(script, keys, args);
+    }
+
+    @Override
+    public Object eval(String script, String key) {
+        return jedis.eval(script);
+    }
+
+    @Override
+    public Object evalsha(String script, String key) {
+        return jedis.evalsha(script);
+    }
+
+    @Override
+    public Object evalsha(String sha1, List<String> keys, List<String> args) {
+        return jedis.evalsha(sha1, keys, args);
+    }
+
+    @Override
+    public Object evalsha(String sha1, int keyCount, String... params) {
+        return jedis.evalsha(sha1, keyCount, params);
+    }
+
+    @Override
+    public Boolean scriptExists(String sha1, String key) {
+        return jedis.scriptExists(sha1);
+    }
+
+    @Override
+    public List<Boolean> scriptExists(String key, String... sha1) {
+        return jedis.scriptExists(sha1);
+    }
+
+    @Override
+    public String scriptLoad(String script, String key) {
+        return jedis.scriptLoad(script);
+    }
+
+    @Override
+    public String mset(String... keysvalues) {
+        return jedis.mset(keysvalues);
+    }
+
+    @Override
+    public Long msetnx(String... keysvalues) {
+        return jedis.msetnx(keysvalues);
+    }
+
+    @Override
+    public List<byte[]> mget(byte[]... keys) {
+        return jedis.mget(keys);
+    }
+
+    @Override
+    public String mset(byte[]... keysvalues) {
+        return jedis.mset(keysvalues);
+    }
+
+    @Override
+    public Long msetnx(byte[]... keysvalues) {
+        return jedis.msetnx(keysvalues);
     }
 
     @Override
@@ -203,6 +293,11 @@ public class SinaleRedisClient extends RedisClient {
         }
 
         @Override
+        protected void mset_inside(String firstKey, String... keysvalues) {
+            pipe.mset(keysvalues);
+        }
+
+        @Override
         protected void del_inside(String key) {
             pipe.del(key);
         }
@@ -225,6 +320,16 @@ public class SinaleRedisClient extends RedisClient {
         @Override
         protected void request_hget_inside(String key, String field) {
             pipe.hget(key, field);
+        }
+
+        @Override
+        protected void hmset_inside(String key, Map<String, String> params) {
+            pipe.hmset(key, params);
+        }
+
+        @Override
+        protected void expire_inside(String key, int seconds) {
+            pipe.expire(key, seconds);
         }
 
         @Override
