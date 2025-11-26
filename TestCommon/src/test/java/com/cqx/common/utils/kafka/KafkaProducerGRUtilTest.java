@@ -9,18 +9,24 @@ import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class KafkaProducerGRUtilTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerGRUtilTest.class);
+    private final BlockingQueue<String> retryQueue = new LinkedBlockingQueue<>();
+    private KafkaProducerGRUtil kafkaProducerUtil_SETUP;
 
     @Test
     public void sendRandom() throws Exception {
@@ -867,5 +873,66 @@ public class KafkaProducerGRUtilTest extends TestBase {
                 SleepUtil.sleepSecond(3);
             }
         }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        Map param = (Map) getParam("kafka_2.13-3.2.0-scram.yaml").get("param");// 从配置文件解析参数
+        kafkaProducerUtil_SETUP = new KafkaProducerGRUtil(param);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (kafkaProducerUtil_SETUP != null) kafkaProducerUtil_SETUP.close();
+    }
+
+    /**
+     * 测试数据送kafka，保障数据不丢，以及性能压测
+     */
+    @Test
+    public void dataDistributionEnsuresNoDataLoss() throws Exception {
+        String topicName = "sdtp_yc_test1";
+        // 独立线程处理重试
+        startRetryThread(topicName);
+        AtomicInteger seq = new AtomicInteger(0);
+        int i = 0;
+        // 写数据
+        while (true) {
+            String uuid = UUID.randomUUID().toString();
+            int s1 = seq.getAndIncrement();
+            if (s1 % 1000 == 0) {
+                logger.info("s1={}", s1);
+                i++;
+                if (i > 10) {
+                    break;
+                }
+            }
+            sendToKafka(topicName, s1 + "|" + uuid);
+        }
+        logger.info("stop");
+    }
+
+    private void sendToKafka(String topicName, String message) {
+        kafkaProducerUtil_SETUP.sendCallback(topicName, null, message.getBytes(), (metadata, exception) -> {
+            if (exception != null) {
+                logger.warn("失败进入重试队列, data={}", message);
+                retryQueue.offer(message); // 失败进入重试队列
+            }
+        });
+    }
+
+    // 独立线程处理重试
+    private void startRetryThread(String topicName) {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    String message = retryQueue.take();
+                    sendToKafka(topicName, message);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.error("[Thread.currentThread().interrupt()]" + e.getMessage(), e);
+                }
+            }
+        }).start();
     }
 }

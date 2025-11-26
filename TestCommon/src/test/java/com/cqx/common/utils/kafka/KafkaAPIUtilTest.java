@@ -9,11 +9,20 @@ public class KafkaAPIUtilTest extends TestBase {
 
     @Before
     public void setUp() throws Exception {
-        kafkaAPIUtil = new KafkaAPIUtil(getParam("kafka.yaml"));
+        kafkaAPIUtil = new KafkaAPIUtil(getParam("kafka_2.13-3.2.0-scram.yaml"));
     }
 
     @Test
     public void consumerGroupCommand() {
+    }
+
+    @Test
+    public void GetOffsetShell() {
+        kafkaAPIUtil.GetOffsetShell("10.1.8.200:9094"
+                , "nl_sip_test_v1"
+                , "-1"
+                , "D:\\Document\\Workspaces\\Git\\TestSelf\\TestCommon\\src\\test\\resources\\consumer-2.13_3.2.0.properties"
+        );
     }
 
     @Test

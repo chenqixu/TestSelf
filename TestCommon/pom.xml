@@ -797,7 +797,8 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>1.0.0</version>
+            <version>3.2.0</version>
+            <!--<version>1.0.0</version>-->
             <!--<version>0.8.2.1</version>-->
             <exclusions>
                 <exclusion>
@@ -808,8 +809,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>1.0.0</version>
+            <artifactId>kafka_2.13</artifactId>
+            <version>3.2.0</version>
+            <!--<artifactId>kafka_2.11</artifactId>-->
+            <!--<version>1.0.0</version>-->
             <!--<artifactId>kafka_2.10</artifactId>-->
             <!--<version>0.8.2.1</version>-->
             <exclusions>

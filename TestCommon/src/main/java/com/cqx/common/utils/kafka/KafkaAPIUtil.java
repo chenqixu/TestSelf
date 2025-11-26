@@ -20,7 +20,7 @@ public class KafkaAPIUtil {
     private String kafkaSecurityProtocol;
 
     public KafkaAPIUtil(Map conf) {
-        Properties properties = KafkaPropertiesUtil.initConf(conf);
+        Properties properties = KafkaPropertiesUtil.initConf((Map) conf.get("param"));
         bootstrap_servers = properties.getProperty("bootstrap.servers");
         kafka_username = properties.getProperty("newland.kafka_username");
         kafka_password = properties.getProperty("newland.kafka_password");
@@ -48,6 +48,36 @@ public class KafkaAPIUtil {
                 , kafka_password
                 , kafkaSecurityProtocol));
         ConsumerGroupCommand.main(args);
+    }
+
+    /**
+     * 查看offset，只能在2.13使用，2.11用不了<br>
+     * 示例：bin/kafka-run-class.sh kafka.tools.GetOffsetShell --bootstrap-server edc-mqc-01:9094 --topic nl_sip_test_v1 --time -1 --command-config config/consumer-test.properties<br>
+     * --time <String: <timestamp> / -1 or      timestamp of the offsets before that.
+     *   latest / -2 or earliest / -3 or max-     [Note: No offset is returned, if the
+     *   timestamp>                               timestamp greater than recently
+     *                                            committed record timestamp is
+     *                                            given.] (default: latest)
+     * @param bootstrap_servers
+     * @param topic
+     * @param time
+     */
+    public void GetOffsetShell(String bootstrap_servers, String topic, String time, String command_config) {
+        String[] args = {
+                "--bootstrap-server"
+                , bootstrap_servers
+                , "--topic"
+                , topic
+                , "--time"
+                , time
+                , "--command-config"
+                , command_config
+        };
+        Configuration.setConfiguration(new SimpleClientConfiguration(
+                kafka_username
+                , kafka_password
+                , kafkaSecurityProtocol));
+        kafka.tools.GetOffsetShell.main(args);
     }
 
     /**

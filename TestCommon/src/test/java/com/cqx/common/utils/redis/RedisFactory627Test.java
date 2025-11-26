@@ -322,14 +322,22 @@ public class RedisFactory627Test {
             slot_map_value.add(value);
         }
 //        System.exit(0);
-        // 保障相同的slot
-        for (Map.Entry<Integer, List<String>> entry : slot_map.entrySet()) {
-            int key = entry.getKey();
-            List<String> value = entry.getValue();
-            String[] array = value.toArray(new String[0]);
+
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            // 保障相同的slot
+            for (Map.Entry<Integer, List<String>> entry : slot_map.entrySet()) {
+                int key = entry.getKey();
+                List<String> value = entry.getValue();
+                String[] array = value.toArray(new String[0]);
 //            if (value.size() >= 4) logger.info("key={}, value.length={}", key, value.size());
-            String ret = redisClient.mset(array);
-            logger.info("slot={}, value={}, array.length={}, ret={}", key, value, array.length, ret);
+//                String ret = redisClient.mset(array);
+//                logger.info("slot={}, value={}, array.length={}, ret={}", key, value, array.length, ret);
+                // 通过第一个key，来计算槽位
+                redisPipeline.mset(array[0], array);
+            }
+
+            // 最后剩余强制flush
+            redisPipeline.commit();
         }
     }
 }
