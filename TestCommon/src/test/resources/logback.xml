@@ -11,7 +11,8 @@
 		<encoder>
 			<charset>UTF-8</charset>
 			<!-- [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{50}] -  -->
-			<pattern>%msg%n</pattern>
+			<!--<pattern>%msg%n</pattern>-->
+			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{50}] - %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -58,8 +59,17 @@
 		</encoder>
 	</appender> -->
 
+	<!-- 开启HttpClient wire日志（记录所有HTTP请求/响应的原始数据） -->
+	<logger name="org.apache.http.wire" level="DEBUG"/>
+	<logger name="org.apache.http.headers" level="DEBUG"/>
+
+	<!-- 对于HttpClient 5.x版本 -->
+	<logger name="org.apache.hc.client5.http.wire" level="DEBUG"/>
+	<logger name="org.apache.hc.client5.http.headers" level="DEBUG"/>
+
 	<root level="INFO">
 		<appender-ref ref="stdout" />
+		<!--<appender-ref ref="CONSOLE"/>-->
 		<!--<appender-ref ref="A1" />-->
 	</root>
 </configuration>

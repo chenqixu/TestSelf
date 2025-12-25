@@ -11,12 +11,16 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * HttpUtil
@@ -35,6 +39,39 @@ public class HttpUtil implements Serializable {
     private CloseableHttpClient httpClient = null;
     private HttpRequestBase httpRequestBase = null;
     private AtomicBoolean keepAliveCnt = new AtomicBoolean(true);
+
+    /**
+     * 将实体内容写入输出流查看原始字节
+     *
+     * @param entity
+     * @throws IOException
+     */
+    public static void printlnHttpEntity(HttpEntity entity) throws IOException {
+        // 将实体内容写入输出流查看原始字节
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // HttpEntity写入到ByteArrayOutputStream
+        entity.writeTo(baos);
+        // 转成内容
+        String rawContent = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        // 按边界分割显示各部分
+        String boundary = extractBoundary(entity.getContentType().getValue());
+        if (boundary != null) {
+            String[] parts = rawContent.split("--" + boundary);
+            for (int i = 0; i < parts.length; i++) {
+                if (!parts[i].trim().isEmpty()) {
+                    logger.info("--- Part " + i + " ---");
+                    logger.info(parts[i]);
+                }
+            }
+        }
+    }
+
+    private static String extractBoundary(String contentType) {
+        // 从Content-Type中提取boundary值
+        Pattern pattern = Pattern.compile("boundary=([^;]+)");
+        Matcher matcher = pattern.matcher(contentType);
+        return matcher.find() ? matcher.group(1) : null;
+    }
 
     public void setKeepAlive() {
         isKeepAlive = true;

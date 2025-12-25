@@ -4,10 +4,17 @@ import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.common.utils.system.TimeCostUtil;
 import com.cqx.common.utils.thread.BaseCallableV1;
 import com.cqx.common.utils.thread.ExecutorFactoryV1;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +65,39 @@ public class HttpUtilTest {
             }
         }
         ef.stop();
+    }
+
+    /**
+     * 从Multipart中打印表单内容
+     *
+     * @throws Exception
+     */
+    @Test
+    public void MultipartTest() throws Exception {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("title", "SDP.txt");
+        paramMap.put("fileType", "txt");
+        InputStream inputStream = new FileInputStream("d:\\tmp\\SDP.txt");
+
+        //解决中文乱码问题
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setCharset(Charset.forName("UTF-8"));
+        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.addBinaryBody("file"
+                , inputStream
+                , ContentType.DEFAULT_BINARY.withCharset("UTF-8")
+                , String.valueOf(paramMap.get("title")));
+
+        //(这个是要调的接口的参数，根据实际情况组装)解决文件名中文乱码（？？？）
+        builder.addTextBody("title"
+                , String.valueOf(paramMap.get("title"))
+                , ContentType.DEFAULT_TEXT.withCharset("UTF-8"));
+        builder.addTextBody("fileType"
+                , String.valueOf(paramMap.get("fileType")));
+
+        HttpEntity entity = builder.build();
+        logger.info("entity={}", entity);
+        HttpUtil.printlnHttpEntity(entity);
     }
 
     public class HttpTest extends BaseCallableV1 {
