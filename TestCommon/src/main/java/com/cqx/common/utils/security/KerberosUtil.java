@@ -1,10 +1,15 @@
 package com.cqx.common.utils.security;
 
+import org.apache.hadoop.util.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.Subject;
+import javax.security.auth.kerberos.KerberosPrincipal;
+import javax.security.auth.kerberos.KerberosTicket;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * KerberoUtil
@@ -13,7 +18,6 @@ import java.lang.reflect.Method;
  * @since 8.0.0
  */
 public class KerberosUtil {
-    private static final Logger logger = LoggerFactory.getLogger(KerberosUtil.class);
     /**
      * JAVA_VENDER
      */
@@ -42,6 +46,12 @@ public class KerberosUtil {
      * DEFAULT_REALM
      */
     public static final String DEFAULT_REALM = "HADOOP.COM";
+    private static final Logger logger = LoggerFactory.getLogger(KerberosUtil.class);
+    /**
+     * Percentage of the ticket window to use before we renew ticket.
+     */
+    private static final float TICKET_RENEW_WINDOW = 0.80f;
+    private static boolean shouldRenewImmediatelyForTests = false;
 
     /**
      * Get Krb5 Domain Realm
@@ -74,5 +84,57 @@ public class KerberosUtil {
         }
 
         return peerRealm;
+    }
+
+    static KerberosTicket getTGT(Subject subject) {
+        Set<KerberosTicket> tickets = subject
+                .getPrivateCredentials(KerberosTicket.class);
+        for (KerberosTicket ticket : tickets) {
+            if (isTGSPrincipal(ticket.getServer())) {
+                return ticket;
+            }
+        }
+        return null;
+    }
+
+    static boolean isTGSPrincipal(KerberosPrincipal principal) {
+        if (principal == null)
+            return false;
+        if (principal.getName().equals("krbtgt/" + principal.getRealm() +
+                "@" + principal.getRealm())) {
+            return true;
+        }
+        return false;
+    }
+
+    static long getRefreshTime(KerberosTicket tgt) {
+        long start = tgt.getStartTime().getTime();
+        long end = tgt.getEndTime().getTime();
+        return start + (long) ((end - start) * TICKET_RENEW_WINDOW);
+    }
+
+    /**
+     * 认证检查，过期返回true
+     *
+     * @param subject
+     * @return
+     */
+    public static boolean checkTGT(Subject subject) {
+        if (subject == null) {
+            throw new NullPointerException("subject 参数为空！");
+        }
+        KerberosTicket tgt = getTGT(subject);
+        if (tgt == null) {
+            throw new NullPointerException(String.format("无法从%s中获取KerberosTicket!", subject));
+        }
+        long time_now = Time.now();
+        long refresh_time = getRefreshTime(tgt);
+        if (!KerberosUtil.shouldRenewImmediatelyForTests && time_now < refresh_time) {
+            logger.info("[Kerberos认证检查] 认证没有过期，当前时间={}, 过期时间={}", time_now, refresh_time);
+        } else {
+            logger.warn("[Kerberos认证检查] 认证过期！");
+            return true;
+        }
+        return false;
     }
 }
