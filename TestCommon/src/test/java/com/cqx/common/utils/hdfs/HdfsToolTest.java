@@ -13,16 +13,28 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HdfsToolTest {
-
     private static final MyLogger logger = MyLoggerFactory.getLogger(HdfsToolTest.class);
-    private static final String conf = "d:\\tmp\\etc\\hadoop\\conf75\\";
+    private static final String conf = "d:\\tmp\\etc\\hadoop\\";
     private HdfsTool hdfsTool;
 
     @Before
     public void setUp() throws Exception {
-        HdfsTool.setHadoopUser("edc_base");
         HdfsBean hdfsBean = new HdfsBean();
-        hdfsTool = new HdfsTool(conf, hdfsBean);
+        // 从JVM参数中获取，使用方式：-Dhadoop.conf=confhw
+        String sp = System.getProperty("hadoop.conf");
+        logger.info("sp={}", sp);
+        if (sp != null && sp.trim().length() > 0) {
+            if (sp.equals("confhw")) {// 10.1.12.75,10.1.12.78,10.1.12.79
+                hdfsBean.setPrincipal("yz_newland@HADOOP.COM");
+                hdfsBean.setAuth_type("kerberos");
+                hdfsBean.setKrb5("d:\\tmp\\etc\\keytab\\krb5.conf");
+                hdfsBean.setKeytab("d:\\tmp\\etc\\keytab\\yz_newland.keytab");
+            }
+        } else {// 10.1.8.75
+            sp = "conf75";
+            HdfsTool.setHadoopUser("edc_base");
+        }
+        hdfsTool = new HdfsTool(conf + sp, hdfsBean);
     }
 
     @After
@@ -48,7 +60,7 @@ public class HdfsToolTest {
 
     @Test
     public void createFileCodeTest() throws Exception {
-        try (OutputStream os = hdfsTool.createFile("/data/otherdata/code_test/gbk1.txt");){
+        try (OutputStream os = hdfsTool.createFile("/data/otherdata/code_test/gbk1.txt");) {
 //             OutputStreamWriter osw = new OutputStreamWriter(os, "GBK")) {
 //            osw.write("你好");
             os.write("你好GBK\n".getBytes("GBK"));
@@ -135,5 +147,10 @@ public class HdfsToolTest {
 //        hdfsTool.delete("/cqx/data/a.complete");
 //        hdfsTool.rename("/cqx/data/a.complete", "/cqx/data/b.complete");
         hdfsTool.delete("/cqx/data/b.complete");
+    }
+
+    @Test
+    public void lsHWCluster() throws IOException {
+        hdfsTool.ls("/user");
     }
 }
