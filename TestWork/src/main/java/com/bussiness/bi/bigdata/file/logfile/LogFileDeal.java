@@ -143,6 +143,15 @@ public class LogFileDeal {
                         }
                     }
                 }
+
+                @Override
+                public void tearDown() throws IOException {
+                    // 剔除已完成
+                    for (ExcelFileBean excelFileBean : completeMap.values()) {
+                        contingencyMap.remove(excelFileBean.getRealTaskName());
+                        unresolvedMap.remove(excelFileBean.getRealTaskName());
+                    }
+                }
             });
 
             logger.info("<!-- 列会自动生成");
@@ -308,7 +317,7 @@ public class LogFileDeal {
             isUpdate = true;
         }
         // 更新完成时间
-        if (o2.getTaskType().equals(TaskStatusEnum.COMPLETED.getName())) {
+        if (o2.getTaskStatus().equals(TaskStatusEnum.COMPLETED.getName())) {
             // 通过星期获得对应日期
             o1.setEndTime(weekAndDay.get(o2.getWeekNum()));
             isUpdate = true;
