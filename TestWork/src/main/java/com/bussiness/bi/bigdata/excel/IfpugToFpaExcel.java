@@ -19,8 +19,13 @@ public class IfpugToFpaExcel {
     private static final Logger logger = LoggerFactory.getLogger(IfpugToFpaExcel.class);
 
     public static void main(String[] args) {
-        new IfpugToFpaExcel().readExcel("d:\\Work\\CVS\\BI\\SSC\\项目管理\\工程项目(未立项)\\标签基础平台\\投资框架任务包\\子任务包-两级互动管理建设\\工作簿1.xlsx"
-                , "d:\\Work\\CVS\\BI\\SSC\\项目管理\\工程项目(未立项)\\标签基础平台\\投资框架任务包\\子任务包-两级互动管理建设\\prom\\");
+        // 父目录
+        String f_path = "d:\\Work\\CVS\\BI\\SSC\\项目管理\\工程项目(未立项)\\标签基础平台\\投资框架任务包\\";
+        // 子目录
+        String c_path = "子任务包-两级互动管理建设";
+        c_path = "子任务包-政企存量二期集团考核能力建设";
+        new IfpugToFpaExcel().readExcel(f_path + c_path + "\\工作簿1.xlsx"
+                , f_path + c_path + "\\prom\\");
     }
 
     public void readExcel(String path, String savePath) {
@@ -48,7 +53,7 @@ public class IfpugToFpaExcel {
                                 }
                                 StringBuilder sb = new StringBuilder();
                                 sb.append("## 任务\n" + "请参考以下内容，将IFPUG格式的功能点描述，转换成FPA格式的功能点描述\n");
-                                sb.append("## 输出格式\n" + "内容\n\n");
+                                sb.append("## 输出\n" + "直接输出内容，就是FPA格式的功能点描述，不要输出其他\n\n");
                                 sb.append("## IFPUG格式-功能点名称\n");
                                 sb.append(FunctionPointName);
                                 sb.append("\n");
@@ -64,13 +69,22 @@ public class IfpugToFpaExcel {
                                 sb.append("## IFPUG格式-要素数量\n");
                                 sb.append(NumberOfElements);
                                 sb.append("\n");
+//                                sb.append("## 举例\n" +
+//                                        "- IFPUG格式功能点描述\n" +
+//                                        "新增一个复合标签列表查询类页面，输入复合标签信息，呈现复合标签基础情况的查询结果，包括复合标签名称、主体、状态、创建人员、归属区域等情况。\n" +
+//                                        "- 转换后的FPA格式功能点描述\n" +
+//                                        "提供复合标签列表查询页面，支持输入复合标签相关信息作为查询条件，并以列表形式呈现包含复合标签名称、主体、状态、创建人员、归属区域等基础信息 。\n");
                                 sb.append("## 举例\n" +
                                         "- IFPUG格式功能点描述\n" +
-                                        "新增一个复合标签列表查询类页面，输入复合标签信息，呈现复合标签基础情况的查询结果，包括复合标签名称、主体、状态、创建人员、归属区域等情况。\n" +
+                                        "新增一个“评估模型信息列表展示”查询类页面，输入模型信息，展示标签评估模型基础信息情况的查询结果，包括模型名称、模型类型、模型状态、创建\n" +
+                                        "人等情况。\n" +
                                         "- 转换后的FPA格式功能点描述\n" +
-                                        "提供复合标签列表查询页面，支持输入复合标签相关信息作为查询条件，并以列表形式呈现包含复合标签名称、主体、状态、创建人员、归属区域等基础信息 。\n");
+                                        "支持展示所有标签监测模型的相关信息，包括展示了模型的基本属性（如名称、类型、对象等），还提供了创建人和创建时间等详细信息，帮助用户快速\n" +
+                                        "获取所需的信息并进行有效的管理。\n" +
+                                        "## 注意要点\n" +
+                                        "不用体现“输入”，“过程处理”，只要描述好这个功能点实现的功能。");
                                 try {
-                                    fu.createFile(savePath + num++ + "-" + FunctionPointName + ".txt", "UTF-8");
+                                    fu.createFile(savePath + num++ + "-" + FunctionPointName + ".txt" , "UTF-8");
                                     fu.write(sb.toString());
                                 } finally {
                                     fu.closeWrite();

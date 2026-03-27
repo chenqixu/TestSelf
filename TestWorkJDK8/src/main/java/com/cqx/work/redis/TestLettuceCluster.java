@@ -1,26 +1,17 @@
 package com.cqx.work.redis;
 
-import io.lettuce.core.*;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.RedisURI;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
 import io.lettuce.core.cluster.RedisClusterClient;
-import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
-import io.lettuce.core.cluster.api.sync.Executions;
-import io.lettuce.core.cluster.api.sync.NodeSelection;
-import io.lettuce.core.cluster.api.sync.NodeSelectionCommands;
-import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
-import io.lettuce.core.cluster.pubsub.StatefulRedisClusterPubSubConnection;
-import io.lettuce.core.cluster.pubsub.api.async.NodeSelectionPubSubAsyncCommands;
-import io.lettuce.core.cluster.pubsub.api.async.PubSubAsyncNodeSelection;
-import io.lettuce.core.cluster.pubsub.api.reactive.RedisClusterPubSubReactiveCommands;
 import io.lettuce.core.protocol.DecodeBufferPolicies;
-import io.lettuce.core.pubsub.RedisPubSubListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * lettuce
@@ -28,13 +19,16 @@ import java.util.Map;
  * @author chenqixu
  */
 public class TestLettuceCluster {
+    private static final Logger logger = LoggerFactory.getLogger(TestLettuceCluster.class);
+    private RedisClusterClient clusterClient;
 
-    public static void main(String[] args) {
+    public void init() {
+        logger.info("初始化开始");
         List<RedisURI> nodeList = new ArrayList<>();
         nodeList.add(RedisURI.builder().withHost("10.1.8.200").withPort(10010).withAuthentication("default", "by7JqR_k").build());
         nodeList.add(RedisURI.builder().withHost("10.1.8.201").withPort(10010).withAuthentication("default", "by7JqR_k").build());
         nodeList.add(RedisURI.builder().withHost("10.1.8.202").withPort(10010).withAuthentication("default", "by7JqR_k").build());
-        RedisClusterClient clusterClient = RedisClusterClient.create(nodeList);
+        clusterClient = RedisClusterClient.create(nodeList);
 
         ClusterTopologyRefreshOptions clusterTopologyRefreshOptions = ClusterTopologyRefreshOptions.builder()
                 .adaptiveRefreshTriggersTimeout(Duration.ofSeconds(5L))//设置自适应拓扑刷新超时，每次超时刷新一次，默认30s；
@@ -66,125 +60,17 @@ public class TestLettuceCluster {
 
         clusterClient.setDefaultTimeout(Duration.ofSeconds(5L));
         clusterClient.setOptions(clusterClientOptions);
+        logger.info("初始化完成");
+    }
 
-        StatefulRedisClusterConnection<String, String> clusterConn = clusterClient.connect();
-        clusterConn.setReadFrom(ReadFrom.ANY);//设置从哪些节点读取数据；
-        RedisAdvancedClusterCommands<String, String> clusterCmd = clusterConn.sync();
-        clusterCmd.set("a", "A");
-        clusterCmd.set("b", "B");
-        clusterCmd.set("c", "C");
-        clusterCmd.set("d", "D");
-        System.out.println("get a=" + clusterCmd.get("a"));
-        System.out.println("get b=" + clusterCmd.get("b"));
-        System.out.println("get c=" + clusterCmd.get("c"));
-        System.out.println("get d=" + clusterCmd.get("d"));
-        //跨槽位命令
-        Map<String, String> kvmap = new HashMap<>();
-        kvmap.put("a", "AA");
-        kvmap.put("b", "BB");
-        kvmap.put("c", "CC");
-        kvmap.put("d", "DD");
-        clusterCmd.mset(kvmap);//Lettuce做了优化，支持一些命令的跨槽位命令；
-        System.out.println("Lettuce mget:" + clusterCmd.mget("a", "b", "c", "d"));
-        //选定部分节点操作
-        NodeSelection<String, String> replicas = clusterCmd.replicas();
-        NodeSelectionCommands<String, String> replicaseCmd = replicas.commands();
-        Executions<KeyScanCursor<String>> executions = replicaseCmd.scan(ScanCursor.INITIAL);
-        executions.forEach(s -> {
-            System.out.println(s.getKeys());
-        });
-
-        //订阅发布消息
-        StatefulRedisClusterPubSubConnection<String, String> pubSubConn = clusterClient.connectPubSub();
-        pubSubConn.addListener(new RedisPubSubListener<String, String>() {
-            @Override
-            public void message(String channel, String message) {
-                System.out.println("[message]ch:" + channel + ",msg:" + message);
-            }
-
-            @Override
-            public void message(String pattern, String channel, String message) {
-            }
-
-            @Override
-            public void subscribed(String channel, long count) {
-                System.out.println("[subscribed]ch:" + channel);
-            }
-
-            @Override
-            public void psubscribed(String pattern, long count) {
-            }
-
-            @Override
-            public void unsubscribed(String channel, long count) {
-            }
-
-            @Override
-            public void punsubscribed(String pattern, long count) {
-            }
-        });
-        pubSubConn.sync().subscribe("TEST_Ch");//（回调内部使用阻塞调用或者lettuce同步api调用，需使用异步订阅）
-        clusterCmd.publish("TEST_Ch", "MSGMSGMSG");
-        //响应式订阅，可以监听ChannelMessage和PatternMessage，使用链式过滤处理计算等操作
-        RedisClusterPubSubReactiveCommands<String, String> pubsubReactive = pubSubConn.reactive();
-        pubsubReactive.subscribe("TEST_Ch2").subscribe();
-        pubsubReactive.observeChannels()
-                .filter(chmsg -> {
-                    return chmsg.getMessage().contains("tom");
-                })
-                .doOnNext(chmsg -> {
-                    System.out.println("<tom>" + chmsg.getChannel() + ">>" + chmsg.getMessage());
-                })
-                .subscribe();
-        clusterCmd.publish("TEST_Ch2", "send to jerry");
-        clusterCmd.publish("TEST_Ch", "tom MSG");
-        clusterCmd.publish("TEST_Ch2", "this is tom");
-
-        //keySpaceEvent事件
-        StatefulRedisClusterPubSubConnection<String, String> clusterPubSubConn = clusterClient.connectPubSub();
-        clusterPubSubConn.setNodeMessagePropagation(true);//启用禁用节点消息传播到该listener，例如只能在本节点通知的键事件通知；
-        RedisPubSubListener<String, String> listener = new RedisPubSubListener<String, String>() {
-            @Override
-            public void unsubscribed(String channel, long count) {
-                System.out.println("unsubscribed_ch:" + channel);
-            }
-
-            @Override
-            public void subscribed(String channel, long count) {
-                System.out.println("subscribed_ch:" + channel);
-            }
-
-            @Override
-            public void punsubscribed(String pattern, long count) {
-                System.out.println("punsubscribed_pattern:" + pattern);
-            }
-
-            @Override
-            public void psubscribed(String pattern, long count) {
-                System.out.println("psubscribed_pattern:" + pattern);
-            }
-
-            @Override
-            public void message(String pattern, String channel, String message) {
-                System.out.println("message_pattern:" + pattern + " ch:" + channel + " msg:" + message);
-            }
-
-            @Override
-            public void message(String channel, String message) {
-                System.out.println("message_ch:" + channel + " msg:" + message);
-            }
-        };
-        clusterPubSubConn.addListener(listener);
-        PubSubAsyncNodeSelection<String, String> allPubSubAsyncNodeSelection = clusterPubSubConn.async().all();
-        NodeSelectionPubSubAsyncCommands<String, String> pubsubAsyncCmd = allPubSubAsyncNodeSelection.commands();
-        clusterCmd.setex("a", 1, "A");
-        pubsubAsyncCmd.psubscribe("__keyspace@0__:*");
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void close() {
+        if (clusterClient != null) {
+            logger.info("clusterClient资源释放");
+            clusterClient.close();
         }
-        System.out.println("end");
+    }
+
+    public RedisClusterClient getClusterClient() {
+        return clusterClient;
     }
 }

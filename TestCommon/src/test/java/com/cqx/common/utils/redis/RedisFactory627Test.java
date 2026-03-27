@@ -340,4 +340,31 @@ public class RedisFactory627Test {
             redisPipeline.commit();
         }
     }
+
+    @Test
+    public void mgetTest() {
+        /**
+         * redis.clients.jedis.exceptions.JedisClusterException: No way to dispatch this command to Redis Cluster because keys have different slots.
+         * */
+        /**
+         * 这个错误是因为在使用 Redis Cluster 集群模式时，MGET命令尝试获取的多个 key 分布在不同的哈希槽（slot）中。
+         *
+         * 在 Redis Cluster 中，每个 key 都会被分配到 0-16383 共 16384 个槽位中的一个。
+         * MGET要求所有涉及的 key 必须在同一个哈希槽中，否则无法在单个命令中跨槽操作。
+         * */
+//        String[] keys = {"72_5919517088", "72_5919517519", "72_13626909221"};
+//        List<String> vals = redisClient.mget(keys);
+//        logger.info("[vals]={}", vals);
+
+        /**
+         * jedis，集群模式下，不能走mget，只能走pipeline
+         * */
+        try (RedisPipeline redisPipeline = redisClient.openPipeline()) {
+            redisPipeline.request_get("72_5919517088");
+            redisPipeline.request_get("72_5919517519");
+            redisPipeline.request_get("72_13626909221");
+            List<Object> vals = redisPipeline.get();
+            logger.info("[vals]={}", vals);
+        }
+    }
 }
