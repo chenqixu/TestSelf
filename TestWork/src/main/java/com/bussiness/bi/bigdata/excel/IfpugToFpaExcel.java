@@ -19,16 +19,35 @@ public class IfpugToFpaExcel {
     private static final Logger logger = LoggerFactory.getLogger(IfpugToFpaExcel.class);
 
     public static void main(String[] args) {
-        // 父目录
-        String f_path = "d:\\Work\\CVS\\BI\\SSC\\项目管理\\工程项目(未立项)\\标签基础平台\\投资框架任务包\\";
-        // 子目录
-        String c_path = "子任务包-两级互动管理建设";
-        c_path = "子任务包-政企存量二期集团考核能力建设";
-        new IfpugToFpaExcel().readExcel(f_path + c_path + "\\工作簿1.xlsx"
-                , f_path + c_path + "\\prom\\");
+        // 需要输入2个参数，1：父目录，2：子目录
+        if (args.length == 2) {
+            // 父目录
+            String f_path = "d:\\Work\\CVS\\BI\\SSC\\项目管理\\工程项目(未立项)\\标签基础平台\\投资框架任务包\\";
+            // 子目录
+            String c_path = "子任务包-两级互动管理建设";
+            c_path = "子任务包-政企存量二期集团考核能力建设";
+            c_path = "子任务包-全网标签库与四度三维体系建设";
+            // 从参数中获取
+            f_path = args[0];
+            c_path = args[1];
+            new IfpugToFpaExcel().readExcel(f_path + c_path + "\\工作簿1.xlsx"
+                    , f_path + c_path + "\\prom\\");
+        } else {
+            System.err.println("需要输入2个参数，1：父目录，2：子目录！");
+        }
     }
 
     public void readExcel(String path, String savePath) {
+        // 校验path是否存在
+        if (!FileUtil.isFile(path)) {
+            System.err.println(String.format("找不到输入文件：%s", path));
+            System.exit(-1);
+        }
+        // 校验savePath是否存在
+        if (!FileUtil.isDirectory(savePath)) {
+            System.err.println(String.format("找不到输出文件路径：%s", savePath));
+            System.exit(-1);
+        }
         List<ExcelSheetList> list;
         ExcelUtils eu = new ExcelUtils();
         FileUtil fu = new FileUtil();
@@ -84,7 +103,7 @@ public class IfpugToFpaExcel {
                                         "## 注意要点\n" +
                                         "不用体现“输入”，“过程处理”，只要描述好这个功能点实现的功能。");
                                 try {
-                                    fu.createFile(savePath + num++ + "-" + FunctionPointName + ".txt" , "UTF-8");
+                                    fu.createFile(savePath + num++ + "-" + FunctionPointName + ".txt", "UTF-8");
                                     fu.write(sb.toString());
                                 } finally {
                                     fu.closeWrite();
