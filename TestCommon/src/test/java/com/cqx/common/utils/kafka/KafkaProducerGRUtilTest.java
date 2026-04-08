@@ -80,6 +80,27 @@ public class KafkaProducerGRUtilTest extends TestBase {
     }
 
     @Test
+    public void sendTest_Avro_1AvroWithBtime() throws Exception {
+        Map param = (Map) getParam("kafka_2.13-3.2.0-scram.yaml").get("param");//从配置文件解析参数
+        param.put("kafkaconf.newland.schema.mode", "FILE");
+        param.put("kafkaconf.newland.schema.file", "d:/tmp/data/avro/test1.avsc");
+        Random random = new Random();
+        try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
+            kafkaProducerGRUtil.setTopic("test_avro_2");
+            for (int i = 0; i < 1000; i++) {
+                // 时间戳
+                Map<String, String> map = new HashMap<>();
+//                map.put("btime", "" + System.currentTimeMillis());
+                // long
+                map.put("btime", Utils.formatTime(System.currentTimeMillis(), "yyyyMMddHHmmss"));
+                // long，随机值，1-10
+                map.put("type", String.valueOf(random.nextInt(10)));
+                kafkaProducerGRUtil.sends(map);
+            }
+        }
+    }
+
+    @Test
     public void sendTest1WithWatermark() throws Exception {
         Map param = (Map) getParam("kafka.yaml").get("param");//从配置文件解析参数
         try (KafkaProducerGRUtil kafkaProducerGRUtil = new KafkaProducerGRUtil(param)) {
