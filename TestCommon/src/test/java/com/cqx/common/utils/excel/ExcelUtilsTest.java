@@ -297,4 +297,12 @@ public class ExcelUtilsTest {
             }
         }
     }
+
+    /**
+     * 删除多余sheet
+     */
+    @Test
+    public void deleteSheet() {
+        excelUtils.deleteSheetWithMatch("d:\\Work\\架构师SA\\软件架构师SA周报2026 - 副本.xlsx","2025");
+    }
 }

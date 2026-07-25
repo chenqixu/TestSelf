@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ExcelUtils {
     private static final Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
@@ -378,6 +379,54 @@ public class ExcelUtils {
             } else {
                 logger.info("{}", path + ExcelCommons.NOT_EXCEL_FILE);
             }
+        }
+    }
+
+    public void deleteSheetWithMatch(String filePath, String matchSheetName) {
+        List<String> allNames = new ArrayList<>();
+        AtomicBoolean isDelete = new AtomicBoolean(false);
+        int deleteCnt = 0;
+        try (FileInputStream fis = new FileInputStream(new File(filePath));
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            logger.info("[NumberOfSheets] {}", workbook.getNumberOfSheets());
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                String _name = workbook.getSheetAt(i).getSheetName();
+                allNames.add(_name);
+                logger.info("[SheetName] {}", _name);
+                if (_name.contains(matchSheetName)) {
+                    workbook.removeSheetAt(i); // 删除工作表
+                    isDelete.set(true);
+                    deleteCnt++;
+                    logger.info("[删除工作表] {} {}", i, _name);
+                }
+            }
+            if (isDelete.get()) {
+                try (FileOutputStream fos = new FileOutputStream(filePath)) {
+                    workbook.write(fos); // 保存更改到文件
+                }
+                logger.info("[总共删除] {}", deleteCnt);
+            } else {
+                logger.info("没有改动，工作表匹配不上: {}", matchSheetName);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    public void deleteSheet(String filePath, String sheetName) {
+        try (FileInputStream fis = new FileInputStream(new File(filePath));
+             Workbook workbook = new XSSFWorkbook(fis)) {
+            int sheetIndex = workbook.getSheetIndex(sheetName); // 获取工作表的索引
+            if (sheetIndex >= 0) { // 检查工作表是否存在
+                workbook.removeSheetAt(sheetIndex); // 删除工作表
+                try (FileOutputStream fos = new FileOutputStream(filePath)) {
+                    workbook.write(fos); // 保存更改到文件
+                }
+            } else {
+                logger.info("工作表不存在: {}", sheetName);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 }
