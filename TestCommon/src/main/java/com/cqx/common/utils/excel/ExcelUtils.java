@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -181,6 +182,8 @@ public class ExcelUtils {
                     if (row != null) {
                         int minColIx = row.getFirstCellNum();
                         int maxColIx = row.getLastCellNum();
+                        // 有个bug，minCollx可能小于0 #20260818
+                        if (minColIx < 0) minColIx = 0;
                         // 如果要按表头对齐长度，最大单元格以表头为准
                         if (titleRow > -1) maxColIx = titleRow;
                         List<String> rowlist = new ArrayList<>();
@@ -190,7 +193,8 @@ public class ExcelUtils {
                             if (cell == null) {
                                 rowlist.add("");
                             } else {
-                                rowlist.add(getValue(cell, evaluator));
+//                                rowlist.add(getValue(cell, evaluator));
+                                rowlist.add(getCellValue(sheet, cell, evaluator));
                             }
                         }
                         sheetlist.add(rowlist);
@@ -202,6 +206,42 @@ public class ExcelUtils {
             if (is != null) is.close();
         }
         return resultlist;
+    }
+
+    /**
+     * 获取单元格值，自动处理合并单元格
+     *
+     * @param sheet     当前工作表
+     * @param cell      单元格
+     * @param evaluator 计算器
+     * @return 单元格值（统一转为字符串）
+     */
+    private String getCellValue(Sheet sheet, Cell cell, FormulaEvaluator evaluator) {
+        int rowIndex = cell.getRowIndex();
+        int colIndex = cell.getColumnIndex();
+        // 1. 判断当前单元格是否落在某个合并区域内
+        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+        for (CellRangeAddress region : mergedRegions) {
+            if (region.isInRange(rowIndex, colIndex)) {
+                // 命中合并区域，重定向到左上角单元格
+                rowIndex = region.getFirstRow();
+                colIndex = region.getFirstColumn();
+                break;
+            }
+        }
+
+        // 2. 空值保护：避免行/单元格未创建导致空指针
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) {
+            return "";
+        }
+        Cell cell1 = row.getCell(colIndex);
+        if (cell1 == null) {
+            return "";
+        }
+
+        // 3. 按单元格类型解析值，避免类型转换异常
+        return getValue(cell1, evaluator);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.cqx.common.utils.excel;
 
 import com.cqx.common.bean.system.PCBean;
+import com.cqx.common.utils.xml.OpmlConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -303,6 +304,69 @@ public class ExcelUtilsTest {
      */
     @Test
     public void deleteSheet() {
-        excelUtils.deleteSheetWithMatch("d:\\Work\\架构师SA\\软件架构师SA周报2026 - 副本.xlsx","2025");
+        excelUtils.deleteSheetWithMatch("d:\\Work\\架构师SA\\软件架构师SA周报2026 - 副本.xlsx", "2025");
+    }
+
+    /**
+     * 生成2期的opml，用来导入生成xmind
+     */
+    @Test
+    public void createOpml() throws Exception {
+        boolean isFirst = true;
+        String name = "标签平台二期功能清单1.xlsx";
+        String read_path = "d:\\Work\\实时\\标签大宽表\\标签平台\\需求\\标签二期需求\\" + name;
+        List<ExcelSheetList> excelSheetLists = excelUtils.readExcel(read_path);
+        List<String> newl = new ArrayList<>();
+        for (ExcelSheetList excelSheetList : excelSheetLists) {
+            if (excelSheetList.getSheetName().equals("项目功能点估算20260720")) {
+                String jucuo_name = null;// 举措名称
+                String jucuo_name_his = null;// 历史举措名称
+                for (List<String> strs : excelSheetList.getSheetList()) {
+                    // 去掉首行
+                    if (isFirst) {
+                        isFirst = false;
+                        continue;
+                    }
+                    if (strs != null && strs.size() > 6) {
+                        jucuo_name = strs.get(0);
+                        if (jucuo_name_his == null) {
+                            jucuo_name_his = jucuo_name;
+                        }
+                        // 换举措了
+                        if (!jucuo_name.equals(jucuo_name_his)) {
+//                            System.out.println(String.format("jucuo_name=%s, jucuo_name_his=%s",jucuo_name,jucuo_name_his));
+                            StringBuilder result = new StringBuilder();
+                            new OpmlConverter().generateOutlineXml(newl, 0, result);
+                            System.out.println(result);
+
+                            // 清空数据
+                            newl.clear();
+                            jucuo_name_his = jucuo_name;
+                        }
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(strs.get(0))
+                                .append(", ")
+                                .append(strs.get(1))
+                                .append(", ")
+                                .append(strs.get(2))
+                                .append(", ")
+                                .append(strs.get(3))
+                                .append(", ")
+                                .append(strs.get(5));
+                        newl.add(sb.toString());
+//                        System.out.println(sb);
+                    }
+                }
+            }
+        }
+
+        if (newl.size() > 0) {
+            StringBuilder result = new StringBuilder();
+            new OpmlConverter().generateOutlineXml(newl, 0, result);
+            System.out.println(result);
+
+            // 清空数据
+            newl.clear();
+        }
     }
 }
