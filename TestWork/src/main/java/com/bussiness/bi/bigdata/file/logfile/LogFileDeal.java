@@ -75,8 +75,17 @@ public class LogFileDeal {
                 case "2":
                     lfd.excelDeal(filePath);
                     break;
+                case "4":// 支持自定义年份
+                    // 先判断参数是否4个，最后一个是年份
+                    if (args.length == 4) {
+                        year = args[3];
+                        logger.info("[year]{}", year);
+                    } else {
+                        logger.warn("类型是4，需要4个入参！");
+                        break;
+                    }
                 case "3":
-                    if (args.length == 3) {
+                    if (args.length >= 3) {
                         String excelPath = guding_path + args[2];
                         logger.info("[excel输入路径]{}", excelPath);
                         lfd.logAndExcelDeal(filePath, excelPath);
@@ -89,7 +98,11 @@ public class LogFileDeal {
                     break;
             }
         } else {
-            logger.warn("至少需要2个入参！\n1）类型：1]日志解析，2]excel解析，3]日志解析+excel解析+excel更新\n2）日志文件路径 | excel文件路径\n3）[excel文件路径]");
+            logger.warn("至少需要2个入参！\n" +
+                    "1）类型：1]日志解析，2]excel解析，3]日志解析+excel解析+excel更新\n" +
+                    "2）日志文件路径 | excel文件路径\n" +
+                    "3）[excel文件路径]\n" +
+                    "4）YYYY[年份]");
         }
     }
 
