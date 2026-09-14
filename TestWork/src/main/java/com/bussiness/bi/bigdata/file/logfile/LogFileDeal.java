@@ -5,6 +5,7 @@ import com.cqx.common.utils.excel.ExcelUtils;
 import com.cqx.common.utils.file.FileResult;
 import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.log.LogBackUtil;
+import com.cqx.common.utils.system.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +56,16 @@ public class LogFileDeal {
         // 日志配置文件加载分析
         LogBackUtil.printLoggerConfig();
 
+        String work_path = "D:\\Document\\BaiduNetdiskWorkspace\\个人日志\\work_log\\";
+        String file_path_split = "\\";
+        String year = TimeUtil.getDateFormat("YYYY");
+        final String guding_path = work_path + year + file_path_split;
+
         // 至少要2个参数
         if (args.length >= 2) {
             String type = args[0].trim();
             logger.info("[类型]{}", type);
-            String filePath = args[1];
+            String filePath = guding_path + args[1];
             logger.info("[文件输入路径]{}", filePath);
             LogFileDeal lfd = new LogFileDeal();
             switch (type) {
@@ -71,7 +77,7 @@ public class LogFileDeal {
                     break;
                 case "3":
                     if (args.length == 3) {
-                        String excelPath = args[2];
+                        String excelPath = guding_path + args[2];
                         logger.info("[excel输入路径]{}", excelPath);
                         lfd.logAndExcelDeal(filePath, excelPath);
                     } else {
@@ -245,6 +251,14 @@ public class LogFileDeal {
         }
     }
 
+    /**
+     * Step1. 日志文件读取识别<br>
+     * Step2. 读取当前excel内容，和输入的日志进行比对
+     *
+     * @param logPath
+     * @param excelPath
+     * @throws Exception
+     */
     public void logAndExcelDeal(String logPath, String excelPath) throws Exception {
         logDeal(logPath);
         excelDeal(excelPath);
