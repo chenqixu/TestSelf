@@ -29,6 +29,8 @@ public class HdfsToolTest {
                 hdfsBean.setAuth_type("kerberos");
                 hdfsBean.setKrb5("d:\\tmp\\etc\\keytab\\krb5.conf");
                 hdfsBean.setKeytab("d:\\tmp\\etc\\keytab\\yz_newland.keytab");
+            } else if (sp.equals("conf206-3.1.1")) {
+                HdfsTool.setHadoopUser("edc_base");
             }
         } else {// 10.1.8.75
             sp = "conf75";
@@ -152,5 +154,10 @@ public class HdfsToolTest {
     @Test
     public void lsHWCluster() throws IOException {
         hdfsTool.ls("/user");
+    }
+
+    @Test
+    public void ls206Single() throws IOException {
+        hdfsTool.ls("/bi");
     }
 }
