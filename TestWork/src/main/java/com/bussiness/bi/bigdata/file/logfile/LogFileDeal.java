@@ -326,19 +326,19 @@ public class LogFileDeal {
             return;
         }
         if (!o1.getTaskType().equals(o2.getTaskType())) {
-            logger.info("【{}】任务分类不同！[o1]{}，[o2]{}", prototypeRealTaskName
+            logger.debug("【{}】任务分类不同！[o1]{}，[o2]{}", prototypeRealTaskName
                     , o1.getTaskType(), o2.getTaskType());
             o1.setTaskType(o2.getTaskType());
             isUpdate = true;
         }
         if (!o1.getTaskStatus().equals(o2.getTaskStatus())) {
-            logger.info("【{}】任务状态不同！[o1]{}，[o2]{}", prototypeRealTaskName
+            logger.debug("【{}】任务状态不同！[o1]{}，[o2]{}", prototypeRealTaskName
                     , o1.getTaskStatus(), o2.getTaskStatus());
             o1.setTaskStatus(o2.getTaskStatus());
             isUpdate = true;
         }
         if (!o1.getTaskPIC().equals(o2.getTaskPIC())) {
-            logger.info("【{}】任务负责人不同！[o1]{}，[o2]{}", prototypeRealTaskName
+            logger.debug("【{}】任务负责人不同！[o1]{}，[o2]{}", prototypeRealTaskName
                     , o1.getTaskPIC(), o2.getTaskPIC());
             o1.setTaskPIC(o2.getTaskPIC());
             isUpdate = true;
